@@ -5,6 +5,9 @@ import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Rotation;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
@@ -38,9 +41,11 @@ public class SwerveModule extends Subsystem {
 
 	private BaseStatusSignal[] mSignals = new BaseStatusSignal[4];
 
-	private mPeriodicIO mPeriodicIO = new mPeriodicIO();
+	private ModuleInputsAutoLogged mInputs = new ModuleInputsAutoLogged();
+	private Outputs mOutputs = new Outputs();
 
-	public static class mPeriodicIO {
+	@AutoLog
+	public static class ModuleInputs {
 		// Inputs
 		public double timestamp = 0.0;
 		public double rotationPosition = 0.0;
@@ -48,6 +53,9 @@ public class SwerveModule extends Subsystem {
 		public double drivePosition = 0.0;
 		public double driveVelocity = 0.0;
 
+
+	}
+	public static class Outputs {
 		// Outputs
 		public double targetVelocity = 0.0;
 		public ControlRequest rotationDemand;
@@ -72,7 +80,6 @@ public class SwerveModule extends Subsystem {
 		mDriveMotor.setPosition(0.0);
 
 		resetToAbsolute();
-
 		mSignals[0] = mDriveMotor.getRotorPosition();
 		mSignals[1] = mDriveMotor.getRotorVelocity();
 		mSignals[2] = mAngleMotor.getRotorPosition();
@@ -81,41 +88,42 @@ public class SwerveModule extends Subsystem {
 
 	@Override
 	public synchronized void readPeriodicInputs() {
-		mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+		mInputs.timestamp = Timer.getTimestamp();
 		refreshSignals();
+		Logger.processInputs("Swerve Module"+ kModuleNumber, mInputs);
 	}
 
 	public synchronized void refreshSignals() {
-		mPeriodicIO.rotationVelocity = mAngleMotor.getRotorVelocity().getValue().in(DegreesPerSecond);
-		mPeriodicIO.driveVelocity = mDriveMotor.getRotorVelocity().getValue().in(DegreesPerSecond);
+		mInputs.rotationVelocity = mAngleMotor.getRotorVelocity().getValue().in(DegreesPerSecond);
+		mInputs.driveVelocity = mDriveMotor.getRotorVelocity().getValue().in(DegreesPerSecond);
 
-		mPeriodicIO.rotationPosition = BaseStatusSignal.getLatencyCompensatedValue(
+		mInputs.rotationPosition = BaseStatusSignal.getLatencyCompensatedValue(
 				mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation);
-		mPeriodicIO.drivePosition = mDriveMotor.getRotorPosition().getValueAsDouble();
+		mInputs.drivePosition = mDriveMotor.getRotorPosition().getValueAsDouble();
 	}
 
 	public void setOpenLoop(SwerveModuleState desiredState) {
 		double flip = setSteeringAngleOptimized(new Rotation2d(desiredState.angle)) ? -1 : 1;
-		mPeriodicIO.targetVelocity = desiredState.speedMetersPerSecond * flip;
+		mOutputs.targetVelocity = desiredState.speedMetersPerSecond * flip;
 		double rotorSpeed = Conversions.MPSToRPS(
-				mPeriodicIO.targetVelocity, SwerveConstants.wheelCircumference, SwerveConstants.driveGearRatio);
-		mPeriodicIO.driveDemand = new VoltageOut(rotorSpeed * SwerveConstants.kV)
+			mOutputs.targetVelocity, SwerveConstants.wheelCircumference, SwerveConstants.driveGearRatio);
+				mOutputs.driveDemand = new VoltageOut(rotorSpeed * SwerveConstants.kV)
 				.withEnableFOC(true)
 				.withOverrideBrakeDurNeutral(false);
 	}
 
 	public void setVelocity(SwerveModuleState desiredState) {
 		double flip = setSteeringAngleOptimized(new Rotation2d(desiredState.angle)) ? -1 : 1;
-		mPeriodicIO.targetVelocity = desiredState.speedMetersPerSecond * flip;
+		mOutputs.targetVelocity = desiredState.speedMetersPerSecond * flip;
 		double rotorSpeed = Conversions.MPSToRPS(
-				mPeriodicIO.targetVelocity,
+			mOutputs.targetVelocity,
 				Constants.SwerveConstants.wheelCircumference,
 				Constants.SwerveConstants.driveGearRatio);
 
 		if (Math.abs(rotorSpeed) < 0.002) {
-			mPeriodicIO.driveDemand = new NeutralOut();
+			mOutputs.driveDemand = new NeutralOut();
 		} else {
-			mPeriodicIO.driveDemand = new VelocityVoltage(rotorSpeed);
+			mOutputs.driveDemand = new VelocityVoltage(rotorSpeed);
 		}
 	}
 
@@ -143,13 +151,13 @@ public class SwerveModule extends Subsystem {
 
 	private void setSteeringAngleRaw(double angleDegrees) {
 		double rotorPosition = Conversions.degreesToRotation(angleDegrees, SwerveConstants.angleGearRatio);
-		mPeriodicIO.rotationDemand = new PositionDutyCycle(rotorPosition).withVelocity(0).withEnableFOC(true).withFeedForward(0).withSlot(0).withOverrideBrakeDurNeutral(false).withLimitForwardMotion(false).withLimitReverseMotion(false);
+		mOutputs.rotationDemand = new PositionDutyCycle(rotorPosition).withVelocity(0).withEnableFOC(true).withFeedForward(0).withSlot(0).withOverrideBrakeDurNeutral(false).withLimitForwardMotion(false).withLimitReverseMotion(false);
 	}
 
 	@Override
 	public synchronized void writePeriodicOutputs() {
-		mAngleMotor.setControl(mPeriodicIO.rotationDemand);
-		mDriveMotor.setControl(mPeriodicIO.driveDemand);
+		mAngleMotor.setControl(mOutputs.rotationDemand);
+		mDriveMotor.setControl(mOutputs.driveDemand);
 	}
 
 	public void resetToAbsolute() {
@@ -177,8 +185,8 @@ public class SwerveModule extends Subsystem {
 		SmartDashboard.putNumber("Module" + kModuleNumber + "/Azi Angle", getCurrentUnboundedDegrees());
 		SmartDashboard.putNumber("Module" + kModuleNumber + "/Azi Error", getCurrentUnboundedDegrees() - target_angle);
 		SmartDashboard.putNumber("Module" + kModuleNumber + "/Wheel Velocity", Math.abs(getCurrentVelocity()));
-		SmartDashboard.putNumber("Module" + kModuleNumber + "/Wheel Target Velocity", Math.abs(mPeriodicIO.targetVelocity));
-		SmartDashboard.putNumber("Module" + kModuleNumber + "/Drive Position", Math.abs(mPeriodicIO.drivePosition));
+		SmartDashboard.putNumber("Module" + kModuleNumber + "/Wheel Target Velocity", Math.abs(mOutputs.targetVelocity));
+		SmartDashboard.putNumber("Module" + kModuleNumber + "/Drive Position", Math.abs(mInputs.drivePosition));
 		SmartDashboard.putNumber("Module" + kModuleNumber + "/Duty Cycle",
 				mDriveMotor.getDutyCycle().getValueAsDouble());
 		SmartDashboard.putNumber("Module" + kModuleNumber + "/Azi Current",
@@ -186,7 +194,7 @@ public class SwerveModule extends Subsystem {
 		SmartDashboard.putNumber("Module" + kModuleNumber + "/Drive Current",
 				mDriveMotor.getSupplyCurrent().getValueAsDouble());
 		SmartDashboard.putNumber("Module" + kModuleNumber + "/Wheel Velocity Error",
-				Math.abs(getCurrentVelocity()) - Math.abs(mPeriodicIO.targetVelocity));
+				Math.abs(getCurrentVelocity()) - Math.abs(mOutputs.targetVelocity));
 		// spotless:on
 	}
 
@@ -222,29 +230,29 @@ public class SwerveModule extends Subsystem {
 	}
 
 	public double getTargetVelocity() {
-		return mPeriodicIO.targetVelocity;
+		return mOutputs.targetVelocity;
 	}
 
 	public double getCurrentVelocity() {
 		return Conversions.RPSToMPS(
-				mPeriodicIO.driveVelocity,
+				mInputs.driveVelocity,
 				Constants.SwerveConstants.wheelCircumference,
 				Constants.SwerveConstants.driveGearRatio);
 	}
 
 	public double getDriveDistanceMeters() {
 		return Conversions.rotationsToMeters(
-				mPeriodicIO.drivePosition,
+				mInputs.drivePosition,
 				Constants.SwerveConstants.wheelCircumference,
 				Constants.SwerveConstants.driveGearRatio);
 	}
 
 	public double getCurrentUnboundedDegrees() {
-		return Conversions.rotationsToDegrees(mPeriodicIO.rotationPosition, SwerveConstants.angleGearRatio);
+		return Conversions.rotationsToDegrees(mInputs.rotationPosition, SwerveConstants.angleGearRatio);
 	}
 
 	public double getTimestamp() {
-		return mPeriodicIO.timestamp;
+		return mInputs.timestamp;
 	}
 
 	public double getDriveMotorCurrent() {

@@ -46,7 +46,7 @@ public class LinearServo extends Servo {
 	 * servo
 	 */
 	public void updateCurPos() {
-		double dt = Timer.getFPGATimestamp() - lastTime;
+		double dt = Timer.getTimestamp() - lastTime;
 		if (curPos > setPos + m_speed * dt) {
 			curPos -= m_speed * dt;
 		} else if (curPos < setPos - m_speed * dt) {

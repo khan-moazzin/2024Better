@@ -95,7 +95,7 @@ public class VisionDevice extends Subsystem {
 
 	@Override
 	public void readPeriodicInputs() {
-		double timestamp = Timer.getFPGATimestamp();
+		double timestamp = Timer.getTimestamp();
 		mPeriodicIO.fps = mOutputTable.getEntry("fps").getInteger(0);
 		mPeriodicIO.latency = mOutputTable.getEntry("latency").getDouble(0.0);
 		mPeriodicIO.tagId = mOutputTable.getEntry("tid").getNumber(-1).intValue();

@@ -25,6 +25,12 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
 
+	public enum Mode{
+		SIM,
+		REPLAY
+	}
+	static Mode mode = Mode.SIM;
+
 	// Disables extra smart dashboard outputs that slow down the robot
 	public static final boolean disableExtraTelemetry = false;
 

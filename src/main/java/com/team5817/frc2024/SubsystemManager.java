@@ -79,13 +79,13 @@ public class SubsystemManager implements ILooper {
 			for (int i = 0; i < mLoops.size(); i++) {
 				mLoops.get(i).onLoop(timestamp);
 			}
-			on_loop_dt = Timer.getFPGATimestamp() - (timestamp + read_dt);
+			on_loop_dt = Timer.getTimestamp() - (timestamp + read_dt);
 
 			// Write
 			for (int i = 0; i < mAllSubsystems.size(); i++) {
 				mAllSubsystems.get(i).writePeriodicOutputs();
 			}
-			write_dt = Timer.getFPGATimestamp() - (timestamp + on_loop_dt);
+			write_dt = Timer.getTimestamp() - (timestamp + on_loop_dt);
 
 			// Telemetry
 			outputTelemetry();

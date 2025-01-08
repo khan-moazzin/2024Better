@@ -26,7 +26,7 @@ public class SynchronousPIDF {
     private double m_result = 0.0;
     private double m_last_input = Double.NaN;
     private double m_deadband = 0.0; // If the absolute error is less than deadband then treat error for the proportional term as 0
-    private double m_last_timestamp = Timer.getFPGATimestamp();
+    private double m_last_timestamp = Timer.getTimestamp();
 
     public SynchronousPIDF() {}
 
@@ -54,7 +54,7 @@ public class SynchronousPIDF {
     }
 
     public double calculate(double input) {
-        double timestamp = Timer.getFPGATimestamp();
+        double timestamp = Timer.getTimestamp();
         double dt = timestamp - m_last_timestamp;
         m_last_timestamp = timestamp;
 

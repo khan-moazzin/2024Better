@@ -1,13 +1,19 @@
 package com.team254.lib.geometry;
 
+
+import java.io.Serializable;
+
 import com.team254.lib.util.Util;
+
+import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.util.struct.StructSerializable;
 
 /**
  * Represents a 2d pose (rigid transform) containing translational and rotational elements.
  * <p>
  * Inspired by Sophus (https://github.com/strasdat/Sophus/tree/master/sophus)
  */
-public class Pose2d implements IPose2d<Pose2d> {
+public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
     protected static final Pose2d kIdentity = new Pose2d();
 
     public static Pose2d identity() {
@@ -262,4 +268,7 @@ public class Pose2d implements IPose2d<Pose2d> {
     public Pose2d mirrorAboutY(double yValue) {
         return new Pose2d(getTranslation().mirrorAboutY(yValue), getRotation().mirrorAboutY());
     }
+
+    public static final Pose2dStruct struct = new Pose2dStruct();
+
 }

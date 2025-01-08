@@ -12,13 +12,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
 public class WheelTracker {
 	private final Pigeon mPigeon = Pigeon.getInstance();
 	private final SwerveModule[] mModules;
 
 	private WheelProperties[] wheels = new WheelProperties[4];
-	private Pose2d robotPose = new Pose2d();
-	private Translation2d robotVelocity = Translation2d.identity();
 
 	private double robotHeading;
 
@@ -28,6 +29,7 @@ public class WheelTracker {
 	private BaseStatusSignal[] mAllSignals;
 
 	private OdometryThread mOdometryThread;
+	WheelTrackerInputsAutoLogged inputs = new WheelTrackerInputsAutoLogged();
 
 	public WheelTracker(SwerveModule[] modules) {
 		if (modules.length != 4) {
@@ -74,6 +76,7 @@ public class WheelTracker {
 		mIsEnabled = false;
 	}
 
+
 	private class OdometryThread extends Thread {
 		@Override
 		public void run() {
@@ -86,7 +89,7 @@ public class WheelTracker {
 					}
 
 					robotHeading = mPigeon.getYaw().getRadians();
-					updateRobotPose(Timer.getFPGATimestamp());
+					updateRobotPose(Timer.getTimestamp());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -110,7 +113,7 @@ public class WheelTracker {
 			updateWheelOdometry(m, w);
 			double delta = w.estimatedRobotPose
 					.getTranslation()
-					.translateBy(robotPose.getTranslation().inverse())
+					.translateBy(inputs.pose.getTranslation().inverse())
 					.norm();
 			deltas[i] = delta;
 			avg_delta += delta;
@@ -151,13 +154,19 @@ public class WheelTracker {
 		if (sample_window > 0.02) {
 			final Translation2d translation =
 					(new_pose.transformBy(last_velocity_sample.inverse()).getTranslation());
-			robotVelocity = translation.scale(1.0 / sample_window);
+			inputs.velocity = translation.scale(1.0 / sample_window);
 			last_sample_timestamp = timestamp;
 			last_velocity_sample = new_pose;
 		}
 
-		robotPose = new_pose;
-		resetModulePoses(robotPose);
+		inputs.pose = new_pose;
+		Logger.processInputs("WheelTracker", inputs);
+		resetModulePoses(inputs.pose);
+	}
+	@AutoLog
+	public static class WheelTrackerInputs{
+		Pose2d pose= new Pose2d();
+		Translation2d velocity= new Translation2d();
 	}
 
 	private void updateWheelOdometry(SwerveModule module, WheelProperties props) {
@@ -214,8 +223,8 @@ public class WheelTracker {
 	}
 
 	public void resetPose(Pose2d pose) {
-		robotPose = pose;
-		resetModulePoses(robotPose);
+		inputs.pose = pose;
+		resetModulePoses(inputs.pose);
 	}
 
 	public class WheelProperties {
@@ -226,11 +235,11 @@ public class WheelTracker {
 	}
 
 	public synchronized Pose2d getRobotPose() {
-		return robotPose;
+		return inputs.pose;
 	}
 
 	public Translation2d getMeasuredVelocity() {
-		return robotVelocity;
+		return inputs.velocity;
 	}
 
 	public double getTimestamp() {
@@ -270,10 +279,10 @@ public class WheelTracker {
 	}
 
 	public double robot_x() {
-		return robotPose.getTranslation().x();
+		return inputs.velocity.getTranslation().x();
 	}
 
 	public double robot_y() {
-		return robotPose.getTranslation().y();
+		return inputs.velocity.getTranslation().y();
 	}
 }

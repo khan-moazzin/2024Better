@@ -13,6 +13,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
 // Conatiner to hold the Cancoders so we can initialize them
 // earlier than everything else and DI them to the swerve modules
 public class Cancoders {
@@ -103,6 +106,8 @@ public class Cancoders {
 		mBackRight = build(Ports.BR_CANCODER);
 		mBackRightObserver = new CanTsObserver(mBackRight);
 	}
+
+
 
 	public boolean allHaveBeenInitialized() {
 		return mFrontLeftObserver.hasUpdate()

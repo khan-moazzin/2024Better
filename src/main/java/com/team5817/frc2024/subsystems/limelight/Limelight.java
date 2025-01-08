@@ -67,7 +67,7 @@ public class Limelight extends Subsystem {
 
 	@Override
 	public void readPeriodicInputs() {
-		double timestamp = Timer.getFPGATimestamp();
+		double timestamp = Timer.getTimestamp();
 		if (RobotBase.isReal()) {
 			inputs.heartbeat = LimelightHelpers.getLimelightNTDouble(name, "hb").get();
 			inputs.jsonDump = LimelightHelpers.getJSONDump(name);

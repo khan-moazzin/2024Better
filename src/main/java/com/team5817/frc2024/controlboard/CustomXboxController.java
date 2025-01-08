@@ -133,9 +133,9 @@ public class CustomXboxController extends XboxController {
 
 		public void run() {
 			rumbling = true;
-			startTime = Timer.getFPGATimestamp();
+			startTime = Timer.getTimestamp();
 			try {
-				while ((Timer.getFPGATimestamp() - startTime) < seconds) {
+				while ((Timer.getTimestamp() - startTime) < seconds) {
 					setRumble(RumbleType.kLeftRumble, 1);
 					setRumble(RumbleType.kRightRumble, 1);
 					sleep(interval);
@@ -208,7 +208,7 @@ public class CustomXboxController extends XboxController {
 			}
 			if (buttonCheck) {
 				if (buttonActive) {
-					if (((Timer.getFPGATimestamp() - buttonStartTime) > longPressDuration) && !longPressActivated) {
+					if (((Timer.getTimestamp() - buttonStartTime) > longPressDuration) && !longPressActivated) {
 						longPressActivated = true;
 						longPressed = true;
 						longReleased = false;
@@ -216,7 +216,7 @@ public class CustomXboxController extends XboxController {
 				} else {
 					buttonActive = true;
 					activationReported = false;
-					buttonStartTime = Timer.getFPGATimestamp();
+					buttonStartTime = Timer.getTimestamp();
 				}
 			} else {
 				if (buttonActive) {
