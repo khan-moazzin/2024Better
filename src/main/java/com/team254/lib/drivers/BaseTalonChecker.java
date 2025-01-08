@@ -2,7 +2,7 @@ package com.team254.lib.drivers;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.team5817.frc2024.subsystems.Subsystem;
+import com.team5817.lib.drivers.Subsystem;
 
 import java.util.ArrayList;
 

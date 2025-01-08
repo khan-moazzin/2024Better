@@ -30,6 +30,8 @@ public class Ports {
 	public static final CanDeviceId BR_ROTATION = new CanDeviceId(7, "canivore1");
 	public static final CanDeviceId BR_CANCODER = new CanDeviceId(3, "canivore1");
 
+	public static final CanDeviceId INTAKE_PIVOT = new CanDeviceId(8, "canivore1"); //TODO
+
 	public static final int PIGEON = 20;
 	
 	public static final CanDeviceId LEDS = new CanDeviceId(21, "rio");

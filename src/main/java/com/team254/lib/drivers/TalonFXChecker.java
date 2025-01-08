@@ -1,9 +1,9 @@
 package com.team254.lib.drivers;
 
 import com.ctre.phoenix6.signals.ControlModeValue;
+import com.team5817.lib.drivers.Subsystem;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.team5817.frc2024.subsystems.Subsystem;
 
 import static edu.wpi.first.units.Units.Amp;
 
