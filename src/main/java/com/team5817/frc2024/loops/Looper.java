@@ -31,7 +31,7 @@ public class Looper implements ILooper {
 		public void runCrashTracked() {
 			synchronized (taskRunningLock_) {
 				if (running_) {
-					double now = Timer.getFPGATimestamp();
+					double now = Timer.getTimestamp();
 
 					for (Loop loop : loops_) {
 						loop.onLoop(now);
@@ -66,7 +66,7 @@ public class Looper implements ILooper {
 		if (!running_) {
 			System.out.println("Starting loops");
 			synchronized (taskRunningLock_) {
-				timestamp_ = Timer.getFPGATimestamp();
+				timestamp_ = Timer.getTimestamp();
 				for (Loop loop : loops_) {
 					loop.onStart(timestamp_);
 				}
@@ -82,7 +82,7 @@ public class Looper implements ILooper {
 			notifier_.stop();
 			synchronized (taskRunningLock_) {
 				running_ = false;
-				timestamp_ = Timer.getFPGATimestamp();
+				timestamp_ = Timer.getTimestamp();
 				for (Loop loop : loops_) {
 					System.out.println("Stopping " + loop);
 					loop.onStop(timestamp_);

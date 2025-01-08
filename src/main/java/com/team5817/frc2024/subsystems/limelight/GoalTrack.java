@@ -61,7 +61,7 @@ public class GoalTrack {
 	 * @see Constants
 	 */
 	synchronized void pruneByTime() {
-		double delete_before = Timer.getFPGATimestamp() - mConfiguration.kMaxGoalTrackAge;
+		double delete_before = Timer.getTimestamp() - mConfiguration.kMaxGoalTrackAge;
 		mObservedPositions.entrySet().removeIf(entry -> entry.getKey() < delete_before);
 		if (mObservedPositions.isEmpty()) {
 			mSmoothedPosition = null;
@@ -89,7 +89,7 @@ public class GoalTrack {
 		if (isAlive()) {
 			double x = 0;
 			double y = 0;
-			double t_now = Timer.getFPGATimestamp();
+			double t_now = Timer.getTimestamp();
 			int num_samples = 0;
 			for (Map.Entry<Double, Translation2d> entry : mObservedPositions.entrySet()) {
 				if (t_now - entry.getKey() > mConfiguration.kMaxGoalTrackSmoothingTime) {

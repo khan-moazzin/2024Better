@@ -116,7 +116,7 @@ public class Drive extends Subsystem {
 			} else {
 				double x = speeds.vxMetersPerSecond;
 				double y = speeds.vyMetersPerSecond;
-				double omega = mHeadingController.update(mPeriodicIO.heading, Timer.getFPGATimestamp());
+				double omega = mHeadingController.update(mPigeon.getYaw(), Timer.getTimestamp());
 				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(x, y, omega);
 				return;
 			}
@@ -235,7 +235,7 @@ public class Drive extends Subsystem {
 							break;
 					}
 					updateSetpoint();
-
+					
 					RobotState.getInstance()
 							.addOdometryUpdate(
 									timestamp,
@@ -261,10 +261,8 @@ public class Drive extends Subsystem {
 			swerveModule.readPeriodicInputs();
 		}
 
-		mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-		mPeriodicIO.heading = mPigeon.getYaw();
-		mPeriodicIO.pitch = mPigeon.getPitch();
-
+		mPeriodicIO.timestamp = Timer.getTimestamp();
+		mPigeon.readInputs();
 		Twist2d twist_vel = Constants.SwerveConstants.kKinematics
 				.toChassisSpeeds(getModuleStates())
 				.toTwist2d();
@@ -315,7 +313,7 @@ public class Drive extends Subsystem {
 		ChassisSpeeds wanted_speeds;
 		if (mOverrideHeading) {
 			stabilizeHeading(mTrackingAngle);
-			double new_omega = mHeadingController.update(mPeriodicIO.heading, Timer.getFPGATimestamp());
+			double new_omega = mHeadingController.update(mPigeon.getYaw(), Timer.getTimestamp());
 			ChassisSpeeds speeds = new ChassisSpeeds(twist_vel.dx, twist_vel.dy, new_omega);
 			wanted_speeds = speeds;
 		} else {
@@ -433,8 +431,7 @@ public class Drive extends Subsystem {
 		double timestamp;
 		ChassisSpeeds des_chassis_speeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 		Twist2d measured_velocity = Twist2d.identity();
-		Rotation2d heading = new Rotation2d();
-		Rotation2d pitch = new Rotation2d();
+
 		SwerveSetpoint setpoint = new SwerveSetpoint(new ChassisSpeeds(), new SwerveModuleState[SwerveConstants.kKinematics.getNumModules()]); 
 		// Outputs
 		SwerveModuleState[] des_module_states = new SwerveModuleState[] {

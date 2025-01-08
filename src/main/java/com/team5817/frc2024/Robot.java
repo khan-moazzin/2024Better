@@ -4,12 +4,16 @@
 
 package com.team5817.frc2024;
 
+import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.team254.lib.swerve.ChassisSpeeds;
+import com.team5817.BuildConstants;
 import com.team5817.frc2024.controlboard.ControlBoard;
 import com.team5817.frc2024.controlboard.DriverControls;
 import com.team5817.frc2024.loops.Looper;
@@ -21,6 +25,9 @@ import com.team5817.lib.Util;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
 public class Robot extends LoggedRobot {
 
@@ -34,6 +41,7 @@ public class Robot extends LoggedRobot {
     private final Looper mEnabledLooper = new Looper();
   
   // HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
+    @SuppressWarnings("resource")
     @Override
     public void robotInit() {
       DriverStation.silenceJoystickConnectionWarning(true);
@@ -49,8 +57,26 @@ public class Robot extends LoggedRobot {
         // autoChooser.addOption(N, A);
       // }
   
-      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-      Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
+      Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+    Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+
+if (isReal()) {
+    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+} else {
+    if(Constants.mode == Constants.Mode.REPLAY) {
+      setUseTiming(false); // Run as fast as possible
+      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      setUseTiming(false);
+    }else{
+      //physics
+    }
+}
+
+Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
       drive.resetModulesToAbsolute();
       mSubsystemManager = SubsystemManager.getInstance();
   

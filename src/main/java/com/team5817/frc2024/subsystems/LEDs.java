@@ -8,13 +8,14 @@ import com.ctre.phoenix.led.CANdleControlFrame;
 import com.ctre.phoenix.led.CANdleStatusFrame;
 import com.team5817.frc2024.Constants;
 import com.team5817.frc2024.Ports;
-import com.team5817.frc2024.led.Color;
-import com.team5817.frc2024.led.TimedLEDState;
 import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
 import com.team5817.frc2024.subsystems.vision.VisionDeviceManager;
+import com.team5817.lib.Lights.Color;
+import com.team5817.lib.Lights.TimedLEDState;
 import com.team5817.lib.requests.Request;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -84,7 +85,7 @@ public class LEDs extends Subsystem {
 			}
 		}
 
-		double timestamp = Timer.getFPGATimestamp();
+		double timestamp = Timer.getTimestamp();
 		if (mLEDStatus.state.interval != Double.POSITIVE_INFINITY) {
 			if (timestamp - mLEDStatus.lastSwitchTime >= mLEDStatus.state.interval) {
 				mLEDStatus.nextColor();
@@ -150,7 +151,7 @@ public class LEDs extends Subsystem {
 		public void setState(TimedLEDState wantedTimedState) {
 			if (wantedTimedState != state) {
 				colorIndex = 0;
-				lastSwitchTime = Timer.getFPGATimestamp();
+				lastSwitchTime = Timer.getTimestamp();
 				state = wantedTimedState;
 			}
 		}
@@ -164,6 +165,7 @@ public class LEDs extends Subsystem {
 			}
 			return color;
 		}
+	
 
 		// cycle to next color in array
 		public void nextColor() {

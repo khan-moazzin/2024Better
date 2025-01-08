@@ -9,7 +9,7 @@ public class Stopwatch {
 	private double startTime = Double.POSITIVE_INFINITY;
 
 	public void start() {
-		startTime = Timer.getFPGATimestamp();
+		startTime = Timer.getTimestamp();
 	}
 
 	public void startIfNotRunning() {
@@ -22,7 +22,7 @@ public class Stopwatch {
 		if (Double.isInfinite(startTime)) {
 			return 0.0;
 		}
-		return Timer.getFPGATimestamp() - startTime;
+		return Timer.getTimestamp() - startTime;
 	}
 
 	public void reset() {

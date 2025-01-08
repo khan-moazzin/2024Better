@@ -1,4 +1,4 @@
-package com.team5817.frc2024.led;
+package com.team5817.lib.Lights;
 
 public class TimedLEDState {
 	private static final double kFlashInterval = 0.2;
