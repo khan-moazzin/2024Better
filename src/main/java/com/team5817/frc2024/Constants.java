@@ -7,6 +7,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.team5817.frc2024.subsystems.limelight.GoalTracker;
 import com.team5817.frc2024.subsystems.vision.VisionDeviceConstants;
+import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import com.team5817.lib.swerve.SwerveModule.SwerveModuleConstants;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
@@ -301,5 +302,52 @@ public class Constants {
 			kNoteTrackerConstants.kAgeWeight = 0.2;
 			kNoteTrackerConstants.kSwitchingWeight = 0.2;
 		}
+	}
+
+	public static final class IntakeDeployConstants {
+		// 115.93
+		// 7.92
+		public static final ServoMotorSubsystemConstants kDeployServoConstants = new ServoMotorSubsystemConstants();
+
+		static {
+			kDeployServoConstants.kName = "Deploy";
+
+			kDeployServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
+			kDeployServoConstants.kMainConstants.counterClockwisePositive = false;
+
+			kDeployServoConstants.kHomePosition = 128.1; // degrees
+			kDeployServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+
+			kDeployServoConstants.kMaxUnitsLimit = 128.1;
+			kDeployServoConstants.kMinUnitsLimit = 0.0;
+
+			kDeployServoConstants.kKp = 3.0;
+			kDeployServoConstants.kKi = 0.0;
+			kDeployServoConstants.kKd = 0.0;
+			kDeployServoConstants.kKa = 0.0;
+			kDeployServoConstants.kKs = 0.2;
+			kDeployServoConstants.kKg = 0.2;
+
+			kDeployServoConstants.kCruiseVelocity = 400.0; // degrees / s
+			kDeployServoConstants.kAcceleration = 10000.0; // degrees / s^2
+
+			kDeployServoConstants.kMaxForwardOutput = 12.0;
+			kDeployServoConstants.kMaxReverseOutput = -12.0;
+
+			kDeployServoConstants.kEnableSupplyCurrentLimit = true;
+			kDeployServoConstants.kSupplyCurrentLimit = 40; // amps
+			kDeployServoConstants.kSupplyCurrentThreshold = 40; // amps
+			kDeployServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
+
+			kDeployServoConstants.kEnableStatorCurrentLimit = true;
+			kDeployServoConstants.kStatorCurrentLimit = 80; // amps
+
+			kDeployServoConstants.kNeutralMode = NeutralModeValue.Brake;
+		}
+
+		public static double kHomingZone = 7.0; // degrees
+		public static double kHomingTimeout = 0.2; // seconds
+		public static double kHomingVelocityWindow = 5.0; // "units" / second
+		public static double kHomingOutput = 4.0; // volts
 	}
 }

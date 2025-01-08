@@ -1,7 +1,7 @@
 package com.team5817.frc2024;
 
-import com.team5817.frc2024.subsystems.Subsystem;
 import com.team5817.frc2024.subsystems.vision.VisionPoseAcceptor;
+import com.team5817.lib.drivers.Subsystem;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;

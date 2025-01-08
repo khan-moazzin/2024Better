@@ -3,7 +3,8 @@ package com.team5817.frc2024;
 import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
 import com.team5817.frc2024.loops.Looper;
-import com.team5817.frc2024.subsystems.Subsystem;
+import com.team5817.lib.drivers.Subsystem;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
