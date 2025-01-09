@@ -17,8 +17,8 @@ import com.team5817.BuildConstants;
 import com.team5817.frc2024.controlboard.ControlBoard;
 import com.team5817.frc2024.controlboard.DriverControls;
 import com.team5817.frc2024.loops.Looper;
-import com.team5817.frc2024.subsystems.Drive;
 import com.team5817.frc2024.subsystems.Superstructure;
+import com.team5817.frc2024.subsystems.Drive.Drive;
 import com.team5817.frc2024.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Util;
 

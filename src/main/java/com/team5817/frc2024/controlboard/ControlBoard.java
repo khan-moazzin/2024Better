@@ -3,7 +3,7 @@ package com.team5817.frc2024.controlboard;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team5817.frc2024.Constants;
-import com.team5817.frc2024.subsystems.Drive;
+import com.team5817.frc2024.subsystems.Drive.Drive;
 import com.team5817.lib.Util;
 
 import edu.wpi.first.wpilibj.XboxController.Axis;

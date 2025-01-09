@@ -2,12 +2,14 @@ package com.team5817.frc2024;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.team5817.frc2024.subsystems.limelight.GoalTracker;
 import com.team5817.frc2024.subsystems.vision.VisionDeviceConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
+import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
 import com.team5817.lib.swerve.SwerveModule.SwerveModuleConstants;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
@@ -309,6 +311,8 @@ public class Constants {
 		// 7.92
 		public static final ServoMotorSubsystemConstants kDeployServoConstants = new ServoMotorSubsystemConstants();
 
+		public static final AbsoluteEncoderConstants kDeployEncoderConstants = new AbsoluteEncoderConstants();
+
 		static {
 			kDeployServoConstants.kName = "Deploy";
 
@@ -343,6 +347,77 @@ public class Constants {
 			kDeployServoConstants.kStatorCurrentLimit = 80; // amps
 
 			kDeployServoConstants.kNeutralMode = NeutralModeValue.Brake;
+
+			kDeployEncoderConstants.encoder_type = FeedbackSensorSourceValue.FusedCANcoder;
+			kDeployEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
+			kDeployEncoderConstants.rotor_rotations_per_output = 314.0;
+			kDeployEncoderConstants.remote_encoder_offset = 0;
+		}
+
+		public static double kHomingZone = 7.0; // degrees
+		public static double kHomingTimeout = 0.2; // seconds
+		public static double kHomingVelocityWindow = 5.0; // "units" / secon
+		public static double kHomingOutput = 4.0; // volts
+
+	}
+
+	public static final class IntakeRollerConstants {
+		public static TalonFXConfiguration RollerFXConfig() {
+			TalonFXConfiguration config = new TalonFXConfiguration();
+
+			config.CurrentLimits.SupplyCurrentLimitEnable = true;
+			config.CurrentLimits.SupplyCurrentLimit = 40.0;
+
+			config.CurrentLimits.StatorCurrentLimitEnable = true;
+			config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+			config.Voltage.PeakForwardVoltage = 12.0;
+			config.Voltage.PeakReverseVoltage = -12.0;
+
+			config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+			return config;
+		}
+	}
+
+	public static final class ElevatorConstants {
+		// 115.93
+		// 7.92
+		public static final ServoMotorSubsystemConstants kElevatorServoConstants = new ServoMotorSubsystemConstants();
+
+		static {
+			kElevatorServoConstants.kName = "Deploy";
+
+			kElevatorServoConstants.kMainConstants.id = Ports.ELEVATOR;
+			kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
+
+			kElevatorServoConstants.kHomePosition = 128.1; // degrees
+			kElevatorServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+
+			kElevatorServoConstants.kMaxUnitsLimit = 128.1;
+			kElevatorServoConstants.kMinUnitsLimit = 0.0;
+
+			kElevatorServoConstants.kKp = 3.0;
+			kElevatorServoConstants.kKi = 0.0;
+			kElevatorServoConstants.kKd = 0.0;
+			kElevatorServoConstants.kKa = 0.0;
+			kElevatorServoConstants.kKs = 0.2;
+			kElevatorServoConstants.kKg = 0.2;
+
+			kElevatorServoConstants.kCruiseVelocity = 400.0; // degrees / s
+			kElevatorServoConstants.kAcceleration = 10000.0; // degrees / s^2
+
+			kElevatorServoConstants.kMaxForwardOutput = 12.0;
+			kElevatorServoConstants.kMaxReverseOutput = -12.0;
+
+			kElevatorServoConstants.kEnableSupplyCurrentLimit = true;
+			kElevatorServoConstants.kSupplyCurrentLimit = 40; // amps
+			kElevatorServoConstants.kSupplyCurrentThreshold = 40; // amps
+			kElevatorServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
+
+			kElevatorServoConstants.kEnableStatorCurrentLimit = true;
+			kElevatorServoConstants.kStatorCurrentLimit = 80; // amps
+
+			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
 		}
 
 		public static double kHomingZone = 7.0; // degrees
@@ -350,4 +425,74 @@ public class Constants {
 		public static double kHomingVelocityWindow = 5.0; // "units" / second
 		public static double kHomingOutput = 4.0; // volts
 	}
+
+	public static final class EndEffectorWristConstants {
+		// 115.93
+		// 7.92
+		public static final ServoMotorSubsystemConstants kWristServoConstants = new ServoMotorSubsystemConstants();
+
+		public static final AbsoluteEncoderConstants kWristEncoderConstants = new AbsoluteEncoderConstants();
+
+		static {
+			kWristServoConstants.kName = "Deploy";
+
+			kWristServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
+			kWristServoConstants.kMainConstants.counterClockwisePositive = false;
+
+			kWristServoConstants.kHomePosition = 128.1; // degrees
+			kWristServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+
+			kWristServoConstants.kMaxUnitsLimit = 128.1;
+			kWristServoConstants.kMinUnitsLimit = 0.0;
+
+			kWristServoConstants.kKp = 3.0;
+			kWristServoConstants.kKi = 0.0;
+			kWristServoConstants.kKd = 0.0;
+			kWristServoConstants.kKa = 0.0;
+			kWristServoConstants.kKs = 0.2;
+			kWristServoConstants.kKg = 0.2;
+
+			kWristServoConstants.kCruiseVelocity = 400.0; // degrees / s
+			kWristServoConstants.kAcceleration = 10000.0; // degrees / s^2
+
+			kWristServoConstants.kMaxForwardOutput = 12.0;
+			kWristServoConstants.kMaxReverseOutput = -12.0;
+
+			kWristServoConstants.kEnableSupplyCurrentLimit = true;
+			kWristServoConstants.kSupplyCurrentLimit = 40; // amps
+			kWristServoConstants.kSupplyCurrentThreshold = 40; // amps
+			kWristServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
+
+			kWristServoConstants.kEnableStatorCurrentLimit = true;
+			kWristServoConstants.kStatorCurrentLimit = 80; // amps
+
+			kWristServoConstants.kNeutralMode = NeutralModeValue.Brake;
+
+			kWristEncoderConstants.encoder_type = FeedbackSensorSourceValue.FusedCANcoder;
+			kWristEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
+			kWristEncoderConstants.rotor_rotations_per_output = 314.0;
+			kWristEncoderConstants.remote_encoder_offset = 0;
+		}
+
+	}
+
+	public static final class EndEffectorRollerConstants {
+		public static TalonFXConfiguration RollerFXConfig() {
+			TalonFXConfiguration config = new TalonFXConfiguration();
+
+			config.CurrentLimits.SupplyCurrentLimitEnable = true;
+			config.CurrentLimits.SupplyCurrentLimit = 40.0;
+
+			config.CurrentLimits.StatorCurrentLimitEnable = true;
+			config.CurrentLimits.StatorCurrentLimit = 80.0;
+
+			config.Voltage.PeakForwardVoltage = 12.0;
+			config.Voltage.PeakReverseVoltage = -12.0;
+
+			config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+			return config;
+		}
+	}
+
+
 }

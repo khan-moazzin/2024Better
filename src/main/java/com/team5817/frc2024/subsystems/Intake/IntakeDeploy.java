@@ -1,7 +1,7 @@
-package com.team5817.frc2024.subsystems;
+package com.team5817.frc2024.subsystems.Intake;
 
 import com.team5817.lib.Util;
-import com.team5817.lib.drivers.ServoMotorSubsystem;
+import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder;
 import com.team5817.lib.requests.Request;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -15,12 +15,12 @@ import com.team5817.frc2024.Constants;
 import com.team5817.frc2024.Constants.IntakeDeployConstants;
 import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
-public class IntakeDeploy extends ServoMotorSubsystem {
+public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	public static IntakeDeploy mInstance;
 
 	public static IntakeDeploy getInstance() {
 		if (mInstance == null) {
-			mInstance = new IntakeDeploy(IntakeDeployConstants.kDeployServoConstants);
+			mInstance = new IntakeDeploy(IntakeDeployConstants.kDeployServoConstants, IntakeDeployConstants.kDeployEncoderConstants);
 		}
 		return mInstance;
 	}
@@ -44,8 +44,8 @@ public class IntakeDeploy extends ServoMotorSubsystem {
 	private final DelayedBoolean mHomingDelay =
 			new DelayedBoolean(Timer.getTimestamp(), Constants.IntakeDeployConstants.kHomingTimeout);
 
-	public IntakeDeploy(final ServoMotorSubsystemConstants constants) {
-		super(constants);
+	public IntakeDeploy(final ServoMotorSubsystemConstants constants, final AbsoluteEncoderConstants encoder_constants) {
+		super(constants, encoder_constants);
 		mMain.setPosition(homeAwareUnitsToRotations(120.0));
 		enableSoftLimits(false);
 		setSetpointMotionMagic(State.DEPLOY.output);
