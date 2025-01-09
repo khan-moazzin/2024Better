@@ -1,6 +1,5 @@
 package com.team254.lib.motion;
 
-import com.team254.lib.motion.MotionProfileGoal.CompletionBehavior;
 import com.team254.lib.util.Util;
 
 /**
@@ -195,12 +194,6 @@ public class ProfileFollower {
         if (mGoal == null || mLatestSetpoint == null) {
             return false;
         }
-        // For the options that don't achieve the goal velocity exactly, also count any instance where we have passed
-        // the finish line.
-        final double goal_to_start = mGoal.pos() - mInitialState.pos();
-        final double goal_to_actual = mGoal.pos() - mLatestActualState.pos();
-        final boolean passed_goal_state = Math.signum(goal_to_start) * Math.signum(goal_to_actual) < 0.0;
-        return mGoal.atGoalState(mLatestActualState)
-                || (mGoal.completion_behavior() != CompletionBehavior.OVERSHOOT && passed_goal_state);
+        return mGoal.atGoalState(mLatestActualState);
     }
 }

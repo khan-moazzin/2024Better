@@ -2,7 +2,7 @@ package com.team5817.frc2024.autos.Actions;
 
 
 import com.team5817.frc2024.Constants;
-import com.team5817.frc2024.FieldLayout;
+import com.team5817.frc2024.field.FieldLayout;
 import com.team5817.frc2024.subsystems.Drive.Drive;
 
 import edu.wpi.first.wpilibj.DriverStation;

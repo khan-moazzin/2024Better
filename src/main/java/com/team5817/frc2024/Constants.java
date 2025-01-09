@@ -6,13 +6,12 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.team5817.frc2024.subsystems.limelight.GoalTracker;
 import com.team5817.frc2024.subsystems.vision.VisionDeviceConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
 import com.team5817.lib.swerve.SwerveModule.SwerveModuleConstants;
-import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
+import com.team254.lib.motion.MotionProfileConstraints;
 import com.team254.lib.swerve.SwerveDriveKinematics;
 import com.team254.lib.swerve.SwerveKinematicLimits;
 
@@ -55,7 +54,6 @@ public class Constants {
 	{0.0,0.0,0.0},
 	{0.0,0.0,0.0}};
 
-    public static final double SwerveMaxspeedMPS = 6;//TODO FIND
 
 	public static final class SwerveConstants {
 
@@ -93,7 +91,10 @@ public class Constants {
 
 		/* Swerve Profiling Values */
 		public static final double maxSpeed = 5.2; // meters per second
+		public static final double maxAcceleration = 4.8; // meters per second
 		public static final double maxAngularVelocity = 11.5;
+		public static final double maxAngularAcceleration = maxAcceleration /
+            Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
 
 		public static final double kV = 12 * Math.PI * wheelDiameter / (driveGearRatio * maxSpeed);
 		public static final double maxAutoSpeed = maxSpeed * 0.85; // Max out at 85% to ensure attainable speeds
@@ -139,8 +140,19 @@ public class Constants {
 			kSwerveKinematicLimits.kMaxDriveAcceleration = Double.MAX_VALUE;
 			kSwerveKinematicLimits.kMaxSteeringVelocity = Double.MAX_VALUE;
 		}
+
+		public static final double kAutoAlignAllowableDistance = 2.0; //Meters
 	
-	
+	    public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
+            0.8 * maxSpeed,
+            0.8 * -maxSpeed,
+            0.6 * maxAcceleration);
+
+		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
+            0.5 * maxAngularVelocity,
+            0.5 * -maxAngularVelocity,
+            1.0 * maxAngularAcceleration);
+
 
 		/*** MODULE SPECIFIC CONSTANTS ***/
 		/* Front Left Module - Module 0 */
@@ -280,31 +292,6 @@ public class Constants {
 	}
 
 }
-
-	public static final class LimelightConstants {
-
-		public static final double kNoteHeight = 0.0508;
-		public static final double kNoteTargetOffset = 0.2;
-		public static final double kMaxNoteTrackingDistance = 6.75;
-		public static final double kNoteTrackEpsilon = 1.0;
-
-		public static final String kName = "limelight";
-		public static final Translation2d kRobotToCameraTranslation = new Translation2d(0.0, 0.0);
-		public static final double kCameraHeightMeters = 0.65;
-		public static final Rotation2d kCameraPitch = Rotation2d.fromDegrees(-18.0);
-		public static final Rotation2d kCameraYaw = Rotation2d.fromDegrees(0.0);
-
-		public static final GoalTracker.Configuration kNoteTrackerConstants = new GoalTracker.Configuration();
-
-		static {
-			kNoteTrackerConstants.kMaxTrackerDistance = 0.46;
-			kNoteTrackerConstants.kMaxGoalTrackAge = 0.5;
-			kNoteTrackerConstants.kCameraFrameRate = 30.0;
-			kNoteTrackerConstants.kStabilityWeight = 1.0;
-			kNoteTrackerConstants.kAgeWeight = 0.2;
-			kNoteTrackerConstants.kSwitchingWeight = 0.2;
-		}
-	}
 
 	public static final class IntakeDeployConstants {
 		// 115.93

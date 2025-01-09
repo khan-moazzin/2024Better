@@ -1,4 +1,4 @@
-package com.team5817.frc2024.subsystems.limelight;
+package com.team5817.frc2024.subsystems.vision;
 
 //LimelightHelpers v1.5.0 (March 27, 2024)
 

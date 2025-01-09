@@ -1,8 +1,9 @@
 package com.team5817.frc2024.subsystems.vision;
 
-import com.team5817.frc2024.FieldLayout;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Twist2d;
+import com.team5817.frc2024.field.FieldLayout;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionPoseAcceptor {

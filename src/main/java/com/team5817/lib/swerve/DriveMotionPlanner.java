@@ -11,6 +11,7 @@ import com.team254.lib.swerve.ChassisSpeeds;
 import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.util.Util;
 import com.team5817.frc2024.Constants;
+import com.team5817.frc2024.Constants.SwerveConstants;
 import com.team5817.lib.motion.PPPathPointState;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -55,8 +56,6 @@ public class DriveMotionPlanner {
 	double mStartTime = Double.POSITIVE_INFINITY;
 	ChassisSpeeds mOutput = new ChassisSpeeds();
 
-	Lookahead mSpeedLookahead = null;
-
 	// PID controllers for path following
 	double mDt = 0.0;
 
@@ -66,11 +65,6 @@ public class DriveMotionPlanner {
 		mCurrentTrajectory = trajectory;
 		mSetpoint = trajectory.getCurrentState();
 		mLastSetpoint = null;
-		mSpeedLookahead = new Lookahead(
-				kAdaptivePathMinLookaheadDistance,
-				kAdaptivePathMaxLookaheadDistance,
-				0.0,
-				Constants.SwerveMaxspeedMPS);
 		mCurrentTrajectoryLength =
 				mCurrentTrajectory.getTimeView().last_interpolant();
 	}
