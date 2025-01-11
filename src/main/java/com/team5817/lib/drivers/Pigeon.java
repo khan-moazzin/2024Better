@@ -2,8 +2,7 @@ package com.team5817.lib.drivers;
 
 import static edu.wpi.first.units.Units.Degree;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.Logger;
+
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -11,7 +10,6 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.team5817.frc2024.Constants;
 import com.team5817.frc2024.Ports;
-import com.team5817.lib.swerve.SwerveModule.ModuleInputs;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -31,7 +29,6 @@ public class Pigeon {
 
 	// Actual pigeon object
 	private final Pigeon2 mGyro;
-	PigeonInputsAutoLogged periodicIO = new PigeonInputsAutoLogged();
 
 	// Configs
 	private boolean inverted = Constants.SwerveConstants.invertGyro;
@@ -43,6 +40,7 @@ public class Pigeon {
 		mGyro = new Pigeon2(port, "canivore1");
 		mGyro.getConfigurator().apply(new Pigeon2Configuration());
 	}
+
 
 	public Rotation2d getYaw() {
 		Rotation2d angle = getUnadjustedYaw().rotateBy(yawAdjustmentAngle.inverse());
@@ -69,12 +67,6 @@ public class Pigeon {
 		yawAdjustmentAngle = Rotation2d.fromDegrees(getYawStatusSignal().getValueAsDouble())
 				.rotateBy(Rotation2d.fromDegrees(angleDeg).inverse());
 	}
-	public void readInputs() {
-		periodicIO.pitch = Rotation2d.fromDegrees(mGyro.getPitch().getValue().in(Degree));
-		periodicIO.roll = Rotation2d.fromDegrees(mGyro.getRoll().getValue().in(Degree));
-		periodicIO.yaw = Rotation2d.fromDegrees(BaseStatusSignal.getLatencyCompensatedValue(getYawStatusSignal(), getRateStatusSignal()).in(Degree));
-		Logger.processInputs("Gyro", periodicIO);
-	}
 
 	/**
 	 * Sets the roll register to read the specified value.
@@ -96,17 +88,18 @@ public class Pigeon {
 				getUnadjustedPitch().rotateBy(Rotation2d.fromDegrees(angleDeg).inverse());
 		System.out.println("Reset gyro to " + getPitch().getDegrees());
 	}
-
 	public Rotation2d getUnadjustedYaw() {
-		return periodicIO.yaw;
+
+		return Rotation2d.fromDegrees(
+			BaseStatusSignal.getLatencyCompensatedValue(getYawStatusSignal(), getRateStatusSignal()).in(Degree));
 	}
 
 	public Rotation2d getUnadjustedPitch() {
-		return periodicIO.pitch;
+		return Rotation2d.fromDegrees(mGyro.getRoll().getValue().in(Degree));
 	}
 
 	public Rotation2d getUnadjustedRoll() {
-		return periodicIO.roll;
+		return Rotation2d.fromDegrees(mGyro.getPitch().getValue().in(Degree));
 	}
 
 	public StatusSignal<Angle> getYawStatusSignal() {
@@ -115,11 +108,5 @@ public class Pigeon {
 
 	public StatusSignal<AngularVelocity> getRateStatusSignal() {
 		return mGyro.getAngularVelocityZDevice();
-	}
-	@AutoLog
-	public static class PigeonInputs {
-		Rotation2d pitch = Rotation2d.identity();
-		Rotation2d roll = Rotation2d.identity();
-		Rotation2d yaw = Rotation2d.identity();
 	}
 }

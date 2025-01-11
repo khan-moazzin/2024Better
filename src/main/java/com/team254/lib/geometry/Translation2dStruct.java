@@ -4,7 +4,6 @@
 
 package com.team254.lib.geometry;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.struct.Struct;
 import java.nio.ByteBuffer;
 
@@ -38,8 +37,8 @@ public class Translation2dStruct implements Struct<Translation2d> {
 
   @Override
   public void pack(ByteBuffer bb, Translation2d value) {
-    bb.putDouble(value.getX());
-    bb.putDouble(value.getY());
+    bb.putDouble(value.x());
+    bb.putDouble(value.y());
   }
 
   @Override

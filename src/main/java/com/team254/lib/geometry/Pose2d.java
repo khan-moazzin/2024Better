@@ -5,7 +5,6 @@ import java.io.Serializable;
 
 import com.team254.lib.util.Util;
 
-import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.util.struct.StructSerializable;
 
 /**
@@ -53,6 +52,9 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
     public Pose2d(final edu.wpi.first.math.geometry.Pose2d other) {
         translation_ = new Translation2d(other.getTranslation());
         rotation_ = new Rotation2d(other.getRotation());
+    }
+    public edu.wpi.first.math.geometry.Pose2d wpi(){
+        return new edu.wpi.first.math.geometry.Pose2d(translation_.x(),translation_.y(),new edu.wpi.first.math.geometry.Rotation2d(rotation_.cos(),rotation_.sin()));
     }
 
     public static Pose2d fromTranslation(final Translation2d translation) {
@@ -268,7 +270,5 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
     public Pose2d mirrorAboutY(double yValue) {
         return new Pose2d(getTranslation().mirrorAboutY(yValue), getRotation().mirrorAboutY());
     }
-
     public static final Pose2dStruct struct = new Pose2dStruct();
-
 }

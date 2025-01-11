@@ -2,11 +2,16 @@ package com.team5817.frc2024.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.team5817.frc2024.Constants;
+import com.team5817.frc2024.Robot;
+import com.team5817.frc2024.subsystems.Drive.Drive;
 import com.team5817.lib.drivers.Pigeon;
+import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.swerve.SwerveModule;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
+import com.team254.lib.swerve.ChassisSpeeds;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
@@ -15,7 +20,11 @@ import java.util.List;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
-public class WheelTracker {
+import org.ironmaple.simulation.SimulatedArena;
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
+public class WheelTracker extends Subsystem{
 	private final Pigeon mPigeon = Pigeon.getInstance();
 	private final SwerveModule[] mModules;
 
@@ -29,7 +38,7 @@ public class WheelTracker {
 	private BaseStatusSignal[] mAllSignals;
 
 	private OdometryThread mOdometryThread;
-	WheelTrackerInputsAutoLogged inputs = new WheelTrackerInputsAutoLogged();
+	private WheelTrackerInputsAutoLogged inputs = new WheelTrackerInputsAutoLogged();
 
 	public WheelTracker(SwerveModule[] modules) {
 		if (modules.length != 4) {
@@ -75,6 +84,10 @@ public class WheelTracker {
 	public void stop() {
 		mIsEnabled = false;
 	}
+	@Override
+	public void readPeriodicInputs(){
+		Logger.processInputs("WheelTracker", inputs);
+	}
 
 
 	private class OdometryThread extends Thread {
@@ -95,6 +108,7 @@ public class WheelTracker {
 				}
 			}
 		}
+		
 	}
 
 	private Pose2d last_velocity_sample = new Pose2d();
@@ -158,9 +172,12 @@ public class WheelTracker {
 			last_sample_timestamp = timestamp;
 			last_velocity_sample = new_pose;
 		}
-
+		if(Robot.isReal()){
 		inputs.pose = new_pose;
-		Logger.processInputs("WheelTracker", inputs);
+		}else{
+			inputs.pose = new Pose2d(Drive.driveSimulation.getSimulatedDriveTrainPose());
+			inputs.velocity = new ChassisSpeeds(Drive.driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative()).getTranslation();
+		}
 		resetModulePoses(inputs.pose);
 	}
 	@AutoLog

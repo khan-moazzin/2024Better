@@ -4,9 +4,7 @@
 
 package com.team254.lib.geometry;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+
 import edu.wpi.first.util.struct.Struct;
 import java.nio.ByteBuffer;
 
@@ -18,7 +16,7 @@ public class Pose2dStruct implements Struct<Pose2d> {
 
   @Override
   public String getTypeName() {
-    return "Pose2d";
+    return "Pose2d+";
   }
 
   @Override

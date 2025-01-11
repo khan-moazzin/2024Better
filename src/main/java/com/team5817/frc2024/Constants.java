@@ -11,6 +11,7 @@ import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
 import com.team5817.lib.swerve.SwerveModule.SwerveModuleConstants;
 import com.team254.lib.geometry.Translation2d;
+import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.motion.MotionProfileConstraints;
 import com.team254.lib.swerve.SwerveDriveKinematics;
 import com.team254.lib.swerve.SwerveKinematicLimits;
@@ -30,7 +31,7 @@ public class Constants {
 		SIM,
 		REPLAY
 	}
-	static Mode mode = Mode.SIM;
+	public static Mode mode = Mode.SIM;
 
 	// Disables extra smart dashboard outputs that slow down the robot
 	public static final boolean disableExtraTelemetry = false;
@@ -42,7 +43,7 @@ public class Constants {
 	public static final double kJoystickThreshold = 0.2;
 	public static final int kButtonGamepadPort = 1;
 
-	public static final double stickDeadband = 0.15;
+	public static final double stickDeadband = 0.05;
 
 	// Timeout constants
 	public static final int kLongCANTimeoutMs = 100;
@@ -129,16 +130,16 @@ public class Constants {
 
 		static {
 			kSwerveKinematicLimits.kMaxDriveVelocity = maxSpeed;
-			kSwerveKinematicLimits.kMaxDriveAcceleration = Double.MAX_VALUE;
+			kSwerveKinematicLimits.kMaxDriveAcceleration = 20;
 			kSwerveKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
-
+		
 		public static final SwerveKinematicLimits kSwerveUncappedKinematicLimits = new SwerveKinematicLimits();
 
 		static {
-			kSwerveKinematicLimits.kMaxDriveVelocity = maxSpeed;
-			kSwerveKinematicLimits.kMaxDriveAcceleration = Double.MAX_VALUE;
-			kSwerveKinematicLimits.kMaxSteeringVelocity = Double.MAX_VALUE;
+			kSwerveUncappedKinematicLimits.kMaxDriveVelocity = maxSpeed;
+			kSwerveUncappedKinematicLimits.kMaxDriveAcceleration = Double.MAX_VALUE;
+			kSwerveUncappedKinematicLimits.kMaxSteeringVelocity = Double.MAX_VALUE;
 		}
 
 		public static final double kAutoAlignAllowableDistance = 2.0; //Meters

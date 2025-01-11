@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
+
 /**
  * Used to reset, start, stop, and update all subsystems at once
  */
@@ -97,28 +99,12 @@ public class SubsystemManager implements ILooper {
 		}
 	}
 
-	private class DisabledLoop implements Loop {
-		@Override
-		public void onStart(double timestamp) {}
-
-		@Override
-		public void onLoop(double timestamp) {
-			mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
-			outputTelemetry();
-		}
-
-		@Override
-		public void onStop(double timestamp) {}
-	}
 
 	public void registerEnabledLoops(Looper enabledLooper) {
 		mAllSubsystems.forEach(s -> s.registerEnabledLoops(this));
 		enabledLooper.register(new EnabledLoop());
 	}
 
-	public void registerDisabledLoops(Looper disabledLooper) {
-		disabledLooper.register(new DisabledLoop());
-	}
 
 	@Override
 	public void register(Loop loop) {

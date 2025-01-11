@@ -1,6 +1,7 @@
 package com.team5817.frc2024.subsystems.Drive;
 
 import com.team5817.frc2024.Constants;
+import com.team5817.frc2024.Robot;
 import com.team5817.frc2024.Constants.SwerveConstants;
 import com.team5817.frc2024.Constants.SwerveConstants.Mod0;
 import com.team5817.frc2024.Constants.SwerveConstants.Mod1;
@@ -30,9 +31,24 @@ import com.team254.lib.swerve.SwerveModuleState;
 import com.team254.lib.swerve.SwerveSetpoint;
 import com.team254.lib.swerve.SwerveSetpointGenerator;
 import com.team254.lib.trajectory.timing.TimedState;
+
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Timer;
+
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Kilogram;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Pound;
+import static edu.wpi.first.units.Units.Volt;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
+import org.littletonrobotics.junction.Logger;
 
 public class Drive extends Subsystem {
 
@@ -48,8 +64,8 @@ public class Drive extends Subsystem {
 	private Pigeon mPigeon = Pigeon.getInstance();
 	public SwerveModule[] mModules;
 
-	private PeriodicIO mPeriodicIO = new PeriodicIO();
-	private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
+	private SwerveInputs mPeriodicIO = new SwerveInputs();
+	private DriveControlState mControlState = DriveControlState.OPEN_LOOP;
 
 	private SwerveSetpointGenerator mSetpointGenerator;
 
@@ -66,6 +82,7 @@ public class Drive extends Subsystem {
 	private Rotation2d mTrackingAngle = Rotation2d.identity();
 
 	private SwerveKinematicLimits mKinematicLimits = SwerveConstants.kSwerveKinematicLimits;
+	private SwerveKinematicLimits mUncappedKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 
 	private static Drive mInstance;
 
@@ -75,7 +92,25 @@ public class Drive extends Subsystem {
 		}
 		return mInstance;
 	}
-
+	    public static final DriveTrainSimulationConfig mapleSimConfig = DriveTrainSimulationConfig.Default()
+            .withRobotMass(Pound.of(115))
+            .withTrackLengthTrackWidth(Inches.of(29), Inches.of(29))
+            .withGyro(COTS.ofPigeon2())
+            .withSwerveModule(new SwerveModuleSimulationConfig(
+                    DCMotor.getKrakenX60(1),
+                    DCMotor.getFalcon500(1),
+                    SwerveConstants.driveGearRatio,
+                    SwerveConstants.angleGearRatio,
+                    Volt.of(.2),
+                    Volt.of(.2),
+                    Inches.of(2),
+                    KilogramSquareMeters.of(.005),
+                    1.2));
+		
+		public static SwerveDriveSimulation driveSimulation;
+		public static void registerDriveSimulation(SwerveDriveSimulation sim) {
+			driveSimulation = sim;
+		}
 	private Drive() {
 		mModules = new SwerveModule[] {
 			new SwerveModule(
@@ -113,13 +148,15 @@ public class Drive extends Subsystem {
 			} else {
 				return;
 			}
-		} else if (mControlState == DriveControlState.HEADING_CONTROL) {
+		}
+		if (mControlState == DriveControlState.HEADING_CONTROL) {
 			if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
 				mControlState = DriveControlState.OPEN_LOOP;
 			} else {
 				double x = speeds.vxMetersPerSecond;
 				double y = speeds.vyMetersPerSecond;
-				double omega = mHeadingController.update(mPigeon.getYaw(), Timer.getTimestamp());
+
+				double omega = mHeadingController.update(mPeriodicIO.heading, Timer.getFPGATimestamp());
 				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(x, y, omega);
 				return;
 			}
@@ -245,7 +282,9 @@ public class Drive extends Subsystem {
 									mWheelTracker.getRobotPose(),
 									mPeriodicIO.measured_velocity,
 									mPeriodicIO.predicted_velocity);
+					mWheelTracker.readPeriodicInputs();
 				}
+
 			}
 
 			@Override
@@ -260,14 +299,25 @@ public class Drive extends Subsystem {
 
 	@Override
 	public void readPeriodicInputs() {
-		for (SwerveModule swerveModule : mModules) {
-			swerveModule.readPeriodicInputs();
-		}
+		SwerveModuleState[] module_states = new SwerveModuleState[4];
+		if(!Robot.isReal()&&Constants.mode == Constants.Mode.SIM){
+			mPeriodicIO.heading = new Rotation2d(driveSimulation.getGyroSimulation().getGyroReading());
+			mPeriodicIO.pitch = Rotation2d.identity();
+			for (int i = 0; i < mModules.length; i++) {
+				module_states[i] = new SwerveModuleState(driveSimulation.getModules()[i].getCurrentState());
+			}
+		}else{
+			for (SwerveModule swerveModule : mModules) {
+				swerveModule.readPeriodicInputs();
+			}
+			mPeriodicIO.heading = mPigeon.getYaw();
+			mPeriodicIO.pitch = mPigeon.getPitch();
+			module_states = getModuleStates();
+		}		
 
-		mPeriodicIO.timestamp = Timer.getTimestamp();
-		mPigeon.readInputs();
+		mPeriodicIO.timestamp = Timer.getFPGATimestamp();
 		Twist2d twist_vel = Constants.SwerveConstants.kKinematics
-				.toChassisSpeeds(getModuleStates())
+				.toChassisSpeeds(module_states)
 				.toTwist2d();
 		Translation2d translation_vel = new Translation2d(twist_vel.dx, twist_vel.dy);
 		translation_vel = translation_vel.rotateBy(getHeading());
@@ -275,6 +325,8 @@ public class Drive extends Subsystem {
 				translation_vel.getTranslation().x(),
 				translation_vel.getTranslation().y(),
 				twist_vel.dtheta);
+		mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+
 	}
 
 	/**
@@ -311,6 +363,7 @@ public class Drive extends Subsystem {
 				mPeriodicIO.des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt * 4.0,
 				Rotation2d.fromRadians(
 						mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond * Constants.kLooperDt * 4.0));
+
 		Twist2d twist_vel = Pose2d.log(robot_pose_vel).scaled(1.0 / (4.0 * Constants.kLooperDt));
 
 		ChassisSpeeds wanted_speeds;
@@ -324,12 +377,13 @@ public class Drive extends Subsystem {
 		}
 
 		mPeriodicIO.setpoint = mSetpointGenerator.generateSetpoint(mKinematicLimits, mPeriodicIO.setpoint, wanted_speeds, Constants.kLooperDt);
-
+		var uncapped_setpoint = mSetpointGenerator.generateSetpoint(mUncappedKinematicLimits, mPeriodicIO.setpoint, wanted_speeds, Constants.kLooperDt);
 		mPeriodicIO.predicted_velocity =
 				Pose2d.log(Pose2d.exp(wanted_speeds.toTwist2d()).rotateBy(getHeading()));
 
-		
+		mPeriodicIO.uncapped_module_states = uncapped_setpoint.mModuleStates;
 		mPeriodicIO.des_module_states = mPeriodicIO.setpoint.mModuleStates;
+		
 	}
 
 	public void resetModulesToAbsolute() {
@@ -359,19 +413,24 @@ public class Drive extends Subsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
+		
 		for (int i = 0; i < mModules.length; i++) {
 			if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
 				mModules[i].setOpenLoop(mPeriodicIO.des_module_states[i]);
-			} else if (mControlState == DriveControlState.PATH_FOLLOWING
+			}else if (mControlState == DriveControlState.PATH_FOLLOWING
 					|| mControlState == DriveControlState.VELOCITY
 					|| mControlState == DriveControlState.FORCE_ORIENT) {
 				mModules[i].setVelocity(mPeriodicIO.des_module_states[i]);
 			}
 		}
-
-		for (SwerveModule swerveModule : mModules) {
-			swerveModule.writePeriodicOutputs();
-		}
+		if(!Robot.isReal()&&Constants.mode == Constants.Mode.SIM){
+			driveSimulation.setRobotSpeeds(mPeriodicIO.des_chassis_speeds.wpi());
+			
+		}else{
+			for (SwerveModule swerveModule : mModules) {
+				swerveModule.writePeriodicOutputs();
+		}}
+	
 	}
 
 	public SwerveModuleState[] getModuleStates() {
@@ -420,7 +479,6 @@ public class Drive extends Subsystem {
 	public Rotation2d getHeading() {
 		return mPigeon.getYaw();
 	}
-
 	public DriveMotionPlanner getMotionPlanner() {
 		return mMotionPlanner;
 	}
@@ -428,18 +486,26 @@ public class Drive extends Subsystem {
 	public SwerveKinematicLimits getKinematicLimits() {
 		return mKinematicLimits;
 	}
-
-	public static class PeriodicIO {
+	
+	public static class SwerveInputs {
 		// Inputs/Desired States
 		double timestamp;
 		ChassisSpeeds des_chassis_speeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 		Twist2d measured_velocity = Twist2d.identity();
 
-		SwerveSetpoint setpoint = new SwerveSetpoint(new ChassisSpeeds(), new SwerveModuleState[SwerveConstants.kKinematics.getNumModules()]); 
+		SwerveSetpoint setpoint = new SwerveSetpoint(new ChassisSpeeds(), new SwerveModuleState[] {
+			new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()
+		}); 
+		Rotation2d heading = Rotation2d.identity();
+		Rotation2d pitch = Rotation2d.identity();
 		// Outputs
 		SwerveModuleState[] des_module_states = new SwerveModuleState[] {
 			new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()
 		};
+		SwerveModuleState[] uncapped_module_states = new SwerveModuleState[] {
+			new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()
+		};
+		
 		Twist2d predicted_velocity = Twist2d.identity();
 		Translation2d translational_error = Translation2d.identity();
 		Rotation2d heading_error = Rotation2d.identity();
@@ -449,6 +515,27 @@ public class Drive extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
+		
+		Logger.recordOutput("Kinematic Limits accel", mKinematicLimits.kMaxDriveAcceleration);
+		Logger.recordOutput("Kinematic Limits vel", mKinematicLimits.kMaxDriveVelocity);
+		Logger.recordOutput("Kinematic Limits steer vel", mKinematicLimits.kMaxSteeringVelocity);
+		edu.wpi.first.math.kinematics.SwerveModuleState[] uncappedstates = new edu.wpi.first.math.kinematics.SwerveModuleState[4];
+		edu.wpi.first.math.kinematics.SwerveModuleState[] states = new edu.wpi.first.math.kinematics.SwerveModuleState[4];
+
+		for (SwerveModule mod : mModules) {
+			states[mod.moduleNumber()] = mod.getWpiState();
+			uncappedstates[mod.moduleNumber()] = new edu.wpi.first.math.kinematics.SwerveModuleState(
+				mPeriodicIO.uncapped_module_states[mod.moduleNumber()].speedMetersPerSecond, 
+				mPeriodicIO.uncapped_module_states[mod.moduleNumber()].angle.wpi());
+		}
+		Logger.recordOutput("Drive/States", states);
+		Logger.recordOutput("Drive/UncappedStates", uncappedstates);
+		Logger.recordOutput("Drive/DesiredSpeed", mPeriodicIO.setpoint.mChassisSpeeds);
+
+		for (SwerveModule module : mModules) {
+			module.outputTelemetry();
+
+		}
 	}
 
 	public DriveControlState getControlState() {
@@ -465,6 +552,6 @@ public class Drive extends Subsystem {
 	public boolean checkSystem() {
 		return false;
 	}
-
+// 
 
 }

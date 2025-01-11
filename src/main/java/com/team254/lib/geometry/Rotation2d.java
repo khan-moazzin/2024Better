@@ -16,7 +16,7 @@ import static edu.wpi.first.units.Units.Radian;
  * <p>
  * Inspired by Sophus (https://github.com/strasdat/Sophus/tree/master/sophus)
  */
-public class Rotation2d implements IRotation2d<Rotation2d>,StructSerializable {
+public class Rotation2d implements IRotation2d<Rotation2d>, StructSerializable {
     public static final Rotation2d kIdentity = new Rotation2d();
     public static final Rotation2d kPi = new Rotation2d(Math.PI, false);
     public static final Rotation2d kHalfPi = new Rotation2d(Math.PI / 2.0, false);
@@ -90,6 +90,10 @@ public class Rotation2d implements IRotation2d<Rotation2d>,StructSerializable {
     }
     public static Rotation2d fromAngle(Angle angle) {
         return fromRadians(angle.in(Radian));
+    }
+
+    public edu.wpi.first.math.geometry.Rotation2d wpi() {
+        return new edu.wpi.first.math.geometry.Rotation2d(getRadians());
     }
 
     public double cos() {
@@ -311,7 +315,5 @@ public class Rotation2d implements IRotation2d<Rotation2d>,StructSerializable {
     public Rotation2d getRotation() {
         return this;
     }
-
     public static final Rotation2dStruct struct = new Rotation2dStruct();
-
 }
