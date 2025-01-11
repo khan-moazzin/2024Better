@@ -53,6 +53,7 @@ public class ChassisSpeeds implements StructSerializable{
         this.vyMetersPerSecond = wpi.vyMetersPerSecond;
         this.omegaRadiansPerSecond = wpi.omegaRadiansPerSecond;
     }
+   
 
 
     /**

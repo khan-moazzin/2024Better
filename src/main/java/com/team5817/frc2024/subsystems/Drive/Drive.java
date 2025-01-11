@@ -457,6 +457,15 @@ public class Drive extends Subsystem {
 		}
 		return states;
 	}
+	public edu.wpi.first.math.kinematics.SwerveModuleState[] getWpiModuleStates() {
+		edu.wpi.first.math.kinematics.SwerveModuleState[] states =
+				new edu.wpi.first.math.kinematics.SwerveModuleState[4];
+		for (SwerveModule mod : mModules) {
+			states[mod.moduleNumber()] = mod.getWpiState();
+		}
+		return states;
+	}
+
 
 	public Pose2d getPose() {
 		return RobotState.getInstance().getLatestFieldToVehicle();
@@ -515,22 +524,16 @@ public class Drive extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
-		
-		Logger.recordOutput("Kinematic Limits accel", mKinematicLimits.kMaxDriveAcceleration);
-		Logger.recordOutput("Kinematic Limits vel", mKinematicLimits.kMaxDriveVelocity);
-		Logger.recordOutput("Kinematic Limits steer vel", mKinematicLimits.kMaxSteeringVelocity);
 		edu.wpi.first.math.kinematics.SwerveModuleState[] uncappedstates = new edu.wpi.first.math.kinematics.SwerveModuleState[4];
 		edu.wpi.first.math.kinematics.SwerveModuleState[] states = new edu.wpi.first.math.kinematics.SwerveModuleState[4];
-
 		for (SwerveModule mod : mModules) {
 			states[mod.moduleNumber()] = mod.getWpiState();
-			uncappedstates[mod.moduleNumber()] = new edu.wpi.first.math.kinematics.SwerveModuleState(
-				mPeriodicIO.uncapped_module_states[mod.moduleNumber()].speedMetersPerSecond, 
-				mPeriodicIO.uncapped_module_states[mod.moduleNumber()].angle.wpi());
+			uncappedstates[mod.moduleNumber()] = mPeriodicIO.uncapped_module_states[mod.moduleNumber()].wpi();
 		}
-		Logger.recordOutput("Drive/States", states);
-		Logger.recordOutput("Drive/UncappedStates", uncappedstates);
-		Logger.recordOutput("Drive/DesiredSpeed", mPeriodicIO.setpoint.mChassisSpeeds);
+		Logger.recordOutput("Drive/Desired States", states);
+		Logger.recordOutput("Drive/Uncapped States", uncappedstates);
+		Logger.recordOutput("Drive/Current States", getWpiModuleStates());
+		Logger.recordOutput("Drive/DesiredSpeed", mPeriodicIO.setpoint.mChassisSpeeds.wpi());
 
 		for (SwerveModule module : mModules) {
 			module.outputTelemetry();

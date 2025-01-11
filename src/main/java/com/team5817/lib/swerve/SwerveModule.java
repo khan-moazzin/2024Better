@@ -3,20 +3,12 @@ package com.team5817.lib.swerve;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotation;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
-import org.ironmaple.simulation.motorsims.SimulatedMotorController;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.ControlRequest;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -33,13 +25,7 @@ import com.team254.lib.drivers.Phoenix6Util;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.swerve.SwerveModuleState;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule extends Subsystem {
 
@@ -55,10 +41,6 @@ public class SwerveModule extends Subsystem {
 	private ModuleInputsAutoLogged mInputs = new ModuleInputsAutoLogged();
 	private ModuleOutputs mOutputs = new ModuleOutputs();
 
-
-
-
-
 	public enum DriveType {
 		OPENLOOP,
 		VELOCITY,
@@ -70,7 +52,6 @@ public class SwerveModule extends Subsystem {
 		// Inputs
 		public double timestamp = 0.0;
 		public double rotationPosition = 0.0;
-		public double rotationVelocity = 0.0;
 		public double drivePosition = 0.0;
 		public double driveVelocity = 0.0;
 	}
@@ -114,17 +95,21 @@ public class SwerveModule extends Subsystem {
 	public void readPeriodicInputs() {
 		mInputs.timestamp = Timer.getTimestamp();
 		refreshSignals();
+		
 		Logger.processInputs("Drive/Module"+kModuleNumber, mInputs);
 	}
 
 	public synchronized void refreshSignals() {
-
-			mInputs.rotationVelocity = mAngleMotor.getRotorVelocity().getValue().in(DegreesPerSecond);
+		if(Robot.isReal()){
 			mInputs.driveVelocity = mDriveMotor.getRotorVelocity().getValue().in(DegreesPerSecond);
 			mInputs.drivePosition = mDriveMotor.getRotorPosition().getValueAsDouble();
 			mInputs.rotationPosition = BaseStatusSignal.getLatencyCompensatedValue(
 				mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation);
-			mInputs.drivePosition = mDriveMotor.getRotorPosition().getValueAsDouble();
+		}else{
+			mInputs.driveVelocity = mOutputs.driveVelocity;
+			mInputs.drivePosition = 0;
+			mInputs.rotationPosition = mOutputs.rotTarget;
+		}
 	}
 	public void setOpenLoop(SwerveModuleState desiredState) {
 		double flip = setSteeringAngleOptimized(new Rotation2d(desiredState.angle)) ? -1 : 1;
