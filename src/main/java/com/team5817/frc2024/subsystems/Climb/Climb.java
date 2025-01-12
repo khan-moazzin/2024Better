@@ -1,4 +1,4 @@
-package com.team5817.frc2024.subsystems.Elevator;
+package com.team5817.frc2024.subsystems.Climb;
 
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
@@ -9,16 +9,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.team5817.frc2024.Constants.ElevatorConstants;
+import com.team5817.frc2024.Constants.ClimbConstants;
 import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
 
-public class Elevator extends ServoMotorSubsystem {
-	public static Elevator mInstance;
+public class Climb extends ServoMotorSubsystem {
+	public static Climb mInstance;
 
-	public static Elevator getInstance() {
+	public static Climb getInstance() {
 		if (mInstance == null) {
-			mInstance = new Elevator(ElevatorConstants.kElevatorServoConstants);
+			mInstance = new Climb(ClimbConstants.kClimbServoConstants);
 		}
 		return mInstance;
 	}
@@ -28,19 +28,13 @@ public class Elevator extends ServoMotorSubsystem {
 	final static double kLenientError = 5;
 
     public enum State {
-        L4(0.0, kStrictError),
-        L3(0.0, kStrictError),
-        L2(0.0, kStrictError),
-        L1(0.0, kStrictError),
-        A1(0.0, kMediumError),
-        A2(0.0, kMediumError),
-        NET(0.0 ,kMediumError),
-        ZERO(0.0, kLenientError),
-		PROCESS(0.0, kLenientError),
-        STOW(0.0, kStrictError);
+        ZERO(0.0, kStrictError),
+        STOW(0.0, kLenientError),
+        PULL(0.0, kStrictError),
+		PREPARE(0.0, kLenientError);
 
         double output = 0;
-		double allowable_error = 20;
+		double allowable_error = 0;
 
         State(double output, double allowable_error) {
         this.output = output;
@@ -49,7 +43,7 @@ public class Elevator extends ServoMotorSubsystem {
     }
 
 
-	public Elevator(final ServoMotorSubsystemConstants constants) {
+	public Climb(final ServoMotorSubsystemConstants constants) {
 		super(constants);
 		mMain.setPosition(homeAwareUnitsToRotations(120.0));
 		enableSoftLimits(false);
@@ -75,7 +69,7 @@ public class Elevator extends ServoMotorSubsystem {
     @Override
     public synchronized void readPeriodicInputs() {
         super.readPeriodicInputs();
-        Logger.processInputs("Elevator", mServoInputs);
+        Logger.processInputs("Climb", mServoInputs);
     }
 
 	@Override
@@ -86,7 +80,6 @@ public class Elevator extends ServoMotorSubsystem {
 	@Override
 	public void outputTelemetry() {
 
-		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());
 		super.outputTelemetry();
 	}
 
@@ -98,34 +91,7 @@ public class Elevator extends ServoMotorSubsystem {
 		return false;
 	}
 
-	public Request stowRequest() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.STOW.output);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.STOW.output, State.STOW.allowable_error);
-			}
-		};
-	}
-
-	public Request zeroRequest() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.ZERO.output);
-			}
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.ZERO.output, State.ZERO.allowable_error);
-			}
-		};
-	}
-
-
+	
 	public Request stateRequest(State _wantedState) {
 		return new Request() {
 			@Override
@@ -138,5 +104,4 @@ public class Elevator extends ServoMotorSubsystem {
 			}
 		};
 	}
-
 }

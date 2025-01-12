@@ -88,6 +88,8 @@ public class Drive extends Subsystem {
 	private SwerveKinematicLimits mKinematicLimits = SwerveConstants.kSwerveKinematicLimits;
 	private SwerveKinematicLimits mUncappedKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 
+
+	private static AutoAlignPointSelector.RequestedAlignment mAlignment = AutoAlignPointSelector.RequestedAlignment.AUTO;
 	private static Drive mInstance;
 
 	public static Drive getInstance() {
@@ -225,6 +227,10 @@ public class Drive extends Subsystem {
 		
 	}
 
+	public synchronized void setAlignment(AutoAlignPointSelector.RequestedAlignment alignment){
+		mAlignment = alignment;
+	}
+
 	/**
 	 * Enable/disables vision heading control.
 	 *
@@ -267,7 +273,7 @@ public class Drive extends Subsystem {
 		}
 	}
 	public void autoAlign(){
-		Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(getPose(), AutoAlignPointSelector.RequestedAlignment.AUTO_CORAL);
+		Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(getPose(), mAlignment);
 		if(targetPoint.isEmpty()){
 			return;//TODO is this ok
 		}

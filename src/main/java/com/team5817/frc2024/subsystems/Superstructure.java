@@ -42,6 +42,13 @@ public class Superstructure extends Subsystem {
 	private double mDistanceToTarget = 0.0;
 	private double mAngularErrToTarget = 0.0;
 
+	public enum GameObject{
+		CORAL,
+		ALGAE
+	}
+
+	
+
 	Superstructure() {
 		mDrive = Drive.getInstance();
 	}

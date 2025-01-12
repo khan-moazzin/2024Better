@@ -25,17 +25,32 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		return mInstance;
 	}
 
+	final static double kStrictError = .5;
+	final static double kMediumError = 2;
+	final static double kLenientError = 5;
+
     public enum State {
-        DEPLOY(16.0),
-        CLEAR(0.0),
-        UNJAM(0.0),
-        STOW(0.0);
+        DEPLOY(16.0, kStrictError, true),//TODO
+        CLEAR(0.0, kLenientError),//TODO
+        UNJAM(0.0, kLenientError),//TODO
+        STOW(0.0, kMediumError);//TODO
 
         double output = 0;
+		double allowable_error = 0;
+		boolean needs_to_home = false;
 
-        State(double output) {
+        State(double output, double allowable_error, boolean needs_to_home) {
         this.output = output;
+		this.allowable_error = allowable_error;
+		this.needs_to_home = needs_to_home;
         }
+
+        State(double output, double allowable_error) {
+        this.output = output;
+		this.needs_to_home = false;
+		this.allowable_error = allowable_error;
+        }
+ 
     }
 
 
@@ -58,7 +73,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public void onLoop(double timestamp) {
-				if (getSetpoint() == mConstants.kHomePosition && atHomingLocation() && mNeedsToHome && !mHoming) {
+				if (getSetpoint() == State.STOW.output && atHomingLocation() && mNeedsToHome && !mHoming) {
 					setWantHome(true);
 				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
 					setWantHome(false);
@@ -143,7 +158,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.DEPLOY.output, 20.0);
+				return Util.epsilonEquals(getPosition(), State.DEPLOY.output, State.DEPLOY.allowable_error);
 			}
 		};
 	}
@@ -160,7 +175,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.STOW.output, 4.0);
+				return Util.epsilonEquals(getPosition(), State.STOW.output, State.STOW.allowable_error);
 			}
 		};
 	}
@@ -177,7 +192,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.CLEAR.output, 4.0);
+				return Util.epsilonEquals(getPosition(), State.CLEAR.output, State.CLEAR.allowable_error);
 			}
 		};
 	}
@@ -194,7 +209,21 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.UNJAM.output, 4.0);
+				return Util.epsilonEquals(getPosition(), State.UNJAM.output, State.UNJAM.allowable_error);
+			}
+		};
+	}
+
+	public Request stateRequest(State _wantedState) {
+		return new Request() {
+			@Override
+			public void act() {
+				setSetpointMotionMagic(_wantedState.output);
+				mNeedsToHome = _wantedState.needs_to_home;
+			}
+			@Override
+			public boolean isFinished() {
+				return Util.epsilonEquals(getPosition(), _wantedState.output, _wantedState.allowable_error);
 			}
 		};
 	}

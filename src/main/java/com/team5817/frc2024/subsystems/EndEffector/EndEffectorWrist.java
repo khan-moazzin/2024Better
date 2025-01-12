@@ -21,21 +21,31 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 		return mInstance;
 	}
 
+	final static double kStrictError = .5;
+	final static double kMediumError = 2;
+	final static double kLenientError = 5;
+
+
     public enum State {
-        L4(0.0),
-        L3(0.0),
-        L2(0.0),
-        L1(0.0),
-        A1(0.0),
-        A2(0.0),
-        NET(0.0),
-        ZERO(0.0),
-        STOW(0.0);
+
+		L4(0.0, kStrictError),
+        L3(0.0, kStrictError),
+        L2(0.0, kStrictError),
+        L1(0.0, kStrictError),
+        A1(0.0, kMediumError),
+        A2(0.0, kMediumError),
+        NET(0.0, kMediumError),
+        ZERO(0.0, kLenientError),
+		PROCESS(0.0, kLenientError),
+        STOW(0.0, kStrictError);
+
 
         double output = 0;
+		double allowable_error = 20;
 
-        State(double output) {
-        this.output = output;
+        State(double output, double allowable_error) {
+            this.output = output;
+			this.allowable_error = allowable_error;
         }
     }
 
@@ -88,64 +98,6 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 	public boolean checkSystem() {
 		return false;
 	}
-	/**
-	 * @return Request to move intake to deploy angle to pick up notes off the ground.
-	 */
-	public Request l1Request() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.L1.output);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.L1.output, 20.0);
-			}
-		};
-	}
-
-	public Request l2Request() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.L2.output);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.L2.output, 20.0);
-			}
-		};
-	}
-
-	public Request l3Request() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.L1.output);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.L3.output, 20.0);
-			}
-		};
-	}
-
-	public Request l4Request() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.L4.output);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.L1.output, 20.0);
-			}
-		};
-	}
 
 	public Request stowRequest() {
 		return new Request() {
@@ -156,7 +108,7 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.STOW.output, 20.0);
+				return Util.epsilonEquals(getPosition(), State.STOW.output, State.STOW.allowable_error);
 			}
 		};
 	}
@@ -169,46 +121,7 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 			}
 			@Override
 			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.ZERO.output, 20.0);
-			}
-		};
-	}
-
-	public Request netRequest() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.NET.output);
-			}
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.NET.output, 20.0);
-			}
-		};
-	}	
-
-	public Request a1Request() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.A1.output);
-			}
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.A1.output, 20.0);
-			}
-		};
-	}
-
-	public Request a2Request() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.A2.output);
-			}
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.A2.output, 20.0);
+				return Util.epsilonEquals(getPosition(), State.ZERO.output, State.ZERO.allowable_error);
 			}
 		};
 	}
@@ -221,7 +134,7 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 			}
 			@Override
 			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), _wantedState.output, 20.0);
+				return Util.epsilonEquals(getPosition(), _wantedState.output, _wantedState.allowable_error);
 			}
 		};
 	}

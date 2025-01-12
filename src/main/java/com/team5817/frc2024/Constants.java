@@ -375,7 +375,7 @@ public class Constants {
 		public static final ServoMotorSubsystemConstants kElevatorServoConstants = new ServoMotorSubsystemConstants();
 
 		static {
-			kElevatorServoConstants.kName = "Deploy";
+			kElevatorServoConstants.kName = "Elevator";
 
 			kElevatorServoConstants.kMainConstants.id = Ports.ELEVATOR;
 			kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
@@ -416,6 +416,50 @@ public class Constants {
 		public static double kHomingOutput = 4.0; // volts
 	}
 
+	public static final class ClimbConstants {
+		// 115.93
+		// 7.92
+		public static final ServoMotorSubsystemConstants kClimbServoConstants = new ServoMotorSubsystemConstants();
+
+		static {
+			kClimbServoConstants.kName = "Climb";
+
+			kClimbServoConstants.kMainConstants.id = Ports.ELEVATOR;
+			kClimbServoConstants.kMainConstants.counterClockwisePositive = false;
+
+			kClimbServoConstants.kHomePosition = 128.1; // degrees
+			kClimbServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+
+			kClimbServoConstants.kMaxUnitsLimit = 128.1;
+			kClimbServoConstants.kMinUnitsLimit = 0.0;
+
+			kClimbServoConstants.kKp = 3.0;
+			kClimbServoConstants.kKi = 0.0;
+			kClimbServoConstants.kKd = 0.0;
+			kClimbServoConstants.kKa = 0.0;
+			kClimbServoConstants.kKs = 0.2;
+			kClimbServoConstants.kKg = 0.2;
+
+			kClimbServoConstants.kCruiseVelocity = 400.0; // degrees / s
+			kClimbServoConstants.kAcceleration = 10000.0; // degrees / s^2
+
+			kClimbServoConstants.kMaxForwardOutput = 12.0;
+			kClimbServoConstants.kMaxReverseOutput = -12.0;
+
+			kClimbServoConstants.kEnableSupplyCurrentLimit = true;
+			kClimbServoConstants.kSupplyCurrentLimit = 40; // amps
+			kClimbServoConstants.kSupplyCurrentThreshold = 40; // amps
+			kClimbServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
+
+			kClimbServoConstants.kEnableStatorCurrentLimit = true;
+			kClimbServoConstants.kStatorCurrentLimit = 80; // amps
+
+			kClimbServoConstants.kNeutralMode = NeutralModeValue.Brake;
+		}
+
+	}
+
+
 	public static final class EndEffectorWristConstants {
 		// 115.93
 		// 7.92
@@ -424,7 +468,7 @@ public class Constants {
 		public static final AbsoluteEncoderConstants kWristEncoderConstants = new AbsoluteEncoderConstants();
 
 		static {
-			kWristServoConstants.kName = "Deploy";
+			kWristServoConstants.kName = "Wrist";
 
 			kWristServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
 			kWristServoConstants.kMainConstants.counterClockwisePositive = false;
