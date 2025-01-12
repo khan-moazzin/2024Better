@@ -380,7 +380,7 @@ public class Constants {
 			kElevatorServoConstants.kMainConstants.id = Ports.ELEVATOR;
 			kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
 
-			kElevatorServoConstants.kHomePosition = 128.1; // degrees
+			kElevatorServoConstants.kHomePosition = 0; // degrees
 			kElevatorServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
 
 			kElevatorServoConstants.kMaxUnitsLimit = 128.1;
@@ -473,7 +473,7 @@ public class Constants {
 			kWristServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
 			kWristServoConstants.kMainConstants.counterClockwisePositive = false;
 
-			kWristServoConstants.kHomePosition = 128.1; // degrees
+			kWristServoConstants.kHomePosition = 0; // degrees
 			kWristServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
 
 			kWristServoConstants.kMaxUnitsLimit = 128.1;

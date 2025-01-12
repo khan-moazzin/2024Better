@@ -18,6 +18,7 @@ import com.team254.lib.drivers.TalonUtil;
 import com.team254.lib.motion.MotionState;
 import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.Util;
+import com.team5817.frc2024.Robot;
 import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
 
@@ -396,6 +397,11 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 					Math.signum(newVelocity - mServoInputs.active_trajectory_velocity) * mConstants.kAcceleration;
 		}
 		mServoInputs.active_trajectory_velocity = newVelocity;
+
+		if(!Robot.isReal()&&mControlState != ControlState.OPEN_LOOP){
+			mServoInputs.position_rots = mServoOutputs.demand;
+			mServoInputs.position_units = rotationsToUnits(mServoOutputs.demand);
+		}
 
 		if (mCSVWriter != null) {
 			mCSVWriter.add(mServoInputs);

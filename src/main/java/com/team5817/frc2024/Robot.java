@@ -24,7 +24,12 @@ import com.team5817.frc2024.controlboard.DriverControls;
 import com.team5817.frc2024.field.FieldLayout;
 import com.team5817.frc2024.loops.Looper;
 import com.team5817.frc2024.subsystems.Superstructure;
+import com.team5817.frc2024.subsystems.Climb.Climb;
 import com.team5817.frc2024.subsystems.Drive.Drive;
+import com.team5817.frc2024.subsystems.Elevator.Elevator;
+import com.team5817.frc2024.subsystems.EndEffector.EndEffectorRollers;
+import com.team5817.frc2024.subsystems.EndEffector.EndEffectorWrist;
+import com.team5817.frc2024.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2024.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.Pigeon;
@@ -94,7 +99,12 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
       mSubsystemManager.setSubsystems(
           Drive.getInstance(),
           Superstructure.getInstance(),
-          VisionDeviceManager.getInstance()
+          VisionDeviceManager.getInstance(),
+          IntakeDeploy.getInstance(),
+          Climb.getInstance(),
+          Elevator.getInstance(),
+          EndEffectorRollers.getInstance(),
+          EndEffectorWrist.getInstance()
           );
           
           mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -159,6 +169,24 @@ boolean disableGyroReset = false;
       if(controlBoard.autoAlign()){
         drive.autoAlign();
       }
+      //All BELLOW IS FOR TESTING REMOVE!!!
+      if(controlBoard.groundIntake()){
+        IntakeDeploy.getInstance().setSetpointMotionMagic(.3);
+      }else{
+        IntakeDeploy.getInstance().setSetpointMotionMagic(2);
+      }
+      if(controlBoard.elevator()){
+        Elevator.getInstance().setSetpointMotionMagic(1);
+      }else{
+        Elevator.getInstance().setSetpointMotionMagic(0);
+      }
+      if(controlBoard.wrist()){
+        EndEffectorWrist.getInstance().setSetpointMotionMagic(1.6);
+      }else{
+        EndEffectorWrist.getInstance().setSetpointMotionMagic(-.1);
+      }
+
+
     }
 
     

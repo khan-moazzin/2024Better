@@ -4,10 +4,17 @@ import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder;
 import com.team5817.lib.requests.Request;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
+import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
+import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team254.lib.util.DelayedBoolean;
@@ -16,6 +23,10 @@ import com.team5817.frc2024.Constants.IntakeDeployConstants;
 import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
 public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
+	LoggedMechanism2d mMech = new LoggedMechanism2d(2, 1);
+	LoggedMechanismRoot2d mRoot = mMech.getRoot("IntakePivot", .8, Units.inchesToMeters(6));
+	LoggedMechanismLigament2d one = mRoot.append(new LoggedMechanismLigament2d("IntakeOne", Units.inchesToMeters(9), 180));
+	LoggedMechanismLigament2d two = one.append(new LoggedMechanismLigament2d("IntakeTwo", Units.inchesToMeters(9), 50));
 	public static IntakeDeploy mInstance;
 
 	public static IntakeDeploy getInstance() {
@@ -125,7 +136,9 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	public void outputTelemetry() {
         Logger.recordOutput("IntakeDeploy/Homing", mHoming);
         Logger.recordOutput("IntakeDeploy/Within Homing Window", atHomingLocation());
-
+		
+		one.setAngle(180-mServoInputs.position_rots*360);
+		Logger.recordOutput("IntakeDeploy/Mech", mMech);
 		SmartDashboard.putBoolean(mConstants.kName + "/Homing", mHoming);
 		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());
 		super.outputTelemetry();

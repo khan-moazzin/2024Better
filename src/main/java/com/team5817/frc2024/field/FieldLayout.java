@@ -123,7 +123,7 @@ public class FieldLayout {
         );
         public static final AprilTag kAprilTag3 = new AprilTag(
                 3,
-                false,
+                true,
                 kProcessorToCenterAlign,
                 kProcessorToCenterAlign,
                 kProcessorToCenterAlign
@@ -211,7 +211,7 @@ public class FieldLayout {
         );
         public static final AprilTag kAprilTag16 = new AprilTag(
                 16,
-                false,
+                true,
                 kProcessorToCenterAlign,
                 kProcessorToCenterAlign,
                 kProcessorToCenterAlign

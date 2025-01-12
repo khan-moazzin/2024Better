@@ -87,6 +87,15 @@ public class ControlBoard {
 		return driver.aButton.isBeingPressed();
 	}
 
+	public boolean groundIntake(){
+		return driver.bButton.isBeingPressed();
+	}
+	public boolean elevator(){
+		return driver.xButton.isBeingPressed();
+	}
+	public boolean wrist(){
+		return driver.yButton.isBeingPressed();
+	}
 	// Only Driver
 	public boolean topButtonsClearDriver() {
 		return !(driver.leftBumper.isBeingPressed()
