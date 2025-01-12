@@ -107,6 +107,20 @@ public class EndEffectorRollers extends Subsystem {
 		};
 	}
 
+	public Request idleRequest(){
+		return new Request() {
+			@Override
+			public void act() {
+				setState(State.IDLE);
+			}
+
+			@Override
+			public boolean isFinished() {
+				return mEndEffectorRollerOutputs.roller_demand == State.IDLE.roller_voltage;
+			}
+		};
+	}
+
 	@AutoLog
 	public static class EndEffectorRollerInputs implements Sendable {
 		// INPUTS
