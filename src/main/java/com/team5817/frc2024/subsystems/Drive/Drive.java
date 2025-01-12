@@ -272,6 +272,7 @@ public class Drive extends Subsystem {
 			mPeriodicIO.des_module_states[i] = new SwerveModuleState(0.0, orientations.get(i));
 		}
 	}
+
 	public void autoAlign(){
 		Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(getPose(), mAlignment);
 		if(targetPoint.isEmpty()){
@@ -283,6 +284,10 @@ public class Drive extends Subsystem {
 			mAutoAlignMotionPlanner.reset();
 			mControlState = DriveControlState.AUTOALIGN;
 		}
+	}	
+
+	public boolean getAutoAlignComplete(){
+		return mAutoAlignMotionPlanner.getAutoAlignComplete();
 	}
 
 	@Override

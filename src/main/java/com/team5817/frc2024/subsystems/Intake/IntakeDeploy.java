@@ -218,6 +218,21 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		};
 	}
 
+	public Request stowRequest() {
+		return new Request() {
+			@Override
+			public void act() {
+				setSetpointMotionMagic(State.STOW.output);
+			}
+
+			@Override
+			public boolean isFinished() {
+				return Util.epsilonEquals(getPosition(), State.STOW.output, State.STOW.allowable_error);
+			}
+		};
+	}
+
+
 	public Request stateRequest(State _wantedState) {
 		return new Request() {
 			@Override

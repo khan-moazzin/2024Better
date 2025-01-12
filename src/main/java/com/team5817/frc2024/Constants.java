@@ -410,10 +410,7 @@ public class Constants {
 			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
 		}
 
-		public static double kHomingZone = 7.0; // degrees
-		public static double kHomingTimeout = 0.2; // seconds
-		public static double kHomingVelocityWindow = 5.0; // "units" / second
-		public static double kHomingOutput = 4.0; // volts
+		public static final double kCoralClearHeight = 7.0; // rotations
 	}
 
 	public static final class ClimbConstants {

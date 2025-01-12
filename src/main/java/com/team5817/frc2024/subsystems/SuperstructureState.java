@@ -20,7 +20,7 @@ public class SuperstructureState {
 	public final Type mType;
 
 	public enum Type{
-		SCORING,
+		REEF,
 		INTAKING,
 		CLIMBING,
 		IDLE

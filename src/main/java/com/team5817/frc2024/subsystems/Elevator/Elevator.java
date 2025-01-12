@@ -123,6 +123,19 @@ public class Elevator extends ServoMotorSubsystem {
 				return Util.epsilonEquals(getPosition(), State.ZERO.output, State.ZERO.allowable_error);
 			}
 		};
+	}	
+
+	public Request waitForExtensionRequest(double position){
+		return new Request() {
+			@Override
+			public void act() {
+			}
+
+			@Override
+			public boolean isFinished() {
+				return mServoInputs.position_units >= position;
+			}
+		};
 	}
 
 
