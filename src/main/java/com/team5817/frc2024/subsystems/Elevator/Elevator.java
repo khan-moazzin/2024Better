@@ -31,9 +31,9 @@ public class Elevator extends ServoMotorSubsystem {
 	final static double kLenientError = 5;
 
 	LoggedMechanism2d mech = new LoggedMechanism2d(2,2);
-	LoggedMechanismRoot2d root = mech.getRoot("Elevator", 1.15,0);
-	LoggedMechanismLigament2d low = root.append(new LoggedMechanismLigament2d("Low", .5, 85));
-	LoggedMechanismLigament2d mid = low.append(new LoggedMechanismLigament2d("mid", .2, 0));
+	LoggedMechanismRoot2d root = mech.getRoot("Elevator", 1,0);
+	LoggedMechanismLigament2d low = root.append(new LoggedMechanismLigament2d("Low", .3, 85));
+	LoggedMechanismLigament2d mid = low.append(new LoggedMechanismLigament2d("mid", .4, 0));
 	public LoggedMechanismLigament2d midBar = mid.append(new LoggedMechanismLigament2d("midBar", .3, -90));
 	LoggedMechanismLigament2d high = mid.append(new LoggedMechanismLigament2d("high", .3, 0));
 	LoggedMechanismLigament2d algaeBar = high.append(new LoggedMechanismLigament2d("algaeBar", .3, -90));
@@ -97,7 +97,7 @@ public class Elevator extends ServoMotorSubsystem {
 	@Override
 	public void outputTelemetry() {
 
-		low.setLength(.7+mServoOutputs.demand*8);
+		low.setLength(.3+mServoOutputs.demand*8);
 
 		Logger.recordOutput("Elevator/Mech", mech);
 		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());
