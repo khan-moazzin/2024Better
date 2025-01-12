@@ -73,14 +73,14 @@ public class Superstructure extends Subsystem {
 
 	public enum GoalState{
 		STOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.IDLE)),
-		L1(new SuperstructureState(Elevator.State.L1, EndEffectorWrist.State.L1, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF)),
-		L2(new SuperstructureState(Elevator.State.L2, EndEffectorWrist.State.L2, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF)),
-		L3(new SuperstructureState(Elevator.State.L3, EndEffectorWrist.State.L3, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF)),
-		L4(new SuperstructureState(Elevator.State.L4, EndEffectorWrist.State.L4, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF)),
-		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF)),
-		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF)),
-		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF)), //TODO THESE ARE LABLED AS SCORING BUT ARE ACTUALLY INTAKING
-		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF)),
+		L1(new SuperstructureState(Elevator.State.L1, EndEffectorWrist.State.L1, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		L2(new SuperstructureState(Elevator.State.L2, EndEffectorWrist.State.L2, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		L3(new SuperstructureState(Elevator.State.L3, EndEffectorWrist.State.L3, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		L4(new SuperstructureState(Elevator.State.L4, EndEffectorWrist.State.L4, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF_INTAKE)), 
+		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF_INTAKE)),
 		GROUND_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING, IntakeDeploy.State.DEPLOY, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE, IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
 		GROUND_ALGAE_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.ALGAE, Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.INTAKING_ALGAE, Indexer.State.IDLE, SuperstructureState.Type.INTAKING)),
 		HUMAN_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING, IntakeDeploy.State.HUMAN, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE, IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
@@ -292,7 +292,7 @@ public class Superstructure extends Subsystem {
 	}
 
 	private Request reefGoalRequest(SuperstructureState goal) {
-		if(!(goal.mType == SuperstructureState.Type.REEF)){
+		if(!(goal.mType == SuperstructureState.Type.SCORING)){
 			return new ParallelRequest(
 			);
 		}
@@ -314,9 +314,12 @@ public class Superstructure extends Subsystem {
 			breakWait(null, false),
 			new ParallelRequest(
 				mIntakeDeploy.stowRequest(),
-				mEndEffectorWrist.stowRequest(),
 				mElevator.zeroRequest(),
-				mEndEffectorRollers.idleRequest()
+				mEndEffectorRollers.idleRequest(),
+				new SequentialRequest(
+					mElevator.waitForExtensionRequest(Constants.ElevatorConstants.kCoralClearHeight),
+					mEndEffectorWrist.stowRequest()
+				)
 			)
 	);
 	}
