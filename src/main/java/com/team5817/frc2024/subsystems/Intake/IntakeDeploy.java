@@ -33,7 +33,11 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
         DEPLOY(16.0, kStrictError, true),//TODO
         CLEAR(0.0, kLenientError),//TODO
         UNJAM(0.0, kLenientError),//TODO
-        STOW(0.0, kMediumError);//TODO
+        STOW(0.0, kMediumError),
+		ALGAE(0.0, kMediumError, true),
+		HUMAN(0.0, kStrictError, true),
+		ZERO(0.0, kStrictError);
+
 
         double output = 0;
 		double allowable_error = 0;

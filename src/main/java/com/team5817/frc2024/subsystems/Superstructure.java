@@ -4,6 +4,15 @@ import com.team254.lib.util.TimeDelayedBoolean;
 import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
 import com.team5817.frc2024.subsystems.Drive.Drive;
+import com.team5817.frc2024.subsystems.Elevator.Elevator;
+import com.team5817.frc2024.subsystems.SuperstructureState;
+import com.team5817.frc2024.subsystems.Climb.Climb;
+import com.team5817.frc2024.subsystems.EndEffector.EndEffectorWrist;
+import com.team5817.frc2024.subsystems.EndEffector.EndEffectorRollers;
+import com.team5817.frc2024.subsystems.EndEffector.EndEffectorRollers.State;
+import com.team5817.frc2024.subsystems.Indexer.Indexer;
+import com.team5817.frc2024.subsystems.Intake.IntakeDeploy;
+import com.team5817.frc2024.subsystems.Intake.IntakeRollers;
 import com.team5817.lib.Lights.TimedLEDState;
 import com.team5817.lib.drivers.BeamBreak;
 import com.team5817.lib.drivers.Subsystem;
@@ -47,7 +56,27 @@ public class Superstructure extends Subsystem {
 		ALGAE
 	}
 
-	
+	public enum GoalState{
+		STOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.IDLE)),
+		L1(new SuperstructureState(Elevator.State.L1, EndEffectorWrist.State.L1, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		L2(new SuperstructureState(Elevator.State.L2, EndEffectorWrist.State.L2, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		L3(new SuperstructureState(Elevator.State.L3, EndEffectorWrist.State.L3, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		L4(new SuperstructureState(Elevator.State.L4, EndEffectorWrist.State.L4, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		GROUND_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING, IntakeDeploy.State.DEPLOY, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE, IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
+		GROUND_ALGAE_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.ALGAE, Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.INTAKING_ALGAE, Indexer.State.IDLE, SuperstructureState.Type.INTAKING)),
+		HUMAN_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING, IntakeDeploy.State.HUMAN, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE, IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
+		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
+		CLIMB_PREPARE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.ZERO, Climb.State.PREPARE, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.CLIMBING)),
+		CLIMB_PULL(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.ZERO, Climb.State.PULL, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.CLIMBING));
+
+		SuperstructureState mGoal;
+		GoalState(SuperstructureState state_goal){
+			this.mGoal = state_goal;
+		}
+	}
 
 	Superstructure() {
 		mDrive = Drive.getInstance();

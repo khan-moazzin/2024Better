@@ -22,26 +22,27 @@ public class SuperstructureState {
 	public enum Type{
 		SCORING,
 		INTAKING,
-		CLIMBING
+		CLIMBING,
+		IDLE
 	};
 
 	public SuperstructureState(
 		Elevator.State elevator_state,
-		EndEffectorWrist.State wrist_angle,
-		IntakeDeploy.State intake_angle, 
+		EndEffectorWrist.State wrist_state,
+		IntakeDeploy.State intake_state, 
 		Climb.State climb_state, 
 		EndEffectorRollers.State endEffector_state, 
-		IntakeRollers.State intake_state, 
+		IntakeRollers.State intake_roller_state, 
 		Indexer.State indexer_state,
 		Type type
 		){
 
 		this.mElevatorState = elevator_state;
-		this.mEndEffectorWristState = wrist_angle;
-		this.mIntakeDeployState = intake_angle;
+		this.mEndEffectorWristState = wrist_state;
+		this.mIntakeDeployState = intake_state;
 		this.mClimbState = climb_state;
 		this.mEndEffectorRollersState = endEffector_state;
-		this.mIntakeRollersState = intake_state;
+		this.mIntakeRollersState = intake_roller_state;
 		this.mIndexerState = indexer_state;
 		this.mType = type;
 	}
