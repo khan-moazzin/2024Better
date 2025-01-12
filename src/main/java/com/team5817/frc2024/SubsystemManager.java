@@ -88,6 +88,7 @@ public class SubsystemManager implements ILooper {
 				mAllSubsystems.get(i).writePeriodicOutputs();
 			}
 			write_dt = Timer.getTimestamp() - (timestamp + on_loop_dt);
+			SubsystemManager.getInstance().outputTelemetry();
 
 			// Telemetry
 			outputTelemetry();

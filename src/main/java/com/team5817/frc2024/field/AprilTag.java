@@ -6,7 +6,6 @@ import com.team254.lib.geometry.Translation2d;
 public class AprilTag {
 
     private int id;
-    private double height;
     private Pose2d fieldToTag;
     private boolean isScoring;
 
@@ -16,23 +15,24 @@ public class AprilTag {
 
     private Translation2d tagToCenterAlign;
 
-    public AprilTag(int id, double height, Pose2d fieldToTag, boolean isScoring, Translation2d tagToCenterAlign, Translation2d tagToLeftAlign, Translation2d tagToRightAlign) {
+    public AprilTag(int id, boolean isScoring, Translation2d tagToCenterAlign, Translation2d tagToLeftAlign, Translation2d tagToRightAlign) {
         this.id = id;
-        this.height = height;
-        this.fieldToTag = fieldToTag;
         this.isScoring = isScoring;
         this.tagToCenterAlign = tagToCenterAlign;
         this.tagToLeftAlign = tagToLeftAlign;
         this.tagToRightAlign = tagToRightAlign;
+        this.fieldToTag = new Pose2d(FieldLayout.kTagMap.getTagPose(id).get().toPose2d());
+        if(isScoring){
+            this.fieldToTag = fieldToTag.withRotation(fieldToTag.getRotation().flip());
+        }
+        
     }
 
     public int getId() {
         return id;
     }
 
-    public double getHeight() {
-        return height;
-    }
+
 
     public Pose2d getFieldToTag() {
         return fieldToTag;

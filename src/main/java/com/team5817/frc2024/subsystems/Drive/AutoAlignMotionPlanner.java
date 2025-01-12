@@ -15,11 +15,13 @@ import edu.wpi.first.wpilibj.Timer;
 
 import java.util.OptionalDouble;
 
+import org.littletonrobotics.junction.Logger;
+
 public class AutoAlignMotionPlanner {
 
     private ProfileFollower mXController = new ProfileFollower(2.5, 0.0, 0.0, 1.0, 0.0, 0.0);
-    private ProfileFollower mYController = new ProfileFollower(2.5, 0.0, 0.0, 1.0, 0.0, 0.0);
-    private ProfileFollower mThetaController = new ProfileFollower(1.5, 0.0, 0.0, 1.0, 0.0, 0.0);
+    private ProfileFollower mYController = new ProfileFollower(2.5 ,0.0, 0.0, 1.0, 0.0, 0.0);
+    private ProfileFollower mThetaController = new ProfileFollower(2.5, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     boolean mAutoAlignComplete = false;
 
@@ -42,51 +44,47 @@ public class AutoAlignMotionPlanner {
 
     }
 
-    public synchronized ChassisSpeeds updateAutoAlign(double timestamp, Pose2d current_odom_to_vehicle, Pose2d current_field_to_odom, Twist2d current_vel) {
-        var odom_to_target_point = current_field_to_odom.inverse().transformBy(mFieldToTargetPoint);
+    public synchronized ChassisSpeeds updateAutoAlign(double timestamp, Pose2d current_pose, Twist2d current_vel) {
 
         mXController.setGoalAndConstraints(
-            new MotionProfileGoal(odom_to_target_point.getTranslation().x(), 0, IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.05),
+            new MotionProfileGoal(mFieldToTargetPoint.getTranslation().x(), 0, IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.05),
             SwerveConstants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
-            new MotionProfileGoal(odom_to_target_point.getTranslation().y(), 0, IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.02, 0.05),
+            new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 0, IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.02, 0.05),
             SwerveConstants.kPositionMotionProfileConstraints);
         mThetaController.setGoalAndConstraints(
-            new MotionProfileGoal(odom_to_target_point.getRotation().getRadians(), 0, IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.03, 0.05),
+            new MotionProfileGoal(mFieldToTargetPoint.getRotation().getRadians(), 0, IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.03, 0.05),
             SwerveConstants.kHeadingMotionProfileConstraints);
 
-        double currentRotation = current_field_to_odom.getRotation().rotateBy(current_odom_to_vehicle.getRotation()).getRadians();
+        double currentRotation = current_pose.getRotation().getRadians();
 
-        Translation2d current_vel_robot_frame = new Translation2d(current_vel.dx, current_vel.dy);
-        Translation2d current_vel_odom_frame = current_vel_robot_frame.rotateBy(current_odom_to_vehicle.getRotation());
-
-        if (odom_to_target_point.getRotation().getRadians() - currentRotation > Math.PI) {
+    
+        if (mFieldToTargetPoint.getRotation().getRadians() - currentRotation > Math.PI) {
             currentRotation += 2 * Math.PI;
-        } else if (odom_to_target_point.getRotation().getRadians() - currentRotation < -Math.PI) {
+        } else if (mFieldToTargetPoint.getRotation().getRadians() - currentRotation < -Math.PI) {
             currentRotation -= 2 * Math.PI;
         }
 
         double xOutput = mXController.update(
-               new MotionState(timestamp, current_odom_to_vehicle.getTranslation().x(), current_vel_odom_frame.x(), 0.0),
+               new MotionState(timestamp, current_pose.getTranslation().x(), current_vel.dx, 0.0),
                 timestamp + Constants.kLooperDt);
         double yOutput = mYController.update(
-               new MotionState(timestamp, current_odom_to_vehicle.getTranslation().y(), current_vel_odom_frame.y(), 0.0),
+               new MotionState(timestamp, current_pose.getTranslation().y(), current_vel.dy, 0.0),
                 timestamp + Constants.kLooperDt);
         double thetaOutput = mThetaController.update(
                 new MotionState(timestamp, currentRotation, current_vel.dtheta, 0.0),
                 timestamp + Constants.kLooperDt);
-
-        ChassisSpeeds setpoint;
+        Logger.recordOutput("output", new Pose2d(xOutput, yOutput, thetaOutput).wpi());
+        ChassisSpeeds setpoint = new ChassisSpeeds();
 
         boolean thetaWithinDeadband = mThetaController.onTarget();
         boolean xWithinDeadband = mXController.onTarget();
         boolean yWithinDeadband = mYController.onTarget();
 
-        setpoint = ChassisSpeeds.fromFieldRelativeSpeeds(
+        setpoint = new ChassisSpeeds(
                 xWithinDeadband ? 0.0 : xOutput,
                 yWithinDeadband ? 0.0 : yOutput,
-                thetaWithinDeadband ? 0.0 : thetaOutput,
-                current_field_to_odom.getRotation().rotateBy(current_odom_to_vehicle.getRotation()));
+                thetaWithinDeadband ? 0.0 : thetaOutput);
         mAutoAlignComplete = thetaWithinDeadband && xWithinDeadband && yWithinDeadband;
 
         if (mStartTime.isPresent() && mAutoAlignComplete) {

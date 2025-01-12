@@ -1,5 +1,8 @@
 package com.team5817.frc2024.controlboard;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team5817.frc2024.Constants;
@@ -79,6 +82,9 @@ public class ControlBoard {
 
 	public boolean zeroGyro() {
 		return driver.startButton.isBeingPressed() && driver.backButton.isBeingPressed();
+	}
+	public boolean autoAlign(){
+		return driver.aButton.isBeingPressed();
 	}
 
 	// Only Driver

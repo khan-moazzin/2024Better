@@ -38,6 +38,10 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
         translation_ = translation;
         rotation_ = rotation;
     }
+    public Pose2d(final double x, final double y, final double degree) {
+        translation_ = new Translation2d(x, y);
+        this.rotation_ = Rotation2d.fromDegrees(degree);
+    }
 
     public Pose2d(final Pose2d other) {
         translation_ = new Translation2d(other.translation_);
@@ -82,6 +86,9 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
         }
         return new Pose2d(new Translation2d(delta.dx * s - delta.dy * c, delta.dx * c + delta.dy * s),
                 new Rotation2d(cos_theta, sin_theta, false));
+    }
+    public Pose2d withRotation(Rotation2d rotation){
+        return new Pose2d(translation_,rotation);
     }
 
     /**
@@ -134,6 +141,7 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
         return new Pose2d(translation_.translateBy(other.translation_.rotateBy(rotation_)),
                 rotation_.rotateBy(other.rotation_));
     }
+    
 
     public Pose2d transformBy(Transform2d other) {
         return new Pose2d(

@@ -21,6 +21,7 @@ import com.team254.lib.swerve.ChassisSpeeds;
 import com.team5817.BuildConstants;
 import com.team5817.frc2024.controlboard.ControlBoard;
 import com.team5817.frc2024.controlboard.DriverControls;
+import com.team5817.frc2024.field.FieldLayout;
 import com.team5817.frc2024.loops.Looper;
 import com.team5817.frc2024.subsystems.Superstructure;
 import com.team5817.frc2024.subsystems.Drive.Drive;
@@ -106,7 +107,6 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
       
       mEnabledLooper.outputToSmartDashboard();
           mSubsystemManager.outputLoopTimes();
-      SubsystemManager.getInstance().outputTelemetry();
       
       
     }
@@ -130,7 +130,7 @@ boolean disableGyroReset = false;
     /** This function is called once when teleop is enabled. */  
     @Override
     public void teleopInit() {
-      
+      new FieldLayout();
       // swerve.fieldzeroSwerve();
       drive.resetModulesToAbsolute();
       drive.feedTeleopSetpoint(new ChassisSpeeds(0,0,0));
@@ -141,15 +141,27 @@ boolean disableGyroReset = false;
     public void teleopPeriodic() {
       controls.twoControllerMode();
       controlBoard.update();
-      drive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-        controlBoard.getSwerveTranslation().x(),
-        controlBoard.getSwerveTranslation().y(),
-        controlBoard.getSwerveRotation(),
-        Rotation2d.kIdentity
-        // Util.robotToFieldRelative(drive.getHeading(), DriverStation.getAlliance().get().equals(Alliance.Red))
+      if(!Robot.isReal() && Constants.mode == Constants.Mode.SIM){
+        drive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+          controlBoard.getSwerveTranslation().x(),
+          controlBoard.getSwerveTranslation().y(),
+          controlBoard.getSwerveRotation(),
+          Rotation2d.kIdentity
       ));
-
+      }else{
+        drive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+          controlBoard.getSwerveTranslation().x(),
+          controlBoard.getSwerveTranslation().y(),
+          controlBoard.getSwerveRotation(),
+            Util.robotToFieldRelative(drive.getHeading(), DriverStation.getAlliance().get().equals(Alliance.Red))
+      ));}
+        
+      if(controlBoard.autoAlign()){
+        drive.autoAlign();
+      }
     }
+
+    
   
     /** This function is called once when the robot is disabled. */
   

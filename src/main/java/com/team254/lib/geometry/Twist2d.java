@@ -61,6 +61,9 @@ public class Twist2d implements Interpolable<Twist2d>, ICourse2d<Twist2d>, Struc
     public boolean hasTranslation() {
         return norm2() > Util.kEpsilon;
     }
+    public edu.wpi.first.math.geometry.Twist2d wpi() {
+        return new edu.wpi.first.math.geometry.Twist2d(dx, dy, dtheta);
+    }
 
     // Return a vector in the local direction of motion
     @Override

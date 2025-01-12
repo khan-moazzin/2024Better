@@ -65,11 +65,8 @@ public class AutoAlignPointSelector {
     private static Optional<Pose2d> getNearestAlignment(AprilTag tag, Pose2d point, boolean coral, boolean algae) {
         if (tag.isScoring()) {
             Pose2d center = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToCenterAlign()));
-            center = new Pose2d(center.getTranslation(), Rotation2d.fromDegrees(180));
             Pose2d left = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToLeftAlign()));
-            left = new Pose2d(left.getTranslation(), Rotation2d.fromDegrees(180));
             Pose2d right = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToRightAlign()));
-            right = new Pose2d(right.getTranslation(), Rotation2d.fromDegrees(180));
             if (coral) {
                 return minimizeDistance(point, new Pose2d[]{left,right});
             } else if (algae) {
@@ -79,9 +76,7 @@ public class AutoAlignPointSelector {
             }
         } else {
             Pose2d left = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToLeftAlign()));
-            left = new Pose2d(left.getTranslation(), Rotation2d.fromDegrees(0));
             Pose2d right = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToRightAlign()));
-            right = new Pose2d(right.getTranslation(), Rotation2d.fromDegrees(0));
             return minimizeDistance(point, new Pose2d[]{left,right});
         }
     }
@@ -125,10 +120,6 @@ public class AutoAlignPointSelector {
                 }
                 targetPose = Optional.of(new Pose2d(targetPose.get().getTranslation(), Rotation2d.fromDegrees(0)));
             }
-        }
-
-        if (targetPose.isPresent() && targetPose.get().distance(currentPoint) > SwerveConstants.kAutoAlignAllowableDistance) {
-            return Optional.empty();
         }
         return targetPose;
     }  

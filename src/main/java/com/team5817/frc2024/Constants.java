@@ -55,6 +55,8 @@ public class Constants {
 	{0.0,0.0,0.0},
 	{0.0,0.0,0.0}};
 
+    public static final double kBumberSideLength = Units.inchesToMeters(29);
+
 
 	public static final class SwerveConstants {
 
@@ -91,8 +93,8 @@ public class Constants {
 				new edu.wpi.first.math.kinematics.SwerveDriveKinematics(wpiModuleLocations);
 
 		/* Swerve Profiling Values */
-		public static final double maxSpeed = 5.2; // meters per second
-		public static final double maxAcceleration = 4.8; // meters per second
+		public static final double maxSpeed = 6; // meters per second
+		public static final double maxAcceleration = 6; // meters per second
 		public static final double maxAngularVelocity = 11.5;
 		public static final double maxAngularAcceleration = maxAcceleration /
             Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
@@ -145,14 +147,14 @@ public class Constants {
 		public static final double kAutoAlignAllowableDistance = 2.0; //Meters
 	
 	    public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
-            0.8 * maxSpeed,
-            0.8 * -maxSpeed,
-            0.6 * maxAcceleration);
+             maxSpeed,
+        	 -maxSpeed,
+             maxAcceleration);
 
 		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
-            0.5 * maxAngularVelocity,
-            0.5 * -maxAngularVelocity,
-            1.0 * maxAngularAcceleration);
+            maxAngularVelocity,
+            -maxAngularVelocity,
+            maxAngularAcceleration);
 
 
 		/*** MODULE SPECIFIC CONSTANTS ***/

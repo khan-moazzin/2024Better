@@ -43,7 +43,9 @@ import static edu.wpi.first.units.Units.Volt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
@@ -57,7 +59,8 @@ public class Drive extends Subsystem {
 		OPEN_LOOP,
 		HEADING_CONTROL,
 		VELOCITY,
-		PATH_FOLLOWING
+		PATH_FOLLOWING,
+		AUTOALIGN
 	}
 
 	private WheelTracker mWheelTracker;
@@ -72,6 +75,7 @@ public class Drive extends Subsystem {
 	private boolean odometryReset = false;
 
 	private final DriveMotionPlanner mMotionPlanner;
+	private final AutoAlignMotionPlanner mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
 	private final SwerveHeadingController mHeadingController;
 
 	private Translation2d enableFieldToOdom = null;
@@ -123,9 +127,11 @@ public class Drive extends Subsystem {
 					3, Mod3.SwerveModuleConstants(), Cancoders.getInstance().getBackRight())
 		};
 
+
 		mMotionPlanner = new DriveMotionPlanner();
 		mHeadingController = new SwerveHeadingController();
 
+		mMotionPlanner.reset();
 		mPigeon.setYaw(0.0);
 		mWheelTracker = new WheelTracker(mModules);
 		mSetpointGenerator = new SwerveSetpointGenerator(SwerveConstants.kKinematics);
@@ -149,6 +155,20 @@ public class Drive extends Subsystem {
 				return;
 			}
 		}
+		if (mControlState == DriveControlState.AUTOALIGN) {
+			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
+					> mKinematicLimits.kMaxDriveVelocity * 0.1) {
+				mControlState = DriveControlState.OPEN_LOOP;
+			} else {	
+				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp, RobotState.getInstance().getFieldToVehicle(mPeriodicIO.timestamp).withRotation(mPeriodicIO.heading),
+																	mPeriodicIO.predicted_velocity);
+				if(speed != null){
+					mPeriodicIO.des_chassis_speeds = speed;
+				}
+				return;
+			}
+		}
+ 
 		if (mControlState == DriveControlState.HEADING_CONTROL) {
 			if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
 				mControlState = DriveControlState.OPEN_LOOP;
@@ -246,6 +266,18 @@ public class Drive extends Subsystem {
 			mPeriodicIO.des_module_states[i] = new SwerveModuleState(0.0, orientations.get(i));
 		}
 	}
+	public void autoAlign(){
+		Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(getPose(), AutoAlignPointSelector.RequestedAlignment.AUTO_CORAL);
+		if(targetPoint.isEmpty()){
+			return;//TODO is this ok
+		}
+		Logger.recordOutput("Drive/TargetPoint", targetPoint.get().wpi());
+		mAutoAlignMotionPlanner.setTargetPoint(targetPoint.get());
+		if (mControlState != DriveControlState.AUTOALIGN) {
+			mAutoAlignMotionPlanner.reset();
+			mControlState = DriveControlState.AUTOALIGN;
+		}
+	}
 
 	@Override
 	public void registerEnabledLoops(ILooper enabledLooper) {
@@ -263,6 +295,8 @@ public class Drive extends Subsystem {
 					switch (mControlState) {
 						case PATH_FOLLOWING:
 							// updatePathFollower();
+							break;
+						case AUTOALIGN:
 							break;
 						case HEADING_CONTROL:
 							break;
@@ -301,7 +335,7 @@ public class Drive extends Subsystem {
 	public void readPeriodicInputs() {
 		SwerveModuleState[] module_states = new SwerveModuleState[4];
 		if(!Robot.isReal()&&Constants.mode == Constants.Mode.SIM){
-			mPeriodicIO.heading = new Rotation2d(driveSimulation.getGyroSimulation().getGyroReading());
+			mPeriodicIO.heading = new Rotation2d(driveSimulation.getSimulatedDriveTrainPose().getRotation());
 			mPeriodicIO.pitch = Rotation2d.identity();
 			for (int i = 0; i < mModules.length; i++) {
 				module_states[i] = new SwerveModuleState(driveSimulation.getModules()[i].getCurrentState());
@@ -378,8 +412,8 @@ public class Drive extends Subsystem {
 
 		mPeriodicIO.setpoint = mSetpointGenerator.generateSetpoint(mKinematicLimits, mPeriodicIO.setpoint, wanted_speeds, Constants.kLooperDt);
 		var uncapped_setpoint = mSetpointGenerator.generateSetpoint(mUncappedKinematicLimits, mPeriodicIO.setpoint, wanted_speeds, Constants.kLooperDt);
-		mPeriodicIO.predicted_velocity =
-				Pose2d.log(Pose2d.exp(wanted_speeds.toTwist2d()).rotateBy(getHeading()));
+		mPeriodicIO.predicted_velocity = wanted_speeds.toTwist2d();
+				// Pose2d.log(Pose2d.exp(wanted_speeds.toTwist2d()).rotateBy(getHeading()));
 
 		mPeriodicIO.uncapped_module_states = uncapped_setpoint.mModuleStates;
 		mPeriodicIO.des_module_states = mPeriodicIO.setpoint.mModuleStates;
@@ -419,7 +453,8 @@ public class Drive extends Subsystem {
 				mModules[i].setOpenLoop(mPeriodicIO.des_module_states[i]);
 			}else if (mControlState == DriveControlState.PATH_FOLLOWING
 					|| mControlState == DriveControlState.VELOCITY
-					|| mControlState == DriveControlState.FORCE_ORIENT) {
+					|| mControlState == DriveControlState.FORCE_ORIENT
+					|| mControlState == DriveControlState.AUTOALIGN) {
 				mModules[i].setVelocity(mPeriodicIO.des_module_states[i]);
 			}
 		}
@@ -533,7 +568,9 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Desired States", states);
 		Logger.recordOutput("Drive/Uncapped States", uncappedstates);
 		Logger.recordOutput("Drive/Current States", getWpiModuleStates());
-		Logger.recordOutput("Drive/DesiredSpeed", mPeriodicIO.setpoint.mChassisSpeeds.wpi());
+		Logger.recordOutput("Drive/DesiredSpeed", mPeriodicIO.des_chassis_speeds.wpi());
+		Logger.recordOutput("Drive/State",mControlState );
+		Logger.recordOutput("Drive/Predicted Velocity", mPeriodicIO.predicted_velocity.wpi());
 
 		for (SwerveModule module : mModules) {
 			module.outputTelemetry();
