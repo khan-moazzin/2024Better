@@ -105,6 +105,18 @@ public class IntakeRollers extends Subsystem {
 			}
 		};
 	}
+	public Request hasPieceRequest() {
+		return new Request() {
+			@Override
+			public void act() {
+			}
+
+			@Override
+			public boolean isFinished() {
+				return mIntakeRollerInputs.roller_stator_current>20;
+			}
+		};
+	}
 
 	@AutoLog
 	public static class IntakeRollerInputs implements Sendable {

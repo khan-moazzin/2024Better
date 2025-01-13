@@ -6,18 +6,15 @@ import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
 import com.team5817.frc2024.subsystems.Drive.Drive;
 import com.team5817.frc2024.subsystems.Elevator.Elevator;
-import com.team5817.frc2024.subsystems.SuperstructureState;
 import com.team5817.frc2024.subsystems.Climb.Climb;
 import com.team5817.frc2024.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2024.subsystems.EndEffector.EndEffectorRollers;
-import com.team5817.frc2024.subsystems.EndEffector.EndEffectorRollers.State;
 import com.team5817.frc2024.subsystems.Indexer.Indexer;
 import com.team5817.frc2024.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2024.subsystems.Intake.IntakeRollers;
 import com.team5817.lib.Lights.TimedLEDState;
 import com.team5817.lib.drivers.BeamBreak;
 import com.team5817.lib.drivers.Subsystem;
-import com.team5817.lib.requests.LambdaRequest;
 import com.team5817.lib.requests.ParallelRequest;
 import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
@@ -42,7 +39,7 @@ public class Superstructure extends Subsystem {
 	private ArrayList<Request> queuedRequests = new ArrayList<>(0);
 	private boolean hasNewRequest = false;
 	private boolean allRequestsComplete = false;
-	private boolean readyToScore = false;
+	private boolean readyToScore = true;
 
 	// Subsystems
 
@@ -79,13 +76,13 @@ public class Superstructure extends Subsystem {
 		L4(new SuperstructureState(Elevator.State.L4, EndEffectorWrist.State.L4, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
 		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
 		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.SCORING)),
-		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF_INTAKE)), 
-		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.REEF_INTAKE)),
+		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.CLEAN)), 
+		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, IntakeDeploy.State.STOW, Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.CLEAN)),
 		GROUND_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING, IntakeDeploy.State.DEPLOY, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE, IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
 		GROUND_ALGAE_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.ALGAE, Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.INTAKING_ALGAE, Indexer.State.IDLE, SuperstructureState.Type.INTAKING)),
 		HUMAN_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING, IntakeDeploy.State.HUMAN, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE, IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
-		CLIMB_PREPARE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.ZERO, Climb.State.PREPARE, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.CLIMBING)),
-		CLIMB_PULL(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.ZERO, Climb.State.PULL, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.CLIMBING));
+		CLIMB_PREPARE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.ZERO, Climb.State.PREPARE, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.IDLE)),
+		CLIMB_PULL(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.ZERO, Climb.State.PULL, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE, SuperstructureState.Type.IDLE));
 
 		SuperstructureState goal;
 		GoalState(SuperstructureState state_goal){
@@ -112,29 +109,29 @@ public class Superstructure extends Subsystem {
 		clearRequestQueue();
 	}
 
-	private void setActiveRequest(Request request) {
+	public void setActiveRequest(Request request) {
 		activeRequest = request;
 		hasNewRequest = true;
 		allRequestsComplete = false;
 	}
 
-	private void clearRequestQueue() {
+	public void clearRequestQueue() {
 		queuedRequests.clear();
 	}
 
-	private void setRequestQueue(List<Request> requests) {
+	public void setRequestQueue(List<Request> requests) {
 		clearRequestQueue();
 		for (Request req : requests) {
 			queuedRequests.add(req);
 		}
 	}
 
-	private void setRequestQueue(Request activeRequest, ArrayList<Request> requests) {
+	public void setRequestQueue(Request activeRequest, ArrayList<Request> requests) {
 		request(activeRequest);
 		setRequestQueue(requests);
 	}
 
-	private void addRequestToQueue(Request req) {
+	public void addRequestToQueue(Request req) {
 		queuedRequests.add(req);
 	}
 
@@ -290,9 +287,58 @@ public class Superstructure extends Subsystem {
 		return new ParallelRequest(
 		);
 	}
+	public Request GoalRequest(GoalState goal){
+		
+		switch (goal.goal.mType) {
+			case SCORING:
+				return ScoreGoalRequest(goal.goal);
+			case IDLE:
+			return null;//do climing last, wont affect anything unless you are climbing
+			case INTAKING:
+			return IntakeRequest(goal.goal);
+			case CLEAN:
+			return CleanRequest(goal.goal);
+		}
+		return null;
+	}
 
-	private Request reefGoalRequest(SuperstructureState goal) {
+	private Request CleanRequest(SuperstructureState goal){
+		return new SequentialRequest(
+			new ParallelRequest(
+			mElevator.stateRequest(goal.mElevatorState),
+			mIndexer.stateRequest(goal.mIndexerState),
+			mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
+			mClimb.stateRequest(goal.mClimbState),
+			mIntakeRollers.stateRequest(goal.mIntakeRollersState),
+			mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
+			mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState)
+			),
+			mIntakeRollers.hasPieceRequest()
+		);
+	}
+	private Request IntakeRequest(SuperstructureState goal){
+		if(!(goal.mType == SuperstructureState.Type.INTAKING)){
+			System.out.println("Wrong Goal Type");
+			return new ParallelRequest();
+		}
+		return new SequentialRequest(
+			
+			new ParallelRequest(
+				mElevator.stateRequest(goal.mElevatorState),
+				mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
+				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
+				mIndexer.stateRequest(goal.mIndexerState),
+				mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
+				mClimb.stateRequest(goal.mClimbState),
+				mIntakeRollers.stateRequest(goal.mIntakeRollersState)
+						)
+				// breakWait(null, true)
+			);
+	}
+	
+	private Request ScoreGoalRequest(SuperstructureState goal) {
 		if(!(goal.mType == SuperstructureState.Type.SCORING)){
+			System.out.println("Wrong Goal Type");
 			return new ParallelRequest(
 			);
 		}
@@ -309,22 +355,14 @@ public class Superstructure extends Subsystem {
 			)
 			),
 			autoAlignWait(),
-			readyToScoreRequest(),
-			mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
-			breakWait(null, false),
-			new ParallelRequest(
-				mIntakeDeploy.stowRequest(),
-				mElevator.zeroRequest(),
-				mEndEffectorRollers.idleRequest(),
-				new SequentialRequest(
-					mElevator.waitForExtensionRequest(Constants.ElevatorConstants.kCoralClearHeight),
-					mEndEffectorWrist.stowRequest()
-				)
-			)
+			ReadyToScoreRequest(),
+			mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState)
+			// breakWait(null, false),//TODO
+			
 	);
 	}
 
-	public Request readyToScoreRequest() {
+	private Request ReadyToScoreRequest() {
 		return(new Request() {
 			@Override
 			public void act() {

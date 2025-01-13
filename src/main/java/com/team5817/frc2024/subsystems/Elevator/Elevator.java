@@ -31,18 +31,17 @@ public class Elevator extends ServoMotorSubsystem {
 	final static double kLenientError = 5;
 
 	LoggedMechanism2d mech = new LoggedMechanism2d(2,2);
-	LoggedMechanismRoot2d root = mech.getRoot("Elevator", 1,0);
-	LoggedMechanismLigament2d low = root.append(new LoggedMechanismLigament2d("Low", .3, 85));
-	LoggedMechanismLigament2d mid = low.append(new LoggedMechanismLigament2d("mid", .4, 0));
-	public LoggedMechanismLigament2d midBar = mid.append(new LoggedMechanismLigament2d("midBar", .3, -90));
-	LoggedMechanismLigament2d high = mid.append(new LoggedMechanismLigament2d("high", .3, 0));
-	LoggedMechanismLigament2d algaeBar = high.append(new LoggedMechanismLigament2d("algaeBar", .3, -90));
+	LoggedMechanismRoot2d root = mech.getRoot("Elevator", .85,0);
+	LoggedMechanismLigament2d low = root.append(new LoggedMechanismLigament2d("low", .4, 85));
+	public LoggedMechanismLigament2d midBar = low.append(new LoggedMechanismLigament2d("lowBar", .2, -90));
+	LoggedMechanismLigament2d mid = low.append(new LoggedMechanismLigament2d("mid", .3, 0));
+	LoggedMechanismLigament2d algaeBar = mid.append(new LoggedMechanismLigament2d("algaeBar", .2, -90));
 
     public enum State {
-        L4(0.0, kStrictError),
-        L3(0.0, kStrictError),
-        L2(0.0, kStrictError),
-        L1(0.0, kStrictError),
+        L4(1.4, kStrictError),
+        L3(.8, kStrictError),
+        L2(0.2, kStrictError),
+        L1(0.2, kStrictError),
         A1(0.0, kMediumError),
         A2(0.0, kMediumError),
         NET(0.0 ,kMediumError),
@@ -97,7 +96,7 @@ public class Elevator extends ServoMotorSubsystem {
 	@Override
 	public void outputTelemetry() {
 
-		low.setLength(.3+mServoOutputs.demand*8);
+		low.setLength(.4+mServoInputs.position_units);
 
 		Logger.recordOutput("Elevator/Mech", mech);
 		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());

@@ -4,17 +4,11 @@ import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team5817.frc2024.Constants;
-import com.team5817.frc2024.Constants.SwerveConstants;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.util.Units;
 import java.io.IOException;
 import java.util.HashMap;
-
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.apriltag.AprilTagFields;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are
@@ -35,7 +29,6 @@ public class FieldLayout {
 	public static double kFieldLength = Units.inchesToMeters(651.223); //TODO
 	public static double kFieldWidth = Units.inchesToMeters(323.277); //TODO
 
-	public static final double kApriltagWidth = Units.inchesToMeters(6.50); //TODO
 	public static final AprilTagFieldLayout kTagMap;
 	static {
 		try {

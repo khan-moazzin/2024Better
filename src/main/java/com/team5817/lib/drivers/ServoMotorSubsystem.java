@@ -346,7 +346,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		MOTION_MAGIC,
 		POSITION_PID
 	}
-
+	private double lastTimestamp = 0;
 	protected ServoInputsAutoLogged mServoInputs = new ServoInputsAutoLogged();
 	protected ServoOutputsAutoLogged mServoOutputs = new ServoOutputsAutoLogged();
 	protected ControlState mControlState = ControlState.OPEN_LOOP;
@@ -357,6 +357,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	@Override
 	public synchronized void readPeriodicInputs() {
 		mServoInputs.timestamp = Timer.getFPGATimestamp();
+		double dt = mServoInputs.timestamp - lastTimestamp;
 
 		if (mMain.hasResetOccurred()) {
 			DriverStation.reportError(mConstants.kName + ": Talon Reset! ", false);
@@ -378,7 +379,11 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.main_supply_current = mMainSupplyCurrentSignal.asSupplier().get().in(Amps);
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
-		mServoInputs.position_rots = mMainPositionSignal.asSupplier().get().in(Rotations);
+		if(!Robot.isReal()&&mControlState != ControlState.OPEN_LOOP){
+			mServoInputs.position_rots += (mServoOutputs.demand-mServoInputs.position_rots)/1.1*dt;//bad guess at motion for sim
+		}else if(Robot.isReal()){
+			mServoInputs.position_rots = mMainPositionSignal.asSupplier().get().in(Rotations);
+		}
 		mServoInputs.position_units = rotationsToHomedUnits(mServoInputs.position_rots);
 		mServoInputs.velocity_rps = mMainVelocitySignal.asSupplier().get().in(RotationsPerSecond);
 		mServoInputs.active_trajectory_position =
@@ -398,14 +403,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 		mServoInputs.active_trajectory_velocity = newVelocity;
 
-		if(!Robot.isReal()&&mControlState != ControlState.OPEN_LOOP){
-			mServoInputs.position_rots = mServoOutputs.demand;
-			mServoInputs.position_units = rotationsToUnits(mServoOutputs.demand);
-		}
+		
 
 		if (mCSVWriter != null) {
 			mCSVWriter.add(mServoInputs);
 		}
+		lastTimestamp = Timer.getTimestamp();
 	}
 
 	@Override

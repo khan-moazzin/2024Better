@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.littletonrobotics.junction.Logger;
 
 /**
  * Used to reset, start, stop, and update all subsystems at once

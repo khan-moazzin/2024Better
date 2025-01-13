@@ -10,8 +10,6 @@ package com.team5817.lib.wpi;
 import static java.util.Objects.requireNonNull;
 
 import edu.wpi.first.hal.NotifierJNI;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import java.util.concurrent.atomic.AtomicInteger;

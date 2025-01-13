@@ -6,9 +6,6 @@ import edu.wpi.first.util.struct.StructSerializable;
 
 import java.text.DecimalFormat;
 
-import org.littletonrobotics.junction.LogTable;
-import org.littletonrobotics.junction.inputs.LoggableInputs;
-
 /**
  * A translation in a 2d coordinate frame. Translations are simply shifts in an (x, y) plane.
  */

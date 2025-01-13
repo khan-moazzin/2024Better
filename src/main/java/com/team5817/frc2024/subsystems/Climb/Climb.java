@@ -4,8 +4,6 @@ import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 import com.team5817.lib.requests.Request;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;

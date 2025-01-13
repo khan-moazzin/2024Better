@@ -15,7 +15,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.swerve.ChassisSpeeds;
 import com.team5817.BuildConstants;
@@ -32,8 +31,6 @@ import com.team5817.frc2024.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2024.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2024.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Util;
-import com.team5817.lib.drivers.Pigeon;
-
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -89,6 +86,7 @@ if (isReal()) {
 }
 
 Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+  s = Superstructure.getInstance();
           Drive.registerDriveSimulation(drivesim);
           SimulatedArena.getInstance().addDriveTrainSimulation(drivesim);
       drive = Drive.getInstance();
@@ -165,26 +163,6 @@ boolean disableGyroReset = false;
           controlBoard.getSwerveRotation(),
             Util.robotToFieldRelative(drive.getHeading(), DriverStation.getAlliance().get().equals(Alliance.Red))
       ));}
-        
-      if(controlBoard.autoAlign()){
-        drive.autoAlign();
-      }
-      //All BELLOW IS FOR TESTING REMOVE!!!
-      if(controlBoard.groundIntake()){
-        IntakeDeploy.getInstance().setSetpointMotionMagic(.3);
-      }else{
-        IntakeDeploy.getInstance().setSetpointMotionMagic(2);
-      }
-      if(controlBoard.elevator()){
-        Elevator.getInstance().setSetpointMotionMagic(1);
-      }else{
-        Elevator.getInstance().setSetpointMotionMagic(0);
-      }
-      if(controlBoard.wrist()){
-        EndEffectorWrist.getInstance().setSetpointMotionMagic(1.6);
-      }else{
-        EndEffectorWrist.getInstance().setSetpointMotionMagic(-.1);
-      }
 
 
     }

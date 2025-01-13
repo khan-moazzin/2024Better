@@ -1,7 +1,6 @@
 package com.team5817.frc2024.subsystems.Drive;
 
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.motion.IMotionProfileGoal;
 import com.team254.lib.motion.MotionProfileGoal;

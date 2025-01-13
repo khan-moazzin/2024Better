@@ -6,9 +6,6 @@ import com.team5817.lib.requests.Request;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.littletonrobotics.junction.Logger;
@@ -23,9 +20,10 @@ import com.team5817.frc2024.Constants.IntakeDeployConstants;
 import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
 public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
-	LoggedMechanism2d mMech = new LoggedMechanism2d(2, 1);
-	LoggedMechanismRoot2d mRoot = mMech.getRoot("IntakePivot", .8, Units.inchesToMeters(6));
-	LoggedMechanismLigament2d one = mRoot.append(new LoggedMechanismLigament2d("IntakeOne", Units.inchesToMeters(9), 180));
+	LoggedMechanism2d mMech = new LoggedMechanism2d(2, 2);
+	LoggedMechanismRoot2d mRoot = mMech.getRoot("IntakeRoot", .8, 0);
+	LoggedMechanismLigament2d zero = mRoot.append(new LoggedMechanismLigament2d("IntakeSupp", Units.inchesToMeters(7), 90));
+	LoggedMechanismLigament2d one = zero.append(new LoggedMechanismLigament2d("IntakeOne", Units.inchesToMeters(9), 90));
 	LoggedMechanismLigament2d two = one.append(new LoggedMechanismLigament2d("IntakeTwo", Units.inchesToMeters(9), 50));
 	public static IntakeDeploy mInstance;
 
@@ -41,13 +39,13 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	final static double kLenientError = 5;
 
     public enum State {
-        DEPLOY(16.0, kStrictError, true),//TODO
+        DEPLOY(0.3, kStrictError, true),//TODO
         CLEAR(0.0, kLenientError),//TODO
         UNJAM(0.0, kLenientError),//TODO
-        STOW(0.0, kMediumError),
+        STOW(2.0, kMediumError),
 		ALGAE(0.0, kMediumError, true),
 		HUMAN(0.0, kStrictError, true),
-		ZERO(0.0, kStrictError);
+		ZERO(2.0, kStrictError);
 
 
         double output = 0;
@@ -141,7 +139,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
         Logger.recordOutput("IntakeDeploy/Homing", mHoming);
         Logger.recordOutput("IntakeDeploy/Within Homing Window", atHomingLocation());
 		
-		one.setAngle(180-mServoInputs.position_rots*360);
+		one.setAngle(90-mServoInputs.position_rots*360);
 		Logger.recordOutput("IntakeDeploy/Mech", mMech);
 		SmartDashboard.putBoolean(mConstants.kName + "/Homing", mHoming);
 		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());

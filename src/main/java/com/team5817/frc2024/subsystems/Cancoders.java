@@ -9,13 +9,9 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.team5817.frc2024.Ports;
 import com.team254.lib.drivers.CanDeviceId;
 
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Optional;
-
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.Logger;
 
 // Conatiner to hold the Cancoders so we can initialize them
 // earlier than everything else and DI them to the swerve modules

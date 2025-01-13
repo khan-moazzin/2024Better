@@ -21,9 +21,8 @@ public class SuperstructureState {
 
 	public enum Type{
 		SCORING,
-		REEF_INTAKE,
+		CLEAN,
 		INTAKING,
-		CLIMBING,
 		IDLE
 	};
 

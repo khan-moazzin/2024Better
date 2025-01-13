@@ -410,7 +410,7 @@ public class Constants {
 			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
 		}
 
-		public static final double kCoralClearHeight = 7.0; // rotations
+		public static final double kCoralClearHeight = 0.15; // rotations
 	}
 
 	public static final class ClimbConstants {

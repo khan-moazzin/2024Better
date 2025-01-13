@@ -1,7 +1,6 @@
 package com.team5817.frc2024.loops;
 
 import com.team5817.frc2024.Constants;
-import com.team5817.frc2024.SubsystemManager;
 import com.team5817.lib.wpi.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

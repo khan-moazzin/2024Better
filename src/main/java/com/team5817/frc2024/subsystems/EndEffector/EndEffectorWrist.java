@@ -4,7 +4,6 @@ import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder;
 import com.team5817.lib.requests.Request;
 
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
 import org.littletonrobotics.junction.Logger;
@@ -29,28 +28,27 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 		return mInstance;
 	}
 
-	final static double kStrictError = .5;
-	final static double kMediumError = 2;
-	final static double kLenientError = 5;
+	final static double kStrictError = .5/360;
+	final static double kMediumError = 2/360;
+	final static double kLenientError = 5/360;
 
 
     public enum State {
 
-		L4(0.0, kStrictError),
-        L3(0.0, kStrictError),
-        L2(0.0, kStrictError),
-        L1(0.0, kStrictError),
+		L4(.4, kStrictError),
+        L3(.4, kStrictError),
+        L2(.4, kStrictError),
+        L1(.4, kStrictError),
         A1(0.0, kMediumError),
         A2(0.0, kMediumError),
         NET(0.0, kMediumError),
-        ZERO(0.0, kLenientError),
-		PROCESS(0.0, kLenientError),
+        ZERO(.0, kLenientError),
         INTAKING(0.0, kStrictError),
         STOW(0.0, kStrictError);
 
 
         double output = 0;
-		double allowable_error = 20;
+		double allowable_error = 0;
 
         State(double output, double allowable_error) {
             this.output = output;
@@ -102,7 +100,7 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 
 	@Override
 	public void outputTelemetry() {
-		two.setAngle(-90-8*mServoInputs.position_rots*360);
+		two.setAngle(-90+8*mServoInputs.position_rots*360);
 		super.outputTelemetry();
 	}
 

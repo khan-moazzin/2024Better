@@ -36,7 +36,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Timer;
 
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.Volt;
@@ -45,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
@@ -276,7 +274,7 @@ public class Drive extends Subsystem {
 	public void autoAlign(){
 		Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(getPose(), mAlignment);
 		if(targetPoint.isEmpty()){
-			return;//TODO is this ok
+			return;
 		}
 		Logger.recordOutput("Drive/TargetPoint", targetPoint.get().wpi());
 		mAutoAlignMotionPlanner.setTargetPoint(targetPoint.get());

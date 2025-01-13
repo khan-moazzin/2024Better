@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
-import com.team5817.frc2024.Constants.SwerveConstants;
 import com.team5817.frc2024.field.AprilTag;
 import com.team5817.frc2024.field.FieldLayout;
 
