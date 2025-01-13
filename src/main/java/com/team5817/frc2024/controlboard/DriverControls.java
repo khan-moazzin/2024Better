@@ -23,22 +23,21 @@ public class DriverControls {
 	}
 
 	/* TWO CONTROLLERS */
-
+	GoalState preparedGoal = GoalState.L4;
 	public void twoControllerMode() {
-		
-        
-      if(mControlBoard.driver.getAButton()){
-        mDrive.autoAlign();
-      }
-      if(mControlBoard.driver.getBButton()){
-        s.request(s.GoalRequest(GoalState.L2));
-		s.addRequestToQueue(s.GoalRequest(GoalState.STOW));
-      }
-	  if(mControlBoard.driver.getXButton()){
-		s.request(s.GoalRequest(GoalState.GROUND_CORAL_INTAKE));
-		s.addRequestToQueue(s.GoalRequest(GoalState.STOW));
-	  }
-	  
+		if(mControlBoard.driver.leftBumper.isBeingPressed()){
+			s.request(s.GoalRequest(GoalState.GROUND_CORAL_INTAKE));
+		}
+		if(mControlBoard.driver.getLeftTriggerAxis()>0.2){
+			s.request(s.GoalRequest(preparedGoal));
+		}
+		if(mControlBoard.driver.rightBumper.isBeingPressed())
+			mControlBoard.setSwerveScalar(.5);
+		else
+			mControlBoard.setSwerveScalar(1);
+		if(mControlBoard.driver.aButton.isBeingPressed()){
+			s.request(s.AlgaeSmartCleanRequest());;
+		}
 	}
 
 }

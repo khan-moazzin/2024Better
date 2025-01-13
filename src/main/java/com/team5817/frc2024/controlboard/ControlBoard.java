@@ -36,6 +36,11 @@ public class ControlBoard {
 	}
 
 	/* DRIVER METHODS */
+	double scalar = 1;
+	public void setSwerveScalar(double scalar){
+		this.scalar = scalar;
+	}
+
 	public Translation2d getSwerveTranslation() {
 		double forwardAxis = driver.getRawAxis(Axis.kLeftY.value);
 		double strafeAxis = driver.getRawAxis(Axis.kLeftX.value);
@@ -49,7 +54,7 @@ public class ControlBoard {
 		expoForwardAxis = Constants.SwerveConstants.invertYAxis ? expoForwardAxis : -expoForwardAxis;
 		expoStrafeAxis = Constants.SwerveConstants.invertXAxis ? expoStrafeAxis : -expoStrafeAxis;
 		
-		Translation2d tAxes = new Translation2d(expoForwardAxis, expoStrafeAxis);
+		Translation2d tAxes = new Translation2d(expoForwardAxis, expoStrafeAxis).scale(scalar);
 
 		if (Math.abs(tAxes.norm()) < kSwerveDeadband) {
 			return new Translation2d();

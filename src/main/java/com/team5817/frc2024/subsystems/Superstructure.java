@@ -1,7 +1,9 @@
 package com.team5817.frc2024.subsystems;
 
+import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.TimeDelayedBoolean;
 import com.team5817.frc2024.Constants;
+import com.team5817.frc2024.field.FieldLayout;
 import com.team5817.frc2024.loops.ILooper;
 import com.team5817.frc2024.loops.Loop;
 import com.team5817.frc2024.subsystems.Drive.Drive;
@@ -19,8 +21,15 @@ import com.team5817.lib.requests.ParallelRequest;
 import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
 
+import edu.wpi.first.math.util.Units;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.naming.PartialResultException;
+
+import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends Subsystem {
 
@@ -373,6 +382,18 @@ public class Superstructure extends Subsystem {
 				return readyToScore;
 			}
 		});
+	}
+	public Request AlgaeSmartCleanRequest(){
+		return isAlgaeHigh()?GoalRequest(GoalState.A2):GoalRequest(GoalState.A1);
+	}
+	private boolean isAlgaeHigh(){
+		Translation2d reef_to_odom = FieldLayout.getReefPose().inverse().translateBy(mDrive.getPose().getTranslation());
+		double angle = Math.atan2(reef_to_odom.x(),reef_to_odom.y());
+		angle = Units.radiansToDegrees(angle);
+		angle += 30;
+		int side = (int) Math.round(angle/60);
+		Integer low = Math.floorMod(side, 2);
+		return low==0;
 	}
 
 

@@ -7,6 +7,9 @@ import com.team5817.frc2024.Constants;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -26,8 +29,8 @@ import java.util.HashMap;
  * Width refers to the <i>y</i> direction (as described by wpilib)
  */
 public class FieldLayout {
-	public static double kFieldLength = Units.inchesToMeters(651.223); //TODO
-	public static double kFieldWidth = Units.inchesToMeters(323.277); //TODO
+	public static double kFieldLength = 17.55; 
+	public static double kFieldWidth = 8.05; 
 
 	public static final AprilTagFieldLayout kTagMap;
 	static {
@@ -254,4 +257,12 @@ public class FieldLayout {
 		}
 		return x_coordinate;
 	}
+
+    public static Translation2d getReefPose() {
+        var blue = new Translation2d(4.5,4);
+        if(DriverStation.getAlliance().get().equals(Alliance.Red))
+                return blue.mirrorAboutX(kFieldLength/2);
+        else  
+                return blue;
+    }
 }
