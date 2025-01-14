@@ -6,6 +6,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.config.RobotConfig;
 import com.team5817.frc2024.subsystems.vision.VisionDeviceConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
@@ -60,6 +61,7 @@ public class Constants {
 
 	public static final class SwerveConstants {
 
+		public static final RobotConfig mRobotConfig = new RobotConfig(43, 1, null, null);
 
 		public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 

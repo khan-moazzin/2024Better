@@ -322,9 +322,10 @@ public class Superstructure extends Subsystem {
 			mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
 			mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState)
 			),
-			mIntakeRollers.hasPieceRequest()
+			mIntakeRollers.hasPieceRequest() //NO
 		);
 	}
+
 	private Request IntakeRequest(SuperstructureState goal){
 		if(!(goal.mType == SuperstructureState.Type.INTAKING)){
 			System.out.println("Wrong Goal Type");
@@ -386,6 +387,7 @@ public class Superstructure extends Subsystem {
 	public Request AlgaeSmartCleanRequest(){
 		return isAlgaeHigh()?GoalRequest(GoalState.A2):GoalRequest(GoalState.A1);
 	}
+
 	private boolean isAlgaeHigh(){
 		Translation2d reef_to_odom = FieldLayout.getReefPose().inverse().translateBy(mDrive.getPose().getTranslation());
 		double angle = Math.atan2(reef_to_odom.x(),reef_to_odom.y());
