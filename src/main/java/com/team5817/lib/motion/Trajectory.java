@@ -6,7 +6,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.team254.lib.trajectory.TrajectoryIterator;
-import com.team5817.frc2024.Constants.SwerveConstants;
+import com.team5817.frc2025.Constants.SwerveConstants;
 
 public class Trajectory {
     Optional<PathPlannerPath> mPath;

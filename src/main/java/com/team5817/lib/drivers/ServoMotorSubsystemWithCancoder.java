@@ -5,7 +5,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.team254.lib.drivers.CanDeviceId;
 import com.team254.lib.drivers.Phoenix6Util;
-import com.team5817.frc2024.Constants;
+import com.team5817.frc2025.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -34,7 +34,7 @@ public class ServoMotorSubsystemWithCancoder extends ServoMotorSubsystem {
 		cancoder_configuration.MagnetSensor.MagnetOffset = encoder_constants.remote_encoder_offset;
 		Phoenix6Util.checkErrorAndRetry(() -> mCancoder.getConfigurator().apply(cancoder_configuration));
 		System.out.println(encoder_constants.remote_encoder_offset);
-		mCancoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutMs);
+		mCancoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutS);
 		double position = mCancoder.getAbsolutePosition().getValueAsDouble();
 		while (position < 0.0) {
 			position++;

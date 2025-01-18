@@ -18,9 +18,9 @@ import com.team254.lib.drivers.TalonUtil;
 import com.team254.lib.motion.MotionState;
 import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.Util;
-import com.team5817.frc2024.Robot;
-import com.team5817.frc2024.loops.ILooper;
-import com.team5817.frc2024.loops.Loop;
+import com.team5817.frc2025.Robot;
+import com.team5817.frc2025.loops.ILooper;
+import com.team5817.frc2025.loops.Loop;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -40,6 +40,7 @@ import static edu.wpi.first.units.Units.Volts;
 import java.util.function.UnaryOperator;
 
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Abstract base class for a subsystem with a single sensored servo-mechanism.
@@ -304,7 +305,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	public static class ServoInputs implements Sendable {
 		// INPUTS
 		public double timestamp;
-		public double position_rots; // motor rotations
+		public double position_rots = 0; // motor rotations
 		public double position_units;
 		public double velocity_rps;
 		public double prev_vel_rps;
@@ -379,8 +380,19 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.main_supply_current = mMainSupplyCurrentSignal.asSupplier().get().in(Amps);
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
-		if(!Robot.isReal()&&mControlState != ControlState.OPEN_LOOP){
-			mServoInputs.position_rots += (mServoOutputs.demand-mServoInputs.position_rots)/1.1*dt;//bad guess at motion for sim
+		if(!Robot.isReal()){
+			switch (mControlState) {
+				case OPEN_LOOP:
+					mServoInputs.position_rots += 	mServoOutputs.demand/dt;
+					break;
+				case MOTION_MAGIC:
+					mServoInputs.position_rots += (mServoOutputs.demand-mServoInputs.position_rots)/1.1*dt;//bad guess at motion for sim
+					break;
+				case POSITION_PID:
+					mServoInputs.position_rots += (mServoOutputs.demand-mServoInputs.position_rots)/1.1*dt;//bad guess at motion for sim
+					break;
+				
+			}
 		}else if(Robot.isReal()){
 			mServoInputs.position_rots = mMainPositionSignal.asSupplier().get().in(Rotations);
 		}
@@ -636,9 +648,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
 	@Override
 	public synchronized void outputTelemetry() {
-		SmartDashboard.putNumber(mConstants.kName + "/position units", mServoInputs.position_units);
-		SmartDashboard.putNumber(mConstants.kName + "/position rots", mServoInputs.position_rots);
-		SmartDashboard.putData(mConstants.kName + "/IO", mServoInputs);
+		Logger.recordOutput(mConstants.kName + "/Control Mode", mControlState);
+
 	}
 
 	@Override

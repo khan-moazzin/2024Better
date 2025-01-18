@@ -15,9 +15,9 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.team5817.frc2024.Constants;
-import com.team5817.frc2024.Robot;
-import com.team5817.frc2024.Constants.SwerveConstants;
+import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.Robot;
+import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.lib.Conversions;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.Subsystem;
@@ -29,8 +29,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveModule extends Subsystem {
 
-	private final int kModuleNumber;
-	private final double kAngleOffset;
+	private  int kModuleNumber;
+	private  double kAngleOffset;
 
 	private TalonFX mAngleMotor;
 	private TalonFX mDriveMotor;
@@ -54,6 +54,7 @@ public class SwerveModule extends Subsystem {
 		public double rotationPosition = 0.0;
 		public double drivePosition = 0.0;
 		public double driveVelocity = 0.0;
+		public double absolutePosition = 0.0;
 	}
 	@AutoLog
 	public static class ModuleOutputs {
@@ -76,12 +77,12 @@ public class SwerveModule extends Subsystem {
 		// Angle motor config
 		mAngleMotor = new TalonFX(moduleConstants.angleMotorID, "canivore1");
 		Phoenix6Util.checkErrorAndRetry(() ->
-				mAngleMotor.getConfigurator().apply(SwerveConstants.AzimuthFXConfig(SwerveConstants.angleMotorInvert), Constants.kLongCANTimeoutMs));
+				mAngleMotor.getConfigurator().apply(SwerveConstants.AzimuthFXConfig(SwerveConstants.angleMotorInvert), Constants.kLongCANTimeoutS));
 
 		// Drive motor config
 		mDriveMotor = new TalonFX(moduleConstants.driveMotorID, "canivore1");
 		Phoenix6Util.checkErrorAndRetry(() ->
-				mDriveMotor.getConfigurator().apply(SwerveConstants.DriveFXConfig(SwerveConstants.driveMotorInvert), Constants.kLongCANTimeoutMs));
+				mDriveMotor.getConfigurator().apply(SwerveConstants.DriveFXConfig(SwerveConstants.driveMotorInvert), Constants.kLongCANTimeoutS));
 		mDriveMotor.setPosition(0.0);
 
 		resetToAbsolute();
@@ -105,6 +106,7 @@ public class SwerveModule extends Subsystem {
 			mInputs.drivePosition = mDriveMotor.getRotorPosition().getValueAsDouble();
 			mInputs.rotationPosition = BaseStatusSignal.getLatencyCompensatedValue(
 				mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation);
+			mInputs.absolutePosition = getCanCoder().getDegrees();
 		}else{
 			mInputs.driveVelocity = mOutputs.driveVelocity;
 			mInputs.drivePosition = 0;
@@ -173,11 +175,11 @@ public class SwerveModule extends Subsystem {
 	}
 
 	public void resetToAbsolute() {
-		angleEncoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutMs);
+		angleEncoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutS);
 		double angle = Util.placeInAppropriate0To360Scope(
 				getCurrentUnboundedDegrees(), getCanCoder().getDegrees() - kAngleOffset);
 		double absolutePosition = Conversions.degreesToRotation(angle, SwerveConstants.angleGearRatio);
-		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.setPosition(absolutePosition, Constants.kLongCANTimeoutMs));
+		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.setPosition(absolutePosition, Constants.kLongCANTimeoutS));
 	}
 
 	public void setDriveNeutralBrake(boolean wantBrake) {

@@ -8,13 +8,13 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.team5817.frc2024.Constants;
-import com.team5817.frc2024.Ports;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 import com.team254.lib.geometry.Rotation2d;
+import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.Ports;
 
 public class Pigeon {
 

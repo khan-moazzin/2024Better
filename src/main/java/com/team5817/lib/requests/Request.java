@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Request {
-
+	String name = "DefaultName";
 	public abstract void act();
 
 	public boolean isFinished() {
@@ -38,5 +38,12 @@ public abstract class Request {
 
 	public void cleanup() {
 		cleanupFunction.f();
+	}
+	public Request addName(String name){
+		this.name = name;
+		return this;
+	}
+	public String getName(){
+		return this.name;
 	}
 }
