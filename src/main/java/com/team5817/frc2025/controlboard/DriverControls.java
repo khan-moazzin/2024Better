@@ -21,7 +21,10 @@ public class DriverControls {
 	/* ONE CONTROLLER */
 
 	public void oneControllerMode() {
-			mDrive.overrideHeading(true);
+			// mDrive.overrideHeading(true);
+		if(driver.getStartButton())
+			mDrive.zeroGyro();
+			
 	}
 	boolean climbAllowed = false;
 	boolean autoAlignAllowed = true;
