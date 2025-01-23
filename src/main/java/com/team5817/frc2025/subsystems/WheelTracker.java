@@ -4,6 +4,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.team5817.frc2025.subsystems.WheelTrackerInputsAutoLogged;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Robot;
+import com.team5817.frc2025.Constants.Mode;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.drivers.Pigeon;
 import com.team5817.lib.drivers.Subsystem;
@@ -169,12 +170,12 @@ public class WheelTracker extends Subsystem{
 			last_sample_timestamp = timestamp;
 			last_velocity_sample = new_pose;
 		}
-		if(Robot.isReal()){
-		inputs.pose = new_pose;
-		}else{
+		if(!Robot.isReal() && Constants.mode == Mode.SIM){
 			inputs.pose = new Pose2d(Drive.driveSimulation.getSimulatedDriveTrainPose());
 			inputs.velocity = new ChassisSpeeds(Drive.driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative()).getTranslation();
-		}
+		}else
+			inputs.pose = new_pose;
+
 		resetModulePoses(inputs.pose);
 	}
 	@AutoLog

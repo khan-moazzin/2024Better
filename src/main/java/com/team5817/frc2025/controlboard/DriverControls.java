@@ -24,6 +24,7 @@ public class DriverControls {
 			// mDrive.overrideHeading(true);
 		if(driver.getStartButton())
 			mDrive.zeroGyro();
+		
 			
 	}
 	boolean climbAllowed = false;

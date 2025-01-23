@@ -45,8 +45,8 @@ public class ControlBoard {
 		double forwardAxis = driver.getRawAxis(Axis.kLeftY.value);
 		double strafeAxis = driver.getRawAxis(Axis.kLeftX.value);
 
-		double expoForwardAxis = Math.pow(forwardAxis, 3) ;
-		double expoStrafeAxis = Math.pow(strafeAxis, 3);
+		double expoForwardAxis = forwardAxis;
+		double expoStrafeAxis = strafeAxis;
 
 		SmartDashboard.putNumber("Raw Y", forwardAxis);
 		SmartDashboard.putNumber("Raw X", strafeAxis);

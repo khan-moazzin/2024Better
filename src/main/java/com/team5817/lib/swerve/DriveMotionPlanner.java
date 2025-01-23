@@ -79,7 +79,7 @@ public class DriveMotionPlanner {
 		// chassisSpeeds.vxMetersPerSecond = (chassisSpeeds.vxMetersPerSecond * 1) ;
 		// chassisSpeeds.vyMetersPerSecond = (chassisSpeeds.vyMetersPerSecond * 1) ;
 	
-		chassisSpeeds.omegaRadiansPerSecond = mHeadingController.getVelocityCorrection(-mError.getRotation().getDegrees(), Timer.getTimestamp());
+		// chassisSpeeds.omegaRadiansPerSecond = mHeadingController.update(mError.getRotation().inverse(), Timer.getTimestamp());TODO
 		// chassisSpeeds.omegaRadiansPerSecond = 0;
 		return chassisSpeeds;
 	}

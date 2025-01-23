@@ -77,7 +77,7 @@ public class Constants {
 		public static final double wheelDiameter = Units.inchesToMeters(4.00);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
-		public static final double driveGearRatio = 7.36; 
+		public static final double driveGearRatio = 6.25; 
 		public static final double angleGearRatio = 15.43; 
 
 		public static final Translation2d[] swerveModuleLocations = {
@@ -109,7 +109,7 @@ public class Constants {
 				new edu.wpi.first.math.kinematics.SwerveDriveKinematics(wpiModuleLocations);
 
 		/* Swerve Profiling Values */
-		public static final double maxSpeed = 6; // meters per second
+		public static final double maxSpeed = 5; // meters per second
 		public static final double maxAcceleration = 6; // meters per second
 		public static final double maxAngularVelocity = 11.5;
 		public static final double maxAngularAcceleration = maxAcceleration /
@@ -176,7 +176,7 @@ public class Constants {
 		/*** MODULE SPECIFIC CONSTANTS ***/
 		/* Front Left Module - Module 0 */
 		public static final class Mod0 {
-			public static final double compAngleOffset = 50.36;
+			public static final double compAngleOffset = 45.439+180;
 
 			public static SwerveModuleConstants SwerveModuleConstants() {
 				return new SwerveModuleConstants(
@@ -188,7 +188,7 @@ public class Constants {
 
 		/* Front Right Module - Module 1 */
 		public static final class Mod1 {
-			public static final double compAngleOffset =135;
+			public static final double compAngleOffset = 143.262;
 
 			public static SwerveModuleConstants SwerveModuleConstants() {
 				return new SwerveModuleConstants(
@@ -200,7 +200,7 @@ public class Constants {
 
 		/* Back Left Module - Module 2 */
 		public static final class Mod2 {
-			public static final double compAngleOffset = 180-67.7;
+			public static final double compAngleOffset = 180-62.314;
 
 			public static SwerveModuleConstants SwerveModuleConstants() {
 				return new SwerveModuleConstants(
@@ -212,7 +212,7 @@ public class Constants {
 
 		/* Back Right Module - Module 3 */
 		public static final class Mod3 {
-			public static final double compAngleOffset = 117;
+			public static final double compAngleOffset = 124.893;
 
 			public static SwerveModuleConstants SwerveModuleConstants() {
 				return new SwerveModuleConstants(
