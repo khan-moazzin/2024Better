@@ -84,7 +84,7 @@ public class WheelTracker extends Subsystem{
 	}
 	@Override
 	public void readPeriodicInputs(){
-		Logger.processInputs("WheelTracker", inputs);
+
 	}
 
 
@@ -170,11 +170,11 @@ public class WheelTracker extends Subsystem{
 			last_sample_timestamp = timestamp;
 			last_velocity_sample = new_pose;
 		}
+		inputs.pose = new_pose;
 		if(!Robot.isReal() && Constants.mode == Mode.SIM){
 			inputs.pose = new Pose2d(Drive.driveSimulation.getSimulatedDriveTrainPose());
 			inputs.velocity = new ChassisSpeeds(Drive.driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative()).getTranslation();
-		}else
-			inputs.pose = new_pose;
+		}
 
 		resetModulePoses(inputs.pose);
 	}

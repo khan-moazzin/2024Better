@@ -46,6 +46,6 @@ public class Pose2dStruct implements Struct<com.team254.lib.geometry.Pose2d> {
 
   @Override
   public boolean isImmutable() {
-    return true;
+    return false;
   }
 }

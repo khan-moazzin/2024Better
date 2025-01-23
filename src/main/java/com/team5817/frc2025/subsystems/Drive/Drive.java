@@ -167,7 +167,7 @@ public class Drive extends Subsystem {
 					> mKinematicLimits.kMaxDriveVelocity * 0.1) {
 				mControlState = DriveControlState.OPEN_LOOP;
 			} else {	
-				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp, RobotState.getInstance().getFieldToVehicle(mPeriodicIO.timestamp).withRotation(mPeriodicIO.heading),
+				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp, RobotState.getInstance().getFilteredPose(mPeriodicIO.timestamp).withRotation(mPeriodicIO.heading),
 																	mPeriodicIO.predicted_velocity);
 				if(speed != null){
 					mPeriodicIO.des_chassis_speeds = speed;
@@ -600,6 +600,7 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Predicted Velocity", mPeriodicIO.predicted_velocity.wpi());
 		Logger.recordOutput("Drive/Heading", mPeriodicIO.heading);
 		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
+		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestFieldToVehicle().wpi());
 
 
 		for (SwerveModule module : mModules) {

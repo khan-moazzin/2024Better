@@ -148,7 +148,7 @@ public class Constants {
 
 		static {
 			kSwerveKinematicLimits.kMaxDriveVelocity = maxSpeed;
-			kSwerveKinematicLimits.kMaxDriveAcceleration = 20;
+			kSwerveKinematicLimits.kMaxDriveAcceleration = 40;
 			kSwerveKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
 		
@@ -308,234 +308,234 @@ public class Constants {
 
 }
 
-	// public static final class IntakeDeployConstants {
-	// 	// 115.93
-	// 	// 7.92
-	// 	public static final ServoMotorSubsystemConstants kDeployServoConstants = new ServoMotorSubsystemConstants();
+	public static final class IntakeDeployConstants {
+		// 115.93
+		// 7.92
+		public static final ServoMotorSubsystemConstants kDeployServoConstants = new ServoMotorSubsystemConstants();
 
-	// 	public static final AbsoluteEncoderConstants kDeployEncoderConstants = new AbsoluteEncoderConstants();
+		public static final AbsoluteEncoderConstants kDeployEncoderConstants = new AbsoluteEncoderConstants();
 
-	// 	static {
-	// 		kDeployServoConstants.kName = "Deploy";
+		static {
+			kDeployServoConstants.kName = "Deploy";
 
-	// 		kDeployServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
-	// 		kDeployServoConstants.kMainConstants.counterClockwisePositive = false;
+			kDeployServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
+			kDeployServoConstants.kMainConstants.counterClockwisePositive = false;
 
-	// 		kDeployServoConstants.kHomePosition = 0; // degrees
-	// 		kDeployServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+			kDeployServoConstants.kHomePosition = 0; // degrees
+			kDeployServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
 
-	// 		kDeployServoConstants.kMaxUnitsLimit = 1.5;
-	// 		kDeployServoConstants.kMinUnitsLimit = 0.0;
+			kDeployServoConstants.kMaxUnitsLimit = 1.5;
+			kDeployServoConstants.kMinUnitsLimit = 0.0;
 
-	// 		kDeployServoConstants.kKp = 3.0;
-	// 		kDeployServoConstants.kKi = 0.0;
-	// 		kDeployServoConstants.kKd = 0.0;
-	// 		kDeployServoConstants.kKa = 0.0;
-	// 		kDeployServoConstants.kKs = 0.2;
-	// 		kDeployServoConstants.kKg = 0.2;
+			kDeployServoConstants.kKp = 3.0;
+			kDeployServoConstants.kKi = 0.0;
+			kDeployServoConstants.kKd = 0.0;
+			kDeployServoConstants.kKa = 0.0;
+			kDeployServoConstants.kKs = 0.2;
+			kDeployServoConstants.kKg = 0.2;
 
-	// 		kDeployServoConstants.kCruiseVelocity = 400.0; // degrees / s
-	// 		kDeployServoConstants.kAcceleration = 10000.0; // degrees / s^2
+			kDeployServoConstants.kCruiseVelocity = 400.0; // degrees / s
+			kDeployServoConstants.kAcceleration = 10000.0; // degrees / s^2
 
-	// 		kDeployServoConstants.kMaxForwardOutput = 12.0;
-	// 		kDeployServoConstants.kMaxReverseOutput = -12.0;
+			kDeployServoConstants.kMaxForwardOutput = 12.0;
+			kDeployServoConstants.kMaxReverseOutput = -12.0;
 
-	// 		kDeployServoConstants.kEnableSupplyCurrentLimit = true;
-	// 		kDeployServoConstants.kSupplyCurrentLimit = 40; // amps
-	// 		kDeployServoConstants.kSupplyCurrentThreshold = 40; // amps
-	// 		kDeployServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
+			kDeployServoConstants.kEnableSupplyCurrentLimit = true;
+			kDeployServoConstants.kSupplyCurrentLimit = 40; // amps
+			kDeployServoConstants.kSupplyCurrentThreshold = 40; // amps
+			kDeployServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
 
-	// 		kDeployServoConstants.kEnableStatorCurrentLimit = true;
-	// 		kDeployServoConstants.kStatorCurrentLimit = 80; // amps
+			kDeployServoConstants.kEnableStatorCurrentLimit = true;
+			kDeployServoConstants.kStatorCurrentLimit = 80; // amps
 
-	// 		kDeployServoConstants.kNeutralMode = NeutralModeValue.Brake;
+			kDeployServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
-	// 		kDeployEncoderConstants.encoder_type = FeedbackSensorSourceValue.FusedCANcoder;
-	// 		kDeployEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
-	// 		kDeployEncoderConstants.rotor_rotations_per_output = 314.0;
-	// 		kDeployEncoderConstants.remote_encoder_offset = 0;
-	// 	}
+			kDeployEncoderConstants.encoder_type = FeedbackSensorSourceValue.FusedCANcoder;
+			kDeployEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
+			kDeployEncoderConstants.rotor_rotations_per_output = 314.0;
+			kDeployEncoderConstants.remote_encoder_offset = 0;
+		}
 
-	// 	public static double kHomingZone = 7.0; // degrees
-	// 	public static double kHomingTimeout = 0.2; // seconds
-	// 	public static double kHomingVelocityWindow = 5.0; // "units" / secon
-	// 	public static double kHomingOutput = 4.0; // volts
+		public static double kHomingZone = 7.0; // degrees
+		public static double kHomingTimeout = 0.2; // seconds
+		public static double kHomingVelocityWindow = 5.0; // "units" / secon
+		public static double kHomingOutput = 4.0; // volts
 
-	// }
+	}
 
-	// public static final class IntakeRollerConstants {
-	// 	public static TalonFXConfiguration RollerFXConfig() {
-	// 		TalonFXConfiguration config = new TalonFXConfiguration();
+	public static final class IntakeRollerConstants {
+		public static TalonFXConfiguration RollerFXConfig() {
+			TalonFXConfiguration config = new TalonFXConfiguration();
 
-	// 		config.CurrentLimits.SupplyCurrentLimitEnable = true;
-	// 		config.CurrentLimits.SupplyCurrentLimit = 40.0;
+			config.CurrentLimits.SupplyCurrentLimitEnable = true;
+			config.CurrentLimits.SupplyCurrentLimit = 40.0;
 
-	// 		config.CurrentLimits.StatorCurrentLimitEnable = true;
-	// 		config.CurrentLimits.StatorCurrentLimit = 80.0;
+			config.CurrentLimits.StatorCurrentLimitEnable = true;
+			config.CurrentLimits.StatorCurrentLimit = 80.0;
 
-	// 		config.Voltage.PeakForwardVoltage = 12.0;
-	// 		config.Voltage.PeakReverseVoltage = -12.0;
+			config.Voltage.PeakForwardVoltage = 12.0;
+			config.Voltage.PeakReverseVoltage = -12.0;
 
-	// 		config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-	// 		return config;
-	// 	}
-	// }
+			config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+			return config;
+		}
+	}
 
-	// public static final class ElevatorConstants {
-	// 	// 115.93
-	// 	// 7.92
-	// 	public static final ServoMotorSubsystemConstants kElevatorServoConstants = new ServoMotorSubsystemConstants();
+	public static final class ElevatorConstants {
+		// 115.93
+		// 7.92
+		public static final ServoMotorSubsystemConstants kElevatorServoConstants = new ServoMotorSubsystemConstants();
 
-	// 	static {
-	// 		kElevatorServoConstants.kName = "Elevator";
+		static {
+			kElevatorServoConstants.kName = "Elevator";
 
-	// 		kElevatorServoConstants.kMainConstants.id = Ports.ELEVATOR;
-	// 		kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
+			kElevatorServoConstants.kMainConstants.id = Ports.ELEVATOR;
+			kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
 
-	// 		kElevatorServoConstants.kHomePosition = 0; // degrees
-	// 		kElevatorServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+			kElevatorServoConstants.kHomePosition = 0; // degrees
+			kElevatorServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
 
-	// 		kElevatorServoConstants.kMaxUnitsLimit = 128.1;
-	// 		kElevatorServoConstants.kMinUnitsLimit = 0.0;
+			kElevatorServoConstants.kMaxUnitsLimit = 128.1;
+			kElevatorServoConstants.kMinUnitsLimit = 0.0;
 
-	// 		kElevatorServoConstants.kKp = 3.0;
-	// 		kElevatorServoConstants.kKi = 0.0;
-	// 		kElevatorServoConstants.kKd = 0.0;
-	// 		kElevatorServoConstants.kKa = 0.0;
-	// 		kElevatorServoConstants.kKs = 0.2;
-	// 		kElevatorServoConstants.kKg = 0.2;
+			kElevatorServoConstants.kKp = 3.0;
+			kElevatorServoConstants.kKi = 0.0;
+			kElevatorServoConstants.kKd = 0.0;
+			kElevatorServoConstants.kKa = 0.0;
+			kElevatorServoConstants.kKs = 0.2;
+			kElevatorServoConstants.kKg = 0.2;
 
-	// 		kElevatorServoConstants.kCruiseVelocity = 400.0; // degrees / s
-	// 		kElevatorServoConstants.kAcceleration = 10000.0; // degrees / s^2
+			kElevatorServoConstants.kCruiseVelocity = 400.0; // degrees / s
+			kElevatorServoConstants.kAcceleration = 10000.0; // degrees / s^2
 
-	// 		kElevatorServoConstants.kMaxForwardOutput = 12.0;
-	// 		kElevatorServoConstants.kMaxReverseOutput = -12.0;
+			kElevatorServoConstants.kMaxForwardOutput = 12.0;
+			kElevatorServoConstants.kMaxReverseOutput = -12.0;
 
-	// 		kElevatorServoConstants.kEnableSupplyCurrentLimit = true;
-	// 		kElevatorServoConstants.kSupplyCurrentLimit = 40; // amps
-	// 		kElevatorServoConstants.kSupplyCurrentThreshold = 40; // amps
-	// 		kElevatorServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
+			kElevatorServoConstants.kEnableSupplyCurrentLimit = true;
+			kElevatorServoConstants.kSupplyCurrentLimit = 40; // amps
+			kElevatorServoConstants.kSupplyCurrentThreshold = 40; // amps
+			kElevatorServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
 
-	// 		kElevatorServoConstants.kEnableStatorCurrentLimit = true;
-	// 		kElevatorServoConstants.kStatorCurrentLimit = 80; // amps
+			kElevatorServoConstants.kEnableStatorCurrentLimit = true;
+			kElevatorServoConstants.kStatorCurrentLimit = 80; // amps
 
-	// 		kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
-	// 	}
+			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
+		}
 
-	// 	public static final double kCoralClearHeight = 0.15; // rotations
-	// }
+		public static final double kCoralClearHeight = 0.15; // rotations
+	}
 
-	// public static final class ClimbConstants {
-	// 	// 115.93
-	// 	// 7.92
-	// 	public static final ServoMotorSubsystemConstants kClimbServoConstants = new ServoMotorSubsystemConstants();
+	public static final class ClimbConstants {
+		// 115.93
+		// 7.92
+		public static final ServoMotorSubsystemConstants kClimbServoConstants = new ServoMotorSubsystemConstants();
 
-	// 	static {
-	// 		kClimbServoConstants.kName = "Climb";
+		static {
+			kClimbServoConstants.kName = "Climb";
 
-	// 		kClimbServoConstants.kMainConstants.id = Ports.ELEVATOR;
-	// 		kClimbServoConstants.kMainConstants.counterClockwisePositive = false;
+			kClimbServoConstants.kMainConstants.id = Ports.ELEVATOR;
+			kClimbServoConstants.kMainConstants.counterClockwisePositive = false;
 
-	// 		kClimbServoConstants.kHomePosition = 0; // degrees
-	// 		kClimbServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+			kClimbServoConstants.kHomePosition = 0; // degrees
+			kClimbServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
 
-	// 		kClimbServoConstants.kMaxUnitsLimit = 128.1;
-	// 		kClimbServoConstants.kMinUnitsLimit = 0.0;
+			kClimbServoConstants.kMaxUnitsLimit = 128.1;
+			kClimbServoConstants.kMinUnitsLimit = 0.0;
 
-	// 		kClimbServoConstants.kKp = 3.0;
-	// 		kClimbServoConstants.kKi = 0.0;
-	// 		kClimbServoConstants.kKd = 0.0;
-	// 		kClimbServoConstants.kKa = 0.0;
-	// 		kClimbServoConstants.kKs = 0.2;
-	// 		kClimbServoConstants.kKg = 0.2;
+			kClimbServoConstants.kKp = 3.0;
+			kClimbServoConstants.kKi = 0.0;
+			kClimbServoConstants.kKd = 0.0;
+			kClimbServoConstants.kKa = 0.0;
+			kClimbServoConstants.kKs = 0.2;
+			kClimbServoConstants.kKg = 0.2;
 
-	// 		kClimbServoConstants.kCruiseVelocity = 400.0; // degrees / s
-	// 		kClimbServoConstants.kAcceleration = 10000.0; // degrees / s^2
+			kClimbServoConstants.kCruiseVelocity = 400.0; // degrees / s
+			kClimbServoConstants.kAcceleration = 10000.0; // degrees / s^2
 
-	// 		kClimbServoConstants.kMaxForwardOutput = 12.0;
-	// 		kClimbServoConstants.kMaxReverseOutput = -12.0;
+			kClimbServoConstants.kMaxForwardOutput = 12.0;
+			kClimbServoConstants.kMaxReverseOutput = -12.0;
 
-	// 		kClimbServoConstants.kEnableSupplyCurrentLimit = true;
-	// 		kClimbServoConstants.kSupplyCurrentLimit = 40; // amps
-	// 		kClimbServoConstants.kSupplyCurrentThreshold = 40; // amps
-	// 		kClimbServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
+			kClimbServoConstants.kEnableSupplyCurrentLimit = true;
+			kClimbServoConstants.kSupplyCurrentLimit = 40; // amps
+			kClimbServoConstants.kSupplyCurrentThreshold = 40; // amps
+			kClimbServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
 
-	// 		kClimbServoConstants.kEnableStatorCurrentLimit = true;
-	// 		kClimbServoConstants.kStatorCurrentLimit = 80; // amps
+			kClimbServoConstants.kEnableStatorCurrentLimit = true;
+			kClimbServoConstants.kStatorCurrentLimit = 80; // amps
 
-	// 		kClimbServoConstants.kNeutralMode = NeutralModeValue.Brake;
-	// 	}
+			kClimbServoConstants.kNeutralMode = NeutralModeValue.Brake;
+		}
 
-	// }
+	}
 
 
-	// public static final class EndEffectorWristConstants {
-	// 	// 115.93
-	// 	// 7.92
-	// 	public static final ServoMotorSubsystemConstants kWristServoConstants = new ServoMotorSubsystemConstants();
+	public static final class EndEffectorWristConstants {
+		// 115.93
+		// 7.92
+		public static final ServoMotorSubsystemConstants kWristServoConstants = new ServoMotorSubsystemConstants();
 
-	// 	public static final AbsoluteEncoderConstants kWristEncoderConstants = new AbsoluteEncoderConstants();
+		public static final AbsoluteEncoderConstants kWristEncoderConstants = new AbsoluteEncoderConstants();
 
-	// 	static {
-	// 		kWristServoConstants.kName = "Wrist";
+		static {
+			kWristServoConstants.kName = "Wrist";
 
-	// 		kWristServoConstants.kMainConstants.id = Ports.ENDEFFECTOR_WRIST;
-	// 		kWristServoConstants.kMainConstants.counterClockwisePositive = false;
+			kWristServoConstants.kMainConstants.id = Ports.ENDEFFECTOR_WRIST;
+			kWristServoConstants.kMainConstants.counterClockwisePositive = false;
 
-	// 		kWristServoConstants.kHomePosition = 0; // degrees
-	// 		kWristServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+			kWristServoConstants.kHomePosition = 0; // degrees
+			kWristServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
 
-	// 		kWristServoConstants.kMaxUnitsLimit = 128.1;
-	// 		kWristServoConstants.kMinUnitsLimit = 0.0;
+			kWristServoConstants.kMaxUnitsLimit = 128.1;
+			kWristServoConstants.kMinUnitsLimit = 0.0;
 
-	// 		kWristServoConstants.kKp = 3.0;
-	// 		kWristServoConstants.kKi = 0.0;
-	// 		kWristServoConstants.kKd = 0.0;
-	// 		kWristServoConstants.kKa = 0.0;
-	// 		kWristServoConstants.kKs = 0.2;
-	// 		kWristServoConstants.kKg = 0.2;
+			kWristServoConstants.kKp = 3.0;
+			kWristServoConstants.kKi = 0.0;
+			kWristServoConstants.kKd = 0.0;
+			kWristServoConstants.kKa = 0.0;
+			kWristServoConstants.kKs = 0.2;
+			kWristServoConstants.kKg = 0.2;
 
-	// 		kWristServoConstants.kCruiseVelocity = 400.0; // degrees / s
-	// 		kWristServoConstants.kAcceleration = 10000.0; // degrees / s^2
+			kWristServoConstants.kCruiseVelocity = 400.0; // degrees / s
+			kWristServoConstants.kAcceleration = 10000.0; // degrees / s^2
 
-	// 		kWristServoConstants.kMaxForwardOutput = 12.0;
-	// 		kWristServoConstants.kMaxReverseOutput = -12.0;
+			kWristServoConstants.kMaxForwardOutput = 12.0;
+			kWristServoConstants.kMaxReverseOutput = -12.0;
 
-	// 		kWristServoConstants.kEnableSupplyCurrentLimit = true;
-	// 		kWristServoConstants.kSupplyCurrentLimit = 40; // amps
-	// 		kWristServoConstants.kSupplyCurrentThreshold = 40; // amps
-	// 		kWristServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
+			kWristServoConstants.kEnableSupplyCurrentLimit = true;
+			kWristServoConstants.kSupplyCurrentLimit = 40; // amps
+			kWristServoConstants.kSupplyCurrentThreshold = 40; // amps
+			kWristServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
 
-	// 		kWristServoConstants.kEnableStatorCurrentLimit = true;
-	// 		kWristServoConstants.kStatorCurrentLimit = 80; // amps
+			kWristServoConstants.kEnableStatorCurrentLimit = true;
+			kWristServoConstants.kStatorCurrentLimit = 80; // amps
 
-	// 		kWristServoConstants.kNeutralMode = NeutralModeValue.Brake;
+			kWristServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
-	// 		kWristEncoderConstants.encoder_type = FeedbackSensorSourceValue.FusedCANcoder;
-	// 		kWristEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
-	// 		kWristEncoderConstants.rotor_rotations_per_output = 314.0;
-	// 		kWristEncoderConstants.remote_encoder_offset = 0;
-	// 	}
+			kWristEncoderConstants.encoder_type = FeedbackSensorSourceValue.FusedCANcoder;
+			kWristEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
+			kWristEncoderConstants.rotor_rotations_per_output = 314.0;
+			kWristEncoderConstants.remote_encoder_offset = 0;
+		}
 
-	// }
+	}
 
-	// public static final class EndEffectorRollerConstants {
-	// 	public static TalonFXConfiguration RollerFXConfig() {
-	// 		TalonFXConfiguration config = new TalonFXConfiguration();
+	public static final class EndEffectorRollerConstants {
+		public static TalonFXConfiguration RollerFXConfig() {
+			TalonFXConfiguration config = new TalonFXConfiguration();
 
-	// 		config.CurrentLimits.SupplyCurrentLimitEnable = true;
-	// 		config.CurrentLimits.SupplyCurrentLimit = 40.0;
+			config.CurrentLimits.SupplyCurrentLimitEnable = true;
+			config.CurrentLimits.SupplyCurrentLimit = 40.0;
 
-	// 		config.CurrentLimits.StatorCurrentLimitEnable = true;
-	// 		config.CurrentLimits.StatorCurrentLimit = 80.0;
+			config.CurrentLimits.StatorCurrentLimitEnable = true;
+			config.CurrentLimits.StatorCurrentLimit = 80.0;
 
-	// 		config.Voltage.PeakForwardVoltage = 12.0;
-	// 		config.Voltage.PeakReverseVoltage = -12.0;
+			config.Voltage.PeakForwardVoltage = 12.0;
+			config.Voltage.PeakReverseVoltage = -12.0;
 
-	// 		config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-	// 		return config;
-	// 	}
-	// }
+			config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+			return config;
+		}
+	}
 
 
 }

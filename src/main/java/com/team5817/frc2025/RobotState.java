@@ -187,7 +187,7 @@ public class RobotState extends Subsystem{
 	 * @param timestamp Timestamp to look up.
 	 * @return Field relative robot pose at timestamp.
 	 */
-	public synchronized Pose2d getFieldToVehicle(double timestamp) {
+	public synchronized Pose2d getFilteredPose(double timestamp) {
 		Pose2d odomToVehicle = getOdomToVehicle(timestamp);
 
 		Translation2d fieldToOdom = getFieldToOdom(timestamp);
