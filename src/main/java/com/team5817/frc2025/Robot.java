@@ -69,7 +69,7 @@ public class Robot extends LoggedRobot {
   
       DriverStation.startDataLog(DataLogManager.getLog());
   
-      RobotState.getInstance().resetKalman();
+      RobotState.getInstance().reset();
       // for(HashMap.Entry<String, AutoBase> entry : autos.entrySet()) {
         // String N = entry.getKey();
         // AutoBase A = entry.getValue();

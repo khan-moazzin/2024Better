@@ -53,12 +53,13 @@ public class Constants {
 	public static final double kJoystickThreshold = 0.2;
 	public static final int kButtonGamepadPort = 1;
 
-	public static final double stickDeadband = 0.05;
+	public static final double stickDeadband = 0.1;
 
 	// Timeout constants
 	public static final double kLongCANTimeoutS = 0.1;
 	public static final double kCANTimeoutS = .01;
-
+    public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.04, 1), Math.pow(0.04, 1));
+    public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.01, 1), Math.pow(0.01, 1));
     public static final double[][] fundamentalMatrix = 
 	{
 	{0.0,0.0,0.0},
