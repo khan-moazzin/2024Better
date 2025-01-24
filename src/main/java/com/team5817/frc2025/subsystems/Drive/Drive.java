@@ -20,6 +20,7 @@ import com.team5817.lib.swerve.DriveMotionPlanner.FollowerType;
 import com.team5817.lib.swerve.SwerveHeadingController;
 import com.team5817.lib.swerve.SwerveModule;
 import com.team5817.lib.swerve.SwerveModulePosition;
+import com.ctre.phoenix6.controls.StaticBrake;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithMotion;
 import com.team254.lib.geometry.Rotation2d;
@@ -66,7 +67,7 @@ public class Drive extends Subsystem {
 	public SwerveModule[] mModules;
 
 	private SwerveInputs mPeriodicIO = new SwerveInputs();
-	private DriveControlState mControlState = DriveControlState.OPEN_LOOP;
+	private DriveControlState mControlState = DriveControlState.HEADING_CONTROL;
 
 	private SwerveSetpointGenerator mSetpointGenerator;
 
@@ -135,6 +136,7 @@ public class Drive extends Subsystem {
 		mPigeon.setYaw(0.0);
 		mWheelTracker = new WheelTracker(mModules);
 		mSetpointGenerator = new SwerveSetpointGenerator(SwerveConstants.kKinematics);
+		mHeadingController.setStabilizeTarget(mPigeon.getYaw());
 	}
 
 	public void setKinematicLimits(SwerveKinematicLimits newLimits) {
@@ -144,9 +146,14 @@ public class Drive extends Subsystem {
 	/**
 	 * Updates drivetrain with latest desired speeds from the joystick, and sets DriveControlState appropriately.
 	 *
-	 * @param speeds ChassisSpeeds object derived from joystick input.
+	 * @param speeds ChassisSpeeds object derived from joystick input
 	 */
 	public void feedTeleopSetpoint(ChassisSpeeds speeds) {
+		double omega = mHeadingController.update(mPeriodicIO.heading, Timer.getTimestamp());
+		if(mControlState != DriveControlState.HEADING_CONTROL&&Math.abs(mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond-omega) > .1){
+			mHeadingController.setStabilizeTarget(mPigeon.getYaw());
+		}
+
 		if (mControlState == DriveControlState.PATH_FOLLOWING) {
 			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
 					> mKinematicLimits.kMaxDriveVelocity * 0.1) {
@@ -168,23 +175,28 @@ public class Drive extends Subsystem {
 				return;
 			}
 		}
- 
-		if (mControlState == DriveControlState.HEADING_CONTROL) {
-			if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
-				mControlState = DriveControlState.OPEN_LOOP;
-			} else {
+		
+		if (mControlState == DriveControlState.OPEN_LOOP||mControlState == DriveControlState.HEADING_CONTROL) {
+		
 				double x = speeds.vxMetersPerSecond;
 				double y = speeds.vyMetersPerSecond;
 
-				double omega = mHeadingController.update(mPeriodicIO.heading, Timer.getFPGATimestamp());
+				if (Math.abs(speeds.omegaRadiansPerSecond) > .1) {
+					omega = speeds.omegaRadiansPerSecond;
+					
+				}
+					
 				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(x, y, omega);
 				return;
-			}
+			
 		} else if (mControlState != DriveControlState.OPEN_LOOP) {
 			mControlState = DriveControlState.OPEN_LOOP;
+		
 		}
 
+
 		mPeriodicIO.des_chassis_speeds = speeds;
+		
 	}
 
 	public void setOpenLoop(ChassisSpeeds speeds) {
@@ -209,10 +221,10 @@ public class Drive extends Subsystem {
 		if (mControlState != DriveControlState.HEADING_CONTROL && mControlState != DriveControlState.PATH_FOLLOWING) {
 			mControlState = DriveControlState.HEADING_CONTROL;
 		}
-		mHeadingController.setTargetSnapHeading(angle);
+		mHeadingController.setSnapTarget(angle);
 	}
 
-	/**
+	/**`
 	 * Instructs the drivetrain to stabilize heading around target angle.
 	 *
 	 * @param angle Target angle to stabilize around.
@@ -221,7 +233,7 @@ public class Drive extends Subsystem {
 		if (mControlState != DriveControlState.HEADING_CONTROL && mControlState != DriveControlState.PATH_FOLLOWING) {
 			mControlState = DriveControlState.HEADING_CONTROL;
 		}
-		mHeadingController.setTargetStabilizeHeading(angle);
+		mHeadingController.setStabilizeTarget(angle);
 		
 	}
 
@@ -323,6 +335,7 @@ public class Drive extends Subsystem {
 							stop();
 							break;
 					}
+
 					updateSetpoint();
 					
 					RobotState.getInstance()
@@ -474,8 +487,7 @@ public class Drive extends Subsystem {
 			}
 		}
 		if(!Robot.isReal()&&Constants.mode == Constants.Mode.SIM){
-			driveSimulation.setRobotSpeeds(mPeriodicIO.des_chassis_speeds.wpi());
-			
+			driveSimulation.setRobotSpeeds(mPeriodicIO.setpoint.mChassisSpeeds.wpi());
 		}else{
 			for (SwerveModule swerveModule : mModules) {
 				swerveModule.writePeriodicOutputs();
@@ -586,6 +598,10 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/DesiredSpeed", mPeriodicIO.des_chassis_speeds.wpi());
 		Logger.recordOutput("Drive/State",mControlState );
 		Logger.recordOutput("Drive/Predicted Velocity", mPeriodicIO.predicted_velocity.wpi());
+		Logger.recordOutput("Drive/Heading", mPeriodicIO.heading);
+		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
+		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestFieldToVehicle().wpi());
+
 
 		for (SwerveModule module : mModules) {
 			module.outputTelemetry();

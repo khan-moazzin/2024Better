@@ -142,6 +142,7 @@ boolean disableGyroReset = false;
     @Override
     public void teleopPeriodic() {
       // controls.twoControllerMode();
+      controls.oneControllerMode();
       controlBoard.update();
       if(!Robot.isReal() && Constants.mode == Constants.Mode.SIM){
         drive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(

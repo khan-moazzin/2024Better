@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
@@ -56,10 +58,9 @@ public class SwerveModule extends Subsystem {
 		public double driveVelocity = 0.0;
 		public double absolutePosition = 0.0;
 	}
-	@AutoLog
 	public static class ModuleOutputs {
 		// Outputs
-	public double drivePercent = 0.0;
+	public double driveDemand = 0.0;
 	public double driveVelocity = 0.0;
 	public double rotTarget = 0.0;
 	public DriveType driveType = DriveType.OPENLOOP;
@@ -102,7 +103,7 @@ public class SwerveModule extends Subsystem {
 
 	public synchronized void refreshSignals() {
 		if(Robot.isReal()){
-			mInputs.driveVelocity = mDriveMotor.getRotorVelocity().getValue().in(DegreesPerSecond);
+			mInputs.driveVelocity = mDriveMotor.getRotorVelocity().getValue().in(RotationsPerSecond);
 			mInputs.drivePosition = mDriveMotor.getRotorPosition().getValueAsDouble();
 			mInputs.rotationPosition = BaseStatusSignal.getLatencyCompensatedValue(
 				mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation);
@@ -118,7 +119,8 @@ public class SwerveModule extends Subsystem {
 		mOutputs.driveVelocity = desiredState.speedMetersPerSecond * flip;
 		double rotorSpeed = Conversions.MPSToRPS(
 			mOutputs.driveVelocity, SwerveConstants.wheelCircumference, SwerveConstants.driveGearRatio);
-			mOutputs.drivePercent = rotorSpeed * SwerveConstants.kV;
+		mOutputs.driveDemand = rotorSpeed * SwerveConstants.kV;
+		Logger.recordOutput("Voltage", mOutputs.driveDemand);
 	}
 
 	public void setVelocity(SwerveModuleState desiredState) {
@@ -168,7 +170,7 @@ public class SwerveModule extends Subsystem {
 			
 			mAngleMotor.setControl(new PositionDutyCycle(mOutputs.rotTarget).withVelocity(0).withEnableFOC(true).withFeedForward(0).withSlot(0).withOverrideBrakeDurNeutral(false).withLimitForwardMotion(false).withLimitReverseMotion(false));
 			if(mOutputs.driveType == DriveType.OPENLOOP)
-				mDriveMotor.setControl(new VoltageOut(mOutputs.drivePercent));
+				mDriveMotor.setControl(new VoltageOut(mOutputs.driveDemand));
 			else if(mOutputs.driveType == DriveType.VELOCITY)
 				mDriveMotor.setControl(new VelocityVoltage(mOutputs.driveVelocity).withFeedForward(0).withEnableFOC(true).withOverrideBrakeDurNeutral(false));
 	
