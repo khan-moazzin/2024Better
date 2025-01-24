@@ -46,7 +46,7 @@ public class VisionDevice{
 				mPeriodicIO.tagCounts = poseEstimate.tagCount;
 				mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
 
-				VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, timestamp,mPeriodicIO.ta, mPeriodicIO.targetToCamera, mPeriodicIO.mt2Pose.getTranslation());
+				VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, timestamp,mPeriodicIO.ta, mPeriodicIO.mt2Pose.getTranslation());
 				mPeriodicIO.visionUpdate = Optional.of(visionUpdate);
 			
 

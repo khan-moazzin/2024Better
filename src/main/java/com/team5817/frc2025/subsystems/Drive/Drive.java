@@ -188,7 +188,7 @@ public class Drive extends Subsystem {
 				mControlStateHasChanged = false;
 				return;
 			} else {	
-				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp, RobotState.getInstance().getAbosoluteKalmanPose(mPeriodicIO.timestamp).withRotation(mPeriodicIO.heading),
+				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp, RobotState.getInstance().getAbosoluteGlobalKalmanPose(mPeriodicIO.timestamp).withRotation(mPeriodicIO.heading),
 																	mPeriodicIO.predicted_velocity);
 				if(speed != null){
 					mPeriodicIO.des_chassis_speeds = speed;
@@ -553,7 +553,7 @@ public class Drive extends Subsystem {
 	}
 
 	public Pose2d getPose() {
-		return RobotState.getInstance().getLatestKalmanPose();
+		return RobotState.getInstance().getLatestGlobalKalmanPose();
 	}
 
 	public void resetOdometry(Pose2d pose) {
@@ -623,7 +623,7 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Predicted Velocity", mPeriodicIO.predicted_velocity.wpi());
 		Logger.recordOutput("Drive/Heading", mPeriodicIO.heading);
 		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
-		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestKalmanPose().wpi());
+		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestGlobalKalmanPose().wpi());
 		
 
 		for (SwerveModule module : mModules) {

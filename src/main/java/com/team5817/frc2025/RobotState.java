@@ -25,29 +25,25 @@ import com.team5817.lib.util.UnscentedKalmanFilter;
 
 
 public class RobotState {
+    // Existing member variables
     private static RobotState mInstance;
-	private boolean mIsInAuto = true;
+    private boolean mIsInAuto = true;
     private Optional<VisionUpdate> mLatestVisionUpdate;
     private UnscentedKalmanFilter<N2, N2, N2> mKalmanFilter;
     private VisionPoseAcceptor mPoseAcceptor;
     private Pose2d mDisplayVisionPose;
     private Pose2d mSetpointPose;
-
     public Field2d mField2d;
-
     private boolean mHasBeenEnabled = false;
 
-    public static RobotState getInstance() {
-        if (mInstance == null) {
-            mInstance = new RobotState();
-        }
-
-        return mInstance;
-    }
+    // New variables for the specialized Kalman filter and vision update handling
+    private UnscentedKalmanFilter<N2, N2, N2> mSpecializedKalmanFilter;
+    private Optional<VisionUpdate> mLatestSpecializedVisionUpdate;
+    private InterpolatingTreeMap<InterpolatingDouble, Translation2d> specializedVisionPoseComponent;
+    private Optional<Translation2d> initialPoseErrorSpecialized = Optional.empty();  // Separate initial pose error for specialized updates
 
     private static final int kObservationBufferSize = 50;
-    
-    private Optional<Translation2d> initialPose = Optional.empty();
+    private Optional<Translation2d> initialPoseError = Optional.empty();
     private InterpolatingTreeMap<InterpolatingDouble, Pose2d> poseFromOdom;
     private InterpolatingTreeMap<InterpolatingDouble, Translation2d> visionPoseComponent;
 
@@ -55,17 +51,25 @@ public class RobotState {
     private Twist2d MeasuredVelocity;
     private MovingAverageTwist2d filteredMeasuredVelocity;
 
-    private RobotState() {
-        reset(0.0, Pose2d.fromTranslation(new Translation2d(0,0)));
+    public static RobotState getInstance() {
+        if (mInstance == null) 
+
+            mInstance = new RobotState();
+        return mInstance;
     }
 
+    private RobotState() {
+        reset(0.0, Pose2d.fromTranslation(new Translation2d(0, 0)));
+    }
 
     public synchronized void reset(double start_time, Pose2d initialPose) {
-        resetKalmanFilters(start_time);
+        resetKalmanFilters();
         poseFromOdom = new InterpolatingTreeMap<>(kObservationBufferSize);
         poseFromOdom.put(new InterpolatingDouble(start_time), initialPose);
         visionPoseComponent = new InterpolatingTreeMap<>(kObservationBufferSize);
         visionPoseComponent.put(new InterpolatingDouble(start_time), Translation2d.identity());
+        specializedVisionPoseComponent = new InterpolatingTreeMap<>(kObservationBufferSize);
+
         PredictedVelocity = Twist2d.identity();
         MeasuredVelocity = Twist2d.identity();
         filteredMeasuredVelocity = new MovingAverageTwist2d(25);
@@ -73,13 +77,31 @@ public class RobotState {
         mDisplayVisionPose = Pose2d.identity();
         mSetpointPose = Pose2d.identity();
         mPoseAcceptor = new VisionPoseAcceptor();
+        initialPoseError = Optional.empty();
+
+        // Reset specialized Kalman filter and vision update tracker
+        resetSpecializedKalmanFilters();
     }
 
-    public synchronized void reset() {
+    public synchronized void resetSpecializedKalmanFilters() {
+        mSpecializedKalmanFilter = new UnscentedKalmanFilter<>(
+            Nat.N2(),
+            Nat.N2(),
+            (x, u) -> VecBuilder.fill(0.0, 0.0),
+            (x, u) -> x,
+            Constants.kStateStdDevs,
+            Constants.kLocalMeasurementStdDevs, .01
+        );
+
+        mLatestSpecializedVisionUpdate = Optional.empty();
+        initialPoseErrorSpecialized = Optional.empty();  // Reset specialized initial pose error
+    }
+
+   public synchronized void reset() {
         reset(Timer.getFPGATimestamp(), Pose2d.identity());
     }
 
-    public synchronized void resetKalmanFilters(double timestamp) {
+    public synchronized void resetKalmanFilters() {
        mKalmanFilter =
         new UnscentedKalmanFilter<>(
             Nat.N2(),
@@ -137,38 +159,129 @@ public class RobotState {
         return filteredMeasuredVelocity.getAverage();
     }
 
+    // New method to add specialized vision update with separate Kalman filter
+   // Method to access the latest specialized vision update
+    public synchronized Optional<VisionUpdate> getLatestSpecializedVisionUpdate() {
+        return mLatestSpecializedVisionUpdate;
+    }
+
+    // Method to access the specialized Kalman filter state
+    public synchronized Pose2d getSpecializedKalmanPose(double timestamp) {
+        Pose2d poseFromOdom = getPoseFromOdom(timestamp);
+        Translation2d kalmanPoseOffset = specializedVisionPoseComponent.getInterpolated(new InterpolatingDouble(timestamp));
+        return new Pose2d(kalmanPoseOffset.translateBy(poseFromOdom.getTranslation()), poseFromOdom.getRotation());
+    }
+
+    public synchronized Pose2d getLatestSpecializedKalmanPose() {
+        Pose2d poseFromOdom = getLatestPoseFromOdom().getValue();
+        return new Pose2d(specializedVisionPoseComponent.lastEntry().getValue().add(poseFromOdom.getTranslation()), poseFromOdom.getRotation());
+    }
+
+    // Accessor for specialized initial pose error
+    public synchronized Pose2d getInitialPoseErrorSpecialized() {
+        if (initialPoseErrorSpecialized.isEmpty()) {
+            return Pose2d.identity();
+        }
+        return Pose2d.fromTranslation(initialPoseErrorSpecialized.get());
+    }
+
 
     /**
      * Adds a Vision Update
      * @param visionUpdate
      */
     public synchronized void addVisionUpdate(VisionUpdate visionUpdate) {
-        mLatestVisionUpdate = Optional.ofNullable(visionUpdate);
-        if (!mLatestVisionUpdate.isEmpty()) {
-            //Get the Timestamp of the Vision Reading
+        // Use the same logic for both methods.
+        if (!mLatestVisionUpdate.isEmpty() || initialPoseError.isPresent()) {
+            // Get the Timestamp of the Vision Reading
             double visionTimestamp = mLatestVisionUpdate.get().getTimestamp();
             
+            // Get pose from odometry based on vision timestamp
             Pose2d odomToVehicle = getPoseFromOdom(visionTimestamp);
-
             Pose2d visionFieldToVehicle = Pose2d.fromTranslation(visionUpdate.getFieldToVision());
 
-            if (!mPoseAcceptor.shouldAcceptVision(mLatestVisionUpdate.get().getTimestamp(), visionFieldToVehicle, getLatestKalmanPose(),MeasuredVelocity, false)) {
+            // Check if the vision update should be accepted
+            if (!mPoseAcceptor.shouldAcceptVision(visionTimestamp, visionFieldToVehicle, getLatestGlobalKalmanPose(), MeasuredVelocity, false)) {
                 return;
             }
-            
 
-                var visionOdomError = visionFieldToVehicle.getTranslation().translateBy(odomToVehicle.getTranslation().inverse());
-                mDisplayVisionPose = visionFieldToVehicle;
-                try {
-                    mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0), VecBuilder.fill(visionOdomError.getTranslation().x(), visionOdomError.getTranslation().y()));
-                    visionPoseComponent.put(new InterpolatingDouble(visionTimestamp), Pose2d.fromTranslation(new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1))).getTranslation());
-                } catch (Exception e) {
-                    DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
-                }
-            } else {
-                mDisplayVisionPose = null;
+            // Calculate the vision odometry error and apply it to the Kalman filter
+            Translation2d visionOdomError = visionFieldToVehicle.getTranslation().translateBy(odomToVehicle.getTranslation().inverse());
+            mDisplayVisionPose = visionFieldToVehicle;
+
+            try {
+                // Use the correct Kalman filter depending on the method
+                mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0), VecBuilder.fill(visionOdomError.x(), visionOdomError.y()));
+                visionPoseComponent.put(new InterpolatingDouble(visionTimestamp), 
+                    Pose2d.fromTranslation(new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1))).getTranslation());
+            } catch (Exception e) {
+                DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
             }
-        
+        } else {
+            // Handle case when there's no recent vision update or initial pose error
+            double visionTimestamp = visionUpdate.timestamp;
+            Pose2d proximatePose = poseFromOdom.getInterpolated(new InterpolatingDouble(visionTimestamp));
+
+            Translation2d fieldToVision = visionUpdate.field_to_vision;
+            Translation2d odomToVehicleTranslation = proximatePose.getTranslation();
+            Translation2d fieldToOdom = fieldToVision.translateBy(odomToVehicleTranslation.inverse());
+
+            visionPoseComponent.put(new InterpolatingDouble(visionTimestamp), fieldToOdom);
+            initialPoseError = Optional.of(visionPoseComponent.lastEntry().getValue());
+
+            mKalmanFilter.setXhat(0, fieldToOdom.x());
+            mKalmanFilter.setXhat(1, fieldToOdom.y());
+        }
+
+        // Update the latest vision update
+        mLatestVisionUpdate = Optional.ofNullable(visionUpdate);
+    }
+
+    public synchronized void addSpecializedVisionUpdate(VisionUpdate visionUpdate) {
+        // Use the same logic as addVisionUpdate but with the specialized Kalman filter
+        if (!mLatestSpecializedVisionUpdate.isEmpty() || initialPoseErrorSpecialized.isPresent()) {
+            // Get the Timestamp of the Vision Reading
+            double visionTimestamp = mLatestSpecializedVisionUpdate.get().getTimestamp();
+            
+            // Get pose from odometry based on vision timestamp
+            Pose2d odomToVehicle = getPoseFromOdom(visionTimestamp);
+            Pose2d visionFieldToVehicle = Pose2d.fromTranslation(visionUpdate.getFieldToVision());
+
+            // Check if the vision update should be accepted
+            if (!mPoseAcceptor.shouldAcceptVision(visionTimestamp, visionFieldToVehicle, getLatestSpecializedKalmanPose(), MeasuredVelocity, false)) {
+                return;
+            }
+
+            // Calculate the vision odometry error and apply it to the specialized Kalman filter
+            Translation2d visionOdomError = visionFieldToVehicle.getTranslation().translateBy(odomToVehicle.getTranslation().inverse());
+            mDisplayVisionPose = visionFieldToVehicle;
+
+            try {
+                // Use the specialized Kalman filter
+                mSpecializedKalmanFilter.correct(VecBuilder.fill(0.0, 0.0), VecBuilder.fill(visionOdomError.x(), visionOdomError.y()));
+                specializedVisionPoseComponent.put(new InterpolatingDouble(visionTimestamp), 
+                    Pose2d.fromTranslation(new Translation2d(mSpecializedKalmanFilter.getXhat(0), mSpecializedKalmanFilter.getXhat(1))).getTranslation());
+            } catch (Exception e) {
+                DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
+            }
+        } else {
+            // Handle case when there's no recent vision update or initial pose error
+            double visionTimestamp = visionUpdate.timestamp;
+            Pose2d proximatePose = poseFromOdom.getInterpolated(new InterpolatingDouble(visionTimestamp));
+
+            Translation2d fieldToVision = visionUpdate.field_to_vision;
+            Translation2d odomToVehicleTranslation = proximatePose.getTranslation();
+            Translation2d fieldToOdom = fieldToVision.translateBy(odomToVehicleTranslation.inverse());
+
+            specializedVisionPoseComponent.put(new InterpolatingDouble(visionTimestamp), fieldToOdom);
+            initialPoseErrorSpecialized = Optional.of(specializedVisionPoseComponent.lastEntry().getValue());
+
+            mSpecializedKalmanFilter.setXhat(0, fieldToOdom.x());
+            mSpecializedKalmanFilter.setXhat(1, fieldToOdom.y());
+        }
+
+        // Update the latest specialized vision update
+        mLatestSpecializedVisionUpdate = Optional.ofNullable(visionUpdate);
     }
 
     public synchronized Pose2d getDisplayVisionPose() {
@@ -182,44 +295,44 @@ public class RobotState {
      * Return Initial Vision Offset for Pure Odometry Visualization Purposes
      * @return
      */
-    public synchronized Pose2d getInitialPose() {
-        if (initialPose.isEmpty()) return Pose2d.identity();
-        return Pose2d.fromTranslation(initialPose.get());
+    public synchronized Pose2d getInitialGlobalPoseError() {
+        if (initialPoseError.isEmpty()) return Pose2d.identity();
+        return Pose2d.fromTranslation(initialPoseError.get());
     }
 
-    public synchronized Translation2d getVisionPoseComponent(double timestamp) {
-        if (initialPose.isEmpty()) return Translation2d.identity();
-        return initialPose.get().inverse().translateBy(visionPoseComponent.getInterpolated(new InterpolatingDouble(timestamp)));
+    public synchronized Translation2d getGlobalVisionPoseComponent(double timestamp) {
+        if (initialPoseError.isEmpty()) return Translation2d.identity();
+        return initialPoseError.get().inverse().translateBy(visionPoseComponent.getInterpolated(new InterpolatingDouble(timestamp)));
     }
 
-    public synchronized Translation2d getAbsoluteVisionPoseComponent(double timestamp) {
+    public synchronized Translation2d getGlobalAbsoluteVisionPoseComponent(double timestamp) {
         return visionPoseComponent.getInterpolated(new InterpolatingDouble(timestamp));
     }
 
-    public synchronized Translation2d getLatestVisionPoseComponent() {
-        return getAbsoluteVisionPoseComponent(visionPoseComponent.lastKey().value);
+    public synchronized Translation2d getLatestGlobalVisionPoseComponent() {
+        return getGlobalAbsoluteVisionPoseComponent(visionPoseComponent.lastKey().value);
     }
     /**
      * Get Current Field to Vehicle using Filter Idea 1 (Offset Space) => Add the Offset outputted by the Filter to Current Odom
      * @param timestamp
      * @return
      */
-    public synchronized Pose2d getKalmanPose(double timestamp) {
+    public synchronized Pose2d getGlobalKalmanPose(double timestamp) {
         Pose2d poseFromOdom = getPoseFromOdom(timestamp);
 
-        Translation2d kalmanPoseOffset = getAbsoluteVisionPoseComponent(timestamp);
+        Translation2d kalmanPoseOffset = getGlobalAbsoluteVisionPoseComponent(timestamp);
         return new Pose2d(kalmanPoseOffset.translateBy(poseFromOdom.getTranslation()), poseFromOdom.getRotation());
 
     }
 
-    public synchronized Pose2d getAbosoluteKalmanPose(double timestamp) {
-        var initialPose_ = initialPose.orElse(Translation2d.identity());
-        return Pose2d.fromTranslation(initialPose_).transformBy(getKalmanPose(timestamp));
+    public synchronized Pose2d getAbosoluteGlobalKalmanPose(double timestamp) {
+        var initialPose_ = initialPoseError.orElse(Translation2d.identity());
+        return Pose2d.fromTranslation(initialPose_).transformBy(getGlobalKalmanPose(timestamp));
     }
 
-    public synchronized Pose2d getLatestKalmanPose() {
+    public synchronized Pose2d getLatestGlobalKalmanPose() {
         Pose2d poseFromOdom = getLatestPoseFromOdom().getValue();
-        return new Pose2d(getLatestVisionPoseComponent().getTranslation().add(poseFromOdom.getTranslation()), poseFromOdom.getRotation());
+        return new Pose2d(getLatestGlobalVisionPoseComponent().getTranslation().add(poseFromOdom.getTranslation()), poseFromOdom.getRotation());
     }
 
 	public void setIsAuto(boolean newAuto){
@@ -227,17 +340,17 @@ public class RobotState {
 	}
 
 
-    public synchronized Optional<VisionUpdate> getLatestVisionUpdate() {
+    public synchronized Optional<VisionUpdate> getLatestGlobalVisionUpdate() {
         return mLatestVisionUpdate;
     }
 
     public void outputTelemetry() {
-        // Logger.recordOutput("RobotState/Robot Velocity", getMeasuredVelocity().toString());
-        // Logger.recordOutput("RobotState/PoseFromOdometry",  new Pose2d(getLatestPoseFromOdom().getValue().getTranslation(), getLatestPoseFromOdom().getValue().getRotation().inverse()).wpi());
-        // Logger.recordOutput("RobotState/Vision Pose Component", getAbsoluteVisionPoseComponent(Timer.getFPGATimestamp()).wpi());
-        // Logger.recordOutput("RobotState/Filtered Pose", new Pose2d(getLatestKalmanPose().getTranslation(), getLatestKalmanPose().getRotation().inverse()).wpi());
-        // Logger.recordOutput("RobotState/SetPoint Pose", mSetpointPose.wpi());
-        // Logger.recordOutput("RobotState/Vision Pose", getDisplayVisionPose().wpi());
+        Logger.recordOutput("RobotState/Robot Velocity", getMeasuredVelocity().toString());
+        Logger.recordOutput("RobotState/PoseFromOdometry",  new Pose2d(getLatestPoseFromOdom().getValue().getTranslation(), getLatestPoseFromOdom().getValue().getRotation().inverse()).wpi());
+        Logger.recordOutput("RobotState/Vision Pose Component", getGlobalAbsoluteVisionPoseComponent(Timer.getFPGATimestamp()).wpi());
+        Logger.recordOutput("RobotState/Filtered Pose", new Pose2d(getLatestGlobalKalmanPose().getTranslation(), getLatestGlobalKalmanPose().getRotation().inverse()).wpi());
+        Logger.recordOutput("RobotState/SetPoint Pose", mSetpointPose.wpi());
+        Logger.recordOutput("RobotState/Vision Pose", getDisplayVisionPose().wpi());
    }
 
     public void setDisplaySetpointPose(Pose2d setpoint) {
@@ -245,12 +358,11 @@ public class RobotState {
     }
 	public static class VisionUpdate {
 		private double timestamp;
-		private Pose3d target_to_camera;
 		private double ta;
 		private Translation2d field_to_vision;
 		private int mID;
 
-		public VisionUpdate(int id, double timestamp,double ta, Pose3d target_to_camera,Translation2d field_to_vision) {
+		public VisionUpdate(int id, double timestamp,double ta,Translation2d field_to_vision) {
 			this.mID = id;
 			this.ta = ta;			
 			this.timestamp = timestamp;
@@ -261,11 +373,7 @@ public class RobotState {
 			return timestamp;
 		}
 
-		public Pose3d getTargetToCamera(){
-			return target_to_camera;
-		}
-
-		public Translation2d getFieldToVision(){
+        public Translation2d getFieldToVision(){
 			return field_to_vision;
 		}
 		
