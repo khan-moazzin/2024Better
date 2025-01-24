@@ -64,9 +64,7 @@ public class VisionDeviceManager extends Subsystem {
 	
 			@Override
 			public void onLoop(double timestamp) {
-				for (VisionDevice visionDevice : mAllCameras) {
-					visionDevice.update(timestamp);
-				}
+				
 
 
 			
@@ -87,6 +85,7 @@ public class VisionDeviceManager extends Subsystem {
 		}else{
 
 		for(VisionDevice device: mAllCameras){
+			device.update(Timer.getTimestamp());
 			mHeadingAvg.addNumber(device.getEstimatedHeading());
 				System.out.println(!device.getVisionUpdate().isEmpty());
 			if(!device.getVisionUpdate().isEmpty()){
