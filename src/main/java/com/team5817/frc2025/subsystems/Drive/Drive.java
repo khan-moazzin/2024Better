@@ -49,6 +49,7 @@ import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends Subsystem {
@@ -527,7 +528,6 @@ public class Drive extends Subsystem {
 		}
 		return states;
 	}
-
 
 	public Pose2d getPose() {
 		return RobotState.getInstance().getLatestGlobalPose();

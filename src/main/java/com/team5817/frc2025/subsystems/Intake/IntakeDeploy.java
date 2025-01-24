@@ -1,6 +1,7 @@
 package com.team5817.frc2025.subsystems.Intake;
 
 import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.IntakeDeployConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
@@ -8,23 +9,20 @@ import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder;
 import com.team5817.lib.requests.Request;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
+
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team254.lib.util.DelayedBoolean;
 public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
-	LoggedMechanism2d mMech = new LoggedMechanism2d(2, 2);
-	LoggedMechanismRoot2d mRoot = mMech.getRoot("IntakeRoot", .8, 0);
-	LoggedMechanismLigament2d zero = mRoot.append(new LoggedMechanismLigament2d("IntakeSupp", Units.inchesToMeters(7), 90));
-	LoggedMechanismLigament2d one = zero.append(new LoggedMechanismLigament2d("IntakeOne", Units.inchesToMeters(9), 90));
-	LoggedMechanismLigament2d two = one.append(new LoggedMechanismLigament2d("IntakeTwo", Units.inchesToMeters(9), 50));
+	
 	public static IntakeDeploy mInstance;
 
 	public static IntakeDeploy getInstance() {
@@ -42,10 +40,10 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
         DEPLOY(0.3, kStrictError, true),//TODO
         CLEAR(0.0, kLenientError),//TODO
         UNJAM(0.0, kLenientError),//TODO
-        STOW(2.0, kMediumError),
+        STOW(0.0, kMediumError),
 		ALGAE(0.0, kMediumError, true),
 		HUMAN(0.0, kStrictError, true),
-		ZERO(2.0, kStrictError);
+		ZERO(0.0, kStrictError);
 
 
         double output = 0;
@@ -136,11 +134,11 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 	@Override
 	public void outputTelemetry() {
+        Robot.mechPoses[0] = new Pose3d(new Translation3d(-.325,0,.261), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(0.3-mServoInputs.position_units), Units.degreesToRadians(0)));
         Logger.recordOutput("IntakeDeploy/Homing", mHoming);
         Logger.recordOutput("IntakeDeploy/Within Homing Window", atHomingLocation());
+			
 		
-		one.setAngle(90-mServoInputs.position_rots*360);
-		Logger.recordOutput("IntakeDeploy/Mech", mMech);
 		SmartDashboard.putBoolean(mConstants.kName + "/Homing", mHoming);
 		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());
 		super.outputTelemetry();

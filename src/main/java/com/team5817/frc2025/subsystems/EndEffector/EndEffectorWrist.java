@@ -1,5 +1,6 @@
 package com.team5817.frc2025.subsystems.EndEffector;
 
+import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.EndEffectorWristConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
@@ -8,6 +9,11 @@ import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder;
 import com.team5817.lib.requests.Request;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
 import org.littletonrobotics.junction.Logger;
@@ -15,8 +21,6 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
-	LoggedMechanismLigament2d two = Elevator.getInstance().midBar.append(new LoggedMechanismLigament2d("End Effector Wrist", 0.15, -90));
-	LoggedMechanismLigament2d three = two.append(new LoggedMechanismLigament2d("End Effector Rod", 0.15, -90));
 
 	
 	public static EndEffectorWrist mInstance;
@@ -60,10 +64,6 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 
 	public EndEffectorWrist(final ServoMotorSubsystemConstants constants, final AbsoluteEncoderConstants encoder_constants) {
 		super(constants, encoder_constants);
-		two.setLineWeight(3);
-		three.setLineWeight(3);
-		two.setColor(new Color8Bit(255,0,0));
-		three.setColor(new Color8Bit(255,0,0));
 
 		mMain.setPosition(homeAwareUnitsToRotations(120.0));
 		enableSoftLimits(false);
@@ -100,7 +100,7 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 
 	@Override
 	public void outputTelemetry() {
-		two.setAngle(-90+8*mServoInputs.position_rots*360);
+        Robot.mechPoses[5] =Robot.mechPoses[4].transformBy(new Transform3d(new Translation3d(.221,0,.278 ), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(mServoInputs.position_units), Units.degreesToRadians(0))));
 		super.outputTelemetry();
 	}
 

@@ -54,7 +54,7 @@ public class DriverControls {
 				mControlBoard.setSwerveScalar(1);
 			if(driver.aButton.isBeingPressed()){
 				s.request(s.AlgaeSmartCleanRequest());
-			if(driver.releasedAny(driver.leftBumper,driver.leftTrigger))
+			if(driver.releasedAny(driver.leftBumper,driver.leftTrigger,driver.aButton))
 				s.request(s.GoalRequest(GoalState.STOW));
 
 		}

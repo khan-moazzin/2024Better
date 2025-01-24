@@ -1,5 +1,6 @@
 package com.team5817.frc2025.subsystems.Elevator;
 
+import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.ElevatorConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
@@ -7,10 +8,13 @@ import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 import com.team5817.lib.requests.Request;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
@@ -30,12 +34,7 @@ public class Elevator extends ServoMotorSubsystem {
 	final static double kMediumError = 2;
 	final static double kLenientError = 5;
 
-	LoggedMechanism2d mech = new LoggedMechanism2d(2,2);
-	LoggedMechanismRoot2d root = mech.getRoot("Elevator", .85,0);
-	LoggedMechanismLigament2d low = root.append(new LoggedMechanismLigament2d("low", .4, 85));
-	public LoggedMechanismLigament2d midBar = low.append(new LoggedMechanismLigament2d("lowBar", .2, -90));
-	LoggedMechanismLigament2d mid = low.append(new LoggedMechanismLigament2d("mid", .3, 0));
-	LoggedMechanismLigament2d algaeBar = mid.append(new LoggedMechanismLigament2d("algaeBar", .2, -90));
+	
 
     public enum State {
         L4(1.4, kStrictError),
@@ -95,10 +94,12 @@ public class Elevator extends ServoMotorSubsystem {
 
 	@Override
 	public void outputTelemetry() {
+		Pose3d transform = new Pose3d(Math.cos(Units.degreesToRadians(84))*mServoInputs.position_units,0,Math.sin(Units.degreesToRadians(84))*mServoInputs.position_units,new Rotation3d());
+		Robot.mechPoses[2] = transform.div(3);
+		Robot.mechPoses[3] = transform.div(3).times(2);
+		Robot.mechPoses[4] = transform;
 
-		low.setLength(.4+mServoInputs.position_units);
 
-		Logger.recordOutput("Elevator/Mech", mech);
 		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());
 		super.outputTelemetry();
 	}

@@ -14,10 +14,14 @@ import com.team254.lib.util.MovingAverage;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
+
+import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.Logger;
 
 public class VisionDeviceManager extends Subsystem {
@@ -71,26 +75,6 @@ public class VisionDeviceManager extends Subsystem {
 			// 	}
 			// }
 
-			for(VisionDevice device: mAllCameras){
-				mHeadingAvg.addNumber(device.getEstimatedHeading());
-
-				if(!device.getVisionUpdate().isEmpty()){
-					VisionUpdate update = device.getVisionUpdate().get();
-					RobotState.getInstance().addVisionUpdate(update);
-
-					if (DriverStation.getAlliance().get() == Alliance.Red) {
-						if(PoseEstimatorConstants.redTagIDFilters.contains(update.getID())){
-							mRobotState.addVisionUpdate(update);
-						}
-						
-					}
-					else{
-						if(PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())){
-							mRobotState.addVisionUpdate(update);
-						}
-					}
-			}
-			}
 			
 			
 			}
@@ -105,6 +89,30 @@ public class VisionDeviceManager extends Subsystem {
 	public void readPeriodicInputs() {
 		mAllCameras.forEach(VisionDevice::readPeriodicInputs);
 		mMovingAvgRead = mHeadingAvg.getAverage();
+		if(!Robot.isReal()&&Constants.mode==Constants.Mode.SIM){
+			RobotState.getInstance().addVisionUpdate(new VisionUpdate(1,Timer.getTimestamp(),1,new Pose3d(), RobotState.getInstance().getOdomPose(Timer.getTimestamp()).getTranslation(),0));
+		}else{
+
+		for(VisionDevice device: mAllCameras){
+			mHeadingAvg.addNumber(device.getEstimatedHeading());
+
+			if(!device.getVisionUpdate().isEmpty()){
+				VisionUpdate update = device.getVisionUpdate().get();
+				RobotState.getInstance().addVisionUpdate(update);
+
+				if (DriverStation.getAlliance().get() == Alliance.Red) {
+					if(PoseEstimatorConstants.redTagIDFilters.contains(update.getID())){
+						mRobotState.addVisionUpdate(update);
+					}
+					
+				}
+				else{
+					if(PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())){
+						mRobotState.addVisionUpdate(update);
+					}
+				}
+		}
+		}}
 	}
 
 	@Override

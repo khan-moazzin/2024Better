@@ -22,9 +22,20 @@ import com.team5817.frc2025.controlboard.ControlBoard;
 import com.team5817.frc2025.controlboard.DriverControls;
 import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.loops.Looper;
+import com.team5817.frc2025.subsystems.Superstructure;
+import com.team5817.frc2025.subsystems.Climb.Climb;
 import com.team5817.frc2025.subsystems.Drive.Drive;
+import com.team5817.frc2025.subsystems.Elevator.Elevator;
+import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
+import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
+import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Util;
+
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -32,7 +43,13 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
 public class Robot extends LoggedRobot {
+    public static Pose3d[] mechPoses = new Pose3d[6];
+    static{
+        for(int i = 0; i < 6; i++){
+            mechPoses[i] = new Pose3d();
+        }
 
+    }
     SubsystemManager mSubsystemManager;
     // Superstructure s;
     VisionDeviceManager mVision = VisionDeviceManager.getInstance();
@@ -90,14 +107,14 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
 
       controls = new DriverControls();
       mSubsystemManager.setSubsystems(
-          Drive.getInstance()
-          // Superstructure.getInstance()
-          // VisionDeviceManager.getInstance(),
-          // IntakeDeploy.getInstance(),
-          // Climb.getInstance(),
-          // Elevator.getInstance(),
-          // EndEffectorRollers.getInstance(),
-          // EndEffectorWrist.getInstance()
+          Drive.getInstance(),
+          Superstructure.getInstance(),
+          VisionDeviceManager.getInstance(),
+          IntakeDeploy.getInstance(),
+          Climb.getInstance(),
+          Elevator.getInstance(),
+          EndEffectorRollers.getInstance(),
+          EndEffectorWrist.getInstance()
           );
           
           mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -110,7 +127,7 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
       
       // mEnabledLooper.outputToSmartDashboard();
       //     mSubsystemManager.outputLoopTimes();
-      
+      Logger.recordOutput("Mechs", mechPoses);
       
     }
   
@@ -141,8 +158,8 @@ boolean disableGyroReset = false;
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-      // controls.twoControllerMode();
-      controls.oneControllerMode();
+      controls.twoControllerMode();
+      // controls.oneControllerMode();
       controlBoard.update();
       if(!Robot.isReal() && Constants.mode == Constants.Mode.SIM){
         drive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(

@@ -649,7 +649,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	@Override
 	public synchronized void outputTelemetry() {
 		Logger.recordOutput(mConstants.kName + "/Control Mode", mControlState);
-
+		Logger.recordOutput(mConstants.kName + "/Demand", mServoOutputs.demand);
 	}
 
 	@Override

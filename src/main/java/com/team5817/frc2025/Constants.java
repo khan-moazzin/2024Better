@@ -331,7 +331,7 @@ public class Constants {
 			kDeployServoConstants.kMainConstants.counterClockwisePositive = false;
 
 			kDeployServoConstants.kHomePosition = 0; // degrees
-			kDeployServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+			kDeployServoConstants.kRotationsPerUnitDistance = 1;
 
 			kDeployServoConstants.kMaxUnitsLimit = 1.5;
 			kDeployServoConstants.kMinUnitsLimit = 0.0;
