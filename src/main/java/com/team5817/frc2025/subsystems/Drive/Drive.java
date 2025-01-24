@@ -64,7 +64,7 @@ public class Drive extends Subsystem {
 	}
 
 	private WheelTracker mWheelTracker;
-	private Pigeon mPigeon = Pigeon.getInstance();
+	private Pigeon mPigeon;
 	public SwerveModule[] mModules;
 
 	private SwerveInputs mPeriodicIO = new SwerveInputs();
@@ -134,6 +134,8 @@ public class Drive extends Subsystem {
 		mHeadingController = new SwerveHeadingController();
 
 		mMotionPlanner.reset();
+		Pigeon.registerGyroSim(driveSimulation);
+		mPigeon = Pigeon.getInstance();
 		mPigeon.setYaw(0.0);
 		mWheelTracker = new WheelTracker(mModules);
 		mSetpointGenerator = new SwerveSetpointGenerator(SwerveConstants.kKinematics);
@@ -601,7 +603,7 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Heading", mPeriodicIO.heading);
 		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
 		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestKalmanPose().wpi());
-
+		
 
 		for (SwerveModule module : mModules) {
 			module.outputTelemetry();

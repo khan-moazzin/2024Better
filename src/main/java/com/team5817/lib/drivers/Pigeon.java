@@ -2,7 +2,10 @@ package com.team5817.lib.drivers;
 
 import static edu.wpi.first.units.Units.Degree;
 
+import java.time.chrono.ThaiBuddhistChronology;
 
+import org.ironmaple.simulation.drivesims.GyroSimulation;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -15,6 +18,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import com.team254.lib.geometry.Rotation2d;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Ports;
+import com.team5817.frc2025.Robot;
 
 public class Pigeon {
 
@@ -39,6 +43,10 @@ public class Pigeon {
 	private Pigeon(int port) {
 		mGyro = new Pigeon2(port, "canivore1");
 		mGyro.getConfigurator().apply(new Pigeon2Configuration());
+	}
+	static SwerveDriveSimulation driveSim;
+	public static void registerGyroSim(SwerveDriveSimulation sim){
+		driveSim = sim;
 	}
 
 
@@ -89,7 +97,9 @@ public class Pigeon {
 		System.out.println("Reset gyro to " + getPitch().getDegrees());
 	}
 	public Rotation2d getUnadjustedYaw() {
-
+		if(!Robot.isReal()&&Constants.mode==Constants.Mode.SIM){
+			return Rotation2d.fromDegrees(-driveSim.getSimulatedDriveTrainPose().getRotation().getDegrees());
+		}
 		return Rotation2d.fromDegrees(
 			BaseStatusSignal.getLatencyCompensatedValue(getYawStatusSignal(), getRateStatusSignal()).in(Degree));
 	}
