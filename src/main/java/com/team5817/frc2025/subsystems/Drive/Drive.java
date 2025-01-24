@@ -601,6 +601,7 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Heading", mPeriodicIO.heading);
 		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
 		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestGlobalPose().wpi());
+		Logger.recordOutput("RobotState/Erorr", RobotState.getInstance().getLatestGlobalError().wpi());
 
 
 		for (SwerveModule module : mModules) {

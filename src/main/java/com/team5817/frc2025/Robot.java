@@ -52,7 +52,7 @@ public class Robot extends LoggedRobot {
   
       DriverStation.startDataLog(DataLogManager.getLog());
   
-      RobotState.getInstance().resetKalman();
+      RobotState.getInstance().reset();
       // for(HashMap.Entry<String, AutoBase> entry : autos.entrySet()) {
         // String N = entry.getKey();
         // AutoBase A = entry.getValue();
@@ -90,9 +90,9 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
 
       controls = new DriverControls();
       mSubsystemManager.setSubsystems(
-          Drive.getInstance()
+          Drive.getInstance(),
           // Superstructure.getInstance()
-          // VisionDeviceManager.getInstance(),
+          VisionDeviceManager.getInstance()
           // IntakeDeploy.getInstance(),
           // Climb.getInstance(),
           // Elevator.getInstance(),

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
+
 import org.littletonrobotics.junction.Logger;
 
 public class VisionDeviceManager extends Subsystem {
@@ -46,36 +47,32 @@ public class VisionDeviceManager extends Subsystem {
 
 	public VisionDeviceManager() {
 		mDomCamera = new VisionDevice("limelight-dom");
-		mSubCamera = new VisionDevice("limelight-sub");
-		mAllCameras = List.of(mDomCamera, mSubCamera);
+		// mSubCamera = new VisionDevice("limelight-sub");
+		mAllCameras = List.of(mDomCamera);
 		mRobotState = RobotState.getInstance();
 	}
 
 	@Override
 	public void registerEnabledLoops(ILooper enabledLooper){
-		enabledLooper.register(new Loop() {
+			enabledLooper.register(new Loop() {
 			@Override
 			public void onStart(double timestamp) {
 			}
 	
 			@Override
 			public void onLoop(double timestamp) {
-			// if(mDomCamera.getVisionUpdate().isPresent()&&mSubCamera.getVisionUpdate().isPresent()){
-			// 	if(translationalFilter(mDomCamera.getVisionUpdate().get().getTargetToCamera(), mSubCamera.getVisionUpdate().get().getTargetToCamera())||epipolarVerification(null, null)){
+				for (VisionDevice visionDevice : mAllCameras) {
+					visionDevice.update(timestamp);
+				}
 
-			// 	}
-			// }else{
-			// 	for(VisionDevice device: mAllCameras){
-			// 		if(device.getVisionUpdate().isPresent())
-			// 			RobotState.getInstance().addVisionUpdate(device.getVisionUpdate().get());
-			// 	}
-			// }
 
 			for(VisionDevice device: mAllCameras){
 				mHeadingAvg.addNumber(device.getEstimatedHeading());
-
+				System.out.println(!device.getVisionUpdate().isEmpty());
 				if(!device.getVisionUpdate().isEmpty()){
 					VisionUpdate update = device.getVisionUpdate().get();
+
+					System.out.println("trying to send vision update");
 					RobotState.getInstance().addVisionUpdate(update);
 
 					if (DriverStation.getAlliance().get() == Alliance.Red) {
@@ -103,20 +100,20 @@ public class VisionDeviceManager extends Subsystem {
 
 	@Override
 	public void readPeriodicInputs() {
-		mAllCameras.forEach(VisionDevice::readPeriodicInputs);
 		mMovingAvgRead = mHeadingAvg.getAverage();
 	}
 
 	@Override
 	public void writePeriodicOutputs() {
-		mAllCameras.forEach(VisionDevice::writePeriodicOutputs);
 	}
 
 	@Override
 	public void outputTelemetry() {
-		mAllCameras.forEach(VisionDevice::outputTelemetry);
 		SmartDashboard.putNumber("Vision heading moving avg", getMovingAverageRead());
 		SmartDashboard.putBoolean("vision disabled", visionDisabled());
+		for(VisionDevice device: mAllCameras){
+			device.outputTelemetry();
+		}
 	}
 
 	public VisionDevice getBestDevice(){
