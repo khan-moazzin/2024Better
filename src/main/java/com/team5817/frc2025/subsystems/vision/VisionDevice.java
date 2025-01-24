@@ -1,10 +1,11 @@
 package com.team5817.frc2025.subsystems.vision;
 
+import com.team5817.frc2025.RobotState;
 import com.team5817.frc2025.RobotState.VisionUpdate;
-import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.vision.LimelightHelpers.PoseEstimate;
+import com.team5817.lib.drivers.Pigeon;
 import com.team5817.lib.drivers.Subsystem;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
@@ -12,7 +13,6 @@ import com.team254.lib.util.MovingAverage;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Timer;
 
 import java.util.Optional;
 
@@ -38,51 +38,37 @@ public class VisionDevice extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
+
+			if (mPeriodicIO.seesTarget && mPeriodicIO.is_connected) {
+				final double realTime = timestamp - mPeriodicIO.latency;
 				mPeriodicIO.fps = mOutputTable.getEntry("fps").getInteger(0);
 				mPeriodicIO.latency = mOutputTable.getEntry("latency").getDouble(0.0);
 				mPeriodicIO.tagId = mOutputTable.getEntry("tid").getNumber(-1).intValue();
 				mPeriodicIO.seesTarget = mOutputTable.getEntry("tv").getBoolean(false);
-			
-
-				final double realTime = timestamp - mPeriodicIO.latency;
-
-				if (mPeriodicIO.seesTarget && mPeriodicIO.is_connected) {
 					
-					mPeriodicIO.mt1Pose = new Pose2d(LimelightHelpers.getBotPose2d_wpiBlue(mName));
-
-					addHeadingObservation(mPeriodicIO.mt1Pose.getRotation());
-					PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mName);
-					mPeriodicIO.targetToCamera = LimelightHelpers.getTargetPose3d_CameraSpace(mName);
-					mPeriodicIO.tagCounts = poseEstimate.tagCount;
-					mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
-
-					double std_dev_multiplier = 1.0;
-
-			Pose3d pose3d = FieldLayout.kTagMap.getTagPose(mPeriodicIO.tagId).get();
-			double dist = new Pose2d(pose3d.toPose2d()).distance(mPeriodicIO.mt2Pose);//make it cam pose
-
-
-			// Estimate standard deviation of vision measurement
-			double xyStdDev = std_dev_multiplier
-					* (0.1)
-					* ((0.01 * Math.pow(dist, 2.0)) + (0.005 * Math.pow(dist, 2.0)))
-					;
-			xyStdDev = Math.max(0.02, xyStdDev);
-					VisionUpdate visionUpdate = new VisionUpdate(realTime, mPeriodicIO.ta, mPeriodicIO.targetToCamera, mPeriodicIO.mt2Pose.getTranslation(), xyStdDev);//HOW DO YOU FIND STD DEV
-					mPeriodicIO.visionUpdate = Optional.of(visionUpdate);
+				mPeriodicIO.mt1Pose = new Pose2d(LimelightHelpers.getBotPose2d_wpiBlue(mName));
+				PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mName);
+				mPeriodicIO.targetToCamera = LimelightHelpers.getTargetPose3d_CameraSpace(mName);
+				mPeriodicIO.tagCounts = poseEstimate.tagCount;
+				mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
+				VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, timestamp,mPeriodicIO.ta, mPeriodicIO.targetToCamera, mPeriodicIO.mt2Pose.getTranslation(), realTime);
+				mPeriodicIO.visionUpdate = Optional.of(visionUpdate);
 				}
-				else{
-					mPeriodicIO.visionUpdate = Optional.empty();
-				}
+
+				LimelightHelpers.SetRobotOrientation(mName, Pigeon.getInstance().getYaw().getDegrees(), 0, 0, 0, 0, 0);
+
 			}
 
 			@Override
 			public void onStop(double timestamp) {
 				mHeadingAverage.clear();
 			}
-		});
-	}
+			});
+		}
 
+	public boolean movingAverageReady(){
+		return mHeadingAverage.getSize() == 100;
+	}
 
 	public void addHeadingObservation(Rotation2d heading) {
 		double degrees = heading.getDegrees();
@@ -92,30 +78,13 @@ public class VisionDevice extends Subsystem {
 		mHeadingAverage.addNumber(degrees);
 	}
 
+	public double getEstimatedHeading(){
+		return mHeadingAverage.getAverage();
+	}
+
 	@Override
 	public void readPeriodicInputs() {
-		double timestamp = Timer.getTimestamp();
-		mPeriodicIO.fps = mOutputTable.getEntry("fps").getInteger(0);
-		mPeriodicIO.latency = mOutputTable.getEntry("latency").getDouble(0.0);
-		mPeriodicIO.tagId = mOutputTable.getEntry("tid").getNumber(-1).intValue();
-		mPeriodicIO.seesTarget = mOutputTable.getEntry("tv").getBoolean(false);
-	
 
-		final double realTime = timestamp - mPeriodicIO.latency;
-
-		if (mPeriodicIO.seesTarget && mPeriodicIO.is_connected) {
-			
-			mPeriodicIO.mt1Pose = new Pose2d(LimelightHelpers.getBotPose2d_wpiBlue(mName));
-
-			addHeadingObservation(mPeriodicIO.mt1Pose.getRotation());
-
-			PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mName);
-			mPeriodicIO.targetToCamera = LimelightHelpers.getTargetPose3d_CameraSpace(mName);
-			mPeriodicIO.tagCounts = poseEstimate.tagCount;
-			mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
-			VisionUpdate visionUpdate = new VisionUpdate(timestamp,mPeriodicIO.ta, mPeriodicIO.targetToCamera, mPeriodicIO.mt2Pose.getTranslation(), realTime);
-			mPeriodicIO.visionUpdate = Optional.of(visionUpdate);
-		}
 
 
 	}
@@ -126,11 +95,12 @@ public class VisionDevice extends Subsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
-		// No-op
+
 	}
 	public Optional<VisionUpdate> getVisionUpdate(){
 		return mPeriodicIO.visionUpdate;
 	}
+
 	public static class PeriodicIO {
 
 	// inputs
@@ -152,6 +122,7 @@ public class VisionDevice extends Subsystem {
 		public double tagCounts = 0;
 		public Pose2d mt2Pose = new Pose2d();
 		public Pose2d mt1Pose = new Pose2d();
+		public Pose2d specializedPose = new Pose2d();
 		public Pose3d targetToCamera = new Pose3d();
 	}
 }

@@ -3,6 +3,9 @@ package com.team5817.frc2025;
 import static edu.wpi.first.units.Units.Inch;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import java.lang.reflect.Array;
+import java.util.List;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -295,7 +298,13 @@ public class Constants {
 	public static VisionDeviceConstants kDomVisionDevice = new VisionDeviceConstants(); // dot 13
 	public static VisionDeviceConstants kSubVisionDevice = new VisionDeviceConstants(); // dot 12
 
+	public static List<Integer> redTagIDFilters;
+	public static List<Integer> blueTagIDFilters;
+
 	static {
+		redTagIDFilters = List.of();
+		blueTagIDFilters = List.of();
+
 		kDomVisionDevice.kTableName = "limelight-Dom";
 		kDomVisionDevice.kRobotToCamera = new Transform3d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325),Units.inchesToMeters(0), 
 				new Rotation3d(0,0,0));

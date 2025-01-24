@@ -1,11 +1,12 @@
 package com.team5817.frc2025.subsystems.vision;
 
 import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.RobotState;
 import com.team5817.frc2025.Constants.PoseEstimatorConstants;
+import com.team5817.frc2025.RobotState.VisionUpdate;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
-import com.team5817.lib.TunableNumber;
 import com.team5817.lib.drivers.Subsystem;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Translation3d;
@@ -13,6 +14,8 @@ import com.team254.lib.util.MovingAverage;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -30,6 +33,7 @@ public class VisionDeviceManager extends Subsystem {
 
 	private VisionDevice mDomCamera;
 	private VisionDevice mSubCamera;
+	private RobotState mRobotState;
 
 	private List<VisionDevice> mAllCameras;
 
@@ -44,6 +48,7 @@ public class VisionDeviceManager extends Subsystem {
 		mDomCamera = new VisionDevice("limelight-dom");
 		mSubCamera = new VisionDevice("limelight-sub");
 		mAllCameras = List.of(mDomCamera, mSubCamera);
+		mRobotState = RobotState.getInstance();
 	}
 
 	@Override
@@ -55,15 +60,36 @@ public class VisionDeviceManager extends Subsystem {
 	
 			@Override
 			public void onLoop(double timestamp) {
-			if(mDomCamera.getVisionUpdate().isPresent()&&mSubCamera.getVisionUpdate().isPresent()){
-				if(translationalFilter(mDomCamera.getVisionUpdate().get().getTargetToCamera(), mSubCamera.getVisionUpdate().get().getTargetToCamera())||epipolarVerification(null, null)){
+			// if(mDomCamera.getVisionUpdate().isPresent()&&mSubCamera.getVisionUpdate().isPresent()){
+			// 	if(translationalFilter(mDomCamera.getVisionUpdate().get().getTargetToCamera(), mSubCamera.getVisionUpdate().get().getTargetToCamera())||epipolarVerification(null, null)){
 
-				}
-			}else{
-				for(VisionDevice device: mAllCameras){
-					if(device.getVisionUpdate().isPresent())
-						RobotState.getInstance().addVisionUpdate(device.getVisionUpdate().get());
-				}
+			// 	}
+			// }else{
+			// 	for(VisionDevice device: mAllCameras){
+			// 		if(device.getVisionUpdate().isPresent())
+			// 			RobotState.getInstance().addVisionUpdate(device.getVisionUpdate().get());
+			// 	}
+			// }
+
+			for(VisionDevice device: mAllCameras){
+				mHeadingAvg.addNumber(device.getEstimatedHeading());
+
+				if(!device.getVisionUpdate().isEmpty()){
+					VisionUpdate update = device.getVisionUpdate().get();
+					RobotState.getInstance().addVisionUpdate(update);
+
+					if (DriverStation.getAlliance().get() == Alliance.Red) {
+						if(PoseEstimatorConstants.redTagIDFilters.contains(update.getID())){
+							mRobotState.addVisionUpdate(update);
+						}
+						
+					}
+					else{
+						if(PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())){
+							mRobotState.addVisionUpdate(update);
+						}
+					}
+			}
 			}
 			
 			
