@@ -61,7 +61,7 @@ public class DriverControls {
 			if(driver.xButton.isBeingPressed())
 				s.setGoal(GoalState.L3);
 			if(driver.yButton.isBeingPressed())
-				s.setGoal(GoalState.L2);
+				s.setGoal(GoalState.L1);
 			
 			if(driver.releasedAny(driver.leftBumper,driver.leftTrigger,driver.aButton))
 				s.setGoal(GoalState.STOW);

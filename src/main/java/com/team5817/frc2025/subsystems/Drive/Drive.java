@@ -189,7 +189,7 @@ public class Drive extends Subsystem {
 					
 				}
 					
-				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(x, y, omega);
+				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(x, y, 0);
 				return;
 			
 		} else if (mControlState != DriveControlState.OPEN_LOOP) {

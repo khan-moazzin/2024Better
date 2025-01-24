@@ -505,8 +505,8 @@ public class Constants {
 			kWristServoConstants.kKs = 0.2;
 			kWristServoConstants.kKg = 0.2;
 
-			kWristServoConstants.kCruiseVelocity = 400.0; // degrees / s
-			kWristServoConstants.kAcceleration = 10000.0; // degrees / s^2
+			kWristServoConstants.kCruiseVelocity = 4000.0; // degrees / s
+			kWristServoConstants.kAcceleration = 100000.0; // degrees / s^2
 
 			kWristServoConstants.kMaxForwardOutput = 12.0;
 			kWristServoConstants.kMaxReverseOutput = -12.0;

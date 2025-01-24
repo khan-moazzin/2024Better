@@ -43,9 +43,9 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
         L3(.1, kStrictError),
         L2(.1, kStrictError),
         L1(0, kStrictError),
-        A1(0.4, kMediumError),
-        A2(0.4, kMediumError),
-        NET(0.4, kMediumError),
+        A1(0.48, kMediumError),
+        A2(0.48, kMediumError),
+        NET(0.48, kMediumError),
         ZERO(.0, kLenientError),
         INTAKING(.48, kStrictError),
         STOW(0.48, kStrictError);
