@@ -232,12 +232,12 @@ public class RobotState {
     }
 
     public void outputTelemetry() {
-        Logger.recordOutput("RobotState/Robot Velocity", getMeasuredVelocity().toString());
-        Logger.recordOutput("RobotState/PoseFromOdometry",  new Pose2d(getLatestPoseFromOdom().getValue().getTranslation(), getLatestPoseFromOdom().getValue().getRotation().inverse()).wpi());
-        Logger.recordOutput("RobotState/Vision Pose Component", getAbsoluteVisionPoseComponent(Timer.getFPGATimestamp()).wpi());
-        Logger.recordOutput("RobotState/Filtered Pose", new Pose2d(getLatestKalmanPose().getTranslation(), getLatestKalmanPose().getRotation().inverse()).wpi());
-        Logger.recordOutput("RobotState/SetPoint Pose", mSetpointPose.wpi());
-        Logger.recordOutput("RobotState/Vision Pose", getDisplayVisionPose().wpi());
+        // Logger.recordOutput("RobotState/Robot Velocity", getMeasuredVelocity().toString());
+        // Logger.recordOutput("RobotState/PoseFromOdometry",  new Pose2d(getLatestPoseFromOdom().getValue().getTranslation(), getLatestPoseFromOdom().getValue().getRotation().inverse()).wpi());
+        // Logger.recordOutput("RobotState/Vision Pose Component", getAbsoluteVisionPoseComponent(Timer.getFPGATimestamp()).wpi());
+        // Logger.recordOutput("RobotState/Filtered Pose", new Pose2d(getLatestKalmanPose().getTranslation(), getLatestKalmanPose().getRotation().inverse()).wpi());
+        // Logger.recordOutput("RobotState/SetPoint Pose", mSetpointPose.wpi());
+        // Logger.recordOutput("RobotState/Vision Pose", getDisplayVisionPose().wpi());
    }
 
     public void setDisplaySetpointPose(Pose2d setpoint) {

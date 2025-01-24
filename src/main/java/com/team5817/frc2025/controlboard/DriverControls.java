@@ -6,6 +6,7 @@ import com.team5817.frc2025.subsystems.LEDs;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.frc2025.subsystems.Drive.Drive;
+import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
 
 public class DriverControls {
 
@@ -52,9 +53,11 @@ public class DriverControls {
 				mControlBoard.setSwerveScalar(.5);
 			else
 				mControlBoard.setSwerveScalar(1);
-			if(driver.aButton.isBeingPressed())
-				// s.AlgaeSmartCleanRequest();
+			if(driver.aButton.isBeingPressed()){
 				s.setGoal(GoalState.L4);
+				mDrive.autoAlign();
+			}
+				// s.AlgaeSmartCleanRequest();
 			if(driver.bButton.isBeingPressed())
 				s.setGoal(GoalState.GROUND_CORAL_INTAKE);
 			
@@ -63,8 +66,10 @@ public class DriverControls {
 			if(driver.yButton.isBeingPressed())
 				s.setGoal(GoalState.L1);
 			
-			if(driver.releasedAny(driver.leftBumper,driver.leftTrigger,driver.aButton))
+			if(driver.releasedAny(driver.leftBumper,driver.leftTrigger,driver.aButton)){
 				s.setGoal(GoalState.STOW);
+				mDrive.setControlState(DriveControlState.OPEN_LOOP);
+			}
 
 		
 		}else {

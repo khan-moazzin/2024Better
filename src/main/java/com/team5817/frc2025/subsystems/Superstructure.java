@@ -357,8 +357,6 @@ public class Superstructure extends Subsystem {
 	private Request ScoreGoalRequest(SuperstructureState goal) {
 		if(!(goal.mType == SuperstructureState.Type.SCORING)){
 			System.out.println("Wrong Goal Type");
-			return new ParallelRequest(
-			);
 		}
 		return new SequentialRequest(
 			new ParallelRequest(

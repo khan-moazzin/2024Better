@@ -98,7 +98,7 @@ public class Pigeon {
 	}
 	public Rotation2d getUnadjustedYaw() {
 		if(!Robot.isReal()&&Constants.mode==Constants.Mode.SIM){
-			return Rotation2d.fromDegrees(-driveSim.getSimulatedDriveTrainPose().getRotation().getDegrees());
+			return Rotation2d.fromDegrees(driveSim.getSimulatedDriveTrainPose().getRotation().getDegrees());
 		}
 		return Rotation2d.fromDegrees(
 			BaseStatusSignal.getLatencyCompensatedValue(getYawStatusSignal(), getRateStatusSignal()).in(Degree));

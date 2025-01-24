@@ -81,7 +81,10 @@ public class Drive extends Subsystem {
 	private Translation2d enableFieldToOdom = null;
 
 	private boolean mOverrideTrajectory = false;
+	private boolean mControlStateHasChanged = false;
 	private boolean mOverrideHeading = false;
+
+	private double alignmentStartTimestamp = 0;
 
 	private Rotation2d mTrackingAngle = Rotation2d.identity();
 
@@ -89,7 +92,7 @@ public class Drive extends Subsystem {
 	private SwerveKinematicLimits mUncappedKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 
 
-	private static AutoAlignPointSelector.RequestedAlignment mAlignment = AutoAlignPointSelector.RequestedAlignment.AUTO;
+	private static AutoAlignPointSelector.RequestedAlignment mAlignment = AutoAlignPointSelector.RequestedAlignment.AUTO_CORAL;
 	private static Drive mInstance;
 
 	public static Drive getInstance() {
@@ -146,35 +149,51 @@ public class Drive extends Subsystem {
 		this.mKinematicLimits = newLimits;
 	}
 
+	public void setControlState(DriveControlState newState) {
+		if(newState != mControlState){
+			mControlState = newState;
+			mControlStateHasChanged = true;
+		}
+	}
+
 	/**
 	 * Updates drivetrain with latest desired speeds from the joystick, and sets DriveControlState appropriately.
 	 *
 	 * @param speeds ChassisSpeeds object derived from joystick input
 	 */
 	public void feedTeleopSetpoint(ChassisSpeeds speeds) {
+
 		double omega = mHeadingController.update(mPeriodicIO.heading, Timer.getTimestamp());
-		if(mControlState != DriveControlState.HEADING_CONTROL&&Math.abs(mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond-omega) > .1){
+		if(mControlState != DriveControlState.HEADING_CONTROL&&Math.abs(mPeriodicIO.setpoint.mChassisSpeeds.omegaRadiansPerSecond-omega) >.001){
 			mHeadingController.setStabilizeTarget(mPigeon.getYaw());
 		}
 
 		if (mControlState == DriveControlState.PATH_FOLLOWING) {
 			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
 					> mKinematicLimits.kMaxDriveVelocity * 0.1) {
-				mControlState = DriveControlState.OPEN_LOOP;
+				setControlState(DriveControlState.OPEN_LOOP);
+
 			} else {
+
+				mControlStateHasChanged = false;
 				return;
 			}
 		}
 		if (mControlState == DriveControlState.AUTOALIGN) {
+			if(mControlStateHasChanged)
+				alignmentStartTimestamp = Timer.getTimestamp();
 			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
-					> mKinematicLimits.kMaxDriveVelocity * 0.1) {
-				mControlState = DriveControlState.OPEN_LOOP;
+					> mKinematicLimits.kMaxDriveVelocity * 0.1 && Timer.getTimestamp()-alignmentStartTimestamp > .5) {
+				mPeriodicIO.des_chassis_speeds = speeds;	
+				mControlStateHasChanged = false;
+				return;
 			} else {	
 				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp, RobotState.getInstance().getAbosoluteKalmanPose(mPeriodicIO.timestamp).withRotation(mPeriodicIO.heading),
 																	mPeriodicIO.predicted_velocity);
 				if(speed != null){
 					mPeriodicIO.des_chassis_speeds = speed;
 				}
+				mControlStateHasChanged = false;
 				return;
 			}
 		}
@@ -189,17 +208,19 @@ public class Drive extends Subsystem {
 					
 				}
 					
-				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(x, y, 0);
+				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(x, y, omega);
+
+				mControlStateHasChanged = false;
 				return;
 			
 		} else if (mControlState != DriveControlState.OPEN_LOOP) {
-			mControlState = DriveControlState.OPEN_LOOP;
+			setControlState(DriveControlState.OPEN_LOOP);
 		
 		}
 
 
-		mPeriodicIO.des_chassis_speeds = speeds;
-		
+		mControlStateHasChanged = false;
+		mPeriodicIO.des_chassis_speeds = speeds;	
 	}
 
 	public void setOpenLoop(ChassisSpeeds speeds) {
@@ -296,7 +317,7 @@ public class Drive extends Subsystem {
 		mAutoAlignMotionPlanner.setTargetPoint(targetPoint.get());
 		if (mControlState != DriveControlState.AUTOALIGN) {
 			mAutoAlignMotionPlanner.reset();
-			mControlState = DriveControlState.AUTOALIGN;
+			setControlState(DriveControlState.AUTOALIGN);
 		}
 	}	
 
