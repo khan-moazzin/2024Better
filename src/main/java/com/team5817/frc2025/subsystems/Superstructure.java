@@ -62,7 +62,7 @@ public class Superstructure extends Subsystem {
 	private Drive mDrive;
 	private double mDistanceToTarget = 0.0;
 	private double mAngularErrToTarget = 0.0;
-	private SuperstructureState mGoal;
+	private GoalState mGoal;
 
 
 	private Elevator mElevator;
@@ -299,19 +299,25 @@ public class Superstructure extends Subsystem {
 		return new ParallelRequest(
 		).addName("Idle");
 	}
-	public Request GoalRequest(GoalState goal){
-		
-		switch (goal.goal.mType) {
-			case SCORING:
-				return ScoreGoalRequest(goal.goal);
-			case IDLE:
-			return null;//do climing last, wont affect anything unless you are climbing
-			case INTAKING:
-			return IntakeRequest(goal.goal);
-			case CLEAN:
-			return CleanRequest(goal.goal);
+
+	public void setGoal(GoalState goal){
+		Request r = idleRequest();
+		if(mGoal!=goal){
+			mGoal = goal;
+			switch (goal.goal.mType) {
+				case IDLE:
+				case SCORING:
+				r = ScoreGoalRequest(goal.goal);
+				break;
+				case INTAKING:
+				r = IntakeRequest(goal.goal);
+				break;
+				case CLEAN:
+				r = CleanRequest(goal.goal);
+				break;
+			}
+		request(r);
 		}
-		return null;
 	}
 
 	private Request CleanRequest(SuperstructureState goal){
@@ -387,8 +393,12 @@ public class Superstructure extends Subsystem {
 			}
 		}).addName("Driver Score Wait");
 	}
-	public Request AlgaeSmartCleanRequest(){
-		return isAlgaeHigh()?GoalRequest(GoalState.A2):GoalRequest(GoalState.A1);
+	public void AlgaeSmartCleanRequest(){
+		if(isAlgaeHigh()){
+			setGoal(GoalState.A2);
+		}else{
+			setGoal(GoalState.A1);
+		}
 	}
 	private boolean isAlgaeHigh(){
 		Translation2d reef_to_odom = FieldLayout.getReefPose().inverse().translateBy(mDrive.getPose().getTranslation());

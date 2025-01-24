@@ -17,7 +17,7 @@ public class DriverControls {
 	public DriverControls(){
 		mDrive = Drive.getInstance();
 		s = Superstructure.getInstance();
-		s.request(s.GoalRequest(GoalState.STOW));
+		s.setGoal(GoalState.STOW);
 	}
 
 	/* ONE CONTROLLER */
@@ -39,36 +39,45 @@ public class DriverControls {
 		if(!climbAllowed){
 			// if(driver.\)sswaaaaaa
 			if(driver.leftBumper.isBeingPressed()){
-				s.request(s.GoalRequest(GoalState.GROUND_CORAL_INTAKE));
+				s.setGoal(GoalState.GROUND_CORAL_INTAKE);
 			}
 			if(driver.leftTrigger.isBeingPressed()){
 				if(autoAlignAllowed)
 					mDrive.autoAlign();
 				else
 					mDrive.autoAlignFinishedOverrride();
-				s.request(s.GoalRequest(preparedGoal));
+				s.setGoal(preparedGoal);
 			}
 			if(driver.rightBumper.isBeingPressed())
 				mControlBoard.setSwerveScalar(.5);
 			else
 				mControlBoard.setSwerveScalar(1);
-			if(driver.aButton.isBeingPressed()){
-				s.request(s.AlgaeSmartCleanRequest());
+			if(driver.aButton.isBeingPressed())
+				// s.AlgaeSmartCleanRequest();
+				s.setGoal(GoalState.L4);
+			if(driver.bButton.isBeingPressed())
+				s.setGoal(GoalState.GROUND_CORAL_INTAKE);
+			
+			if(driver.xButton.isBeingPressed())
+				s.setGoal(GoalState.L3);
+			if(driver.yButton.isBeingPressed())
+				s.setGoal(GoalState.L2);
+			
 			if(driver.releasedAny(driver.leftBumper,driver.leftTrigger,driver.aButton))
-				s.request(s.GoalRequest(GoalState.STOW));
+				s.setGoal(GoalState.STOW);
 
-		}
+		
 		}else {
 			if (driver.aButton.wasActivated())
-				s.request(s.GoalRequest(GoalState.CLIMB_PREPARE));
+				s.setGoal(GoalState.CLIMB_PREPARE);
 			if(driver.aButton.wasReleased())
-				s.request(s.GoalRequest(GoalState.CLIMB_PULL));	
+				s.setGoal(GoalState.CLIMB_PULL);	
 			}
 
 
 
 		if(codriver.getLeftTriggerAxis()==1)
-			s.request(s.GoalRequest(GoalState.STOW));
+			s.setGoal(GoalState.STOW);
 
 		if(codriver.yButton.isBeingPressed())
 			preparedGoal = GoalState.L4;

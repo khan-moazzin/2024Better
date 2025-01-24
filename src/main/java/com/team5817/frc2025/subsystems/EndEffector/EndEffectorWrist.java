@@ -39,17 +39,16 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 
     public enum State {
 
-		L4(.4, kStrictError),
-        L3(.4, kStrictError),
-        L2(.4, kStrictError),
-        L1(.4, kStrictError),
-        A1(0.0, kMediumError),
-        A2(0.0, kMediumError),
-        NET(0.0, kMediumError),
+		L4(.23, kStrictError),
+        L3(.1, kStrictError),
+        L2(.1, kStrictError),
+        L1(0, kStrictError),
+        A1(0.4, kMediumError),
+        A2(0.4, kMediumError),
+        NET(0.4, kMediumError),
         ZERO(.0, kLenientError),
-        INTAKING(0.0, kStrictError),
-        STOW(0.0, kStrictError);
-
+        INTAKING(.48, kStrictError),
+        STOW(0.48, kStrictError);
 
         double output = 0;
 		double allowable_error = 0;
@@ -100,7 +99,7 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 
 	@Override
 	public void outputTelemetry() {
-        Robot.mechPoses[5] =Robot.mechPoses[4].transformBy(new Transform3d(new Translation3d(.221,0,.278 ), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(mServoInputs.position_units), Units.degreesToRadians(0))));
+        Robot.mechPoses[5] =Robot.mechPoses[4].transformBy(new Transform3d(new Translation3d(.221,0,.278 ), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(-.48 + mServoInputs.position_units), Units.degreesToRadians(0))));
 		super.outputTelemetry();
 	}
 

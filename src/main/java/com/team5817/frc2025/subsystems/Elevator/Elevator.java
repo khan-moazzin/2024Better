@@ -10,13 +10,10 @@ import com.team5817.lib.requests.Request;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
