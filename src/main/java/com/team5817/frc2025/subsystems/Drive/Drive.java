@@ -164,7 +164,8 @@ public class Drive extends Subsystem {
 	public void feedTeleopSetpoint(ChassisSpeeds speeds) {
 
 		double omega = mHeadingController.update(mPeriodicIO.heading, Timer.getTimestamp());
-		if(mControlState != DriveControlState.HEADING_CONTROL&&Math.abs(mPeriodicIO.setpoint.mChassisSpeeds.omegaRadiansPerSecond-omega) >.001){
+
+		if(mControlState != DriveControlState.HEADING_CONTROL&&Math.abs(mPeriodicIO.setpoint.mChassisSpeeds.omegaRadiansPerSecond-omega) >.2){
 			mHeadingController.setStabilizeTarget(mPigeon.getYaw());
 		}
 
@@ -188,8 +189,8 @@ public class Drive extends Subsystem {
 				mControlStateHasChanged = false;
 				return;
 			} else {	
-				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp, RobotState.getInstance().getAbosoluteGlobalKalmanPose(mPeriodicIO.timestamp).withRotation(mPeriodicIO.heading),
-																	mPeriodicIO.predicted_velocity);
+				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp, RobotState.getInstance().getGlobalKalmanPose(mPeriodicIO.timestamp).withRotation(mPeriodicIO.heading),
+																	RobotState.getInstance().getSmoothedVelocity());
 				if(speed != null){
 					mPeriodicIO.des_chassis_speeds = speed;
 				}
@@ -313,7 +314,8 @@ public class Drive extends Subsystem {
 		if(targetPoint.isEmpty()){
 			return;
 		}
-		Logger.recordOutput("Drive/TargetPoint", targetPoint.get().wpi());
+
+		Logger.recordOutput("target pose", targetPoint.get());
 		mAutoAlignMotionPlanner.setTargetPoint(targetPoint.get());
 		if (mControlState != DriveControlState.AUTOALIGN) {
 			mAutoAlignMotionPlanner.reset();
@@ -624,6 +626,7 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Heading", mPeriodicIO.heading);
 		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
 		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestGlobalKalmanPose().wpi());
+		Logger.recordOutput("RobotState/Odom Pose", RobotState.getInstance().getLatestPoseFromOdom().getValue().wpi());
 		
 
 		for (SwerveModule module : mModules) {

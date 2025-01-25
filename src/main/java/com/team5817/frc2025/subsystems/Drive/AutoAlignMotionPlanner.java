@@ -20,7 +20,7 @@ public class AutoAlignMotionPlanner {
 
     private ProfileFollower mXController = new ProfileFollower(2.5, 0.0, 0.0, 1.0, 0.0, 0.0);
     private ProfileFollower mYController = new ProfileFollower(2.5 ,0.0, 0.0, 1.0, 0.0, 0.0);
-    private ProfileFollower mThetaController = new ProfileFollower(2.5, 0.0, 0.0, 1.0, 0.0, 0.0);
+    private ProfileFollower mThetaController = new ProfileFollower(1.25, 0.0, 0.0, 2, 0.0, 0.0);
 
     boolean mAutoAlignComplete = false;
 
@@ -46,10 +46,10 @@ public class AutoAlignMotionPlanner {
     public synchronized ChassisSpeeds updateAutoAlign(double timestamp, Pose2d current_pose, Twist2d current_vel) {
 
         mXController.setGoalAndConstraints(
-            new MotionProfileGoal(mFieldToTargetPoint.getTranslation().x(), 0, IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.05),
+            new MotionProfileGoal(mFieldToTargetPoint.getTranslation().x(), 0, IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.08, 0.05),
             SwerveConstants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
-            new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 0, IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.02, 0.05),
+            new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 0, IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.02, 0.05),
             SwerveConstants.kPositionMotionProfileConstraints);
         mThetaController.setGoalAndConstraints(
             new MotionProfileGoal(mFieldToTargetPoint.getRotation().getRadians(), 0, IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.03, 0.05),
@@ -73,17 +73,17 @@ public class AutoAlignMotionPlanner {
         double thetaOutput = mThetaController.update(
                 new MotionState(timestamp, currentRotation, current_vel.dtheta, 0.0),
                 timestamp + Constants.kLooperDt);
-        Logger.recordOutput("output", new Pose2d(xOutput, yOutput, thetaOutput).wpi());
         ChassisSpeeds setpoint = new ChassisSpeeds();
 
         boolean thetaWithinDeadband = mThetaController.onTarget();
         boolean xWithinDeadband = mXController.onTarget();
         boolean yWithinDeadband = mYController.onTarget();
 
-        setpoint = new ChassisSpeeds(
+        setpoint = ChassisSpeeds.fromFieldRelativeSpeeds(
                 xWithinDeadband ? 0.0 : xOutput,
                 yWithinDeadband ? 0.0 : yOutput,
-                thetaWithinDeadband ? 0.0 : thetaOutput);
+                thetaWithinDeadband ? 0.0 : thetaOutput,
+                current_pose.getRotation());
         mAutoAlignComplete = thetaWithinDeadband && xWithinDeadband && yWithinDeadband;
 
         if (mStartTime.isPresent() && mAutoAlignComplete) {

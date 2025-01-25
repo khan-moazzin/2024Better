@@ -37,6 +37,10 @@ public class DriverControls {
 	/* TWO CONTROLLERS */
 	GoalState preparedGoal = GoalState.L4;
 	public void twoControllerMode() {
+
+		if(driver.getStartButton())
+			mDrive.zeroGyro();
+		
 		if(!climbAllowed){
 			// if(driver.\)sswaaaaaa
 			if(driver.leftBumper.isBeingPressed()){

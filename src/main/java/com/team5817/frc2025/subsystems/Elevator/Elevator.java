@@ -97,7 +97,6 @@ public class Elevator extends ServoMotorSubsystem {
 		Robot.mechPoses[4] = transform;
 
 
-		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());
 		super.outputTelemetry();
 	}
 

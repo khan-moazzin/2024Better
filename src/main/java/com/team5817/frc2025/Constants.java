@@ -75,8 +75,8 @@ public class Constants {
 		public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
 		/* Drivetrain Constants */
-		public static final double trackWidth = Units.inchesToMeters(20.75);
-		public static final double wheelBase = Units.inchesToMeters(20.75);
+		public static final double trackWidth = Units.inchesToMeters(29);
+		public static final double wheelBase = Units.inchesToMeters(29);
 
 		public static final double wheelDiameter = Units.inchesToMeters(4.00);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
@@ -180,7 +180,7 @@ public class Constants {
 		/*** MODULE SPECIFIC CONSTANTS ***/
 		/* Front Left Module - Module 0 */
 		public static final class Mod0 {
-			public static final double compAngleOffset = 45.439+180;
+			public static final double compAngleOffset = 180;
 
 			public static SwerveModuleConstants SwerveModuleConstants() {
 				return new SwerveModuleConstants(
@@ -192,7 +192,7 @@ public class Constants {
 
 		/* Front Right Module - Module 1 */
 		public static final class Mod1 {
-			public static final double compAngleOffset = 143.262;
+			public static final double compAngleOffset =0;
 
 			public static SwerveModuleConstants SwerveModuleConstants() {
 				return new SwerveModuleConstants(
@@ -204,7 +204,7 @@ public class Constants {
 
 		/* Back Left Module - Module 2 */
 		public static final class Mod2 {
-			public static final double compAngleOffset = 180-62.314;
+			public static final double compAngleOffset = 180;
 
 			public static SwerveModuleConstants SwerveModuleConstants() {
 				return new SwerveModuleConstants(
@@ -216,7 +216,7 @@ public class Constants {
 
 		/* Back Right Module - Module 3 */
 		public static final class Mod3 {
-			public static final double compAngleOffset = 124.893;
+			public static final double compAngleOffset = 0;
 
 			public static SwerveModuleConstants SwerveModuleConstants() {
 				return new SwerveModuleConstants(

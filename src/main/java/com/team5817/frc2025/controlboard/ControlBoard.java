@@ -48,8 +48,6 @@ public class ControlBoard {
 		double expoForwardAxis = forwardAxis;
 		double expoStrafeAxis = strafeAxis;
 
-		SmartDashboard.putNumber("Raw Y", forwardAxis);
-		SmartDashboard.putNumber("Raw X", strafeAxis);
 
 		expoForwardAxis = Constants.SwerveConstants.invertYAxis ? expoForwardAxis : -expoForwardAxis;
 		expoStrafeAxis = Constants.SwerveConstants.invertXAxis ? expoStrafeAxis : -expoStrafeAxis;

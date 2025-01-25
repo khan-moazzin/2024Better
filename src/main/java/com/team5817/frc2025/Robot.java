@@ -195,7 +195,6 @@ boolean disableGyroReset = false;
     /** This function is called periodically when disabled. */
     @Override
     public void disabledPeriodic() {
-      RobotState.getInstance().outputTelemetry();
       // if(!disableGyroReset)
       // drive.zeroGyro(mVision.getMovingAverageRead());
     }

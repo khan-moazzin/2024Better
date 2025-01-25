@@ -176,10 +176,6 @@ public class EndEffectorRollers extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
-		Logger.recordOutput("IntakeRollers/State", mState.toString());
 
-		SmartDashboard.putString("IntakeRollers/State", mState.toString());
-		SmartDashboard.putData("IntakeRollers/I", mEndEffectorRollerInputs);
-		SmartDashboard.putData("IntakeRollers/O", mEndEffectorRollerOutputs);
 	}
 }

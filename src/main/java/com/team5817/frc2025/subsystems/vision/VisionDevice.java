@@ -33,8 +33,8 @@ public class VisionDevice{
 
 	public void update(double timestamp) {
 
-			// mPeriodicIO.seesTarget = mOutputTable.getEntry("tv").getBoolean(false);
-			// if (mPeriodicIO.seesTarget) {
+			mPeriodicIO.seesTarget = LimelightHelpers.getTV(mName);
+			if (mPeriodicIO.seesTarget) {
 				final double realTime = timestamp - mPeriodicIO.latency;
 				mPeriodicIO.fps = mOutputTable.getEntry("fps").getInteger(0);
 				mPeriodicIO.latency = mOutputTable.getEntry("latency").getDouble(0.0);
@@ -46,13 +46,13 @@ public class VisionDevice{
 				mPeriodicIO.tagCounts = poseEstimate.tagCount;
 				mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
 
-				VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, timestamp,mPeriodicIO.ta, mPeriodicIO.mt2Pose.getTranslation());
+				VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, realTime,mPeriodicIO.ta, mPeriodicIO.mt2Pose.getTranslation());
 				mPeriodicIO.visionUpdate = Optional.of(visionUpdate);
 			
 
-			// }else{
-				// 	mPeriodicIO.visionUpdate = Optional.empty();
-				// }
+			}else{
+					mPeriodicIO.visionUpdate = Optional.empty();
+				}
 				LimelightHelpers.SetRobotOrientation(mName, Pigeon.getInstance().getYaw().getDegrees(), 0, 0, 0, 0, 0);
 
 
@@ -80,8 +80,6 @@ public class VisionDevice{
 	}
 
 	public void outputTelemetry() {
-		Logger.recordOutput(mName+"whfjwakf", mPeriodicIO.mt1Pose.wpi());
-		Logger.recordOutput(mName+"hfjakef", mPeriodicIO.mt2Pose.wpi());
 	}
 
 	public static class VisionDeviceIO {

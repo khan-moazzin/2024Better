@@ -325,10 +325,6 @@ public class RobotState {
 
     }
 
-    public synchronized Pose2d getAbosoluteGlobalKalmanPose(double timestamp) {
-        var initialPose_ = initialPoseError.orElse(Translation2d.identity());
-        return Pose2d.fromTranslation(initialPose_).transformBy(getGlobalKalmanPose(timestamp));
-    }
 
     public synchronized Pose2d getLatestGlobalKalmanPose() {
         Pose2d poseFromOdom = getLatestPoseFromOdom().getValue();
@@ -344,18 +340,10 @@ public class RobotState {
         return mLatestVisionUpdate;
     }
 
-    public void outputTelemetry() {
-        Logger.recordOutput("RobotState/Robot Velocity", getMeasuredVelocity().toString());
-        Logger.recordOutput("RobotState/PoseFromOdometry",  new Pose2d(getLatestPoseFromOdom().getValue().getTranslation(), getLatestPoseFromOdom().getValue().getRotation().inverse()).wpi());
-        Logger.recordOutput("RobotState/Vision Pose Component", getGlobalAbsoluteVisionPoseComponent(Timer.getFPGATimestamp()).wpi());
-        Logger.recordOutput("RobotState/Filtered Pose", new Pose2d(getLatestGlobalKalmanPose().getTranslation(), getLatestGlobalKalmanPose().getRotation().inverse()).wpi());
-        Logger.recordOutput("RobotState/SetPoint Pose", mSetpointPose.wpi());
-        Logger.recordOutput("RobotState/Vision Pose", getDisplayVisionPose().wpi());
-   }
-
     public void setDisplaySetpointPose(Pose2d setpoint) {
         mSetpointPose = setpoint;
     }
+
 	public static class VisionUpdate {
 		private double timestamp;
 		private double ta;

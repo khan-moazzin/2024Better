@@ -112,8 +112,6 @@ public class LEDs extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
-		SmartDashboard.putString("LED Status", mLEDStatus.state.name);
-		SmartDashboard.putString("LED Colors", mLEDStatus.getWantedColor().toString());
 	}
 
 	/**

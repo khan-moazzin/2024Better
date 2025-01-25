@@ -105,8 +105,8 @@ public class SwerveModule extends Subsystem {
 		if(Robot.isReal()){
 			mInputs.driveVelocity = mDriveMotor.getRotorVelocity().getValue().in(RotationsPerSecond);
 			mInputs.drivePosition = mDriveMotor.getRotorPosition().getValueAsDouble();
-			mInputs.rotationPosition = BaseStatusSignal.getLatencyCompensatedValue(
-				mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation);
+			mInputs.rotationPosition =Util.placeInAppropriate0To360Scope(0, BaseStatusSignal.getLatencyCompensatedValue(
+				mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation));
 			mInputs.absolutePosition = getCanCoder().getDegrees();
 		}else{
 			mInputs.driveVelocity = mOutputs.driveVelocity;
@@ -120,7 +120,7 @@ public class SwerveModule extends Subsystem {
 		double rotorSpeed = Conversions.MPSToRPS(
 			mOutputs.driveVelocity, SwerveConstants.wheelCircumference, SwerveConstants.driveGearRatio);
 		mOutputs.driveDemand = rotorSpeed * SwerveConstants.kV;
-		Logger.recordOutput("Voltage", mOutputs.driveDemand);
+		mOutputs.driveType = DriveType.OPENLOOP;
 	}
 
 	public void setVelocity(SwerveModuleState desiredState) {
@@ -197,20 +197,7 @@ public class SwerveModule extends Subsystem {
 	@Override
 	public void outputTelemetry() {
 		// spotless:off
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Azi Target", target_angle);
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Azi Angle", getCurrentUnboundedDegrees());
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Azi Error", getCurrentUnboundedDegrees() - target_angle);
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Wheel Velocity", Math.abs(getCurrentVelocity()));
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Wheel Target Velocity", Math.abs(mOutputs.driveVelocity));
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Drive Position", Math.abs(mInputs.drivePosition));
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Duty Cycle",
-				mDriveMotor.getDutyCycle().getValueAsDouble());
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Azi Current",
-				mAngleMotor.getSupplyCurrent().getValueAsDouble());
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Drive Current",
-				mDriveMotor.getSupplyCurrent().getValueAsDouble());
-		Logger.recordOutput("Drive/Module" + kModuleNumber + "/Wheel Velocity Error",
-				Math.abs(getCurrentVelocity()) - Math.abs(mOutputs.driveVelocity));
+
 
 		// spotless:on
 	}

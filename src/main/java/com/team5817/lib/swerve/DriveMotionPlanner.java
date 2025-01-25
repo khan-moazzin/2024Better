@@ -95,7 +95,7 @@ public class DriveMotionPlanner {
 
 			// Compute error in robot frame
 			mPrevHeadingError = mError.getRotation();
-			mError = current_state.inverse().transformBy(mSetpoint.getPose());
+			mError = mSetpoint.getPose().inverse().transformBy(current_state);
 		
 
 

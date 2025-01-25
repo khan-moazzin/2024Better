@@ -401,7 +401,6 @@ public class Superstructure extends Subsystem {
 	private boolean isAlgaeHigh(){
 		Translation2d reef_to_odom = FieldLayout.getReefPose().inverse().translateBy(mDrive.getPose().getTranslation());
 		double angle = Math.atan2(reef_to_odom.x(),reef_to_odom.y());
-		Logger.recordOutput("angle", reef_to_odom);
 		angle = Units.radiansToDegrees(angle);
 		angle += 30;
 		int side = (int) Math.round(angle/60);

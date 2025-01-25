@@ -14,14 +14,12 @@ import com.team254.lib.util.MovingAverage;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 
-import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.Logger;
 
 public class VisionDeviceManager extends Subsystem {
@@ -87,22 +85,19 @@ public class VisionDeviceManager extends Subsystem {
 		for(VisionDevice device: mAllCameras){
 			device.update(Timer.getTimestamp());
 			mHeadingAvg.addNumber(device.getEstimatedHeading());
-				System.out.println(!device.getVisionUpdate().isEmpty());
 			if(!device.getVisionUpdate().isEmpty()){
 				VisionUpdate update = device.getVisionUpdate().get();
-
-					System.out.println("trying to send vision update");
 				RobotState.getInstance().addVisionUpdate(update);
 
 				if (DriverStation.getAlliance().get() == Alliance.Red) {
 					if(PoseEstimatorConstants.redTagIDFilters.contains(update.getID())){
-						mRobotState.addVisionUpdate(update);
+						mRobotState.addSpecializedVisionUpdate(update);
 					}
 					
 				}
 				else{
 					if(PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())){
-						mRobotState.addVisionUpdate(update);
+						mRobotState.addSpecializedVisionUpdate(update);
 					}
 				}
 		}
@@ -154,9 +149,6 @@ public class VisionDeviceManager extends Subsystem {
 		Transform3d delta;
 		delta = new Transform3d(domTargetToCamera, subDevice);
 		Transform3d error = delta.plus(expectedDelta.inverse());
-		Logger.recordOutput("PoseEstimator/Expected Transform", expectedDelta);
-		Logger.recordOutput("PoseEstimator/Real Transform", delta);
-		Logger.recordOutput("PoseEstimator/error",error);
 		return(error.getTranslation().getNorm()>0.1||error.getRotation().getAngle()>0.5);//TODO Find threshold (meters and radians)
 
 		}
