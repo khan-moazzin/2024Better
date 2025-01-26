@@ -8,6 +8,7 @@ import com.team5817.frc2025.Constants.SwerveConstants.Mod0;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod1;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod2;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod3;
+import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Cancoders;
@@ -92,7 +93,7 @@ public class Drive extends Subsystem {
 	private SwerveKinematicLimits mUncappedKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 
 
-	private static AutoAlignPointSelector.RequestedAlignment mAlignment = AutoAlignPointSelector.RequestedAlignment.AUTO_CORAL;
+	private static AlignmentType mAlignment = AlignmentType.CORAL_SCORE;
 	private static Drive mInstance;
 
 	public static Drive getInstance() {
@@ -262,7 +263,7 @@ public class Drive extends Subsystem {
 		
 	}
 
-	public synchronized void setAlignment(AutoAlignPointSelector.RequestedAlignment alignment){
+	public synchronized void setAlignment(AlignmentType alignment){
 		mAlignment = alignment;
 	}
 
@@ -308,15 +309,16 @@ public class Drive extends Subsystem {
 		}
 	}
 	boolean autoAlignFinishedOverrride = false;
-	public void autoAlign(){
+	public void autoAlign(AlignmentType type){
+		setAlignment(type);
 		autoAlignFinishedOverrride = false;
-		Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(getPose(), mAlignment);
-		if(targetPoint.isEmpty()){
+		Pose2d targetPoint = AutoAlignPointSelector.chooseTargetPoint(getPose(), mAlignment);
+		if(targetPoint==null){
 			return;
 		}
 
-		Logger.recordOutput("target pose", targetPoint.get());
-		mAutoAlignMotionPlanner.setTargetPoint(targetPoint.get());
+		Logger.recordOutput("target pose", targetPoint);
+		mAutoAlignMotionPlanner.setTargetPoint(targetPoint);
 		if (mControlState != DriveControlState.AUTOALIGN) {
 			mAutoAlignMotionPlanner.reset();
 			setControlState(DriveControlState.AUTOALIGN);

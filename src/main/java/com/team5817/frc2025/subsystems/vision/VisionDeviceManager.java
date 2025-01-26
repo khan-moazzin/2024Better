@@ -48,8 +48,8 @@ public class VisionDeviceManager extends Subsystem {
 
 	public VisionDeviceManager() {
 		mDomCamera = new VisionDevice("limelight-dom");
-		// mSubCamera = new VisionDevice("limelight-sub");
-		mAllCameras = List.of(mDomCamera);
+		mSubCamera = new VisionDevice("limelight-sub");
+		mAllCameras = List.of(mDomCamera, mSubCamera);
 		mRobotState = RobotState.getInstance();
 	}
 

@@ -18,7 +18,9 @@ import com.team254.lib.drivers.TalonUtil;
 import com.team254.lib.motion.MotionState;
 import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.Util;
+import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Robot;
+import com.team5817.frc2025.Constants.Mode;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 
@@ -140,7 +142,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mMain = TalonFXFactory.createDefaultTalon(mConstants.kMainConstants.id, false);
 		mFollowers = new TalonFX[mConstants.kFollowerConstants.length];
 		mFollowerConfigs = new TalonFXConfiguration[mConstants.kFollowerConstants.length];
-
 		Phoenix6Util.checkErrorAndRetry(() -> mMain.getBridgeOutput().setUpdateFrequency(200, 0.05));
 		Phoenix6Util.checkErrorAndRetry(() -> mMain.getFault_Hardware().setUpdateFrequency(4, 0.05));
 
@@ -245,7 +246,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 
 		TalonUtil.applyAndCheckConfiguration(mMain, mMainConfig);
-
+	
 		// Send a neutral command.
 		stop();
 	}
@@ -380,7 +381,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.main_supply_current = mMainSupplyCurrentSignal.asSupplier().get().in(Amps);
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
-		if(!Robot.isReal()){
+		if((!Robot.isReal()&&Constants.mode == Mode.SIM)||Constants.kSubsytemSim){
 			switch (mControlState) {
 				case OPEN_LOOP:
 					mServoInputs.position_rots += 	mServoOutputs.demand/dt;
@@ -393,7 +394,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 					break;
 				
 			}
-		}else if(Robot.isReal()){
+		}else{
 			mServoInputs.position_rots = mMainPositionSignal.asSupplier().get().in(Rotations);
 		}
 		mServoInputs.position_units = rotationsToHomedUnits(mServoInputs.position_rots);

@@ -2,6 +2,8 @@ package com.team5817.frc2025.controlboard;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.team254.lib.geometry.Pose2d;
+import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.subsystems.LEDs;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
@@ -37,7 +39,8 @@ public class DriverControls {
 	/* TWO CONTROLLERS */
 	GoalState preparedGoal = GoalState.L4;
 	public void twoControllerMode() {
-
+		if(driver.getBackButton())
+			mDrive.resetOdometry(new Pose2d());
 		if(driver.getStartButton())
 			mDrive.zeroGyro();
 		
@@ -48,7 +51,7 @@ public class DriverControls {
 			}
 			if(driver.leftTrigger.isBeingPressed()){
 				if(autoAlignAllowed)
-					mDrive.autoAlign();
+					mDrive.autoAlign(AlignmentType.CORAL_SCORE);
 				else
 					mDrive.autoAlignFinishedOverrride();
 				s.setGoal(preparedGoal);
@@ -58,8 +61,8 @@ public class DriverControls {
 			else
 				mControlBoard.setSwerveScalar(1);
 			if(driver.aButton.isBeingPressed()){
-				s.setGoal(GoalState.L4);
-				mDrive.autoAlign();
+				s.setGoal(s.AlgaeSmartCleanRequest());
+				mDrive.autoAlign(AlignmentType.ALGAE_CLEAN);
 			}
 				// s.AlgaeSmartCleanRequest();
 			if(driver.bButton.isBeingPressed())

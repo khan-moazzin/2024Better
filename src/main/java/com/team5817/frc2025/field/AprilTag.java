@@ -1,7 +1,11 @@
 package com.team5817.frc2025.field;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
+import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 
 public class AprilTag {
 
@@ -9,22 +13,33 @@ public class AprilTag {
     private Pose2d fieldToTag;
     private boolean isScoring;
 
-    private Translation2d tagToLeftAlign;
+    private AlignmentPoint tagToLeftAlign;
 
-    private Translation2d tagToRightAlign;
+    private AlignmentPoint tagToRightAlign;
 
-    private Translation2d tagToCenterAlign;
+    private AlignmentPoint tagToCenterAlign;
+    private List<AlignmentType> allTypes = new ArrayList<>();
+    private List<AlignmentPoint> allAlignmentPoints;
 
-    public AprilTag(int id, boolean isScoring, Translation2d tagToCenterAlign, Translation2d tagToLeftAlign, Translation2d tagToRightAlign) {
+    public AprilTag(int id, boolean isScoring, AlignmentPoint tagToCenterAlign, AlignmentPoint tagToLeftAlign, AlignmentPoint tagToRightAlign) {
         this.id = id;
         this.isScoring = isScoring;
         this.tagToCenterAlign = tagToCenterAlign;
         this.tagToLeftAlign = tagToLeftAlign;
         this.tagToRightAlign = tagToRightAlign;
         this.fieldToTag = new Pose2d(FieldLayout.kTagMap.getTagPose(id).get().toPose2d());
+        this.allAlignmentPoints = List.of(tagToCenterAlign,tagToLeftAlign,tagToRightAlign);
+
         if(isScoring){
             this.fieldToTag = fieldToTag.withRotation(fieldToTag.getRotation().flip());
         }
+        for (AlignmentPoint alingments : allAlignmentPoints) {
+            for (AlignmentType tagTypes : alingments.getAllowedAllignments()) {
+                if(!allTypes.contains(tagTypes)){
+                    allTypes.add(tagTypes);
+                }
+            }
+       }
         
     }
 
@@ -42,15 +57,23 @@ public class AprilTag {
         return isScoring;
     }
 
-    public Translation2d getTagToCenterAlign() {
+    public List<AlignmentType> getAllAllowableAllignments(){
+        return allTypes;
+    }
+
+    public List<AlignmentPoint> getAllAlignmentPoints(){
+        return allAlignmentPoints;
+    }
+
+    public AlignmentPoint getTagToCenterAlign() {
         return tagToCenterAlign;
     }
 
-    public Translation2d getTagToLeftAlign() {
+    public AlignmentPoint getTagToLeftAlign() {
         return tagToLeftAlign;
     }
 
-    public Translation2d getTagToRightAlign() {
+    public AlignmentPoint getTagToRightAlign() {
         return tagToRightAlign;
     }
 }

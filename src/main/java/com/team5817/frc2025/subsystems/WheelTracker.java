@@ -194,17 +194,17 @@ public class WheelTracker extends Subsystem{
 		double yCorrectionFactor = 1.0;
 
 		if (Math.signum(deltaPosition.x()) == 1.0) {
-			xCorrectionFactor = 1;
+			xCorrectionFactor = (8.782-.89)/9.44;
 
 		} else if (Math.signum(deltaPosition.x()) == -1.0) {
-			xCorrectionFactor = 1;
+			xCorrectionFactor = (8.782-.89)/9.46;
 		}
 
 		if (Math.signum(deltaPosition.y()) == 1.0) {
-			yCorrectionFactor =1;
+			yCorrectionFactor = -(-8+.89)/8.71;
 
 		} else if (Math.signum(deltaPosition.y()) == -1.0) {
-			yCorrectionFactor = 1;
+			yCorrectionFactor = -(-8+.89)/8.62;
 		}
 
 

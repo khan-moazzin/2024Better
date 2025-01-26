@@ -69,6 +69,8 @@ public class Constants {
 
     public static final double kBumberSideLength = Units.inchesToMeters(29);
 
+    public static final boolean kSubsytemSim = true;//Forces sim IO een if robot is real for partial robot(DB)
+
 
 	public static final class SwerveConstants {
 
@@ -169,12 +171,12 @@ public class Constants {
 	    public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
              maxSpeed,
         	 -maxSpeed,
-             maxAcceleration);
+             maxAcceleration*.5);
 
 		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
-            maxAngularVelocity,
-            -maxAngularVelocity,
-            maxAngularAcceleration);
+            5,
+            -5,
+            maxAngularAcceleration*0.5);
 
 
 		/*** MODULE SPECIFIC CONSTANTS ***/

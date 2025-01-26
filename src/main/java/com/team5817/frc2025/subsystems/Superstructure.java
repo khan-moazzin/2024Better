@@ -391,12 +391,8 @@ public class Superstructure extends Subsystem {
 			}
 		}).addName("Driver Score Wait");
 	}
-	public void AlgaeSmartCleanRequest(){
-		if(isAlgaeHigh()){
-			setGoal(GoalState.A2);
-		}else{
-			setGoal(GoalState.A1);
-		}
+	public GoalState AlgaeSmartCleanRequest(){
+		return isAlgaeHigh()? GoalState.A2:GoalState.A1;
 	}
 	private boolean isAlgaeHigh(){
 		Translation2d reef_to_odom = FieldLayout.getReefPose().inverse().translateBy(mDrive.getPose().getTranslation());

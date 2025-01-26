@@ -36,6 +36,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -65,8 +66,11 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotInit() {
       DriverStation.silenceJoystickConnectionWarning(true);
-  
-  
+        for (int port = 5800; port <= 5809; port++) {
+            PortForwarder.add(port, "limelight-dom.local", port);
+            PortForwarder.add(port+10, "limelight-sub.local", port);
+
+        }
       DriverStation.startDataLog(DataLogManager.getLog());
   
       RobotState.getInstance().reset();

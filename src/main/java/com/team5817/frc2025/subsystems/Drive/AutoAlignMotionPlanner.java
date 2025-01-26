@@ -7,9 +7,12 @@ import com.team254.lib.motion.MotionProfileGoal;
 import com.team254.lib.motion.MotionState;
 import com.team254.lib.motion.ProfileFollower;
 import com.team254.lib.swerve.ChassisSpeeds;
+import com.team254.lib.util.Units;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Constants.SwerveConstants;
+import com.team5817.lib.swerve.SwerveHeadingController;
 
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.util.OptionalDouble;
@@ -20,12 +23,16 @@ public class AutoAlignMotionPlanner {
 
     private ProfileFollower mXController = new ProfileFollower(2.5, 0.0, 0.0, 1.0, 0.0, 0.0);
     private ProfileFollower mYController = new ProfileFollower(2.5 ,0.0, 0.0, 1.0, 0.0, 0.0);
-    private ProfileFollower mThetaController = new ProfileFollower(1.25, 0.0, 0.0, 2, 0.0, 0.0);
+    private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;
 
     private Pose2d mFieldToTargetPoint;
     private OptionalDouble mStartTime;
+
+    public AutoAlignMotionPlanner(){
+        mThetaController = new SwerveHeadingController();
+    }
 
     public void reset() {
         mStartTime = OptionalDouble.of(Timer.getFPGATimestamp());
@@ -33,8 +40,6 @@ public class AutoAlignMotionPlanner {
         mXController.resetSetpoint();
         mYController.resetProfile();
         mYController.resetSetpoint();
-        mThetaController.resetProfile();
-        mThetaController.resetSetpoint();
         mAutoAlignComplete = false;
     }
 
@@ -51,10 +56,7 @@ public class AutoAlignMotionPlanner {
         mYController.setGoalAndConstraints(
             new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 0, IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.02, 0.05),
             SwerveConstants.kPositionMotionProfileConstraints);
-        mThetaController.setGoalAndConstraints(
-            new MotionProfileGoal(mFieldToTargetPoint.getRotation().getRadians(), 0, IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.03, 0.05),
-            SwerveConstants.kHeadingMotionProfileConstraints);
-
+        mThetaController.setStabilizeTarget(mFieldToTargetPoint.getRotation());
         double currentRotation = current_pose.getRotation().getRadians();
 
     
@@ -70,12 +72,10 @@ public class AutoAlignMotionPlanner {
         double yOutput = mYController.update(
                new MotionState(timestamp, current_pose.getTranslation().y(), current_vel.dy, 0.0),
                 timestamp + Constants.kLooperDt);
-        double thetaOutput = mThetaController.update(
-                new MotionState(timestamp, currentRotation, current_vel.dtheta, 0.0),
-                timestamp + Constants.kLooperDt);
+        double thetaOutput = mThetaController.update(current_pose.getRotation(), timestamp);
         ChassisSpeeds setpoint = new ChassisSpeeds();
 
-        boolean thetaWithinDeadband = mThetaController.onTarget();
+        boolean thetaWithinDeadband = current_pose.getRotation().distance(mFieldToTargetPoint.getRotation())< Units.degrees_to_radians(1)&& Math.abs(thetaOutput)<0.02;
         boolean xWithinDeadband = mXController.onTarget();
         boolean yWithinDeadband = mYController.onTarget();
 
@@ -90,7 +90,6 @@ public class AutoAlignMotionPlanner {
             System.out.println("Auto align took: " + (Timer.getFPGATimestamp() - mStartTime.getAsDouble()));
             mStartTime = OptionalDouble.empty();
         }
-
         return setpoint;
     }
 
