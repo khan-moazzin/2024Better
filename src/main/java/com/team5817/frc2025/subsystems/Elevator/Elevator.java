@@ -31,19 +31,17 @@ public class Elevator extends ServoMotorSubsystem {
 	final static double kMediumError = 2;
 	final static double kLenientError = 5;
 
-	
-
-    public enum State {
-        L4(1.4, kStrictError),
-        L3(.8, kStrictError),
-        L2(0.2, kStrictError),
-        L1(0.2, kStrictError),
-        A1(0.2, kMediumError),
-        A2(0.8, kMediumError),
-        NET(0.0 ,kMediumError),
-        ZERO(0.0, kLenientError),
+	public enum State {
+		L4(1.673, kStrictError),
+		L3(.986, kStrictError),
+		L2(0.563, kStrictError),
+		L1(0.304, kStrictError),
+		A1(0.59, kMediumError),
+		A2(.896, kMediumError),
+		NET(0.0, kMediumError),
+		ZERO(0.0, kLenientError),
 		PROCESS(0.0, kLenientError),
-        STOW(0.0, kStrictError);
+		STOW(0.0, kStrictError);
 
         double output = 0;
 		double allowable_error = 20;
@@ -91,10 +89,18 @@ public class Elevator extends ServoMotorSubsystem {
 
 	@Override
 	public void outputTelemetry() {
-		Pose3d transform = new Pose3d(Math.cos(Units.degreesToRadians(84))*mServoInputs.position_units,0,Math.sin(Units.degreesToRadians(84))*mServoInputs.position_units,new Rotation3d());
-		Robot.mechPoses[2] = transform.div(3);
-		Robot.mechPoses[3] = transform.div(3).times(2);
-		Robot.mechPoses[4] = transform;
+		Pose3d current = new Pose3d(Math.cos(Units.degreesToRadians(84))*mServoInputs.position_units,0,Math.sin(Units.degreesToRadians(84))*mServoInputs.position_units,new Rotation3d());
+		
+		Robot.mechPoses[2] = current.div(3);
+		Robot.mechPoses[3] = current.div(3).times(2);
+		Robot.mechPoses[4] = current;
+
+		
+		Pose3d desired = new Pose3d(Math.cos(Units.degreesToRadians(84))*mServoOutputs.demand,0,Math.sin(Units.degreesToRadians(84))*mServoOutputs.demand,new Rotation3d());
+		
+		Robot.desMechPoses[2] = desired.div(3);
+		Robot.desMechPoses[3] = desired.div(3).times(2);
+		Robot.desMechPoses[4] = desired;
 
 
 		super.outputTelemetry();

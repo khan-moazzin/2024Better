@@ -135,6 +135,9 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	@Override
 	public void outputTelemetry() {
         Robot.mechPoses[0] = new Pose3d(new Translation3d(-.325,0,.261), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(0.3-mServoInputs.position_units), Units.degreesToRadians(0)));
+
+		Robot.desMechPoses[0] = new Pose3d(new Translation3d(-.325,0,.261), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(0.3-mServoOutputs.demand), Units.degreesToRadians(0)));
+
         Logger.recordOutput("IntakeDeploy/Homing", mHoming);
         Logger.recordOutput("IntakeDeploy/Within Homing Window", atHomingLocation());
 			

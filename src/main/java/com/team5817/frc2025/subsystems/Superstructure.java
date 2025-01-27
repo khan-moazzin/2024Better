@@ -318,6 +318,7 @@ public class Superstructure extends Subsystem {
 			}
 		request(r);
 		}
+		Logger.recordOutput("Goal", goal);
 	}
 
 	private Request CleanRequest(SuperstructureState goal){

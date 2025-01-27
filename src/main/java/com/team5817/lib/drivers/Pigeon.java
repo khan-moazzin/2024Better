@@ -51,6 +51,9 @@ public class Pigeon {
 
 
 	public Rotation2d getYaw() {
+		if(!Robot.isReal()&&Constants.mode==Constants.Mode.SIM){
+			return Rotation2d.fromDegrees(driveSim.getSimulatedDriveTrainPose().getRotation().getDegrees());
+		}
 		Rotation2d angle = getUnadjustedYaw().rotateBy(yawAdjustmentAngle.inverse());
 		if (inverted) {
 			return angle.inverse();
@@ -63,6 +66,9 @@ public class Pigeon {
 	}
 
 	public Rotation2d getPitch() {
+		if(!Robot.isReal()&&Constants.mode==Constants.Mode.SIM){
+			return Rotation2d.identity();
+		}
 		return getUnadjustedPitch().rotateBy(pitchAdjustmentAngle.inverse()).inverse();
 	}
 
@@ -97,9 +103,7 @@ public class Pigeon {
 		System.out.println("Reset gyro to " + getPitch().getDegrees());
 	}
 	public Rotation2d getUnadjustedYaw() {
-		if(!Robot.isReal()&&Constants.mode==Constants.Mode.SIM){
-			return Rotation2d.fromDegrees(driveSim.getSimulatedDriveTrainPose().getRotation().getDegrees());
-		}
+		
 		return Rotation2d.fromDegrees(
 			BaseStatusSignal.getLatencyCompensatedValue(getYawStatusSignal(), getRateStatusSignal()).in(Degree));
 	}

@@ -382,15 +382,16 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
 		if((!Robot.isReal()&&Constants.mode == Mode.SIM)||Constants.kSubsytemSim){
+			mServoInputs.error_rotations = (mServoOutputs.demand-mServoInputs.position_rots);
 			switch (mControlState) {
 				case OPEN_LOOP:
 					mServoInputs.position_rots += 	mServoOutputs.demand/dt;
 					break;
 				case MOTION_MAGIC:
-					mServoInputs.position_rots += (mServoOutputs.demand-mServoInputs.position_rots)/1.1*dt;//bad guess at motion for sim
+					mServoInputs.position_rots += mServoInputs.error_rotations/1.1*dt;//bad guess at motion for sim
 					break;
 				case POSITION_PID:
-					mServoInputs.position_rots += (mServoOutputs.demand-mServoInputs.position_rots)/1.1*dt;//bad guess at motion for sim
+					mServoInputs.position_rots += mServoInputs.error_rotations/1.1*dt;//bad guess at motion for sim
 					break;
 				
 			}

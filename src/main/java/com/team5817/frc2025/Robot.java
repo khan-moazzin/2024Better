@@ -46,11 +46,13 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
 public class Robot extends LoggedRobot {
     public static Pose3d[] mechPoses = new Pose3d[6];
+    public static Pose3d[] desMechPoses = new Pose3d[6];
+
     static{
         for(int i = 0; i < 6; i++){
             mechPoses[i] = new Pose3d();
+            desMechPoses[i] = new Pose3d();
         }
-
     }
     SubsystemManager mSubsystemManager;
     // Superstructure s;
@@ -134,6 +136,7 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
       // mEnabledLooper.outputToSmartDashboard();
       //     mSubsystemManager.outputLoopTimes();
       Logger.recordOutput("Mechs", mechPoses);
+      Logger.recordOutput("Desired Mechs", desMechPoses);
       mEnabledLooper.update();
     }
   
@@ -167,21 +170,13 @@ boolean disableGyroReset = false;
       controls.twoControllerMode();
       // controls.oneControllerMode();
       controlBoard.update();
-      if(!Robot.isReal() && Constants.mode == Constants.Mode.SIM){
-        drive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-          controlBoard.getSwerveTranslation().x(),
-          controlBoard.getSwerveTranslation().y(),
-          controlBoard.getSwerveRotation(),
-          Rotation2d.kIdentity
-
-      ));
-      }else{
+      
         drive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
           controlBoard.getSwerveTranslation().x(),
           controlBoard.getSwerveTranslation().y(),
           controlBoard.getSwerveRotation(),
             Util.robotToFieldRelative(drive.getHeading(), DriverStation.getAlliance().get().equals(Alliance.Red))
-      ));}
+      ));
 
 
     }

@@ -405,7 +405,7 @@ public class Constants {
 			kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
 
 			kElevatorServoConstants.kHomePosition = 0; // degrees
-			kElevatorServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+			kElevatorServoConstants.kRotationsPerUnitDistance = 1;
 
 			kElevatorServoConstants.kMaxUnitsLimit = 128.1;
 			kElevatorServoConstants.kMinUnitsLimit = 0.0;

@@ -100,6 +100,9 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 	@Override
 	public void outputTelemetry() {
         Robot.mechPoses[5] =Robot.mechPoses[4].transformBy(new Transform3d(new Translation3d(.221,0,.278 ), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(-.48 + mServoInputs.position_units), Units.degreesToRadians(0))));
+
+		Robot.desMechPoses[5] =Robot.desMechPoses[4].transformBy(new Transform3d(new Translation3d(.221,0,.278 ), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(-.48 + mServoOutputs.demand), Units.degreesToRadians(0))));
+
 		super.outputTelemetry();
 	}
 

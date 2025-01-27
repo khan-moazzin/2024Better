@@ -5,6 +5,7 @@
 
 package com.team254.lib.swerve;
 
+import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Twist2d;
@@ -81,6 +82,14 @@ public class ChassisSpeeds implements StructSerializable{
                 omegaRadiansPerSecond);
     }
 
+    public static ChassisSpeeds fromFieldRelativeSpeeds(ChassisSpeeds mChassisSpeeds, Rotation2d robotAngle) {
+        return fromFieldRelativeSpeeds(
+            mChassisSpeeds.vxMetersPerSecond,
+            mChassisSpeeds.vyMetersPerSecond,
+            mChassisSpeeds.omegaRadiansPerSecond,
+            robotAngle
+        );
+    }
 
     public static ChassisSpeeds fromRobotRelativeSpeeds(
             double vxMetersPerSecond,

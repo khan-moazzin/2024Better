@@ -41,6 +41,13 @@ public class ParallelRequest extends Request {
 			}
 		}
 	}
+	@Override
+	public Request addName(String name) {
+		super.addName(name);
+		idleRequests.forEach(r -> r.addName(name));
+		inProgressRequests.forEach(r -> r.addName(name));
+		return this;
+	}
 
 	@Override
 	public void act() {

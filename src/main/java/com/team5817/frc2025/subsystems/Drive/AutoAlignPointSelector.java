@@ -48,28 +48,30 @@ public class AutoAlignPointSelector {
         return closestTag;
     }
 
-    private static Pose2d minimizeDistance(Pose2d from, List<AlignmentPoint> to) {
+    private static Pose2d minimizeDistance(Pose2d from, List<Pose2d> to) {
+        if (to.size() == 0) {
+            return null;
+        }
         double closestDistance = Integer.MAX_VALUE;
-        Pose2d closestPose = Pose2d.fromTranslation(to.get(0).getTranslation());
+        Pose2d closestPose = to.get(0);
         for (int i = 0; i < to.size(); i++) {
-            double distance = from.distance(Pose2d.fromTranslation(to.get(i).getTranslation()));
+            double distance = from.distance(to.get(i));
             if (distance <  closestDistance) {
                 closestDistance = distance;
-                closestPose = Pose2d.fromTranslation(to.get(i).getTranslation());
+                closestPose = to.get(i);
             }
         }
-        return closestPose;
+        return (closestPose);
     }
 
     private static Pose2d getNearestAlignment(AprilTag tag, Pose2d point,AlignmentType desiredAlignment) {
-        List<AlignmentPoint> points= new ArrayList<>();
+        List<Pose2d> points= new ArrayList<>();
         for(AlignmentPoint a: tag.getAllAlignmentPoints()){
             if(a.getAllowedAllignments().contains(desiredAlignment))
-                points.add(a);
+                points.add(tag.getFieldToTag().transformBy(Pose2d.fromTranslation(a.getTranslation())));
             }
         return minimizeDistance(point, points);
     }
-    @AutoLogOutput(key = "Nearest Alignment")
     public static Pose2d chooseTargetPoint(Pose2d currentPoint, AlignmentType desiredAlignment) {
         Map<Integer, AprilTag> mTagMap = getTagSet();
         Optional<AprilTag> closestTag = getNearestTag(mTagMap, currentPoint,desiredAlignment);

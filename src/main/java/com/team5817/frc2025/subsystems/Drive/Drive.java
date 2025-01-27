@@ -393,8 +393,6 @@ public class Drive extends Subsystem {
 	public void readPeriodicInputs() {
 		SwerveModuleState[] module_states = new SwerveModuleState[4];
 		if(!Robot.isReal()&&Constants.mode == Constants.Mode.SIM){
-			mPeriodicIO.heading = new Rotation2d(driveSimulation.getSimulatedDriveTrainPose().getRotation());
-			mPeriodicIO.pitch = Rotation2d.identity();
 			for (int i = 0; i < mModules.length; i++) {
 				module_states[i] = new SwerveModuleState(driveSimulation.getModules()[i].getCurrentState());
 			}
@@ -402,11 +400,10 @@ public class Drive extends Subsystem {
 			for (SwerveModule swerveModule : mModules) {
 				swerveModule.readPeriodicInputs();
 			}
-			mPeriodicIO.heading = mPigeon.getYaw();
-			mPeriodicIO.pitch = mPigeon.getPitch();
 			module_states = getModuleStates();
 		}		
-
+		mPeriodicIO.pitch = mPigeon.getPitch();
+		mPeriodicIO.heading = mPigeon.getYaw();
 		mPeriodicIO.timestamp = Timer.getFPGATimestamp();
 		Twist2d twist_vel = Constants.SwerveConstants.kKinematics
 				.toChassisSpeeds(module_states)
@@ -517,7 +514,7 @@ public class Drive extends Subsystem {
 			}
 		}
 		if(!Robot.isReal()&&Constants.mode == Constants.Mode.SIM){
-			driveSimulation.setRobotSpeeds(mPeriodicIO.setpoint.mChassisSpeeds.wpi());
+			driveSimulation.setRobotSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(mPeriodicIO.setpoint.mChassisSpeeds,mPeriodicIO.heading.inverse()).wpi());
 		}else{
 			for (SwerveModule swerveModule : mModules) {
 				swerveModule.writePeriodicOutputs();
