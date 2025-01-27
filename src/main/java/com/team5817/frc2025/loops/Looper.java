@@ -1,7 +1,6 @@
 package com.team5817.frc2025.loops;
 
 import com.team5817.frc2025.Constants;
-import com.team5817.lib.wpi.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ public class Looper implements ILooper {
 
 	private boolean running_;
 
-	private final Notifier notifier_;
 	private final List<Loop> loops_;
 	private final Object taskRunningLock_ = new Object();
 	private double timestamp_ = 0;
@@ -26,26 +24,9 @@ public class Looper implements ILooper {
 		return dt_;
 	}
 
-	private final CrashTrackingRunnable runnable_ = new CrashTrackingRunnable() {
-		@Override
-		public void runCrashTracked() {
-			synchronized (taskRunningLock_) {
-				if (running_) {
-					double now = Timer.getTimestamp();
 
-					for (Loop loop : loops_) {
-						loop.onLoop(now);
-					}
-
-					dt_ = now - timestamp_;
-					timestamp_ = now;
-				}
-			}
-		}
-	};
 
 	public Looper(double loop_time) {
-		notifier_ = new Notifier(runnable_);
 		running_ = false;
 		loops_ = new ArrayList<>();
 		kPeriod = loop_time;
@@ -72,14 +53,19 @@ public class Looper implements ILooper {
 				}
 				running_ = true;
 			}
-			notifier_.startPeriodic(kPeriod);
+		}
+	}
+	public synchronized void update(){
+		if(running_){
+			for (Loop loop : loops_) {
+				loop.onLoop(Timer.getTimestamp());
+			}
 		}
 	}
 
 	public synchronized void stop() {
 		if (running_) {
 			System.out.println("Stopping loops");
-			notifier_.stop();
 			synchronized (taskRunningLock_) {
 				running_ = false;
 				timestamp_ = Timer.getTimestamp();
@@ -91,8 +77,5 @@ public class Looper implements ILooper {
 		}
 	}
 
-	public void outputToSmartDashboard() {
-		SmartDashboard.putNumber("looper_dt", dt_);
 
-	}
 }

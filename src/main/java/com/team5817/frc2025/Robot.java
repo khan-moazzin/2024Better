@@ -134,7 +134,7 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
       // mEnabledLooper.outputToSmartDashboard();
       //     mSubsystemManager.outputLoopTimes();
       Logger.recordOutput("Mechs", mechPoses);
-      
+      mEnabledLooper.update();
     }
   
   
