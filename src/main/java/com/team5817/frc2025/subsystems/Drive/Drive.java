@@ -36,6 +36,8 @@ import com.team254.lib.trajectory.timing.TimedState;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
@@ -610,7 +612,7 @@ public class Drive extends Subsystem {
 		TimedState<Pose2dWithMotion> path_setpoint = new TimedState<Pose2dWithMotion>(Pose2dWithMotion.identity());
 		Rotation2d heading_setpoint = new Rotation2d();
 	}
-
+	Field2d	mField2d = new Field2d();
 	@Override
 	public void outputTelemetry() {
 		edu.wpi.first.math.kinematics.SwerveModuleState[] uncappedstates = new edu.wpi.first.math.kinematics.SwerveModuleState[4];
@@ -629,6 +631,10 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
 		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestGlobalKalmanPose().wpi());
 		Logger.recordOutput("RobotState/Odom Pose", RobotState.getInstance().getLatestPoseFromOdom().getValue().wpi());
+
+		//elastic
+		mField2d.setRobotPose(RobotState.getInstance().getLatestGlobalKalmanPose().wpi());
+		SmartDashboard.putData("Elastic/Field2d", mField2d);
 		
 
 		for (SwerveModule module : mModules) {

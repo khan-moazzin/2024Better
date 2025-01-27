@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
 public class Robot extends LoggedRobot {
@@ -127,6 +128,7 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
   
     @Override
     public void robotPeriodic() {
+      Logger.recordOutput("Elastic/Match Time", Timer.getMatchTime());
       // auto = autoChooser.get();
       
       // mEnabledLooper.outputToSmartDashboard();

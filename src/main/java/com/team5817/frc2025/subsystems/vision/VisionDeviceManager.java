@@ -45,7 +45,7 @@ public class VisionDeviceManager extends Subsystem {
 	private double mMovingAvgRead = 0.0;
 
 	private static boolean disable_vision = false;
-
+	double timeOfLastUpdate = Double.MIN_VALUE;
 	public VisionDeviceManager() {
 		mDomCamera = new VisionDevice("limelight-dom");
 		mSubCamera = new VisionDevice("limelight-sub");
@@ -100,6 +100,8 @@ public class VisionDeviceManager extends Subsystem {
 						mRobotState.addSpecializedVisionUpdate(update);
 					}
 				}
+				if(update.getTimestamp()>timeOfLastUpdate)
+					timeOfLastUpdate = update.getTimestamp();
 		}
 		}}
 	}
@@ -110,6 +112,7 @@ public class VisionDeviceManager extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
+		Logger.recordOutput("Elastic/Time Since Last Update", Timer.getTimestamp()-timeOfLastUpdate);
 		SmartDashboard.putNumber("Vision heading moving avg", getMovingAverageRead());
 		SmartDashboard.putBoolean("vision disabled", visionDisabled());
 		for(VisionDevice device: mAllCameras){

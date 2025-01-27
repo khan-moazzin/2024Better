@@ -34,6 +34,7 @@ public class DriverControls {
 	}
 	boolean climbAllowed = false;
 	boolean autoAlignAllowed = true;
+	boolean codriverManual = false;
 	CustomXboxController driver = mControlBoard.driver;
 	CustomXboxController codriver = mControlBoard.operator;
 	/* TWO CONTROLLERS */
@@ -103,17 +104,23 @@ public class DriverControls {
 			preparedGoal = GoalState.NET;
 		if(codriver.POV180.isBeingPressed())
 			preparedGoal = GoalState.PROCESS;
-			
-		Logger.recordOutput("preparedGoal", preparedGoal);
-
+		
+		if(codriverManual){
+			//TODO
+		}
 		if(codriver.getRightTriggerAxis()==1)
 			climbAllowed = true;	
 		if(codriver.leftCenterClick.isBeingPressed())
 			climbAllowed = false;
-		Logger.recordOutput("Climb Allowed", climbAllowed);	
 		
 		boolean input = codriver.leftBumper.wasActivated();
 		autoAlignAllowed = input?!autoAlignAllowed:autoAlignAllowed;
+
+		Logger.recordOutput("Elastic/Codriver Manual", codriverManual);
+		Logger.recordOutput("Elastic/Auto Align Allowed", autoAlignAllowed);
+		Logger.recordOutput("Elastic/Climb Allowed", climbAllowed);
+		Logger.recordOutput("Elastic/PreparedGoal", preparedGoal);
+
 	}
 
 
