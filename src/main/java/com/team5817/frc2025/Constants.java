@@ -1,9 +1,5 @@
 package com.team5817.frc2025;
 
-import static edu.wpi.first.units.Units.Inch;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
-import java.lang.reflect.Array;
 import java.util.List;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -19,7 +15,6 @@ import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
 import com.team5817.lib.swerve.SwerveModule.SwerveModuleConstants;
 import com.team254.lib.geometry.Translation2d;
-import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.motion.MotionProfileConstraints;
 import com.team254.lib.swerve.SwerveDriveKinematics;
 import com.team254.lib.swerve.SwerveKinematicLimits;
@@ -33,7 +28,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Distance;
 
 public class Constants {
 
@@ -171,7 +165,7 @@ public class Constants {
 	    public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
              maxSpeed,
         	 -maxSpeed,
-             maxAcceleration*.5);
+             maxAcceleration);
 
 		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
             5,

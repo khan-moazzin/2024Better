@@ -6,6 +6,7 @@ package com.team5817.frc2025;
 
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 
@@ -99,6 +100,7 @@ if (isReal()) {
       setUseTiming(false);
     }else{
       drivesim = new SwerveDriveSimulation(Drive.mapleSimConfig,new Pose2d(3,3,Rotation2d.identity()).wpi());
+
       Drive.registerDriveSimulation(drivesim);
       SimulatedArena.getInstance().addDriveTrainSimulation(drivesim);
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
@@ -181,7 +183,9 @@ boolean disableGyroReset = false;
 
     }
 
-    
+    public SwerveDriveSimulation getSimulation(){
+      return drivesim;
+    }   
   
     /** This function is called once when the robot is disabled. */
   

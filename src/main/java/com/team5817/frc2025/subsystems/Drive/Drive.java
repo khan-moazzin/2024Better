@@ -21,7 +21,6 @@ import com.team5817.lib.swerve.DriveMotionPlanner.FollowerType;
 import com.team5817.lib.swerve.SwerveHeadingController;
 import com.team5817.lib.swerve.SwerveModule;
 import com.team5817.lib.swerve.SwerveModulePosition;
-import com.ctre.phoenix6.controls.StaticBrake;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithMotion;
 import com.team254.lib.geometry.Rotation2d;
@@ -46,13 +45,11 @@ import static edu.wpi.first.units.Units.Volt;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends Subsystem {
