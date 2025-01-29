@@ -12,26 +12,25 @@ public class TrajectoryAction implements Action{
 	private Drive mDrive = null;
 
 
-	private TrajectoryIterator mTrajectory;
+	private Trajectory mTrajectory;
 
 	public TrajectoryAction(Trajectory path){
 		this(path, false);
 	}
 
 	public TrajectoryAction(Trajectory path, boolean resetPos){
-		this.mTrajectory = path.get();
+		this.mTrajectory = path;
 		this.mDrive = Drive.getInstance();
 	}
 
 	@Override
 	public void start(){
-		// mDrive.setTrajectory(mTrajectory);
+		mDrive.setTrajectory(mTrajectory);
 	}
 
 	@Override
 	public boolean isFinished() {
-		return false;
-		// return mDrive.isTrajectoryFinished();
+		return mDrive.isTrajectoryFinished();
 	}
 
 	@Override

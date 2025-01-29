@@ -9,7 +9,7 @@ public class AutoExecuter{
 
 
     public void setAuto(AutoBase auto){
-    this.mAuto = auto;
+        this.mAuto = auto;
     }
 
     public AutoBase getAuto(){

@@ -8,6 +8,7 @@ public class TrajectoryLibrary {
         public static final Trajectory sideStartToCloseScore = new Trajectory(null);
         public static final Trajectory centerStartToCloseScore = new Trajectory(null);
         public static final Trajectory ___ScoreToHumanPlayer = new Trajectory(null);
+        public static final Trajectory leftToHuman = new Trajectory("Left to Human");
 
         
     

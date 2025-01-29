@@ -149,6 +149,8 @@ public class Constants {
 		public static final double kSnapSwerveHeadingKi = 0.0;
 		public static final double kSnapSwerveHeadingKd = 0.6;
 		public static final double kSnapSwerveHeadingKf = 1.0;
+		
+		public static final double kTrajectoryDeadband = .01;
 
 		public static final SwerveKinematicLimits kSwerveKinematicLimits = new SwerveKinematicLimits();
 
@@ -163,7 +165,7 @@ public class Constants {
 		static {
 			kSwerveUncappedKinematicLimits.kMaxDriveVelocity = maxSpeed;
 			kSwerveUncappedKinematicLimits.kMaxDriveAcceleration = Double.MAX_VALUE;
-			kSwerveUncappedKinematicLimits.kMaxSteeringVelocity = Double.MAX_VALUE;
+			kSwerveUncappedKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
 
 		public static final double kAutoAlignAllowableDistance = 2.0; //Meters

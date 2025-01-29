@@ -37,13 +37,7 @@ public class PPTimeView {
         double headingRate = 0;
         double velocity = state.linearVelocity;
         Rotation2d motion_direction = new Rotation2d(state.heading).flip().inverse();
-        if(DriverStation.getAlliance().get() == Alliance.Red){
-            pose = pose.mirrorAboutX(8.25);
-            headingRate *= -1;
-            motion_direction = motion_direction.inverse();
-            velocity *= -1;
-        }
-
+        
         return new PPPathPointState(pose, motion_direction, velocity, t, headingRate);
     }
 

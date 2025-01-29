@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
 // import com.team5817.frc2025.autos.Modes.ThreeCoralMode;
+import com.team5817.frc2025.autos.Modes.ThreeCoralMode;
 
 public class AutoModeSelector {
 	public enum DesiredMode {
@@ -28,13 +29,13 @@ public class AutoModeSelector {
 
 	}
 
-	public void updateModeCreator(boolean force_regen) {
+	public void updateModeCreator() {
 		DesiredMode desiredMode = mModeChooser.getSelected();
-
+		
 		if (desiredMode == null) {
 			desiredMode = DesiredMode.DO_NOTHING;
 		}
-
+		mAutoMode = getAutoModeForParams(desiredMode);
 }
 
 	private Optional<AutoBase> getAutoModeForParams(DesiredMode mode) {
@@ -44,7 +45,7 @@ public class AutoModeSelector {
 
 
 			case THREE_CORAL_MODE:
-				// return Optional.of(new ThreeCoralMode());
+				return Optional.of(new ThreeCoralMode());
 
 		default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
@@ -73,9 +74,11 @@ public class AutoModeSelector {
 	}
 
 	public Optional<AutoBase> getAutoMode() {
+
 		if (!mAutoMode.isPresent()) {
 			return Optional.empty();
 		}
+
 		return mAutoMode;
 	}
 }

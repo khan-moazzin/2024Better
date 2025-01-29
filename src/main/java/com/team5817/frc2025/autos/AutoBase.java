@@ -1,16 +1,15 @@
 package com.team5817.frc2025.autos;
 
-import java.util.List;
 
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+
 import com.team5817.frc2025.autos.Actions.Action;
 
-import java.util.ArrayList;
 
 
 public abstract class AutoBase{
 
-    protected List<PathPlannerTrajectory> trajectories = new ArrayList<>();
+    protected SwerveDriveSimulation mSim;
 
     boolean mActive = false;
     public void start() {
@@ -42,13 +41,8 @@ public abstract class AutoBase{
     }
 
 
-    public PathPlannerTrajectory addTrajectory(PathPlannerTrajectory path){
-        trajectories.add(path);
-        return path;
-    }
-
-    public List<PathPlannerTrajectory> getTrajectory(){
-        return trajectories;
+    public void registerDriveSimulation(SwerveDriveSimulation sim){
+        mSim = sim;
     }
 
 

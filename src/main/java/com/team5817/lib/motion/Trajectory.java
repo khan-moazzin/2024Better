@@ -11,8 +11,25 @@ import com.team5817.frc2025.Constants.SwerveConstants;
 public class Trajectory {
     Optional<PathPlannerPath> mPath;
     PathPlannerTrajectory mTrajectory;
+    boolean mUseSpecializied;
 
     
+    public Trajectory(String path_name, boolean useSpecialized){
+
+        try {
+            mPath = Optional.of(PathPlannerPath.fromPathFile(path_name));
+        } catch (Exception e) {
+            mPath = Optional.empty();
+        }
+
+        if(mPath.isEmpty()){
+            return;
+        }
+        mUseSpecializied = useSpecialized;
+        mTrajectory = mPath.get().getIdealTrajectory(SwerveConstants.mRobotConfig).get();
+
+    }
+
     public Trajectory(String path_name){
 
         try {
@@ -24,11 +41,16 @@ public class Trajectory {
         if(mPath.isEmpty()){
             return;
         }
-
+        mUseSpecializied = false;
         mTrajectory = mPath.get().getIdealTrajectory(SwerveConstants.mRobotConfig).get();
 
     }
-    
+
+
+    public boolean useSpecialized(){
+        return mUseSpecializied;
+    }
+
     public TrajectoryIterator get(){
         return new TrajectoryIterator(new PPTimeView(mTrajectory));
     }

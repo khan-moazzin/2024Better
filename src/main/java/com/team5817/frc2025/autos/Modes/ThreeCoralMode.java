@@ -1,38 +1,39 @@
-// package com.team5817.frc2025.autos.Modes;
+package com.team5817.frc2025.autos.Modes;
 
-// import com.team5817.frc2025.autos.AutoBase;
-// import com.team5817.frc2025.autos.Actions.TrajectoryAction;
-// import com.team5817.frc2025.autos.TrajectoryLibrary.l;
-// import com.team5817.frc2025.subsystems.Superstructure;
-// import com.team5817.frc2025.subsystems.Drive.Drive;
-// import com.team5817.lib.motion.Trajectory;
-// import com.team5817.lib.motion.TrajectorySet;
+import com.team5817.frc2025.Robot;
+import com.team5817.frc2025.autos.AutoBase;
+import com.team5817.frc2025.autos.Actions.TrajectoryAction;
+import com.team5817.frc2025.autos.TrajectoryLibrary.l;
+import com.team5817.frc2025.subsystems.Superstructure;
+import com.team5817.frc2025.subsystems.Drive.Drive;
+import com.team5817.lib.motion.TrajectorySet;
 
-// public class ThreeCoralMode extends AutoBase {
+public class ThreeCoralMode extends AutoBase {
 
 
-// 	private Superstructure s = Superstructure.getInstance();
-// 	private Drive d = Drive.getInstance();
+	private Superstructure s = Superstructure.getInstance();
+	private Drive d = Drive.getInstance();
+	private TrajectorySet t;
 
-// 	private TrajectorySet t;
+	public ThreeCoralMode() {
 
-// 	public ThreeCoralMode() {
+        t = new TrajectorySet(
+            l.leftToHuman
+        );
+		// if()
+		// t.mirror();
 
-//         t = new TrajectorySet(
-//             l.sideStartToCloseScore,
-//             l.sideStartToCloseScore
-//         );
-// 		// if()
-// 		// t.mirror();
+	}
 
-// 	}
-
-// 	// spotless:off
-// 	@Override
-// 	public void routine() {
-// 		runAction(new TrajectoryAction(t.next()));
+	// spotless:off
+	@Override
+	public void routine() {
+		System.out.println("ran auto");
+        if(!Robot.isReal())
+            mSim.setSimulationWorldPose(t.initalPose().wpi());
+		runAction(new TrajectoryAction(t.next()));
         
-//         System.out.println("Finished auto!");
-// 	}
-// 	// spotless:on
-// }
+        System.out.println("Finished auto!");
+	}
+	// spotless:on
+}

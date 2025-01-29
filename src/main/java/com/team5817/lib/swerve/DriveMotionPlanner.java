@@ -2,12 +2,17 @@ package com.team5817.lib.swerve;
 
 
 
+
+import org.dyn4j.exception.SameObjectException;
+import org.littletonrobotics.junction.Logger;
+
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.swerve.ChassisSpeeds;
 import com.team254.lib.trajectory.TrajectoryIterator;
+import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.lib.motion.PPPathPointState;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -35,8 +40,8 @@ public class DriveMotionPlanner {
 	TrajectoryIterator mCurrentTrajectory;
 	boolean mIsReversed = false;
 	double mLastTime = Double.POSITIVE_INFINITY;
-	public PPPathPointState mLastSetpoint = null;
-	public PPPathPointState mSetpoint = new PPPathPointState();
+	PPPathPointState mLastSetpoint = null;
+	PPPathPointState mSetpoint = new PPPathPointState();
 	Pose2d mError = Pose2d.identity();
 
 	SwerveHeadingController mHeadingController = new SwerveHeadingController();
@@ -48,6 +53,7 @@ public class DriveMotionPlanner {
 	double mTotalTime = Double.POSITIVE_INFINITY;
 	double mStartTime = Double.POSITIVE_INFINITY;
 	ChassisSpeeds mOutput = new ChassisSpeeds();
+	boolean mPathIsFinished = false;
 
 	// PID controllers for path following
 	double mDt = 0.0;
@@ -74,12 +80,12 @@ public class DriveMotionPlanner {
 		// Feedback on longitudinal error (distance).
 		final double kPathk = 2.4;/* * Math.ypot(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond)*/;//0.15;
 		Twist2d pid_error = Pose2d.log(mError);
-		chassisSpeeds.vxMetersPerSecond = (chassisSpeeds.vxMetersPerSecond) - kPathk * pid_error.dx;
+		chassisSpeeds.vxMetersPerSecond = (chassisSpeeds.vxMetersPerSecond) + kPathk * pid_error.dx;
 		chassisSpeeds.vyMetersPerSecond = (chassisSpeeds.vyMetersPerSecond) + kPathk * pid_error.dy;
 		// chassisSpeeds.vxMetersPerSecond = (chassisSpeeds.vxMetersPerSecond * 1) ;
 		// chassisSpeeds.vyMetersPerSecond = (chassisSpeeds.vyMetersPerSecond * 1) ;
 	
-		// chassisSpeeds.omegaRadiansPerSecond = mHeadingController.update(mError.getRotation().inverse(), Timer.getTimestamp());TODO
+		chassisSpeeds.omegaRadiansPerSecond = mHeadingController.update(mError.getRotation().inverse(), Timer.getTimestamp());
 		// chassisSpeeds.omegaRadiansPerSecond = 0;
 		return chassisSpeeds;
 	}
@@ -95,28 +101,35 @@ public class DriveMotionPlanner {
 
 			// Compute error in robot frame
 			mPrevHeadingError = mError.getRotation();
-			mError = mSetpoint.getPose().inverse().transformBy(current_state);
+			mError = mSetpoint.getPose().inverse().transformBy(current_state);//TODO WARNIUNGop
 		
 
 
  				sample_point = mCurrentTrajectory.advance(mDt);
 				mSetpoint = sample_point;
-
+				Logger.recordOutput("Trajectory pose", sample_point.getPose().wpi());
 				final double velocity_m = mSetpoint.getVelocity();
 				// Field relative
 				var course = mSetpoint.getCourse();
-				Rotation2d motion_direction = course;
-				// Adjust course by ACTUAL heading rather than planned to decouple heading and translation errors.
 
 				var chassis_speeds = new ChassisSpeeds(
-						velocity_m * motion_direction.cos(),
-						velocity_m * motion_direction.sin(),
+						velocity_m * course.cos(),
+						velocity_m * course.sin(),
 						0
 						);
 				mOutput = updatePIDChassis(chassis_speeds);
-	                   
+	    mPathIsFinished = distance(current_state, Double.MAX_VALUE) < SwerveConstants.kTrajectoryDeadband;
+		mOutput = ChassisSpeeds.fromFieldRelativeSpeeds(mOutput, current_state.getRotation());
 		return mOutput;
 	}
+
+	private double distance(Pose2d current_state, double additional_progress) {
+		return mCurrentTrajectory
+				.preview(additional_progress)
+				.getPose()
+				.distance(current_state);
+	}
+
 
 	public Pose2d getEndPosition() {
 		return mCurrentTrajectory.getTimeView().sample(mCurrentTrajectoryLength).getPose();
@@ -131,11 +144,8 @@ public class DriveMotionPlanner {
 		return mError.getRotation();
 	}
 
-	private double distance(Pose2d current_state, double additional_progress) {
-		return mCurrentTrajectory
-				.preview(additional_progress)
-				.getPose()
-				.distance(current_state);
+	public boolean isPathFinished(){
+		return mPathIsFinished;
 	}
 
 	public synchronized PPPathPointState getSetpoint() {
