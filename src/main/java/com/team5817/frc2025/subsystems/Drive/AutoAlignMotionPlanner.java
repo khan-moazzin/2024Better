@@ -56,7 +56,7 @@ public class AutoAlignMotionPlanner {
         mYController.setGoalAndConstraints(
             new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 0, IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.02, 0.05),
             SwerveConstants.kPositionMotionProfileConstraints);
-        mThetaController.setStabilizeTarget(mFieldToTargetPoint.getRotation());
+        mThetaController.setSnapTarget(mFieldToTargetPoint.getRotation());
         double currentRotation = current_pose.getRotation().getRadians();
 
     
@@ -67,10 +67,10 @@ public class AutoAlignMotionPlanner {
         }
 
         double xOutput = mXController.update(
-               new MotionState(timestamp, current_pose.getTranslation().x(), current_vel.dx, 0.0),
+               new MotionState(timestamp, current_pose.getTranslation().x(), current_vel.dx/2, 0.0),
                 timestamp + Constants.kLooperDt);
         double yOutput = mYController.update(
-               new MotionState(timestamp, current_pose.getTranslation().y(), current_vel.dy, 0.0),
+               new MotionState(timestamp, current_pose.getTranslation().y(), current_vel.dy/2, 0.0),
                 timestamp + Constants.kLooperDt);
         double thetaOutput = mThetaController.update(current_pose.getRotation(), timestamp);
         ChassisSpeeds setpoint = new ChassisSpeeds();

@@ -1,4 +1,5 @@
 package com.team5817.frc2025.autos.Modes;
+package com.team5817.frc2025.autos.Modes;
 
 import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.autos.AutoBase;
@@ -9,12 +10,14 @@ import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.motion.TrajectorySet;
 
 public class ThreeCoralMode extends AutoBase {
+public class ThreeCoralMode extends AutoBase {
 
 
 	private Superstructure s = Superstructure.getInstance();
 	private Drive d = Drive.getInstance();
 	private TrajectorySet t;
 
+	public ThreeCoralMode() {
 	public ThreeCoralMode() {
 
         t = new TrajectorySet(
@@ -33,6 +36,10 @@ public class ThreeCoralMode extends AutoBase {
             mSim.setSimulationWorldPose(t.initalPose().wpi());
 		runAction(new TrajectoryAction(t.next()));
         
+        System.out.println("Finished auto!");
+	}
+	// spotless:on
+}
         System.out.println("Finished auto!");
 	}
 	// spotless:on

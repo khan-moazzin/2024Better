@@ -15,7 +15,6 @@ public class TrajectorySet {
         mInitalPose = mTrajectorySet.get(0).get().getCurrentState().getPose();
     }
 
-
     public Trajectory next(){
         return mTrajectorySet.remove(0);
     }
