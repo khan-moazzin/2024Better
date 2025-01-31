@@ -1,19 +1,11 @@
 package com.team5817.frc2025.subsystems;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CANcoderConfigurator;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.team254.lib.drivers.CanDeviceId;
 import com.team5817.frc2025.Ports;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.Timer;
-
-import static edu.wpi.first.units.Units.Degree;
-
 import java.util.Optional;
 
 // Conatiner to hold the Cancoders so we can initialize them
@@ -71,24 +63,29 @@ public class Cancoders {
 		// CANcoderConfigurator configurator = thisCancoder.getConfigurator();
 		// double initpose = thisCancoder.getAbsolutePosition().getValue().in(Degree);
 		// CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
-		
-		// canCoderConfig.MagnetSensor.MagnetOffset = -thisCancoder.getAbsolutePosition().getValueAsDouble()+initpose;
-		// canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+
+		// canCoderConfig.MagnetSensor.MagnetOffset =
+		// -thisCancoder.getAbsolutePosition().getValueAsDouble()+initpose;
+		// canCoderConfig.MagnetSensor.SensorDirection =
+		// SensorDirectionValue.CounterClockwise_Positive;
 
 		// double startTime = Timer.getFPGATimestamp();
 		// boolean timedOut = false;
 		// boolean goodInit = false;
 		// int attempt = 1;
 		// while (!goodInit && !timedOut && attempt < 20) {
-		// 	System.out.println("Initing CANCoder " + canDeviceId.getDeviceNumber() + " / attempt: " + attempt + " / "
-		// 			+ (Timer.getFPGATimestamp() - startTime) + " seconds elapsed");
-		// 	StatusCode settingsCode = configurator.apply(canCoderConfig);
-		// 	StatusCode sensorCode = thisCancoder.getAbsolutePosition().setUpdateFrequency(20);
+		// System.out.println("Initing CANCoder " + canDeviceId.getDeviceNumber() + " /
+		// attempt: " + attempt + " / "
+		// + (Timer.getFPGATimestamp() - startTime) + " seconds elapsed");
+		// StatusCode settingsCode = configurator.apply(canCoderConfig);
+		// StatusCode sensorCode =
+		// thisCancoder.getAbsolutePosition().setUpdateFrequency(20);
 
-		// 	goodInit = settingsCode == StatusCode.OK && sensorCode == StatusCode.OK;
+		// goodInit = settingsCode == StatusCode.OK && sensorCode == StatusCode.OK;
 
-		// 	timedOut = (Timer.getFPGATimestamp()) - startTime >= kBootUpErrorAllowanceTime;
-		// 	attempt++;
+		// timedOut = (Timer.getFPGATimestamp()) - startTime >=
+		// kBootUpErrorAllowanceTime;
+		// attempt++;
 		// }
 
 		return thisCancoder;
@@ -107,8 +104,6 @@ public class Cancoders {
 		mBackRight = build(Ports.BR_CANCODER);
 		mBackRightObserver = new CanTsObserver(mBackRight);
 	}
-
-
 
 	public boolean allHaveBeenInitialized() {
 		return mFrontLeftObserver.hasUpdate()

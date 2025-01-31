@@ -2,11 +2,8 @@ package com.team5817.lib.drivers;
 
 import static edu.wpi.first.units.Units.Degree;
 
-import java.time.chrono.ThaiBuddhistChronology;
 
-import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -44,14 +41,15 @@ public class Pigeon {
 		mGyro = new Pigeon2(port, "canivore1");
 		mGyro.getConfigurator().apply(new Pigeon2Configuration());
 	}
+
 	static SwerveDriveSimulation driveSim;
-	public static void registerGyroSim(SwerveDriveSimulation sim){
+
+	public static void registerGyroSim(SwerveDriveSimulation sim) {
 		driveSim = sim;
 	}
 
-
 	public Rotation2d getYaw() {
-		if(!Robot.isReal()&&Constants.mode==Constants.Mode.SIM){
+		if (!Robot.isReal() && Constants.mode == Constants.Mode.SIM) {
 			return Rotation2d.fromDegrees(driveSim.getSimulatedDriveTrainPose().getRotation().getDegrees());
 		}
 		Rotation2d angle = getUnadjustedYaw().rotateBy(yawAdjustmentAngle.inverse());
@@ -66,7 +64,7 @@ public class Pigeon {
 	}
 
 	public Rotation2d getPitch() {
-		if(!Robot.isReal()&&Constants.mode==Constants.Mode.SIM){
+		if (!Robot.isReal() && Constants.mode == Constants.Mode.SIM) {
 			return Rotation2d.identity();
 		}
 		return getUnadjustedPitch().rotateBy(pitchAdjustmentAngle.inverse()).inverse();
@@ -88,8 +86,7 @@ public class Pigeon {
 	 * @param angleDeg New yaw in degrees
 	 */
 	public void setRoll(double angleDeg) {
-		rollAdjustmentAngle =
-				getUnadjustedRoll().rotateBy(Rotation2d.fromDegrees(angleDeg).inverse());
+		rollAdjustmentAngle = getUnadjustedRoll().rotateBy(Rotation2d.fromDegrees(angleDeg).inverse());
 	}
 
 	/**
@@ -98,14 +95,14 @@ public class Pigeon {
 	 * @param angleDeg New yaw in degrees
 	 */
 	public void setPitch(double angleDeg) {
-		pitchAdjustmentAngle =
-				getUnadjustedPitch().rotateBy(Rotation2d.fromDegrees(angleDeg).inverse());
+		pitchAdjustmentAngle = getUnadjustedPitch().rotateBy(Rotation2d.fromDegrees(angleDeg).inverse());
 		System.out.println("Reset gyro to " + getPitch().getDegrees());
 	}
+
 	public Rotation2d getUnadjustedYaw() {
-		
+
 		return Rotation2d.fromDegrees(
-			BaseStatusSignal.getLatencyCompensatedValue(getYawStatusSignal(), getRateStatusSignal()).in(Degree));
+				BaseStatusSignal.getLatencyCompensatedValue(getYawStatusSignal(), getRateStatusSignal()).in(Degree));
 	}
 
 	public Rotation2d getUnadjustedPitch() {

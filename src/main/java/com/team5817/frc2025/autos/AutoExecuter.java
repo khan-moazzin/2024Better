@@ -27,12 +27,7 @@ public class AutoExecuter{
             });
             mThread.start();
         }
+
    }
 
-    public void stop(){
-        if(mAuto != null){
-          mAuto.stop();
-        }
-        mThread = null;
-    }
 } 

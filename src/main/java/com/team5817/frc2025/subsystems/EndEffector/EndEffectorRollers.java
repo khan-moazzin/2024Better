@@ -10,9 +10,8 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.team254.lib.drivers.TalonUtil;
-import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollerInputsAutoLogged;
-import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.Constants.EndEffectorRollerConstants;
+import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.lib.drivers.Subsystem;
@@ -20,7 +19,6 @@ import com.team5817.lib.requests.Request;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class EndEffectorRollers extends Subsystem {
 	private static EndEffectorRollers mInstance;
@@ -38,7 +36,6 @@ public class EndEffectorRollers extends Subsystem {
 		CORAL_OUTTAKE(-6.0),
 		ALGAE_INTAKE(8.0),
 		ALGAE_OUTTAKE(-6.0);
-
 
 		public double roller_voltage;
 
@@ -61,7 +58,8 @@ public class EndEffectorRollers extends Subsystem {
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {}
+			public void onStart(double timestamp) {
+			}
 
 			@Override
 			public void onLoop(double timestamp) {
@@ -69,9 +67,11 @@ public class EndEffectorRollers extends Subsystem {
 			}
 
 			@Override
-			public void onStop(double timestamp) {}
+			public void onStop(double timestamp) {
+			}
 		});
 	}
+
 	/**
 	 * Gets the current state of the intake rollers.
 	 *
@@ -92,7 +92,7 @@ public class EndEffectorRollers extends Subsystem {
 
 	/**
 	 * @param _wantedState Wanted state for the intake rollers.
-	 * @return New request that updates the intake rollers with the wanted state. 
+	 * @return New request that updates the intake rollers with the wanted state.
 	 */
 	public Request stateRequest(State _wantedState) {
 		return new Request() {
@@ -108,7 +108,7 @@ public class EndEffectorRollers extends Subsystem {
 		};
 	}
 
-	public Request idleRequest(){
+	public Request idleRequest() {
 		return new Request() {
 			@Override
 			public void act() {
@@ -147,8 +147,6 @@ public class EndEffectorRollers extends Subsystem {
 			builder.addDoubleProperty("Demand", () -> roller_demand, null);
 		}
 	}
-
-
 
 	@Override
 	public void readPeriodicInputs() {

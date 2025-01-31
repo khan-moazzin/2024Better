@@ -248,15 +248,15 @@ public class Rotation2d implements IRotation2d<Rotation2d>, StructSerializable {
         return radians;
     }
 
-    private synchronized boolean hasTrig() {
+    private  boolean hasTrig() {
         return !Double.isNaN(sin_angle_) && !Double.isNaN(cos_angle_);
     }
 
-    private synchronized boolean hasRadians() {
+    private  boolean hasRadians() {
         return !Double.isNaN(radians_);
     }
 
-    private synchronized void ensureTrigComputed() {
+    private  void ensureTrigComputed() {
         if (!hasTrig()) {
             assert(hasRadians());
             sin_angle_ = Math.sin(radians_);
@@ -264,7 +264,7 @@ public class Rotation2d implements IRotation2d<Rotation2d>, StructSerializable {
         }
     }
 
-    private synchronized void ensureRadiansComputed() {
+    private  void ensureRadiansComputed() {
         if (!hasRadians()) {
             assert(hasTrig());
             radians_ = Math.atan2(sin_angle_, cos_angle_);

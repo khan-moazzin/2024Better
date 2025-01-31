@@ -2,7 +2,6 @@ package com.team5817.frc2025.loops;
 
 import com.team5817.frc2025.Constants;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 

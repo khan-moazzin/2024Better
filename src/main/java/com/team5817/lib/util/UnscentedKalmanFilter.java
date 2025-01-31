@@ -18,28 +18,41 @@ import org.ejml.simple.SimpleMatrix;
 
 import com.team5817.lib.Discretization;
 
-
-
 /**
- * A Kalman filter combines predictions from a model and measurements to give an estimate of the
- * true system state. This is useful because many states cannot be measured directly as a result of
+ * A Kalman filter combines predictions from a model and measurements to give an
+ * estimate of the
+ * true system state. This is useful because many states cannot be measured
+ * directly as a result of
  * sensor noise, or because the state is "hidden".
  *
- * <p>Kalman filters use a K gain matrix to determine whether to trust the model or measurements
- * more. Kalman filter theory uses statistics to compute an optimal K gain which minimizes the sum
- * of squares error in the state estimate. This K gain is used to correct the state estimate by some
- * amount of the difference between the actual measurements and the measurements predicted by the
+ * <p>
+ * Kalman filters use a K gain matrix to determine whether to trust the model or
+ * measurements
+ * more. Kalman filter theory uses statistics to compute an optimal K gain which
+ * minimizes the sum
+ * of squares error in the state estimate. This K gain is used to correct the
+ * state estimate by some
+ * amount of the difference between the actual measurements and the measurements
+ * predicted by the
  * model.
  *
- * <p>An unscented Kalman filter uses nonlinear state and measurement models. It propagates the
- * error covariance using sigma points chosen to approximate the true probability distribution.
+ * <p>
+ * An unscented Kalman filter uses nonlinear state and measurement models. It
+ * propagates the
+ * error covariance using sigma points chosen to approximate the true
+ * probability distribution.
  *
- * <p>For more on the underlying math, read
- * https://file.tavsys.net/control/controls-engineering-in-frc.pdf chapter 9 "Stochastic control
+ * <p>
+ * For more on the underlying math, read
+ * https://file.tavsys.net/control/controls-engineering-in-frc.pdf chapter 9
+ * "Stochastic control
  * theory".
  *
- * <p>This class implements a square-root-form unscented Kalman filter (SR-UKF). For more
- * information about the SR-UKF, see https://www.researchgate.net/publication/3908304.
+ * <p>
+ * This class implements a square-root-form unscented Kalman filter (SR-UKF).
+ * For more
+ * information about the SR-UKF, see
+ * https://www.researchgate.net/publication/3908304.
  */
 public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outputs extends Num>
     implements KalmanTypeFilter<States, Inputs, Outputs> {
@@ -67,13 +80,15 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
   /**
    * Constructs an Unscented Kalman Filter.
    *
-   * @param states A Nat representing the number of states.
-   * @param outputs A Nat representing the number of outputs.
-   * @param f A vector-valued function of x and u that returns the derivative of the state vector.
-   * @param h A vector-valued function of x and u that returns the measurement vector.
-   * @param stateStdDevs Standard deviations of model states.
+   * @param states             A Nat representing the number of states.
+   * @param outputs            A Nat representing the number of outputs.
+   * @param f                  A vector-valued function of x and u that returns
+   *                           the derivative of the state vector.
+   * @param h                  A vector-valued function of x and u that returns
+   *                           the measurement vector.
+   * @param stateStdDevs       Standard deviations of model states.
    * @param measurementStdDevs Standard deviations of measurements.
-   * @param nominalDtSeconds Nominal discretization timestep.
+   * @param nominalDtSeconds   Nominal discretization timestep.
    */
   public UnscentedKalmanFilter(
       Nat<States> states,
@@ -99,26 +114,35 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
   }
 
   /**
-   * Constructs an unscented Kalman filter with custom mean, residual, and addition functions. Using
-   * custom functions for arithmetic can be useful if you have angles in the state or measurements,
-   * because they allow you to correctly account for the modular nature of angle arithmetic.
+   * Constructs an unscented Kalman filter with custom mean, residual, and
+   * addition functions. Using
+   * custom functions for arithmetic can be useful if you have angles in the state
+   * or measurements,
+   * because they allow you to correctly account for the modular nature of angle
+   * arithmetic.
    *
-   * @param states A Nat representing the number of states.
-   * @param outputs A Nat representing the number of outputs.
-   * @param f A vector-valued function of x and u that returns the derivative of the state vector.
-   * @param h A vector-valued function of x and u that returns the measurement vector.
-   * @param stateStdDevs Standard deviations of model states.
+   * @param states             A Nat representing the number of states.
+   * @param outputs            A Nat representing the number of outputs.
+   * @param f                  A vector-valued function of x and u that returns
+   *                           the derivative of the state vector.
+   * @param h                  A vector-valued function of x and u that returns
+   *                           the measurement vector.
+   * @param stateStdDevs       Standard deviations of model states.
    * @param measurementStdDevs Standard deviations of measurements.
-   * @param meanFuncX A function that computes the mean of 2 * States + 1 state vectors using a
-   *     given set of weights.
-   * @param meanFuncY A function that computes the mean of 2 * States + 1 measurement vectors using
-   *     a given set of weights.
-   * @param residualFuncX A function that computes the residual of two state vectors (i.e. it
-   *     subtracts them.)
-   * @param residualFuncY A function that computes the residual of two measurement vectors (i.e. it
-   *     subtracts them.)
-   * @param addFuncX A function that adds two state vectors.
-   * @param nominalDtSeconds Nominal discretization timestep.
+   * @param meanFuncX          A function that computes the mean of 2 * States + 1
+   *                           state vectors using a
+   *                           given set of weights.
+   * @param meanFuncY          A function that computes the mean of 2 * States + 1
+   *                           measurement vectors using
+   *                           a given set of weights.
+   * @param residualFuncX      A function that computes the residual of two state
+   *                           vectors (i.e. it
+   *                           subtracts them.)
+   * @param residualFuncY      A function that computes the residual of two
+   *                           measurement vectors (i.e. it
+   *                           subtracts them.)
+   * @param addFuncX           A function that adds two state vectors.
+   * @param nominalDtSeconds   Nominal discretization timestep.
    */
   public UnscentedKalmanFilter(
       Nat<States> states,
@@ -155,16 +179,15 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
     reset();
   }
 
-  static <S extends Num, C extends Num>
-      Pair<Matrix<C, N1>, Matrix<C, C>> squareRootUnscentedTransform(
-          Nat<S> s,
-          Nat<C> dim,
-          Matrix<C, ?> sigmas,
-          Matrix<?, N1> Wm,
-          Matrix<?, N1> Wc,
-          BiFunction<Matrix<C, ?>, Matrix<?, N1>, Matrix<C, N1>> meanFunc,
-          BiFunction<Matrix<C, N1>, Matrix<C, N1>, Matrix<C, N1>> residualFunc,
-          Matrix<C, C> squareRootR) {
+  static <S extends Num, C extends Num> Pair<Matrix<C, N1>, Matrix<C, C>> squareRootUnscentedTransform(
+      Nat<S> s,
+      Nat<C> dim,
+      Matrix<C, ?> sigmas,
+      Matrix<?, N1> Wm,
+      Matrix<?, N1> Wc,
+      BiFunction<Matrix<C, ?>, Matrix<?, N1>, Matrix<C, N1>> meanFunc,
+      BiFunction<Matrix<C, N1>, Matrix<C, N1>, Matrix<C, N1>> residualFunc,
+      Matrix<C, C> squareRootR) {
     if (sigmas.getNumRows() != dim.getNum() || sigmas.getNumCols() != 2 * s.getNum() + 1) {
       throw new IllegalArgumentException(
           "Sigmas must be covDim by 2 * states + 1! Got "
@@ -183,7 +206,7 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
           "Wc must be 2 * states + 1 by 1! Got " + Wc.getNumRows() + " by " + Wc.getNumCols());
     }
 
-   Matrix<C, N1> x = meanFunc.apply(sigmas, Wm);
+    Matrix<C, N1> x = meanFunc.apply(sigmas, Wm);
 
     Matrix<C, ?> Sbar = new Matrix<>(new SimpleMatrix(dim.getNum(), 2 * s.getNum() + dim.getNum()));
     for (int i = 0; i < 2 * s.getNum(); i++) {
@@ -251,7 +274,8 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
    * @param row Row of P.
    * @param col Column of P.
    * @return the value of the error covariance matrix P at (i, j).
-   * @throws UnsupportedOperationException indexing into the reconstructed P matrix is not supported
+   * @throws UnsupportedOperationException indexing into the reconstructed P
+   *                                       matrix is not supported
    */
   @Override
   public double getP(int row, int col) {
@@ -303,7 +327,7 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
   /**
    * Set an element of the initial state estimate x-hat.
    *
-   * @param row Row of x-hat.
+   * @param row   Row of x-hat.
    * @param value Value for element of x-hat.
    */
   @Override
@@ -322,14 +346,13 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
   /**
    * Project the model into the future with a new control input u.
    *
-   * @param u New control input from controller.
+   * @param u         New control input from controller.
    * @param dtSeconds Timestep for prediction.
    */
   @Override
   public void predict(Matrix<Inputs, N1> u, double dtSeconds) {
     // Discretize Q before projecting mean and covariance forward
-    Matrix<States, States> contA =
-        NumericalJacobian.numericalJacobianX(m_states, m_states, m_f, m_xHat, u);
+    Matrix<States, States> contA = NumericalJacobian.numericalJacobianX(m_states, m_states, m_f, m_xHat, u);
     var discQ = Discretization.discretizeAQTaylor(contA, m_contQ, dtSeconds).getSecond();
     var squareRootDiscQ = discQ.lltDecompose(true);
 
@@ -341,16 +364,15 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
       m_sigmasF.setColumn(i, NumericalIntegration.rk4(m_f, x, u, dtSeconds));
     }
 
-    var ret =
-        squareRootUnscentedTransform(
-            m_states,
-            m_states,
-            m_sigmasF,
-            m_pts.getWm(),
-            m_pts.getWc(),
-            m_meanFuncX,
-            m_residualFuncX,
-            squareRootDiscQ);
+    var ret = squareRootUnscentedTransform(
+        m_states,
+        m_states,
+        m_sigmasF,
+        m_pts.getWm(),
+        m_pts.getWc(),
+        m_meanFuncX,
+        m_residualFuncX,
+        squareRootDiscQ);
 
     m_xHat = ret.getFirst();
     m_S = ret.getSecond();
@@ -375,7 +397,7 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
    * @param u Same control input used in the predict step.
    * @param y Measurement vector.
    */
-  public void correct(Matrix<Inputs, N1> u, Matrix<Outputs, N1> y,  Matrix<Outputs, N1> measurementStdDevs) {
+  public void correct(Matrix<Inputs, N1> u, Matrix<Outputs, N1> y, Matrix<Outputs, N1> measurementStdDevs) {
     m_contR = StateSpaceUtil.makeCovarianceMatrix(m_outputs, measurementStdDevs);
 
     correct(
@@ -385,16 +407,20 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
   /**
    * Correct the state estimate x-hat using the measurements in y.
    *
-   * <p>This is useful for when the measurements available during a timestep's Correct() call vary.
-   * The h(x, u) passed to the constructor is used if one is not provided (the two-argument version
+   * <p>
+   * This is useful for when the measurements available during a timestep's
+   * Correct() call vary.
+   * The h(x, u) passed to the constructor is used if one is not provided (the
+   * two-argument version
    * of this function).
    *
-   * @param <R> Number of measurements in y.
+   * @param <R>  Number of measurements in y.
    * @param rows Number of rows in y.
-   * @param u Same control input used in the predict step.
-   * @param y Measurement vector.
-   * @param h A vector-valued function of x and u that returns the measurement vector.
-   * @param R Measurement noise covariance matrix (continuous-time).
+   * @param u    Same control input used in the predict step.
+   * @param y    Measurement vector.
+   * @param h    A vector-valued function of x and u that returns the measurement
+   *             vector.
+   * @param R    Measurement noise covariance matrix (continuous-time).
    */
   public <R extends Num> void correct(
       Nat<R> rows,
@@ -402,10 +428,9 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
       Matrix<R, N1> y,
       BiFunction<Matrix<States, N1>, Matrix<Inputs, N1>, Matrix<R, N1>> h,
       Matrix<R, R> R) {
-    BiFunction<Matrix<R, ?>, Matrix<?, N1>, Matrix<R, N1>> meanFuncY =
-        (sigmas, Wm) -> sigmas.times(Matrix.changeBoundsUnchecked(Wm));
-    BiFunction<Matrix<States, N1>, Matrix<States, N1>, Matrix<States, N1>> residualFuncX =
-        Matrix::minus;
+    BiFunction<Matrix<R, ?>, Matrix<?, N1>, Matrix<R, N1>> meanFuncY = (sigmas, Wm) -> sigmas
+        .times(Matrix.changeBoundsUnchecked(Wm));
+    BiFunction<Matrix<States, N1>, Matrix<States, N1>, Matrix<States, N1>> residualFuncX = Matrix::minus;
     BiFunction<Matrix<R, N1>, Matrix<R, N1>, Matrix<R, N1>> residualFuncY = Matrix::minus;
     BiFunction<Matrix<States, N1>, Matrix<States, N1>, Matrix<States, N1>> addFuncX = Matrix::plus;
     correct(rows, u, y, h, R, meanFuncY, residualFuncY, residualFuncX, addFuncX);
@@ -414,23 +439,30 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
   /**
    * Correct the state estimate x-hat using the measurements in y.
    *
-   * <p>This is useful for when the measurements available during a timestep's Correct() call vary.
-   * The h(x, u) passed to the constructor is used if one is not provided (the two-argument version
+   * <p>
+   * This is useful for when the measurements available during a timestep's
+   * Correct() call vary.
+   * The h(x, u) passed to the constructor is used if one is not provided (the
+   * two-argument version
    * of this function).
    *
-   * @param <R> Number of measurements in y.
-   * @param rows Number of rows in y.
-   * @param u Same control input used in the predict step.
-   * @param y Measurement vector.
-   * @param h A vector-valued function of x and u that returns the measurement vector.
-   * @param R Measurement noise covariance matrix (continuous-time).
-   * @param meanFuncY A function that computes the mean of 2 * States + 1 measurement vectors using
-   *     a given set of weights.
-   * @param residualFuncY A function that computes the residual of two measurement vectors (i.e. it
-   *     subtracts them.)
-   * @param residualFuncX A function that computes the residual of two state vectors (i.e. it
-   *     subtracts them.)
-   * @param addFuncX A function that adds two state vectors.
+   * @param <R>           Number of measurements in y.
+   * @param rows          Number of rows in y.
+   * @param u             Same control input used in the predict step.
+   * @param y             Measurement vector.
+   * @param h             A vector-valued function of x and u that returns the
+   *                      measurement vector.
+   * @param R             Measurement noise covariance matrix (continuous-time).
+   * @param meanFuncY     A function that computes the mean of 2 * States + 1
+   *                      measurement vectors using
+   *                      a given set of weights.
+   * @param residualFuncY A function that computes the residual of two measurement
+   *                      vectors (i.e. it
+   *                      subtracts them.)
+   * @param residualFuncX A function that computes the residual of two state
+   *                      vectors (i.e. it
+   *                      subtracts them.)
+   * @param addFuncX      A function that adds two state vectors.
    */
   public <R extends Num> void correct(
       Nat<R> rows,
@@ -454,16 +486,15 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
     }
 
     // Mean and covariance of prediction passed through unscented transform
-    var transRet =
-        squareRootUnscentedTransform(
-            m_states,
-            rows,
-            sigmasH,
-            m_pts.getWm(),
-            m_pts.getWc(),
-            meanFuncY,
-            residualFuncY,
-            squareRootDiscR);
+    var transRet = squareRootUnscentedTransform(
+        m_states,
+        rows,
+        sigmasH,
+        m_pts.getWm(),
+        m_pts.getWc(),
+        meanFuncY,
+        residualFuncY,
+        squareRootDiscR);
     var yHat = transRet.getFirst();
     var Sy = transRet.getSecond();
 
@@ -477,10 +508,9 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
       Pxy = Pxy.plus(dx.times(dy).times(m_pts.getWc(i)));
     }
 
-   Matrix<States, R> K =
-        Sy.transpose()
-            .solveFullPivHouseholderQr(Sy.solveFullPivHouseholderQr(Pxy.transpose()))
-            .transpose();
+    Matrix<States, R> K = Sy.transpose()
+        .solveFullPivHouseholderQr(Sy.solveFullPivHouseholderQr(Pxy.transpose()))
+        .transpose();
 
     m_xHat = addFuncX.apply(m_xHat, K.times(residualFuncY.apply(y, yHat)));
 

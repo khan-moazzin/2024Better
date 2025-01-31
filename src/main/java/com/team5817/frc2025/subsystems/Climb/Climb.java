@@ -65,13 +65,13 @@ public class Climb extends ServoMotorSubsystem {
 	}
 
     @Override
-    public synchronized void readPeriodicInputs() {
+    public  void readPeriodicInputs() {
         super.readPeriodicInputs();
         Logger.processInputs("Climb", mServoInputs);
     }
 
 	@Override
-	public synchronized void writePeriodicOutputs() {
+	public  void writePeriodicOutputs() {
 		super.writePeriodicOutputs();
 	}
 

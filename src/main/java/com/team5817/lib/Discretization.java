@@ -1,9 +1,9 @@
 package com.team5817.lib;
 
 // Copyright (c) FIRST and other WPILib contributors.
+
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Num;
@@ -18,8 +18,8 @@ public final class Discretization {
   /**
    * Discretizes the given continuous A matrix.
    *
-   * @param <States> Num representing the number of states.
-   * @param contA Continuous system matrix.
+   * @param <States>  Num representing the number of states.
+   * @param contA     Continuous system matrix.
    * @param dtSeconds Discretization timestep.
    * @return the discrete matrix system.
    */
@@ -32,27 +32,26 @@ public final class Discretization {
   /**
    * Discretizes the given continuous A and B matrices.
    *
-   * @param <States> Nat representing the states of the system.
-   * @param <Inputs> Nat representing the inputs to the system.
-   * @param contA Continuous system matrix.
-   * @param contB Continuous input matrix.
+   * @param <States>  Nat representing the states of the system.
+   * @param <Inputs>  Nat representing the inputs to the system.
+   * @param contA     Continuous system matrix.
+   * @param contB     Continuous input matrix.
    * @param dtSeconds Discretization timestep.
    * @return a Pair representing discA and diskB.
    */
-  public static <States extends Num, Inputs extends Num>
-      Pair<Matrix<States, States>, Matrix<States, Inputs>> discretizeAB(
-          Matrix<States, States> contA, Matrix<States, Inputs> contB, double dtSeconds) {
+  public static <States extends Num, Inputs extends Num> Pair<Matrix<States, States>, Matrix<States, Inputs>> discretizeAB(
+      Matrix<States, States> contA, Matrix<States, Inputs> contB, double dtSeconds) {
     int states = contA.getNumRows();
     int inputs = contB.getNumCols();
 
-    // M = [A  B]
-    //     [0  0]
+    // M = [A B]
+    // [0 0]
     var M = new Matrix<>(new SimpleMatrix(states + inputs, states + inputs));
     M.assignBlock(0, 0, contA);
     M.assignBlock(0, contA.getNumCols(), contB);
 
-    //  ϕ = eᴹᵀ = [A_d  B_d]
-    //            [ 0    I ]
+    // ϕ = eᴹᵀ = [A_d B_d]
+    // [ 0 I ]
     var phi = M.times(dtSeconds).exp();
 
     var discA = new Matrix<States, States>(new SimpleMatrix(states, states));
@@ -67,30 +66,30 @@ public final class Discretization {
   /**
    * Discretizes the given continuous A and Q matrices.
    *
-   * @param <States> Nat representing the number of states.
-   * @param contA Continuous system matrix.
-   * @param contQ Continuous process noise covariance matrix.
+   * @param <States>  Nat representing the number of states.
+   * @param contA     Continuous system matrix.
+   * @param contQ     Continuous process noise covariance matrix.
    * @param dtSeconds Discretization timestep.
-   * @return a pair representing the discrete system matrix and process noise covariance matrix.
+   * @return a pair representing the discrete system matrix and process noise
+   *         covariance matrix.
    */
-  public static <States extends Num>
-      Pair<Matrix<States, States>, Matrix<States, States>> discretizeAQ(
-          Matrix<States, States> contA, Matrix<States, States> contQ, double dtSeconds) {
+  public static <States extends Num> Pair<Matrix<States, States>, Matrix<States, States>> discretizeAQ(
+      Matrix<States, States> contA, Matrix<States, States> contQ, double dtSeconds) {
     int states = contA.getNumRows();
 
     // Make continuous Q symmetric if it isn't already
     Matrix<States, States> Q = contQ.plus(contQ.transpose()).div(2.0);
 
-    // M = [−A  Q ]
-    //     [ 0  Aᵀ]
+    // M = [−A Q ]
+    // [ 0 Aᵀ]
     final var M = new Matrix<>(new SimpleMatrix(2 * states, 2 * states));
     M.assignBlock(0, 0, contA.times(-1.0));
     M.assignBlock(0, states, Q);
     M.assignBlock(states, 0, new Matrix<>(new SimpleMatrix(states, states)));
     M.assignBlock(states, states, contA.transpose());
 
-    // ϕ = eᴹᵀ = [−A_d  A_d⁻¹Q_d]
-    //           [ 0      A_dᵀ  ]
+    // ϕ = eᴹᵀ = [−A_d A_d⁻¹Q_d]
+    // [ 0 A_dᵀ ]
     final var phi = M.times(dtSeconds).exp();
 
     // ϕ₁₂ = A_d⁻¹Q_d
@@ -112,38 +111,42 @@ public final class Discretization {
   /**
    * Discretizes the given continuous A and Q matrices.
    *
-   * <p>Rather than solving a 2N x 2N matrix exponential like in DiscretizeQ() (which is expensive),
+   * <p>
+   * Rather than solving a 2N x 2N matrix exponential like in DiscretizeQ() (which
+   * is expensive),
    * we take advantage of the structure of the block matrix of A and Q.
    *
    * <ul>
-   *   <li>eᴬᵀ, which is only N x N, is relatively cheap.
-   *   <li>The upper-right quarter of the 2N x 2N matrix, which we can approximate using a taylor
-   *       series to several terms and still be substantially cheaper than taking the big
-   *       exponential.
+   * <li>eᴬᵀ, which is only N x N, is relatively cheap.
+   * <li>The upper-right quarter of the 2N x 2N matrix, which we can approximate
+   * using a taylor
+   * series to several terms and still be substantially cheaper than taking the
+   * big
+   * exponential.
    * </ul>
    *
-   * @param <States> Nat representing the number of states.
-   * @param contA Continuous system matrix.
-   * @param contQ Continuous process noise covariance matrix.
+   * @param <States>  Nat representing the number of states.
+   * @param contA     Continuous system matrix.
+   * @param contQ     Continuous process noise covariance matrix.
    * @param dtSeconds Discretization timestep.
-   * @return a pair representing the discrete system matrix and process noise covariance matrix.
+   * @return a pair representing the discrete system matrix and process noise
+   *         covariance matrix.
    */
-  public static <States extends Num>
-      Pair<Matrix<States, States>, Matrix<States, States>> discretizeAQTaylor(
-          Matrix<States, States> contA, Matrix<States, States> contQ, double dtSeconds) {
-    //       T
+  public static <States extends Num> Pair<Matrix<States, States>, Matrix<States, States>> discretizeAQTaylor(
+      Matrix<States, States> contA, Matrix<States, States> contQ, double dtSeconds) {
+    // T
     // Q_d = ∫ e^(Aτ) Q e^(Aᵀτ) dτ
-    //       0
+    // 0
     //
-    // M = [−A  Q ]
-    //     [ 0  Aᵀ]
+    // M = [−A Q ]
+    // [ 0 Aᵀ]
     // ϕ = eᴹᵀ
     // ϕ₁₂ = A_d⁻¹Q_d
     //
     // Taylor series of ϕ:
     //
-    //   ϕ = eᴹᵀ = I + MT + 1/2 M²T² + 1/6 M³T³ + …
-    //   ϕ = eᴹᵀ = I + MT + 1/2 T²M² + 1/6 T³M³ + …
+    // ϕ = eᴹᵀ = I + MT + 1/2 M²T² + 1/6 M³T³ + …
+    // ϕ = eᴹᵀ = I + MT + 1/2 T²M² + 1/6 T³M³ + …
     //
     //
     //
@@ -153,14 +156,14 @@ public final class Discretization {
     // ϕ₁₂ = lastTerm lastCoeff = QT
     //
     // for i in range(2, 6):
-    //   // i = 2
-    //   lastTerm = −A lastTerm + Q ATn = −AQ + QAᵀ
-    //   lastCoeff *= T/i → lastCoeff *= T/2 = 1/2 T²
-    //   ATn *= Aᵀ = Aᵀ²
+    // // i = 2
+    // lastTerm = −A lastTerm + Q ATn = −AQ + QAᵀ
+    // lastCoeff *= T/i → lastCoeff *= T/2 = 1/2 T²
+    // ATn *= Aᵀ = Aᵀ²
     //
-    //   // i = 3
-    //   lastTerm = −A lastTerm + Q ATn = −A (−AQ + QAᵀ) + QAᵀ² = …
-    //   …
+    // // i = 3
+    // lastTerm = −A lastTerm + Q ATn = −A (−AQ + QAᵀ) + QAᵀ² = …
+    // …
     // ```
 
     // Make continuous Q symmetric if it isn't already
@@ -193,13 +196,15 @@ public final class Discretization {
   }
 
   /**
-   * Returns a discretized version of the provided continuous measurement noise covariance matrix.
+   * Returns a discretized version of the provided continuous measurement noise
+   * covariance matrix.
    * Note that dt=0.0 divides R by zero.
    *
-   * @param <O> Nat representing the number of outputs.
-   * @param contR Continuous measurement noise covariance matrix.
+   * @param <O>       Nat representing the number of outputs.
+   * @param contR     Continuous measurement noise covariance matrix.
    * @param dtSeconds Discretization timestep.
-   * @return Discretized version of the provided continuous measurement noise covariance matrix.
+   * @return Discretized version of the provided continuous measurement noise
+   *         covariance matrix.
    */
   public static <O extends Num> Matrix<O, O> discretizeR(Matrix<O, O> contR, double dtSeconds) {
     // R_d = 1/T R

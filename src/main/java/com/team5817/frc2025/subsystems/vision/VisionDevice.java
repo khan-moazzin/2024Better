@@ -1,7 +1,6 @@
 package com.team5817.frc2025.subsystems.vision;
 
 import com.team5817.frc2025.RobotState.VisionUpdate;
-import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.subsystems.vision.LimelightHelpers.PoseEstimate;
 import com.team5817.lib.drivers.Pigeon;
 import com.team254.lib.geometry.Pose2d;
@@ -13,10 +12,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
 
-
-public class VisionDevice{
+public class VisionDevice {
 	private VisionDeviceIO mPeriodicIO = new VisionDeviceIO();
 
 	private String mName;
@@ -26,56 +23,54 @@ public class VisionDevice{
 	public VisionDevice(String name) {
 		this.mName = name;
 		mOutputTable = NetworkTableInstance.getDefault().getTable(name);
-		
-        mHeadingAverage.clear();
-		
+
+		mHeadingAverage.clear();
+
 	}
 
 	public void update(double timestamp) {
 
-			mPeriodicIO.seesTarget = LimelightHelpers.getTV(mName);
-			if (mPeriodicIO.seesTarget) {
-				final double realTime = timestamp - mPeriodicIO.latency;
-				mPeriodicIO.fps = mOutputTable.getEntry("fps").getInteger(0);
-				mPeriodicIO.latency = mOutputTable.getEntry("latency").getDouble(0.0);
-				mPeriodicIO.tagId = mOutputTable.getEntry("tid").getNumber(-1).intValue();
-					
-				mPeriodicIO.mt1Pose = new Pose2d(LimelightHelpers.getBotPose2d_wpiBlue(mName));
-				PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mName);
-				mPeriodicIO.targetToCamera = LimelightHelpers.getTargetPose3d_CameraSpace(mName);
-				mPeriodicIO.tagCounts = poseEstimate.tagCount;
-				mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
+		mPeriodicIO.seesTarget = LimelightHelpers.getTV(mName);
+		if (mPeriodicIO.seesTarget) {
+			final double realTime = timestamp - mPeriodicIO.latency;
+			mPeriodicIO.fps = mOutputTable.getEntry("fps").getInteger(0);
+			mPeriodicIO.latency = mOutputTable.getEntry("latency").getDouble(0.0);
+			mPeriodicIO.tagId = mOutputTable.getEntry("tid").getNumber(-1).intValue();
 
-				VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, realTime,mPeriodicIO.ta, mPeriodicIO.mt2Pose.getTranslation());
-				mPeriodicIO.visionUpdate = Optional.of(visionUpdate);
-			
+			mPeriodicIO.mt1Pose = new Pose2d(LimelightHelpers.getBotPose2d_wpiBlue(mName));
+			PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mName);
+			mPeriodicIO.targetToCamera = LimelightHelpers.getTargetPose3d_CameraSpace(mName);
+			mPeriodicIO.tagCounts = poseEstimate.tagCount;
+			mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
 
-			}else{
-					mPeriodicIO.visionUpdate = Optional.empty();
-				}
-				LimelightHelpers.SetRobotOrientation(mName, Pigeon.getInstance().getYaw().getDegrees(), 0, 0, 0, 0, 0);
+			VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, realTime, mPeriodicIO.ta,
+					mPeriodicIO.mt2Pose.getTranslation());
+			mPeriodicIO.visionUpdate = Optional.of(visionUpdate);
 
+		} else {
+			mPeriodicIO.visionUpdate = Optional.empty();
+		}
+		LimelightHelpers.SetRobotOrientation(mName, Pigeon.getInstance().getYaw().getDegrees(), 0, 0, 0, 0, 0);
 
 	}
 
-	public boolean movingAverageReady(){
+	public boolean movingAverageReady() {
 		return mHeadingAverage.getSize() == 100;
 	}
 
 	public void addHeadingObservation(Rotation2d heading) {
 		double degrees = heading.getDegrees();
-		if(degrees < 0){
+		if (degrees < 0) {
 			degrees += 360;
 		}
 		mHeadingAverage.addNumber(degrees);
 	}
 
-	public double getEstimatedHeading(){
+	public double getEstimatedHeading() {
 		return mHeadingAverage.getAverage();
 	}
 
-
-	public Optional<VisionUpdate> getVisionUpdate(){
+	public Optional<VisionUpdate> getVisionUpdate() {
 		return mPeriodicIO.visionUpdate;
 	}
 
@@ -84,8 +79,8 @@ public class VisionDevice{
 
 	public static class VisionDeviceIO {
 
-	// inputs
-		
+		// inputs
+
 		double camera_exposure = 20;
 		boolean camera_auto_exposure = false;
 		double camera_gain = 10;

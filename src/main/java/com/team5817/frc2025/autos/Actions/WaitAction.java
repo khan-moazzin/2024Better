@@ -1,6 +1,8 @@
 package com.team5817.frc2025.autos.Actions;
 
 
+
+
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -10,7 +12,6 @@ public class WaitAction implements Action {
 
 	private double mTimeToWait;
 	private double mStartTime;
-
 	public WaitAction(double timeToWait) {
 		mTimeToWait = timeToWait;
 	}
@@ -28,6 +29,7 @@ public class WaitAction implements Action {
 
 	@Override
 	public void start() {
+
 		mStartTime = Timer.getFPGATimestamp();
 	}
 }

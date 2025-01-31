@@ -2,7 +2,6 @@ package com.team254.lib.swerve;
 
 import edu.wpi.first.util.struct.Struct;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class SwerveSetpointStruct implements Struct<SwerveSetpoint> {
 

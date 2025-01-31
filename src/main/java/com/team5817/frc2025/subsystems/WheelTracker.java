@@ -1,7 +1,6 @@
 package com.team5817.frc2025.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.team5817.frc2025.subsystems.WheelTrackerInputsAutoLogged;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.Mode;
@@ -15,14 +14,12 @@ import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.swerve.ChassisSpeeds;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.Logger;
 
-public class WheelTracker extends Subsystem{
+public class WheelTracker extends Subsystem {
 	private final Pigeon mPigeon = Pigeon.getInstance();
 	private final SwerveModule[] mModules;
 
@@ -82,11 +79,11 @@ public class WheelTracker extends Subsystem{
 	public void stop() {
 		mIsEnabled = false;
 	}
+
 	@Override
-	public void readPeriodicInputs(){
+	public void readPeriodicInputs() {
 
 	}
-
 
 	private class OdometryThread extends Thread {
 		@Override
@@ -106,7 +103,7 @@ public class WheelTracker extends Subsystem{
 				}
 			}
 		}
-		
+
 	}
 
 	private Pose2d last_velocity_sample = new Pose2d();
@@ -153,7 +150,6 @@ public class WheelTracker extends Subsystem{
 
 		int n = accurateModules.size();
 
-
 		for (WheelProperties w : accurateModules) {
 			x += w.estimatedRobotPose.getTranslation().x();
 			y += w.estimatedRobotPose.getTranslation().y();
@@ -163,50 +159,50 @@ public class WheelTracker extends Subsystem{
 		// Velocity calcs
 		double sample_window = timestamp - last_sample_timestamp;
 		if (sample_window > 0.02) {
-			final Translation2d translation =
-					(new_pose.transformBy(last_velocity_sample.inverse()).getTranslation());
+			final Translation2d translation = (new_pose.transformBy(last_velocity_sample.inverse()).getTranslation());
 			inputs.velocity = translation.scale(1.0 / sample_window);
 			last_sample_timestamp = timestamp;
 			last_velocity_sample = new_pose;
 		}
 		inputs.pose = new_pose;
-		if(!Robot.isReal() && Constants.mode == Mode.SIM){
+		if (!Robot.isReal() && Constants.mode == Mode.SIM) {
 			inputs.pose = new Pose2d(Drive.driveSimulation.getSimulatedDriveTrainPose());
-			inputs.velocity = new ChassisSpeeds(Drive.driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative()).getTranslation();
+			inputs.velocity = new ChassisSpeeds(
+					Drive.driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative()).getTranslation();
 		}
 
 		resetModulePoses(inputs.pose);
 	}
+
 	@AutoLog
-	public static class WheelTrackerInputs{
-		Pose2d pose= new Pose2d();
-		Translation2d velocity= new Translation2d();
+	public static class WheelTrackerInputs {
+		Pose2d pose = new Pose2d();
+		Translation2d velocity = new Translation2d();
 	}
 
 	private void updateWheelOdometry(SwerveModule module, WheelProperties props) {
 		double currentEncDistance = module.getDriveDistanceMeters();
 		double deltaEncDistance = currentEncDistance - props.previousEncDistance;
 		Rotation2d wheelAngle = module.getModuleAngle().rotateBy(Rotation2d.fromRadians(robotHeading));
-		Translation2d deltaPosition =
-				new Translation2d(wheelAngle.cos() * deltaEncDistance, wheelAngle.sin() * deltaEncDistance);
+		Translation2d deltaPosition = new Translation2d(wheelAngle.cos() * deltaEncDistance,
+				wheelAngle.sin() * deltaEncDistance);
 
 		double xCorrectionFactor = 1.0;
 		double yCorrectionFactor = 1.0;
 
 		if (Math.signum(deltaPosition.x()) == 1.0) {
-			xCorrectionFactor = (8.782-.89)/9.44;
+			xCorrectionFactor = (8.782 - .89) / 9.44;
 
 		} else if (Math.signum(deltaPosition.x()) == -1.0) {
-			xCorrectionFactor = (8.782-.89)/9.46;
+			xCorrectionFactor = (8.782 - .89) / 9.46;
 		}
 
 		if (Math.signum(deltaPosition.y()) == 1.0) {
-			yCorrectionFactor = -(-8+.89)/8.71;
+			yCorrectionFactor = -(-8 + .89) / 8.71;
 
 		} else if (Math.signum(deltaPosition.y()) == -1.0) {
-			yCorrectionFactor = -(-8+.89)/8.62;
+			yCorrectionFactor = -(-8 + .89) / 8.62;
 		}
-
 
 		deltaPosition = new Translation2d(deltaPosition.x() * xCorrectionFactor, deltaPosition.y() * yCorrectionFactor);
 		Translation2d updatedPosition = props.position.translateBy(deltaPosition);
@@ -246,7 +242,7 @@ public class WheelTracker extends Subsystem{
 		private Pose2d estimatedRobotPose = new Pose2d();
 	}
 
-	public synchronized Pose2d getRobotPose() {
+	public Pose2d getRobotPose() {
 		return inputs.pose;
 	}
 

@@ -7,7 +7,6 @@ import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.Util;
 
 import edu.wpi.first.wpilibj.XboxController.Axis;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ControlBoard {
 	private final double kSwerveDeadband = Constants.stickDeadband;

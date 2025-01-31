@@ -18,16 +18,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.littletonrobotics.junction.Logger;
 
-
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team254.lib.util.DelayedBoolean;
+
 public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
-	
+
 	public static IntakeDeploy mInstance;
 
 	public static IntakeDeploy getInstance() {
 		if (mInstance == null) {
-			mInstance = new IntakeDeploy(IntakeDeployConstants.kDeployServoConstants, IntakeDeployConstants.kDeployEncoderConstants);
+			mInstance = new IntakeDeploy(IntakeDeployConstants.kDeployServoConstants,
+					IntakeDeployConstants.kDeployEncoderConstants);
 		}
 		return mInstance;
 	}
@@ -36,41 +37,40 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	final static double kMediumError = 2;
 	final static double kLenientError = 5;
 
-    public enum State {
-        DEPLOY(.3, kStrictError, true),//TODO
-        CLEAR(0.0, kLenientError),//TODO
-        UNJAM(0.0, kLenientError),//TODO
-        STOW(0.0, kMediumError),
+	public enum State {
+		DEPLOY(.3, kStrictError, true), // TODO
+		CLEAR(0.0, kLenientError), // TODO
+		UNJAM(0.0, kLenientError), // TODO
+		STOW(0.0, kMediumError),
 		ALGAE(0.0, kMediumError, true),
 		HUMAN(0.0, kStrictError, true),
 		ZERO(0.0, kStrictError);
 
-
-        double output = 0;
+		double output = 0;
 		double allowable_error = 0;
 		boolean needs_to_home = false;
 
-        State(double output, double allowable_error, boolean needs_to_home) {
-        this.output = output;
-		this.allowable_error = allowable_error;
-		this.needs_to_home = needs_to_home;
-        }
+		State(double output, double allowable_error, boolean needs_to_home) {
+			this.output = output;
+			this.allowable_error = allowable_error;
+			this.needs_to_home = needs_to_home;
+		}
 
-        State(double output, double allowable_error) {
-        this.output = output;
-		this.needs_to_home = false;
-		this.allowable_error = allowable_error;
-        }
- 
-    }
+		State(double output, double allowable_error) {
+			this.output = output;
+			this.needs_to_home = false;
+			this.allowable_error = allowable_error;
+		}
 
+	}
 
 	private boolean mHoming = false;
 	private boolean mNeedsToHome = false;
-	private final DelayedBoolean mHomingDelay =
-			new DelayedBoolean(Timer.getTimestamp(), Constants.IntakeDeployConstants.kHomingTimeout);
+	private final DelayedBoolean mHomingDelay = new DelayedBoolean(Timer.getTimestamp(),
+			Constants.IntakeDeployConstants.kHomingTimeout);
 
-	public IntakeDeploy(final ServoMotorSubsystemConstants constants, final AbsoluteEncoderConstants encoder_constants) {
+	public IntakeDeploy(final ServoMotorSubsystemConstants constants,
+			final AbsoluteEncoderConstants encoder_constants) {
 		super(constants, encoder_constants);
 		mMain.setPosition(homeAwareUnitsToRotations(0.0));
 		enableSoftLimits(false);
@@ -80,7 +80,8 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {}
+			public void onStart(double timestamp) {
+			}
 
 			@Override
 			public void onLoop(double timestamp) {
@@ -100,6 +101,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 	/**
 	 * Runs intake deploy rehoming sequence.
+	 * 
 	 * @param home Enable/Disable rehome sequence.
 	 */
 	public void setWantHome(boolean home) {
@@ -110,14 +112,14 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		}
 	}
 
-    @Override
-    public synchronized void readPeriodicInputs() {
-        super.readPeriodicInputs();
-        Logger.processInputs("IntakeDeploy", mServoInputs);
-    }
+	@Override
+	public void readPeriodicInputs() {
+		super.readPeriodicInputs();
+		Logger.processInputs("IntakeDeploy", mServoInputs);
+	}
 
 	@Override
-	public synchronized void writePeriodicOutputs() {
+	public void writePeriodicOutputs() {
 		if (mHoming) {
 			setOpenLoop(Constants.IntakeDeployConstants.kHomingOutput / mConstants.kMaxForwardOutput);
 			if (mHomingDelay.update(
@@ -134,21 +136,23 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 	@Override
 	public void outputTelemetry() {
-        Robot.mechPoses[0] = new Pose3d(new Translation3d(-.325,0,.261), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(0.3-mServoInputs.position_units), Units.degreesToRadians(0)));
+		Robot.mechPoses[0] = new Pose3d(new Translation3d(-.325, 0, .261), new Rotation3d(Units.degreesToRadians(0),
+				Units.rotationsToRadians(0.3 - mServoInputs.position_units), Units.degreesToRadians(0)));
 
-		Robot.desMechPoses[0] = new Pose3d(new Translation3d(-.325,0,.261), new Rotation3d(Units.degreesToRadians(0),Units.rotationsToRadians(0.3-mServoOutputs.demand), Units.degreesToRadians(0)));
+		Robot.desMechPoses[0] = new Pose3d(new Translation3d(-.325, 0, .261), new Rotation3d(Units.degreesToRadians(0),
+				Units.rotationsToRadians(0.3 - mServoOutputs.demand), Units.degreesToRadians(0)));
 
-        Logger.recordOutput("IntakeDeploy/Homing", mHoming);
-        Logger.recordOutput("IntakeDeploy/Within Homing Window", atHomingLocation());
-			
-		
+		Logger.recordOutput("IntakeDeploy/Homing", mHoming);
+		Logger.recordOutput("IntakeDeploy/Within Homing Window", atHomingLocation());
+
 		SmartDashboard.putBoolean(mConstants.kName + "/Homing", mHoming);
 		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());
 		super.outputTelemetry();
 	}
 
 	@Override
-	public void stop() {}
+	public void stop() {
+	}
 
 	@Override
 	public boolean checkSystem() {
@@ -157,7 +161,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 	@Override
 	public boolean atHomingLocation() {
-		// Check if intake is  within 7.0 degrees of homing position
+		// Check if intake is within 7.0 degrees of homing position
 		return mServoInputs.position_units - mConstants.kHomePosition > -Constants.IntakeDeployConstants.kHomingZone;
 	}
 
@@ -168,6 +172,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 				setSetpointMotionMagic(_wantedState.output);
 				mNeedsToHome = _wantedState.needs_to_home;
 			}
+
 			@Override
 			public boolean isFinished() {
 				return Util.epsilonEquals(getPosition(), _wantedState.output, _wantedState.allowable_error);

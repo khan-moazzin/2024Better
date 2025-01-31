@@ -8,7 +8,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
@@ -26,15 +25,15 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
 
-	public enum Mode{
+	public enum Mode {
 		SIM,
 		REPLAY
 	}
+
 	public static Mode mode = Mode.SIM;
 
 	// Disables extra smart dashboard outputs that slow down the robot
@@ -52,19 +51,17 @@ public class Constants {
 	// Timeout constants
 	public static final double kLongCANTimeoutS = 0.1;
 	public static final double kCANTimeoutS = .01;
-    public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.04, 1), Math.pow(0.04, 1));
-    public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.01, 1), Math.pow(0.01, 1));
-    public static final double[][] fundamentalMatrix = 
-	{
-	{0.0,0.0,0.0},
-	{0.0,0.0,0.0},
-	{0.0,0.0,0.0}
-};
+	public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.04, 1), Math.pow(0.04, 1));
+	public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.01, 1), Math.pow(0.01, 1));
+	public static final double[][] fundamentalMatrix = {
+			{ 0.0, 0.0, 0.0 },
+			{ 0.0, 0.0, 0.0 },
+			{ 0.0, 0.0, 0.0 }
+	};
 
-    public static final double kBumberSideLength = Units.inchesToMeters(29);
+	public static final double kBumberSideLength = Units.inchesToMeters(29);
 
-    public static final boolean kSubsytemSim = true;//Forces sim IO een if robot is real for partial robot(DB)
-
+	public static final boolean kSubsytemSim = true;// Forces sim IO een if robot is real for partial robot(DB)
 
 	public static final class SwerveConstants {
 
@@ -77,43 +74,51 @@ public class Constants {
 		public static final double wheelDiameter = Units.inchesToMeters(4.00);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
-		public static final double driveGearRatio = 6.25; 
-		public static final double angleGearRatio = 15.43; 
+		public static final double driveGearRatio = 6.25;
+		public static final double angleGearRatio = 15.43;
 
 		public static final Translation2d[] swerveModuleLocations = {
-			new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
-			new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
-			new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-			new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0),
+				new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+				new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+				new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+				new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0),
 		};
-		public static final edu.wpi.first.math.geometry.Translation2d[] swerveModuleLocationsWpi;
+		public static final edu.wpi.first.math.geometry.Translation2d[] swerveModuleLocationsWpi = {
+				swerveModuleLocations[2].wpi(),
+				swerveModuleLocations[0].wpi(),
+				swerveModuleLocations[3].wpi(),
+				swerveModuleLocations[1].wpi()
+		};
+
+		public static RobotConfig mRobotConfig;
 
 		static {
-			swerveModuleLocationsWpi = new edu.wpi.first.math.geometry.Translation2d[4];
-			for(int i = 0; i< swerveModuleLocations.length; i++){
-				swerveModuleLocationsWpi[i] = swerveModuleLocations[i].wpi();
+			try {
+				mRobotConfig = RobotConfig.fromGUISettings();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
 		}
-		public static final RobotConfig mRobotConfig = new RobotConfig(43, 1, new ModuleConfig(Units.inchesToMeters(2),6,.85,DCMotor.getKrakenX60(1),40,1), swerveModuleLocationsWpi);
 
 		public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(swerveModuleLocations);
 
 		public static final edu.wpi.first.math.geometry.Translation2d[] wpiModuleLocations = {
-			new edu.wpi.first.math.geometry.Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-			new edu.wpi.first.math.geometry.Translation2d(wheelBase / 2.0, trackWidth / 2.0),
-			new edu.wpi.first.math.geometry.Translation2d(-wheelBase / 2.0, -trackWidth / 2.0),
-			new edu.wpi.first.math.geometry.Translation2d(wheelBase / 2.0, -trackWidth / 2.0)
+				new edu.wpi.first.math.geometry.Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+				new edu.wpi.first.math.geometry.Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+				new edu.wpi.first.math.geometry.Translation2d(-wheelBase / 2.0, -trackWidth / 2.0),
+				new edu.wpi.first.math.geometry.Translation2d(wheelBase / 2.0, -trackWidth / 2.0)
 		};
 
-		public static final edu.wpi.first.math.kinematics.SwerveDriveKinematics kWpiKinematics =
-				new edu.wpi.first.math.kinematics.SwerveDriveKinematics(wpiModuleLocations);
+		public static final edu.wpi.first.math.kinematics.SwerveDriveKinematics kWpiKinematics = new edu.wpi.first.math.kinematics.SwerveDriveKinematics(
+				wpiModuleLocations);
 
 		/* Swerve Profiling Values */
 		public static final double maxSpeed = 5; // meters per second
 		public static final double maxAcceleration = 6; // meters per second
 		public static final double maxAngularVelocity = 11.5;
 		public static final double maxAngularAcceleration = maxAcceleration /
-            Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
+				Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
 
 		public static final double kV = 12 * Math.PI * wheelDiameter / (driveGearRatio * maxSpeed);
 		public static final double maxAutoSpeed = maxSpeed * 0.85; // Max out at 85% to ensure attainable speeds
@@ -143,7 +148,7 @@ public class Constants {
 		public static final double kSnapSwerveHeadingKi = 0.0;
 		public static final double kSnapSwerveHeadingKd = 0.6;
 		public static final double kSnapSwerveHeadingKf = 1.0;
-		
+
 		public static final double kTrajectoryDeadband = .01;
 
 		public static final SwerveKinematicLimits kSwerveKinematicLimits = new SwerveKinematicLimits();
@@ -153,7 +158,7 @@ public class Constants {
 			kSwerveKinematicLimits.kMaxDriveAcceleration = 40;
 			kSwerveKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
-		
+
 		public static final SwerveKinematicLimits kSwerveUncappedKinematicLimits = new SwerveKinematicLimits();
 
 		static {
@@ -162,18 +167,17 @@ public class Constants {
 			kSwerveUncappedKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
 
-		public static final double kAutoAlignAllowableDistance = 2.0; //Meters
-	
-	    public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
-             maxSpeed,
-        	 -maxSpeed,
-             maxAcceleration);
+		public static final double kAutoAlignAllowableDistance = 2.0; // Meters
+
+		public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
+				maxSpeed,
+				-maxSpeed,
+				maxAcceleration);
 
 		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
-            5,
-            -5,
-            maxAngularAcceleration*0.5);
-
+				5,
+				-5,
+				maxAngularAcceleration * 0.5);
 
 		/*** MODULE SPECIFIC CONSTANTS ***/
 		/* Front Left Module - Module 0 */
@@ -190,7 +194,7 @@ public class Constants {
 
 		/* Front Right Module - Module 1 */
 		public static final class Mod1 {
-			public static final double compAngleOffset =0;
+			public static final double compAngleOffset = 0;
 
 			public static SwerveModuleConstants SwerveModuleConstants() {
 				return new SwerveModuleConstants(
@@ -243,8 +247,8 @@ public class Constants {
 			config.Voltage.PeakReverseVoltage = -12.0;
 
 			config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-			config.MotorOutput.Inverted = inverse ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-
+			config.MotorOutput.Inverted = inverse ? InvertedValue.Clockwise_Positive
+					: InvertedValue.CounterClockwise_Positive;
 
 			config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
 			config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
@@ -253,7 +257,6 @@ public class Constants {
 
 		public static TalonFXConfiguration AzimuthFXConfig(boolean inverse) {
 			TalonFXConfiguration config = new TalonFXConfiguration();
-			
 
 			config.Slot0.kP = 1.0005;
 			config.Slot0.kI = 0.0;
@@ -271,7 +274,8 @@ public class Constants {
 			config.Voltage.PeakReverseVoltage = -12.0;
 
 			config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-			config.MotorOutput.Inverted = inverse ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+			config.MotorOutput.Inverted = inverse ? InvertedValue.Clockwise_Positive
+					: InvertedValue.CounterClockwise_Positive;
 
 			return config;
 		}
@@ -286,35 +290,36 @@ public class Constants {
 	}
 
 	public static final class PoseEstimatorConstants {
-		public record CameraConfig(Pose3d offset, String config) {}
-		;
+		public record CameraConfig(Pose3d offset, String config) {
+		};
 
 		public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.2, 1), Math.pow(0.2, 1));
-		public static final Matrix<N2, N1> kLocalMeasurementStdDevs =
-				VecBuilder.fill(Math.pow(0.01, 1), Math.pow(0.01, 1));
+		public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.01, 1),
+				Math.pow(0.01, 1));
 
+		public static VisionDeviceConstants kDomVisionDevice = new VisionDeviceConstants(); // dot 13
+		public static VisionDeviceConstants kSubVisionDevice = new VisionDeviceConstants(); // dot 12
 
-	public static VisionDeviceConstants kDomVisionDevice = new VisionDeviceConstants(); // dot 13
-	public static VisionDeviceConstants kSubVisionDevice = new VisionDeviceConstants(); // dot 12
+		public static List<Integer> redTagIDFilters;
+		public static List<Integer> blueTagIDFilters;
 
-	public static List<Integer> redTagIDFilters;
-	public static List<Integer> blueTagIDFilters;
+		static {
+			redTagIDFilters = List.of();
+			blueTagIDFilters = List.of();
 
-	static {
-		redTagIDFilters = List.of();
-		blueTagIDFilters = List.of();
+			kDomVisionDevice.kTableName = "limelight-Dom";
+			kDomVisionDevice.kRobotToCamera = new Transform3d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325),
+					Units.inchesToMeters(0),
+					new Rotation3d(0, 0, 0));
 
-		kDomVisionDevice.kTableName = "limelight-Dom";
-		kDomVisionDevice.kRobotToCamera = new Transform3d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325),Units.inchesToMeters(0), 
-				new Rotation3d(0,0,0));
+			kSubVisionDevice.kTableName = "limelight-Sub";
+			kSubVisionDevice.kRobotToCamera = new Transform3d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325),
+					Units.inchesToMeters(0),
+					new Rotation3d(0, 0, 0));// TODO set these to correct values
 
-		kSubVisionDevice.kTableName = "limelight-Sub";
-		kSubVisionDevice.kRobotToCamera = new Transform3d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325), Units.inchesToMeters(0),
-				new Rotation3d(0,0,0));//TODO set these to correct values
+		}
 
 	}
-
-}
 
 	public static final class IntakeDeployConstants {
 		// 115.93
@@ -476,7 +481,6 @@ public class Constants {
 
 	}
 
-
 	public static final class EndEffectorWristConstants {
 		// 115.93
 		// 7.92
@@ -544,6 +548,5 @@ public class Constants {
 			return config;
 		}
 	}
-
 
 }

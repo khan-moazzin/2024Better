@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Translation2d;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 
 public class AprilTag {

@@ -1,8 +1,6 @@
 package com.team254.lib.geometry;
 
 
-import java.io.Serializable;
-
 import com.team254.lib.util.Util;
 
 import edu.wpi.first.util.struct.StructSerializable;
@@ -24,54 +22,113 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
     protected final Translation2d translation_;
     protected final Rotation2d rotation_;
 
+    /**
+     * Default constructor for Pose2d.
+     */
     public Pose2d() {
         translation_ = new Translation2d();
         rotation_ = new Rotation2d();
     }
 
+    /**
+     * Constructor for Pose2d with x, y coordinates and rotation.
+     * 
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     * @param rotation The rotation.
+     */
     public Pose2d(double x, double y, final Rotation2d rotation) {
         translation_ = new Translation2d(x, y);
         rotation_ = rotation;
     }
 
+    /**
+     * Constructor for Pose2d with translation and rotation.
+     * 
+     * @param translation The translation.
+     * @param rotation The rotation.
+     */
     public Pose2d(final Translation2d translation, final Rotation2d rotation) {
         translation_ = translation;
         rotation_ = rotation;
     }
+
+    /**
+     * Constructor for Pose2d with x, y coordinates and rotation in degrees.
+     * 
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     * @param degree The rotation in degrees.
+     */
     public Pose2d(final double x, final double y, final double degree) {
         translation_ = new Translation2d(x, y);
         this.rotation_ = Rotation2d.fromDegrees(degree);
     }
 
+    /**
+     * Copy constructor for Pose2d.
+     * 
+     * @param other The other Pose2d to copy.
+     */
     public Pose2d(final Pose2d other) {
         translation_ = new Translation2d(other.translation_);
         rotation_ = new Rotation2d(other.rotation_);
     }
 
+    /**
+     * Constructor for Pose2d from Pose2dWithMotion.
+     * 
+     * @param other The Pose2dWithMotion to copy.
+     */
     public Pose2d(final Pose2dWithMotion other) {
         translation_ = new Translation2d(other.getTranslation());
         rotation_ = new Rotation2d(other.getRotation());
     }
 
+    /**
+     * Constructor for Pose2d from WPILib Pose2d.
+     * 
+     * @param other The WPILib Pose2d to copy.
+     */
     public Pose2d(final edu.wpi.first.math.geometry.Pose2d other) {
         translation_ = new Translation2d(other.getTranslation());
         rotation_ = new Rotation2d(other.getRotation());
     }
+
+    /**
+     * Converts this Pose2d to a WPILib Pose2d.
+     * 
+     * @return The WPILib Pose2d.
+     */
     public edu.wpi.first.math.geometry.Pose2d wpi(){
-        return new edu.wpi.first.math.geometry.Pose2d(translation_.x(),translation_.y(),new edu.wpi.first.math.geometry.Rotation2d(rotation_.cos(),rotation_.sin()));
+        return new edu.wpi.first.math.geometry.Pose2d(translation_.x(),translation_.y(),new edu.wpi.first.math.geometry.Rotation2d(rotation_.radians_));
     }
 
+    /**
+     * Creates a Pose2d from a translation.
+     * 
+     * @param translation The translation.
+     * @return The new Pose2d.
+     */
     public static Pose2d fromTranslation(final Translation2d translation) {
         return new Pose2d(translation, new Rotation2d());
     }
 
+    /**
+     * Creates a Pose2d from a rotation.
+     * 
+     * @param rotation The rotation.
+     * @return The new Pose2d.
+     */
     public static Pose2d fromRotation(final Rotation2d rotation) {
         return new Pose2d(new Translation2d(), rotation);
     }
 
     /**
-     * Obtain a new Pose2d from a (constant curvature) velocity. See:
-     * https://github.com/strasdat/Sophus/blob/master/sophus/se2.hpp
+     * Creates a Pose2d from a constant curvature velocity.
+     * 
+     * @param delta The twist representing the velocity.
+     * @return The new Pose2d.
      */
     public static Pose2d exp(final Twist2d delta) {
         double sin_theta = Math.sin(delta.dtheta);
@@ -87,12 +144,22 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
         return new Pose2d(new Translation2d(delta.dx * s - delta.dy * c, delta.dx * c + delta.dy * s),
                 new Rotation2d(cos_theta, sin_theta, false));
     }
+
+    /**
+     * Creates a new Pose2d with the specified rotation.
+     * 
+     * @param rotation The new rotation.
+     * @return The new Pose2d.
+     */
     public Pose2d withRotation(Rotation2d rotation){
         return new Pose2d(translation_,rotation);
     }
 
     /**
-     * Logical inverse of the above.
+     * Computes the twist that transforms this pose to another pose.
+     * 
+     * @param transform The other pose.
+     * @return The twist.
      */
     public static Twist2d log(final Pose2d transform) {
         final double dtheta = transform.getRotation().getRadians();
@@ -143,17 +210,35 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
     }
     
 
+    /**
+     * Transforms this pose by another transform.
+     * 
+     * @param other The transform.
+     * @return The new pose.
+     */
     public Pose2d transformBy(Transform2d other) {
         return new Pose2d(
                 translation_.plus(other.getTranslation().rotateBy(rotation_)),
                 rotation_.rotateBy(other.getRotation()));
     }
 
+    /**
+     * Computes the transform that transforms this pose to another pose.
+     * 
+     * @param other The other pose.
+     * @return The transform.
+     */
     public Transform2d minus(Pose2d other) {
         final var pose = this.relativeTo(other);
         return new Transform2d(pose.getTranslation(), pose.getRotation());
     }
 
+    /**
+     * Computes the pose relative to another pose.
+     * 
+     * @param other The other pose.
+     * @return The relative pose.
+     */
     public Pose2d relativeTo(Pose2d other) {
         var transform = new Transform2d(other, this);
         return new Pose2d(transform.getTranslation(), transform.getRotation());
@@ -170,6 +255,11 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
         return new Pose2d(translation_.inverse().rotateBy(rotation_inverted), rotation_inverted);
     }
 
+    /**
+     * Computes the normal of this pose.
+     * 
+     * @return The normal pose.
+     */
     public Pose2d normal() {
         return new Pose2d(translation_, rotation_.normal());
     }
@@ -192,7 +282,10 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
     }
 
     /**
-     * Return true if this pose is (nearly) colinear with the another.
+     * Checks if this pose is colinear with another pose.
+     * 
+     * @param other The other pose.
+     * @return True if colinear, false otherwise.
      */
     public boolean isColinear(final Pose2d other) {
         if (!getRotation().isParallel(other.getRotation()))
@@ -201,11 +294,25 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
         return (Util.epsilonEquals(twist.dy, 0.0) && Util.epsilonEquals(twist.dtheta, 0.0));
     }
 
+    /**
+     * Checks if this pose is approximately equal to another pose.
+     * 
+     * @param other The other pose.
+     * @param epsilon The tolerance.
+     * @return True if approximately equal, false otherwise.
+     */
     public boolean epsilonEquals(final Pose2d other, double epsilon) {
         return getTranslation().epsilonEquals(other.getTranslation(), epsilon)
                 && getRotation().isParallel(other.getRotation());
     }
 
+    /**
+     * Computes the intersection point of two poses.
+     * 
+     * @param a The first pose.
+     * @param b The second pose.
+     * @return The intersection point.
+     */
     private static Translation2d intersectionInternal(final Pose2d a, final Pose2d b) {
         final Rotation2d a_r = a.getRotation();
         final Rotation2d b_r = b.getRotation();

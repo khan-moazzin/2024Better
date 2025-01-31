@@ -16,7 +16,8 @@ public class Util {
 	/**
 	 * Prevent this class from being instantiated.
 	 */
-	private Util() {}
+	private Util() {
+	}
 
 	/**
 	 * Limits the given input to the given magnitude.
@@ -115,14 +116,15 @@ public class Util {
 
 	public static double scaledDeadband(double value, double maxValue, double deadband) {
 		double deadbandedValue = deadBand(value, deadband);
-		if (epsilonEquals(deadbandedValue, 0.0)) return 0.0;
+		if (epsilonEquals(deadbandedValue, 0.0))
+			return 0.0;
 		return Math.signum(deadbandedValue) * ((Math.abs(deadbandedValue) - deadband) / (maxValue - deadband));
 	}
 
 	public static boolean shouldReverse(Rotation2d goalAngle, Rotation2d currentAngle) {
 		double angleDifference = Math.abs(goalAngle.distance(currentAngle));
-		double reverseAngleDifference =
-				Math.abs(goalAngle.distance(currentAngle.rotateBy(Rotation2d.fromDegrees(180.0))));
+		double reverseAngleDifference = Math
+				.abs(goalAngle.distance(currentAngle.rotateBy(Rotation2d.fromDegrees(180.0))));
 		return reverseAngleDifference < angleDifference;
 	}
 

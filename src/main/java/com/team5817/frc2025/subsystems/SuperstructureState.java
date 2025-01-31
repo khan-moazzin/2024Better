@@ -19,7 +19,7 @@ public class SuperstructureState {
 	public final Indexer.State mIndexerState;
 	public final Type mType;
 
-	public enum Type{
+	public enum Type {
 		SCORING,
 		CLEAN,
 		INTAKING,
@@ -27,15 +27,14 @@ public class SuperstructureState {
 	};
 
 	public SuperstructureState(
-		Elevator.State elevator_state,
-		EndEffectorWrist.State wrist_state,
-		IntakeDeploy.State intake_state, 
-		Climb.State climb_state, 
-		EndEffectorRollers.State endEffector_state, 
-		IntakeRollers.State intake_roller_state, 
-		Indexer.State indexer_state,
-		Type type
-		){
+			Elevator.State elevator_state,
+			EndEffectorWrist.State wrist_state,
+			IntakeDeploy.State intake_state,
+			Climb.State climb_state,
+			EndEffectorRollers.State endEffector_state,
+			IntakeRollers.State intake_roller_state,
+			Indexer.State indexer_state,
+			Type type) {
 
 		this.mElevatorState = elevator_state;
 		this.mEndEffectorWristState = wrist_state;

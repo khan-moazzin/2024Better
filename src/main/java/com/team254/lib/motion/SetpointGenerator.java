@@ -50,7 +50,7 @@ public class SetpointGenerator {
      * @param t           The time to generate a setpoint for.
      * @return The new Setpoint at time t.
      */
-    public synchronized Setpoint getSetpoint(MotionProfileConstraints constraints, IMotionProfileGoal goal,
+    public  Setpoint getSetpoint(MotionProfileConstraints constraints, IMotionProfileGoal goal,
                                              MotionState prev_state,
                                              double t) {
         boolean regenerate = mConstraints == null || !mConstraints.equals(constraints) || mGoal == null

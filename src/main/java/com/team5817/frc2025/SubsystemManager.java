@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * Used to reset, start, stop, and update all subsystems at once
  */
@@ -24,7 +23,8 @@ public class SubsystemManager implements ILooper {
 	private double on_loop_dt = 0.0;
 	private double write_dt = 0.0;
 
-	private SubsystemManager() {}
+	private SubsystemManager() {
+	}
 
 	public static SubsystemManager getInstance() {
 		if (mInstance == null) {
@@ -99,12 +99,10 @@ public class SubsystemManager implements ILooper {
 		}
 	}
 
-
 	public void registerEnabledLoops(Looper enabledLooper) {
 		mAllSubsystems.forEach(s -> s.registerEnabledLoops(this));
 		enabledLooper.register(new EnabledLoop());
 	}
-
 
 	@Override
 	public void register(Loop loop) {

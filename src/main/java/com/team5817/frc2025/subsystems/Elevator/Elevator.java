@@ -11,7 +11,6 @@ import com.team5817.lib.requests.Request;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -43,15 +42,14 @@ public class Elevator extends ServoMotorSubsystem {
 		PROCESS(0.0, kLenientError),
 		STOW(0.0, kStrictError);
 
-        double output = 0;
+		double output = 0;
 		double allowable_error = 20;
 
-        State(double output, double allowable_error) {
-        this.output = output;
-		this.allowable_error = allowable_error;
-        }
-    }
-
+		State(double output, double allowable_error) {
+			this.output = output;
+			this.allowable_error = allowable_error;
+		}
+	}
 
 	public Elevator(final ServoMotorSubsystemConstants constants) {
 		super(constants);
@@ -63,11 +61,12 @@ public class Elevator extends ServoMotorSubsystem {
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {}
+			public void onStart(double timestamp) {
+			}
 
 			@Override
 			public void onLoop(double timestamp) {
-		}
+			}
 
 			@Override
 			public void onStop(double timestamp) {
@@ -76,38 +75,39 @@ public class Elevator extends ServoMotorSubsystem {
 		});
 	}
 
-    @Override
-    public synchronized void readPeriodicInputs() {
-        super.readPeriodicInputs();
-        Logger.processInputs("Elevator", mServoInputs);
-    }
+	@Override
+	public void readPeriodicInputs() {
+		super.readPeriodicInputs();
+		Logger.processInputs("Elevator", mServoInputs);
+	}
 
 	@Override
-	public synchronized void writePeriodicOutputs() {
+	public void writePeriodicOutputs() {
 		super.writePeriodicOutputs();
 	}
 
 	@Override
 	public void outputTelemetry() {
-		Pose3d current = new Pose3d(Math.cos(Units.degreesToRadians(84))*mServoInputs.position_units,0,Math.sin(Units.degreesToRadians(84))*mServoInputs.position_units,new Rotation3d());
-		
+		Pose3d current = new Pose3d(Math.cos(Units.degreesToRadians(84)) * mServoInputs.position_units, 0,
+				Math.sin(Units.degreesToRadians(84)) * mServoInputs.position_units, new Rotation3d());
+
 		Robot.mechPoses[2] = current.div(3);
 		Robot.mechPoses[3] = current.div(3).times(2);
 		Robot.mechPoses[4] = current;
 
-		
-		Pose3d desired = new Pose3d(Math.cos(Units.degreesToRadians(84))*mServoOutputs.demand,0,Math.sin(Units.degreesToRadians(84))*mServoOutputs.demand,new Rotation3d());
-		
+		Pose3d desired = new Pose3d(Math.cos(Units.degreesToRadians(84)) * mServoOutputs.demand, 0,
+				Math.sin(Units.degreesToRadians(84)) * mServoOutputs.demand, new Rotation3d());
+
 		Robot.desMechPoses[2] = desired.div(3);
 		Robot.desMechPoses[3] = desired.div(3).times(2);
 		Robot.desMechPoses[4] = desired;
-
 
 		super.outputTelemetry();
 	}
 
 	@Override
-	public void stop() {}
+	public void stop() {
+	}
 
 	@Override
 	public boolean checkSystem() {
@@ -134,14 +134,15 @@ public class Elevator extends ServoMotorSubsystem {
 			public void act() {
 				setSetpointMotionMagic(State.ZERO.output);
 			}
+
 			@Override
 			public boolean isFinished() {
 				return Util.epsilonEquals(getPosition(), State.ZERO.output, State.ZERO.allowable_error);
 			}
 		};
-	}	
+	}
 
-	public Request waitForExtensionRequest(double position){
+	public Request waitForExtensionRequest(double position) {
 		return new Request() {
 			@Override
 			public void act() {
@@ -154,13 +155,13 @@ public class Elevator extends ServoMotorSubsystem {
 		};
 	}
 
-
 	public Request stateRequest(State _wantedState) {
 		return new Request() {
 			@Override
 			public void act() {
 				setSetpointMotionMagic(_wantedState.output);
 			}
+
 			@Override
 			public boolean isFinished() {
 				return Util.epsilonEquals(getPosition(), _wantedState.output, _wantedState.allowable_error);

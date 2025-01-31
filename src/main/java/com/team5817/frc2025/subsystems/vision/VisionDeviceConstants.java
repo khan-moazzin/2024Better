@@ -1,6 +1,5 @@
 package com.team5817.frc2025.subsystems.vision;
 
-
 import edu.wpi.first.math.geometry.Transform3d;
 
 public class VisionDeviceConstants {

@@ -1,10 +1,7 @@
 package com.team5817.frc2025.subsystems.Indexer;
 
-
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Volt;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.AutoLog;
@@ -13,8 +10,6 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.team254.lib.drivers.TalonUtil;
-import com.team5817.frc2025.subsystems.Indexer.IndexerInputsAutoLogged;
-import com.team5817.frc2025.subsystems.Indexer.IndexerOutputsAutoLogged;
 import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.Constants.IntakeRollerConstants;
 import com.team5817.frc2025.loops.ILooper;
@@ -62,7 +57,8 @@ public class Indexer extends Subsystem {
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {}
+			public void onStart(double timestamp) {
+			}
 
 			@Override
 			public void onLoop(double timestamp) {
@@ -70,17 +66,17 @@ public class Indexer extends Subsystem {
 			}
 
 			@Override
-			public void onStop(double timestamp) {}
+			public void onStop(double timestamp) {
+			}
 		});
 	}
-	
+
 	@AutoLog
 	public static class IndexerInputs implements Sendable {
 		// Inputs
 		public double roller_output_voltage;
 		public double roller_stator_current;
 		public double roller_velocity;
-
 
 		@Override
 		public void initSendable(SendableBuilder builder) {
@@ -121,7 +117,7 @@ public class Indexer extends Subsystem {
 
 	/**
 	 * @param _wantedState Wanted state for the intake rollers.
-	 * @return New request that updates the intake rollers with the wanted state. 
+	 * @return New request that updates the intake rollers with the wanted state.
 	 */
 	public Request stateRequest(State _wantedState) {
 		return new Request() {

@@ -1,7 +1,6 @@
 package com.team5817.frc2025.autos.Actions;
 
 
-import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.motion.Trajectory;
 
@@ -30,6 +29,7 @@ public class TrajectoryAction implements Action{
 
 	@Override
 	public boolean isFinished() {
+		// return false;
 		return mDrive.isTrajectoryFinished();
 	}
 
@@ -39,6 +39,5 @@ public class TrajectoryAction implements Action{
 
 	@Override
 	public void done() {
-		// mDrive.setState(State.OFF);
 	}
 }

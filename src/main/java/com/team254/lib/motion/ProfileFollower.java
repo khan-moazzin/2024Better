@@ -121,7 +121,7 @@ public class ProfileFollower {
      * @param t            The timestamp for which the setpoint is desired.
      * @return An output that reflects the control output to apply to achieve the new setpoint.
      */
-    public synchronized double update(MotionState latest_state, double t) {
+    public  double update(MotionState latest_state, double t) {
         mLatestActualState = latest_state;
         MotionState prev_state = latest_state;
         if (mLatestSetpoint != null) {

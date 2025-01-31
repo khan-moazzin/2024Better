@@ -89,7 +89,8 @@ public class PhysicsSim {
 		 * Runs the simulation profile.
 		 * Implemented by device-specific profiles.
 		 */
-		public void run() {}
+		public void run() {
+		}
 
 		/**
 		 * Returns the time since last call, in milliseconds.

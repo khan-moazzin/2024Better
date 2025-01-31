@@ -2,7 +2,6 @@ package com.team5817.lib.swerve;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degree;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -31,8 +30,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveModule extends Subsystem {
 
-	private  int kModuleNumber;
-	private  double kAngleOffset;
+	private int kModuleNumber;
+	private double kAngleOffset;
 
 	private TalonFX mAngleMotor;
 	private TalonFX mDriveMotor;
@@ -49,6 +48,7 @@ public class SwerveModule extends Subsystem {
 		POSITION,
 		NUETRAL
 	}
+
 	@AutoLog
 	public static class ModuleInputs {
 		// Inputs
@@ -58,16 +58,16 @@ public class SwerveModule extends Subsystem {
 		public double driveVelocity = 0.0;
 		public double absolutePosition = 0.0;
 	}
+
 	public static class ModuleOutputs {
 		// Outputs
-	public double driveDemand = 0.0;
-	public double driveVelocity = 0.0;
-	public double rotTarget = 0.0;
-	public DriveType driveType = DriveType.OPENLOOP;
-	public DriveType rotType = DriveType.POSITION;
+		public double driveDemand = 0.0;
+		public double driveVelocity = 0.0;
+		public double rotTarget = 0.0;
+		public DriveType driveType = DriveType.OPENLOOP;
+		public DriveType rotType = DriveType.POSITION;
 
-}
-	
+	}
 
 	public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants, CANcoder cancoder) {
 		this.kModuleNumber = moduleNumber;
@@ -77,13 +77,13 @@ public class SwerveModule extends Subsystem {
 
 		// Angle motor config
 		mAngleMotor = new TalonFX(moduleConstants.angleMotorID, "canivore1");
-		Phoenix6Util.checkErrorAndRetry(() ->
-				mAngleMotor.getConfigurator().apply(SwerveConstants.AzimuthFXConfig(SwerveConstants.angleMotorInvert), Constants.kLongCANTimeoutS));
+		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.getConfigurator()
+				.apply(SwerveConstants.AzimuthFXConfig(SwerveConstants.angleMotorInvert), Constants.kLongCANTimeoutS));
 
 		// Drive motor config
 		mDriveMotor = new TalonFX(moduleConstants.driveMotorID, "canivore1");
-		Phoenix6Util.checkErrorAndRetry(() ->
-				mDriveMotor.getConfigurator().apply(SwerveConstants.DriveFXConfig(SwerveConstants.driveMotorInvert), Constants.kLongCANTimeoutS));
+		Phoenix6Util.checkErrorAndRetry(() -> mDriveMotor.getConfigurator()
+				.apply(SwerveConstants.DriveFXConfig(SwerveConstants.driveMotorInvert), Constants.kLongCANTimeoutS));
 		mDriveMotor.setPosition(0.0);
 
 		resetToAbsolute();
@@ -97,28 +97,30 @@ public class SwerveModule extends Subsystem {
 	public void readPeriodicInputs() {
 		mInputs.timestamp = Timer.getTimestamp();
 		refreshSignals();
-		
-		Logger.processInputs("Drive/Module"+kModuleNumber, mInputs);
+
+		Logger.processInputs("Drive/Module" + kModuleNumber, mInputs);
 	}
 
-	public synchronized void refreshSignals() {
-		if(Robot.isReal()){
+	public void refreshSignals() {
+		if (Robot.isReal()) {
 			mInputs.driveVelocity = mDriveMotor.getRotorVelocity().getValue().in(RotationsPerSecond);
 			mInputs.drivePosition = mDriveMotor.getRotorPosition().getValueAsDouble();
-			mInputs.rotationPosition =Util.placeInAppropriate0To360Scope(0, BaseStatusSignal.getLatencyCompensatedValue(
-				mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation));
+			mInputs.rotationPosition = Util.placeInAppropriate0To360Scope(0,
+					BaseStatusSignal.getLatencyCompensatedValue(
+							mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation));
 			mInputs.absolutePosition = getCanCoder().getDegrees();
-		}else{
+		} else {
 			mInputs.driveVelocity = mOutputs.driveVelocity;
 			mInputs.drivePosition = 0;
 			mInputs.rotationPosition = mOutputs.rotTarget;
 		}
 	}
+
 	public void setOpenLoop(SwerveModuleState desiredState) {
 		double flip = setSteeringAngleOptimized(new Rotation2d(desiredState.angle)) ? -1 : 1;
 		mOutputs.driveVelocity = desiredState.speedMetersPerSecond * flip;
 		double rotorSpeed = Conversions.MPSToRPS(
-			mOutputs.driveVelocity, SwerveConstants.wheelCircumference, SwerveConstants.driveGearRatio);
+				mOutputs.driveVelocity, SwerveConstants.wheelCircumference, SwerveConstants.driveGearRatio);
 		mOutputs.driveDemand = rotorSpeed * SwerveConstants.kV;
 		mOutputs.driveType = DriveType.OPENLOOP;
 	}
@@ -127,13 +129,13 @@ public class SwerveModule extends Subsystem {
 		double flip = setSteeringAngleOptimized(new Rotation2d(desiredState.angle)) ? -1 : 1;
 		mOutputs.driveVelocity = desiredState.speedMetersPerSecond * flip;
 		mOutputs.driveVelocity = Conversions.MPSToRPS(
-			mOutputs.driveVelocity,
+				mOutputs.driveVelocity,
 				Constants.SwerveConstants.wheelCircumference,
 				Constants.SwerveConstants.driveGearRatio);
 
 		if (Math.abs(mOutputs.driveVelocity) < 0.002) {
 			mOutputs.driveType = DriveType.NUETRAL;
-		}else {
+		} else {
 			mOutputs.driveType = DriveType.VELOCITY;
 		}
 	}
@@ -166,14 +168,17 @@ public class SwerveModule extends Subsystem {
 	}
 
 	@Override
-	public synchronized void writePeriodicOutputs() {
-			
-			mAngleMotor.setControl(new PositionDutyCycle(mOutputs.rotTarget).withVelocity(0).withEnableFOC(true).withFeedForward(0).withSlot(0).withOverrideBrakeDurNeutral(false).withLimitForwardMotion(false).withLimitReverseMotion(false));
-			if(mOutputs.driveType == DriveType.OPENLOOP)
-				mDriveMotor.setControl(new VoltageOut(mOutputs.driveDemand));
-			else if(mOutputs.driveType == DriveType.VELOCITY)
-				mDriveMotor.setControl(new VelocityVoltage(mOutputs.driveVelocity).withFeedForward(0).withEnableFOC(true).withOverrideBrakeDurNeutral(false));
-	
+	public void writePeriodicOutputs() {
+
+		mAngleMotor.setControl(new PositionDutyCycle(mOutputs.rotTarget).withVelocity(0).withEnableFOC(true)
+				.withFeedForward(0).withSlot(0).withOverrideBrakeDurNeutral(false).withLimitForwardMotion(false)
+				.withLimitReverseMotion(false));
+		if (mOutputs.driveType == DriveType.OPENLOOP)
+			mDriveMotor.setControl(new VoltageOut(mOutputs.driveDemand));
+		else if (mOutputs.driveType == DriveType.VELOCITY)
+			mDriveMotor.setControl(new VelocityVoltage(mOutputs.driveVelocity).withFeedForward(0).withEnableFOC(true)
+					.withOverrideBrakeDurNeutral(false));
+
 	}
 
 	public void resetToAbsolute() {
@@ -197,7 +202,6 @@ public class SwerveModule extends Subsystem {
 	@Override
 	public void outputTelemetry() {
 		// spotless:off
-
 
 		// spotless:on
 	}
@@ -223,7 +227,8 @@ public class SwerveModule extends Subsystem {
 	}
 
 	public edu.wpi.first.math.kinematics.SwerveModuleState getWpiState() {
-		return new edu.wpi.first.math.kinematics.SwerveModuleState(mOutputs.driveVelocity, edu.wpi.first.math.geometry.Rotation2d.fromDegrees(target_angle));
+		return new edu.wpi.first.math.kinematics.SwerveModuleState(mOutputs.driveVelocity,
+				edu.wpi.first.math.geometry.Rotation2d.fromDegrees(target_angle));
 	}
 
 	public SwerveModulePosition getPosition() {
@@ -243,7 +248,7 @@ public class SwerveModule extends Subsystem {
 
 	public double getCurrentVelocity() {
 		return Conversions.RPSToMPS(
-			mInputs.driveVelocity,
+				mInputs.driveVelocity,
 				Constants.SwerveConstants.wheelCircumference,
 				Constants.SwerveConstants.driveGearRatio);
 	}

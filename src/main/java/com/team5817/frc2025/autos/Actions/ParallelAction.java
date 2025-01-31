@@ -1,13 +1,11 @@
 package com.team5817.frc2025.autos.Actions;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Composite action, running all sub-actions at the same time All actions are started then updated until all actions
- * report being done.
- *
+ * Composite action, running all sub-actions at the same time. 
+ * All actions are started then updated until all actions report being done.
  */
 public class ParallelAction implements Action {
 

@@ -1,6 +1,6 @@
 package com.team5817.frc2025.autos.Modes;
-package com.team5817.frc2025.autos.Modes;
 
+import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.Actions.TrajectoryAction;
@@ -10,7 +10,6 @@ import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.motion.TrajectorySet;
 
 public class ThreeCoralMode extends AutoBase {
-public class ThreeCoralMode extends AutoBase {
 
 
 	private Superstructure s = Superstructure.getInstance();
@@ -18,13 +17,12 @@ public class ThreeCoralMode extends AutoBase {
 	private TrajectorySet t;
 
 	public ThreeCoralMode() {
-	public ThreeCoralMode() {
 
         t = new TrajectorySet(
-            l.leftToHuman
+            l.leftToHuman,
+			l.humanToApp
         );
-		// if()
-		// t.mirror();
+		// if()j
 
 	}
 
@@ -32,15 +30,15 @@ public class ThreeCoralMode extends AutoBase {
 	@Override
 	public void routine() {
 		System.out.println("ran auto");
-        if(!Robot.isReal())
+        if(!Robot.isReal() && Constants.mode == Constants.Mode.SIM){
             mSim.setSimulationWorldPose(t.initalPose().wpi());
-		runAction(new TrajectoryAction(t.next()));
+		}
+		
+		r(new TrajectoryAction(t.next()));
+		r(new TrajectoryAction(t.next()));
+		// runAction(new WaitAction(1));
+
         
         System.out.println("Finished auto!");
 	}
-	// spotless:on
-}
-        System.out.println("Finished auto!");
-	}
-	// spotless:on
 }

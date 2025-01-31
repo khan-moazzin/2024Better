@@ -32,7 +32,6 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
@@ -171,15 +170,15 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mMainConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 		mMainConfig.Feedback.SensorToMechanismRatio = (mConstants.kMainConstants.invert_sensor_phase ? -1 : 1);
 
-		mForwardSoftLimitRotations =
-				(((mConstants.kMaxUnitsLimit - mConstants.kHomePosition) * mConstants.kRotationsPerUnitDistance)
-						- mConstants.kSoftLimitDeadband);
+		mForwardSoftLimitRotations = (((mConstants.kMaxUnitsLimit - mConstants.kHomePosition)
+				* mConstants.kRotationsPerUnitDistance)
+				- mConstants.kSoftLimitDeadband);
 		mMainConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = mForwardSoftLimitRotations;
 		mMainConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 
-		mReverseSoftLimitRotations =
-				(((mConstants.kMinUnitsLimit - mConstants.kHomePosition) * mConstants.kRotationsPerUnitDistance)
-						+ mConstants.kSoftLimitDeadband);
+		mReverseSoftLimitRotations = (((mConstants.kMinUnitsLimit - mConstants.kHomePosition)
+				* mConstants.kRotationsPerUnitDistance)
+				+ mConstants.kSoftLimitDeadband);
 		mMainConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = mReverseSoftLimitRotations;
 		mMainConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
@@ -246,7 +245,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 
 		TalonUtil.applyAndCheckConfiguration(mMain, mMainConfig);
-	
+
 		// Send a neutral command.
 		stop();
 	}
@@ -302,6 +301,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 		TalonUtil.applyAndCheckConfiguration(mMain, mMainConfig);
 	}
+
 	@AutoLog
 	public static class ServoInputs implements Sendable {
 		// INPUTS
@@ -335,7 +335,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	@AutoLog
 	public static class ServoOutputs implements Sendable {
 		// OUTPUTS
-		public double demand; 
+		public double demand;
 
 		@Override
 		public void initSendable(SendableBuilder builder) {
@@ -348,6 +348,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		MOTION_MAGIC,
 		POSITION_PID
 	}
+
 	private double lastTimestamp = 0;
 	protected ServoInputsAutoLogged mServoInputs = new ServoInputsAutoLogged();
 	protected ServoOutputsAutoLogged mServoOutputs = new ServoOutputsAutoLogged();
@@ -357,7 +358,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	protected StatusSignal<Integer> mMainStickyFault;
 
 	@Override
-	public synchronized void readPeriodicInputs() {
+	public void readPeriodicInputs() {
 		mServoInputs.timestamp = Timer.getFPGATimestamp();
 		double dt = mServoInputs.timestamp - lastTimestamp;
 
@@ -381,30 +382,28 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.main_supply_current = mMainSupplyCurrentSignal.asSupplier().get().in(Amps);
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
-		if((!Robot.isReal()&&Constants.mode == Mode.SIM)||Constants.kSubsytemSim){
-			mServoInputs.error_rotations = (mServoOutputs.demand-mServoInputs.position_rots);
+		if ((!Robot.isReal() && Constants.mode == Mode.SIM) || Constants.kSubsytemSim) {
+			mServoInputs.error_rotations = (mServoOutputs.demand - mServoInputs.position_rots);
 			switch (mControlState) {
 				case OPEN_LOOP:
-					mServoInputs.position_rots += 	mServoOutputs.demand/dt;
+					mServoInputs.position_rots += mServoOutputs.demand / dt;
 					break;
 				case MOTION_MAGIC:
-					mServoInputs.position_rots += mServoInputs.error_rotations/1.1*dt;//bad guess at motion for sim
+					mServoInputs.position_rots += mServoInputs.error_rotations / 1.1 * dt;// bad guess at motion for sim
 					break;
 				case POSITION_PID:
-					mServoInputs.position_rots += mServoInputs.error_rotations/1.1*dt;//bad guess at motion for sim
+					mServoInputs.position_rots += mServoInputs.error_rotations / 1.1 * dt;// bad guess at motion for sim
 					break;
-				
+
 			}
-		}else{
+		} else {
 			mServoInputs.position_rots = mMainPositionSignal.asSupplier().get().in(Rotations);
 		}
 		mServoInputs.position_units = rotationsToHomedUnits(mServoInputs.position_rots);
 		mServoInputs.velocity_rps = mMainVelocitySignal.asSupplier().get().in(RotationsPerSecond);
-		mServoInputs.active_trajectory_position =
-				mMainClosedLoopReferenceSignal.asSupplier().get();
+		mServoInputs.active_trajectory_position = mMainClosedLoopReferenceSignal.asSupplier().get();
 
-		final double newVelocity =
-				mMainClosedLoopReferenceSlopeSignal.asSupplier().get();
+		final double newVelocity = mMainClosedLoopReferenceSlopeSignal.asSupplier().get();
 		if (Util.epsilonEquals(newVelocity, mConstants.kCruiseVelocity, Math.max(1, mConstants.kDeadband))
 				|| Util.epsilonEquals(
 						newVelocity, mServoInputs.active_trajectory_velocity, Math.max(1, mConstants.kDeadband))) {
@@ -412,12 +411,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			mServoInputs.active_trajectory_acceleration = 0.0;
 		} else {
 			// Mechanism is accelerating.
-			mServoInputs.active_trajectory_acceleration =
-					Math.signum(newVelocity - mServoInputs.active_trajectory_velocity) * mConstants.kAcceleration;
+			mServoInputs.active_trajectory_acceleration = Math
+					.signum(newVelocity - mServoInputs.active_trajectory_velocity) * mConstants.kAcceleration;
 		}
 		mServoInputs.active_trajectory_velocity = newVelocity;
-
-		
 
 		if (mCSVWriter != null) {
 			mCSVWriter.add(mServoInputs);
@@ -426,7 +423,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	}
 
 	@Override
-	public synchronized void writePeriodicOutputs() {
+	public void writePeriodicOutputs() {
 		if (mControlState == ControlState.MOTION_MAGIC) {
 			mMain.setControl(new MotionMagicVoltage(mServoOutputs.demand).withSlot(kMotionMagicSlot));
 		} else if (mControlState == ControlState.POSITION_PID) {
@@ -436,13 +433,15 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 	}
 
-	public synchronized void handleMainReset(boolean reset) {}
+	public void handleMainReset(boolean reset) {
+	}
 
 	@Override
 	public void registerEnabledLoops(ILooper mEnabledLooper) {
 		mEnabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {}
+			public void onStart(double timestamp) {
+			}
 
 			@Override
 			public void onLoop(double timestamp) {
@@ -477,63 +476,63 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		});
 	}
 
-	public synchronized double getPositionRotations() {
+	public double getPositionRotations() {
 		return mServoInputs.position_rots;
 	}
 
 	// In "Units"
-	public synchronized double getPosition() {
+	public double getPosition() {
 		return rotationsToHomedUnits(mServoInputs.position_rots);
 	}
 
 	// In "Units per second"
-	public synchronized double getVelocity() {
+	public double getVelocity() {
 		return rotationsToUnits(mServoInputs.velocity_rps);
 	}
 
-	public synchronized double getVelError() {
+	public double getVelError() {
 		if (mMotionStateSetpoint == null) {
 			return 0.0;
 		}
 		return rotationsToUnits(mMotionStateSetpoint.vel() - mServoInputs.velocity_rps);
 	}
 
-	public synchronized boolean hasFinishedTrajectory() {
+	public boolean hasFinishedTrajectory() {
 		return Util.epsilonEquals(
 				mServoInputs.active_trajectory_position, getSetpoint(), Math.max(1, mConstants.kDeadband));
 	}
 
-	public synchronized double getSetpoint() {
+	public double getSetpoint() {
 		return (mControlState == ControlState.MOTION_MAGIC || mControlState == ControlState.POSITION_PID)
 				? rotationsToHomedUnits(mServoOutputs.demand)
 				: Double.NaN;
 	}
 
-	public synchronized double getSetpointHomed() {
+	public double getSetpointHomed() {
 		return (mControlState == ControlState.MOTION_MAGIC || mControlState == ControlState.POSITION_PID)
 				? rotationsToHomedUnits(mServoOutputs.demand)
 				: Double.NaN;
 	}
 
-	public synchronized void setSetpointMotionMagic(double units, double feedforward_v) {
+	public void setSetpointMotionMagic(double units, double feedforward_v) {
 		mServoOutputs.demand = constrainRotations(homeAwareUnitsToRotations(units));
 		if (mControlState != ControlState.MOTION_MAGIC) {
 			mControlState = ControlState.MOTION_MAGIC;
 		}
 	}
 
-	public synchronized void setSetpointMotionMagic(double units) {
+	public void setSetpointMotionMagic(double units) {
 		setSetpointMotionMagic(units, 0.0);
 	}
 
-	public synchronized void setSetpointPositionPID(double units, double feedforward_v) {
+	public void setSetpointPositionPID(double units, double feedforward_v) {
 		mServoOutputs.demand = constrainRotations(homeAwareUnitsToRotations(units));
 		if (mControlState != ControlState.POSITION_PID) {
 			mControlState = ControlState.POSITION_PID;
 		}
 	}
 
-	public synchronized void setSetpointPositionPID(double units) {
+	public void setSetpointPositionPID(double units) {
 		setSetpointPositionPID(units, 0.0);
 	}
 
@@ -558,22 +557,22 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		return Util.limit(rotations, mReverseSoftLimitRotations, mForwardSoftLimitRotations);
 	}
 
-	public synchronized void setOpenLoop(double percentage) {
+	public void setOpenLoop(double percentage) {
 		if (mControlState != ControlState.OPEN_LOOP) {
 			mControlState = ControlState.OPEN_LOOP;
 		}
 		mServoOutputs.demand = percentage;
 	}
 
-	public synchronized double getActiveTrajectoryPosition() {
+	public double getActiveTrajectoryPosition() {
 		return rotationsToHomedUnits((mServoInputs.active_trajectory_position));
 	}
 
-	public synchronized String getControlState() {
+	public String getControlState() {
 		return mControlState.toString();
 	}
 
-	public synchronized double getPredictedPositionUnits(double lookahead_secs) {
+	public double getPredictedPositionUnits(double lookahead_secs) {
 		double predicted_units = mServoInputs.active_trajectory_position
 				+ lookahead_secs * mServoInputs.active_trajectory_velocity
 				+ 0.5 * mServoInputs.active_trajectory_acceleration * lookahead_secs * lookahead_secs;
@@ -588,54 +587,54 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		return false;
 	}
 
-	public synchronized void resetIfAtHome() {
+	public void resetIfAtHome() {
 		if (atHomingLocation()) {
 			zeroSensors();
 		}
 	}
 
 	@Override
-	public synchronized void zeroSensors() {
+	public void zeroSensors() {
 		Phoenix6Util.checkErrorAndRetry(() -> mMain.setPosition(0, mConstants.kCANTimeout));
 		mHasBeenZeroed = true;
 	}
 
-	public synchronized void forceZero() {
+	public void forceZero() {
 		Phoenix6Util.checkErrorAndRetry(() -> mMain.setPosition(0, mConstants.kCANTimeout));
 	}
 
-	public synchronized boolean hasBeenZeroed() {
+	public boolean hasBeenZeroed() {
 		return mHasBeenZeroed;
 	}
 
-	public synchronized void setSupplyCurrentLimit(double value, boolean enable) {
+	public void setSupplyCurrentLimit(double value, boolean enable) {
 		mMainConfig.CurrentLimits.SupplyCurrentLimit = value;
 		mMainConfig.CurrentLimits.SupplyCurrentLimitEnable = enable;
 
 		TalonUtil.applyAndCheckConfiguration(mMain, mMainConfig);
 	}
 
-	public synchronized void setSupplyCurrentLimitUnchecked(double value, boolean enable) {
+	public void setSupplyCurrentLimitUnchecked(double value, boolean enable) {
 		mMainConfig.CurrentLimits.SupplyCurrentLimit = value;
 		mMainConfig.CurrentLimits.SupplyCurrentLimitEnable = enable;
 
 		mMain.getConfigurator().apply(mMainConfig);
 	}
 
-	public synchronized void setStatorCurrentLimitUnchecked(double value, boolean enable) {
+	public void setStatorCurrentLimitUnchecked(double value, boolean enable) {
 		mMainConfig.CurrentLimits.StatorCurrentLimit = value;
 		mMainConfig.CurrentLimits.StatorCurrentLimitEnable = enable;
 
 		mMain.getConfigurator().apply(mMainConfig);
 	}
 
-	public synchronized void setMotionMagicConfigsUnchecked(double accel, double jerk) {
+	public void setMotionMagicConfigsUnchecked(double accel, double jerk) {
 		mMainConfig.MotionMagic.MotionMagicAcceleration = accel;
 		mMainConfig.MotionMagic.MotionMagicJerk = jerk;
 		mMain.getConfigurator().apply(mMainConfig.MotionMagic);
 	}
 
-	public synchronized void setMotionMagicConfigs(double accel, double velocity) {
+	public void setMotionMagicConfigs(double accel, double velocity) {
 		mMainConfig.MotionMagic.MotionMagicAcceleration = unitsToRotations(accel);
 		mMainConfig.MotionMagic.MotionMagicCruiseVelocity = unitsToRotations(velocity);
 
@@ -649,7 +648,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	}
 
 	@Override
-	public synchronized void outputTelemetry() {
+	public void outputTelemetry() {
 		Logger.recordOutput(mConstants.kName + "/Control Mode", mControlState);
 		Logger.recordOutput(mConstants.kName + "/Demand", mServoOutputs.demand);
 	}

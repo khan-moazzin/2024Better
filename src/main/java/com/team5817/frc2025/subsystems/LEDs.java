@@ -18,7 +18,6 @@ import com.team5817.lib.requests.Request;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LEDs extends Subsystem {
 	private static LEDs mInstance;
@@ -43,7 +42,7 @@ public class LEDs extends Subsystem {
 		configAll.stripType = LEDStripType.RGB;
 		configAll.brightnessScalar = 1.0;
 		configAll.vBatOutputMode = VBatOutputMode.Modulated;
-		mCandle.configAllSettings(configAll, (int) (1000*Constants.kLongCANTimeoutS));
+		mCandle.configAllSettings(configAll, (int) (1000 * Constants.kLongCANTimeoutS));
 		mCandle.setStatusFramePeriod(CANdleStatusFrame.CANdleStatusFrame_Status_1_General, 255);
 		mCandle.setControlFramePeriod(CANdleControlFrame.CANdle_Control_1_General, 10);
 		mCandle.setControlFramePeriod(CANdleControlFrame.CANdle_Control_2_ModulatedVBatOut, 255);
@@ -60,7 +59,8 @@ public class LEDs extends Subsystem {
 			}
 
 			@Override
-			public void onLoop(double timestamp) {}
+			public void onLoop(double timestamp) {
+			}
 
 			@Override
 			public void onStop(double timestamp) {
@@ -103,7 +103,8 @@ public class LEDs extends Subsystem {
 	}
 
 	@Override
-	public void stop() {}
+	public void stop() {
+	}
 
 	@Override
 	public boolean checkSystem() {
@@ -163,7 +164,6 @@ public class LEDs extends Subsystem {
 			}
 			return color;
 		}
-	
 
 		// cycle to next color in array
 		public void nextColor() {

@@ -49,19 +49,19 @@ public class ServoMotorSubsystemWithCancoder extends ServoMotorSubsystem {
 		changeTalonConfig((conf) -> {
 			conf.Feedback.FeedbackSensorSource = mEncoderConstants.encoder_type;
 			conf.Feedback.FeedbackRemoteSensorID = mEncoderConstants.remote_encoder_port.getDeviceNumber();
-			conf.Feedback.RotorToSensorRatio =
-					(encoder_constants.rotor_rotations_per_output) / (mConstants.kRotationsPerUnitDistance * 360.0);
+			conf.Feedback.RotorToSensorRatio = (encoder_constants.rotor_rotations_per_output)
+					/ (mConstants.kRotationsPerUnitDistance * 360.0);
 			conf.Feedback.SensorToMechanismRatio = 1.0;
 			return conf;
 		});
 	}
 
 	@Override
-	public synchronized void zeroSensors() {
+	public void zeroSensors() {
 		return;
 	}
 
-	public synchronized void setPosition(double value) {
+	public void setPosition(double value) {
 		mCancoder.setPosition(value);
 	}
 

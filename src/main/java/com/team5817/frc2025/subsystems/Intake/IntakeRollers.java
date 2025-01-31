@@ -1,6 +1,5 @@
 package com.team5817.frc2025.subsystems.Intake;
 
-
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -59,7 +58,8 @@ public class IntakeRollers extends Subsystem {
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {}
+			public void onStart(double timestamp) {
+			}
 
 			@Override
 			public void onLoop(double timestamp) {
@@ -67,9 +67,11 @@ public class IntakeRollers extends Subsystem {
 			}
 
 			@Override
-			public void onStop(double timestamp) {}
+			public void onStop(double timestamp) {
+			}
 		});
 	}
+
 	/**
 	 * Gets the current state of the intake rollers.
 	 *
@@ -90,7 +92,7 @@ public class IntakeRollers extends Subsystem {
 
 	/**
 	 * @param _wantedState Wanted state for the intake rollers.
-	 * @return New request that updates the intake rollers with the wanted state. 
+	 * @return New request that updates the intake rollers with the wanted state.
 	 */
 	public Request stateRequest(State _wantedState) {
 		return new Request() {
@@ -131,8 +133,6 @@ public class IntakeRollers extends Subsystem {
 			builder.addDoubleProperty("Demand", () -> roller_demand, null);
 		}
 	}
-
-
 
 	@Override
 	public void readPeriodicInputs() {

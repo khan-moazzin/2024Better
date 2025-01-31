@@ -5,10 +5,8 @@
 package com.team5817.frc2025;
 
 import java.util.Optional;
-
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 
@@ -24,9 +22,9 @@ import com.team5817.BuildConstants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.AutoExecuter;
 import com.team5817.frc2025.autos.AutoModeSelector;
+import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.controlboard.ControlBoard;
 import com.team5817.frc2025.controlboard.DriverControls;
-import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.loops.Looper;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Climb.Climb;
@@ -39,9 +37,6 @@ import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Util;
 
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -123,6 +118,7 @@ public class Robot extends LoggedRobot {
 
     mDrive = Drive.getInstance();
     mSubsystemManager = SubsystemManager.getInstance();
+    mAutoExecuter = new AutoExecuter();
 
     controls = new DriverControls();
     mSubsystemManager.setSubsystems(
@@ -142,13 +138,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     Logger.recordOutput("Elastic/Match Time", Timer.getMatchTime());
-    // auto = autoChooser.get();
-
-    // mEnabledLooper.outputToSmartDashboard();
-    // mSubsystemManager.outputLoopTimes();
+    mEnabledLooper.update();
     Logger.recordOutput("Mechs", mechPoses);
     Logger.recordOutput("Desired Mechs", desMechPoses);
-    mEnabledLooper.update();
   }
 
   boolean disableGyroReset = false;
@@ -169,6 +161,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+
   }
 
   /** This function is called once when teleop is enabled. */
@@ -177,6 +170,8 @@ public class Robot extends LoggedRobot {
     // swerve.fieldzeroSwerve();
     mDrive.resetModulesToAbsolute();
     mDrive.feedTeleopSetpoint(new ChassisSpeeds(0, 0, 0));
+    mDrive.setOpenLoop(new ChassisSpeeds());
+
   }
 
   /** This function is called periodically during operator control. */
@@ -198,27 +193,24 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledInit() {
-    mAutoExecuter = new AutoExecuter();
     mSubsystemManager.stop();
     // Superstructure.getInstance().clearQueues();
     // autoExecuter.stop();
-    // autoExecuter = new AutoExecuter();
+    mAutoExecuter = new AutoExecuter();
   }
 
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-
+    l.update();
     mAutoModeSelector.updateModeCreator();
     Optional<AutoBase> autoMode = mAutoModeSelector.getAutoMode();
     if (autoMode.isPresent() && (autoMode.get() != mAutoExecuter.getAuto())) {
-      if(!Robot.isReal())
+      if (!Robot.isReal())
         autoMode.get().registerDriveSimulation(mDriveSim);
       mAutoExecuter.setAuto(autoMode.get());
 
     }
-
-
 
     // if(!disableGyroReset)
     // drive.zeroGyro(mVision.getMovingAverageRead());
@@ -247,5 +239,6 @@ public class Robot extends LoggedRobot {
         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+
   }
 }

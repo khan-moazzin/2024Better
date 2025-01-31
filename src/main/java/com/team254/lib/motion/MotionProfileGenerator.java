@@ -24,7 +24,7 @@ public class MotionProfileGenerator {
         return profile;
     }
 
-    public synchronized static MotionProfile generateProfile(MotionProfileConstraints constraints,
+    public  static MotionProfile generateProfile(MotionProfileConstraints constraints,
                                                              IMotionProfileGoal goal_state,
                                                              MotionState prev_state) {
         if (goal_state instanceof MotionProfileGoal) {
@@ -42,7 +42,7 @@ public class MotionProfileGenerator {
      * @param prev_state  The initial state to use.
      * @return A motion profile from prev_state to goal_state that satisfies constraints.
      */
-    public synchronized static MotionProfile generateProfile(MotionProfileConstraints constraints,
+    public  static MotionProfile generateProfile(MotionProfileConstraints constraints,
                                                              MotionProfileGoal goal_state,
                                                              MotionState prev_state) {
         return generateProfileImpl(constraints, goal_state, prev_state, false);
@@ -56,7 +56,7 @@ public class MotionProfileGenerator {
      * @param prev_state  The initial state to use.
      * @return A motion profile from prev_state to goal_state that satisfies constraints.
      */
-    public synchronized static MotionProfile generateProfile(MotionProfileConstraints constraints,
+    public  static MotionProfile generateProfile(MotionProfileConstraints constraints,
                                                              LinearTimeVaryingMotionProfileGoal goal_state,
                                                              MotionState prev_state) {
         // The trick we use to solve this problem simply requires symmetrical velocity constraints.

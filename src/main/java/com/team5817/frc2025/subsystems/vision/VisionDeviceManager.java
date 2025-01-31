@@ -39,13 +39,14 @@ public class VisionDeviceManager extends Subsystem {
 
 	private List<VisionDevice> mAllCameras;
 
-	private static double timestampOffset =0.1;
+	private static double timestampOffset = 0.1;
 
 	private MovingAverage mHeadingAvg = new MovingAverage(100);
 	private double mMovingAvgRead = 0.0;
 
 	private static boolean disable_vision = false;
 	double timeOfLastUpdate = Double.MIN_VALUE;
+
 	public VisionDeviceManager() {
 		mDomCamera = new VisionDevice("limelight-dom");
 		mSubCamera = new VisionDevice("limelight-sub");
@@ -54,56 +55,54 @@ public class VisionDeviceManager extends Subsystem {
 	}
 
 	@Override
-	public void registerEnabledLoops(ILooper enabledLooper){
-			enabledLooper.register(new Loop() {
+	public void registerEnabledLoops(ILooper enabledLooper) {
+		enabledLooper.register(new Loop() {
 			@Override
 			public void onStart(double timestamp) {
 			}
-	
+
 			@Override
 			public void onLoop(double timestamp) {
-				
 
-
-			
-			
 			}
+
 			@Override
 			public void onStop(double timestamp) {
 			}
-		
+
 		});
 	}
 
 	@Override
 	public void readPeriodicInputs() {
 		mMovingAvgRead = mHeadingAvg.getAverage();
-		if(!Robot.isReal()&&Constants.mode==Constants.Mode.SIM){
-			RobotState.getInstance().addVisionUpdate(new VisionUpdate(1,Timer.getTimestamp(),1.0, RobotState.getInstance().getPoseFromOdom(Timer.getTimestamp()).getTranslation()));
-		}else{
+		if (!Robot.isReal() && Constants.mode == Constants.Mode.SIM) {
+			RobotState.getInstance().addVisionUpdate(new VisionUpdate(1, Timer.getTimestamp(), 1.0,
+					RobotState.getInstance().getPoseFromOdom(Timer.getTimestamp()).getTranslation()));
+		} else {
 
-		for(VisionDevice device: mAllCameras){
-			device.update(Timer.getTimestamp());
-			mHeadingAvg.addNumber(device.getEstimatedHeading());
-			if(!device.getVisionUpdate().isEmpty()){
-				VisionUpdate update = device.getVisionUpdate().get();
-				RobotState.getInstance().addVisionUpdate(update);
+			for (VisionDevice device : mAllCameras) {
+				device.update(Timer.getTimestamp());
+				mHeadingAvg.addNumber(device.getEstimatedHeading());
+				if (!device.getVisionUpdate().isEmpty()) {
+					VisionUpdate update = device.getVisionUpdate().get();
+					RobotState.getInstance().addVisionUpdate(update);
 
-				if (DriverStation.getAlliance().get() == Alliance.Red) {
-					if(PoseEstimatorConstants.redTagIDFilters.contains(update.getID())){
-						mRobotState.addSpecializedVisionUpdate(update);
+					if (DriverStation.getAlliance().get() == Alliance.Red) {
+						if (PoseEstimatorConstants.redTagIDFilters.contains(update.getID())) {
+							mRobotState.addSpecializedVisionUpdate(update);
+						}
+
+					} else {
+						if (PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())) {
+							mRobotState.addSpecializedVisionUpdate(update);
+						}
 					}
-					
+					if (update.getTimestamp() > timeOfLastUpdate)
+						timeOfLastUpdate = update.getTimestamp();
 				}
-				else{
-					if(PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())){
-						mRobotState.addSpecializedVisionUpdate(update);
-					}
-				}
-				if(update.getTimestamp()>timeOfLastUpdate)
-					timeOfLastUpdate = update.getTimestamp();
+			}
 		}
-		}}
 	}
 
 	@Override
@@ -112,63 +111,66 @@ public class VisionDeviceManager extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
-		Logger.recordOutput("Elastic/Time Since Last Update", Timer.getTimestamp()-timeOfLastUpdate);
+		Logger.recordOutput("Elastic/Time Since Last Update", Timer.getTimestamp() - timeOfLastUpdate);
 		SmartDashboard.putNumber("Vision heading moving avg", getMovingAverageRead());
 		SmartDashboard.putBoolean("vision disabled", visionDisabled());
-		for(VisionDevice device: mAllCameras){
+		for (VisionDevice device : mAllCameras) {
 			device.outputTelemetry();
 		}
 	}
 
-	public VisionDevice getBestDevice(){
-		if(mDomCamera.getVisionUpdate().get().getTa()>mSubCamera.getVisionUpdate().get().getTa())
+	public VisionDevice getBestDevice() {
+		if (mDomCamera.getVisionUpdate().get().getTa() > mSubCamera.getVisionUpdate().get().getTa())
 			return mDomCamera;
 		return mSubCamera;
 	}
-	public boolean epipolarVerification(List<Translation2d> pointsCam1, List<Translation2d> pointsCam2){
-		
-        if (pointsCam1.size() != pointsCam2.size()) {
-            throw new IllegalArgumentException("Point lists must have the same size.");
-        }
-        double threshold = 1e-6; // Tolerance for numerical errors
-        for (int i = 0; i < pointsCam1.size(); i++) {
-            Translation3d x1 = toHomogeneous(pointsCam1.get(i));
-            Translation3d x2 = toHomogeneous(pointsCam2.get(i));
-            // Compute Fx1 = F * x1
-            Translation3d Fx1 = multiplyMatrixVector(Constants.fundamentalMatrix, x1);
-            // Compute x2 • (Fx1)
-            double result = x2.dot(Fx1);
-            // Check if result is close to zero
-            if (Math.abs(result) > threshold) {
-                return false;
-            }
-        }
-        return true;
-    
+
+	public boolean epipolarVerification(List<Translation2d> pointsCam1, List<Translation2d> pointsCam2) {
+
+		if (pointsCam1.size() != pointsCam2.size()) {
+			throw new IllegalArgumentException("Point lists must have the same size.");
+		}
+		double threshold = 1e-6; // Tolerance for numerical errors
+		for (int i = 0; i < pointsCam1.size(); i++) {
+			Translation3d x1 = toHomogeneous(pointsCam1.get(i));
+			Translation3d x2 = toHomogeneous(pointsCam2.get(i));
+			// Compute Fx1 = F * x1
+			Translation3d Fx1 = multiplyMatrixVector(Constants.fundamentalMatrix, x1);
+			// Compute x2 • (Fx1)
+			double result = x2.dot(Fx1);
+			// Check if result is close to zero
+			if (Math.abs(result) > threshold) {
+				return false;
+			}
+		}
+		return true;
 
 	}
-	public boolean translationalFilter(Pose3d domTargetToCamera,Pose3d subDevice){
-		Transform3d expectedDelta = PoseEstimatorConstants.kDomVisionDevice.kRobotToCamera.plus(PoseEstimatorConstants.kSubVisionDevice.kRobotToCamera.inverse());
+
+	public boolean translationalFilter(Pose3d domTargetToCamera, Pose3d subDevice) {
+		Transform3d expectedDelta = PoseEstimatorConstants.kDomVisionDevice.kRobotToCamera
+				.plus(PoseEstimatorConstants.kSubVisionDevice.kRobotToCamera.inverse());
 		Transform3d delta;
 		delta = new Transform3d(domTargetToCamera, subDevice);
 		Transform3d error = delta.plus(expectedDelta.inverse());
-		return(error.getTranslation().getNorm()>0.1||error.getRotation().getAngle()>0.5);//TODO Find threshold (meters and radians)
+		return (error.getTranslation().getNorm() > 0.1 || error.getRotation().getAngle() > 0.5);// TODO Find threshold
+																								// (meters and radians)
 
-		}
+	}
+
 	public Double getMovingAverageRead() {
 		return mMovingAvgRead;
 	}
 
-	public synchronized MovingAverage getMovingAverage() {
+	public MovingAverage getMovingAverage() {
 		return mHeadingAvg;
 	}
 
-
-	public synchronized VisionDevice getLeftVision() {
+	public VisionDevice getLeftVision() {
 		return mDomCamera;
 	}
 
-	public synchronized VisionDevice getRightVision() {
+	public VisionDevice getRightVision() {
 		return mSubCamera;
 	}
 
@@ -184,57 +186,52 @@ public class VisionDeviceManager extends Subsystem {
 		disable_vision = disable;
 	}
 
-    public boolean fullyConnected() {
-        return false;
-    }
+	public boolean fullyConnected() {
+		return false;
+	}
 
+	public static boolean verifyEpipolarGeometry(List<Translation2d> pointsCam1,
+			List<Translation2d> pointsCam2,
+			double[][] fundamentalMatrix) {
+		if (pointsCam1.size() != pointsCam2.size()) {
+			throw new IllegalArgumentException("Point lists must have the same size.");
+		}
 
-	public static boolean verifyEpipolarGeometry(List<Translation2d> pointsCam1, 
-                                                 List<Translation2d> pointsCam2, 
-                                                 double[][] fundamentalMatrix) {
-        if (pointsCam1.size() != pointsCam2.size()) {
-            throw new IllegalArgumentException("Point lists must have the same size.");
-        }
+		double threshold = 1e-6; // Tolerance for numerical errors
+		for (int i = 0; i < pointsCam1.size(); i++) {
+			Translation3d x1 = toHomogeneous(pointsCam1.get(i));
+			Translation3d x2 = toHomogeneous(pointsCam2.get(i));
 
-        double threshold = 1e-6; // Tolerance for numerical errors
-        for (int i = 0; i < pointsCam1.size(); i++) {
-            Translation3d x1 = toHomogeneous(pointsCam1.get(i));
-            Translation3d x2 = toHomogeneous(pointsCam2.get(i));
+			// Compute Fx1 = F * x1
+			Translation3d Fx1 = multiplyMatrixVector(fundamentalMatrix, x1);
 
-            // Compute Fx1 = F * x1
-            Translation3d Fx1 = multiplyMatrixVector(fundamentalMatrix, x1);
+			// Compute x2 • (Fx1)
+			double result = x2.dot(Fx1);
 
-            // Compute x2 • (Fx1)
-            double result = x2.dot(Fx1);
+			// Check if result is close to zero
+			if (Math.abs(result) > threshold) {
+				return false;
+			}
+		}
 
-            // Check if result is close to zero
-            if (Math.abs(result) > threshold) {
-                return false;
-            }
-        }
+		return true;
+	}
 
-        return true;
-    }
+	/**
+	 * Converts a Translation2D to homogeneous coordinates (Translation3D).
+	 */
+	private static Translation3d toHomogeneous(Translation2d point) {
+		return new Translation3d(point.x(), point.y(), 1.0);
+	}
 
-    /**
-     * Converts a Translation2D to homogeneous coordinates (Translation3D).
-     */
-    private static Translation3d toHomogeneous(Translation2d point) {
-        return new Translation3d(point.x(), point.y(), 1.0);
-    }
-
-    /**
-     * Multiplies a 3x3 matrix with a 3d vector.
-     */
-    private static Translation3d multiplyMatrixVector(double[][] matrix, Translation3d vector) {
-        double x = matrix[0][0] * vector.x() + matrix[0][1] * vector.y() + matrix[0][2] * vector.z();
-        double y = matrix[1][0] * vector.x() + matrix[1][1] * vector.y() + matrix[1][2] * vector.z();
-        double z = matrix[2][0] * vector.x() + matrix[2][1] * vector.y() + matrix[2][2] * vector.z();
-        return new Translation3d(x, y, z);
-    }
-
-    
-        
-
+	/**
+	 * Multiplies a 3x3 matrix with a 3d vector.
+	 */
+	private static Translation3d multiplyMatrixVector(double[][] matrix, Translation3d vector) {
+		double x = matrix[0][0] * vector.x() + matrix[0][1] * vector.y() + matrix[0][2] * vector.z();
+		double y = matrix[1][0] * vector.x() + matrix[1][1] * vector.y() + matrix[1][2] * vector.z();
+		double z = matrix[2][0] * vector.x() + matrix[2][1] * vector.y() + matrix[2][2] * vector.z();
+		return new Translation3d(x, y, z);
+	}
 
 }

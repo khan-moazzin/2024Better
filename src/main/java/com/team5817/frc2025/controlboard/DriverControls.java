@@ -10,6 +10,8 @@ import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
 
+import edu.wpi.first.wpilibj.Timer;
+
 public class DriverControls {
 
 	ControlBoard mControlBoard = ControlBoard.getInstance();
@@ -39,7 +41,14 @@ public class DriverControls {
 	CustomXboxController codriver = mControlBoard.operator;
 	/* TWO CONTROLLERS */
 	GoalState preparedGoal = GoalState.L4;
+	Timer practiceTimer = new Timer();
 	public void twoControllerMode() {
+		if(driver.getBButton())
+			practiceTimer.start();
+		if(driver.yButton.wasActivated()){
+			Logger.recordOutput("Timer: ", practiceTimer.get());
+			practiceTimer.stop();
+			practiceTimer.reset();}
 		if(driver.getBackButton())
 			mDrive.resetOdometry(new Pose2d());
 		if(driver.getStartButton())

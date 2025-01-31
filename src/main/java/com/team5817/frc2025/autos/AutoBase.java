@@ -21,13 +21,12 @@ public abstract class AutoBase{
         mActive = false;
     }
 
-    public void runAction(Action action){
+    public void r(Action action){
         action.start();
         if(!mActive)
             throw new Error("Action ran while auto is inactive");
         while(mActive && !action.isFinished()){
             action.update();
-            
             try{
                 Thread.sleep(20);
             }
