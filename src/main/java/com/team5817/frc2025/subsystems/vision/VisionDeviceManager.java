@@ -89,12 +89,12 @@ public class VisionDeviceManager extends Subsystem {
 					RobotState.getInstance().addVisionUpdate(update);
 
 					if (DriverStation.getAlliance().get() == Alliance.Red) {
-						if (PoseEstimatorConstants.redTagIDFilters.contains(update.getID())) {
+						if (PoseEstimatorConstants.redTagIDFilters.contains(update.getID())||DriverStation.isDisabled()) {
 							mRobotState.addSpecializedVisionUpdate(update);
 						}
 
 					} else {
-						if (PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())) {
+						if (PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())||DriverStation.isDisabled()) {
 							mRobotState.addSpecializedVisionUpdate(update);
 						}
 					}

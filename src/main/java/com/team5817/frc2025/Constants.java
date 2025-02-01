@@ -50,6 +50,8 @@ public class Constants {
 
 	public static final double stickDeadband = 0.1;
 
+	public static final double specializedVisionTimeout = 5;
+
 	// Timeout constants
 	public static final double kLongCANTimeoutS = 0.1;
 	public static final double kCANTimeoutS = .01;

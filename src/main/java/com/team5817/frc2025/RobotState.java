@@ -23,12 +23,10 @@ import com.team5817.lib.util.UnscentedKalmanFilter;
 public class RobotState {
     // Existing member variables
     private static RobotState mInstance;
-    private boolean mIsInAuto = true;
     private Optional<VisionUpdate> mLatestVisionUpdate;
     private UnscentedKalmanFilter<N2, N2, N2> mKalmanFilter;
     private VisionPoseAcceptor mPoseAcceptor;
     private Pose2d mDisplayVisionPose;
-    private Pose2d mSetpointPose;
     public Field2d mField2d;
     private boolean mHasBeenEnabled = false;
 
@@ -72,7 +70,6 @@ public class RobotState {
         filteredMeasuredVelocity = new MovingAverageTwist2d(25);
         mLatestVisionUpdate = Optional.empty();
         mDisplayVisionPose = Pose2d.identity();
-        mSetpointPose = Pose2d.identity();
         mPoseAcceptor = new VisionPoseAcceptor();
         initialPoseError = Optional.empty();
 
@@ -241,7 +238,7 @@ public class RobotState {
 
     public void addSpecializedVisionUpdate(VisionUpdate visionUpdate) {
         // Use the same logic as addVisionUpdate but with the specialized Kalman filter
-        if (!mLatestSpecializedVisionUpdate.isEmpty() || initialPoseErrorSpecialized.isPresent()) {
+        if ((!mLatestSpecializedVisionUpdate.isEmpty() || initialPoseErrorSpecialized.isPresent()) && Timer.getTimestamp() - mLatestSpecializedVisionUpdate.get().getTimestamp() < Constants.specializedVisionTimeout) {
             // Get the Timestamp of the Vision Reading
             double visionTimestamp = mLatestSpecializedVisionUpdate.get().getTimestamp();
 
@@ -345,16 +342,8 @@ public class RobotState {
                 poseFromOdom.getRotation());
     }
 
-    public void setIsAuto(boolean newAuto) {
-        this.mIsInAuto = newAuto;
-    }
-
     public Optional<VisionUpdate> getLatestGlobalVisionUpdate() {
         return mLatestVisionUpdate;
-    }
-
-    public void setDisplaySetpointPose(Pose2d setpoint) {
-        mSetpointPose = setpoint;
     }
 
     public static class VisionUpdate {

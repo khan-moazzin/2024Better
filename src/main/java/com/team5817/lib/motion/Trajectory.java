@@ -22,7 +22,7 @@ public class Trajectory {
         mMirrored = false;
         mTrajectory = mPath.getIdealTrajectory(SwerveConstants.mRobotConfig).get();
 
-        l.trajectories.add(this);
+        l.trajectories.put(path_name, this);
     }
 
     public void setMirrored(boolean mirrored){

@@ -153,6 +153,14 @@ public class Drive extends Subsystem {
 		}
 	}
 
+	public void setUseSpecializedPoseForPath(boolean use) {
+		if(Robot.isReal()){
+			useSpecailizedPoseForPath = use;
+			return;
+		}
+		useSpecailizedPoseForPath = false;
+	}
+
 	/**
 	 * Updates drivetrain with latest desired speeds from the joystick, and sets
 	 * DriveControlState appropriately.
@@ -351,7 +359,7 @@ public class Drive extends Subsystem {
 
 	public void updatePathFollower() {
 		final double now = Timer.getTimestamp();
-		ChassisSpeeds output = mMotionPlanner.update(now, getPose());
+		ChassisSpeeds output = mMotionPlanner.update(now, useSpecailizedPoseForPath? getSpecializedPose() : getPose());
 		if (output != null) {
 			mPeriodicIO.des_chassis_speeds = output;
 		}

@@ -20,6 +20,10 @@ public class TrajectorySet {
     public TrajectorySet(Boolean mirrored, Trajectory... trajectories) {
         this.mirrored = mirrored;
         for (Trajectory t : trajectories) {
+            if(t == null){
+                System.out.println("Trajectory is null");
+                continue;
+            }
             t.setMirrored(mirrored);
             mTrajectorySet.add(t);
         }

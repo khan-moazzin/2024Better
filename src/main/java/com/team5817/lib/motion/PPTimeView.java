@@ -33,6 +33,7 @@ public class PPTimeView {
     public PPPathPointState sample(double t) {
 
         PathPlannerTrajectoryState state = mTrajectory.sample(t);
+        
         Pose2d pose;
         double xVelocity;
         double yVelocity;

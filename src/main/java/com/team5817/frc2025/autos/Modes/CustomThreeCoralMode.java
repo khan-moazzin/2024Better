@@ -2,9 +2,7 @@ package com.team5817.frc2025.autos.Modes;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.Actions.LambdaAction;
 import com.team5817.frc2025.autos.Actions.ParallelAction;
@@ -13,17 +11,17 @@ import com.team5817.frc2025.autos.Actions.TrajectoryAction;
 import com.team5817.frc2025.autos.Actions.WaitAction;
 import com.team5817.frc2025.autos.Actions.WaitToPassDistanceToReef;
 import com.team5817.frc2025.autos.AutoModeSelector.PickupLocation;
+import com.team5817.frc2025.autos.AutoModeSelector.ScoringLocation;
 import com.team5817.frc2025.autos.AutoModeSelector.StartingPosition;
 import com.team5817.frc2025.autos.Actions.WaitForSuperstructureAction;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
-import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.lib.motion.Trajectory;
 import com.team5817.lib.motion.TrajectorySet;
 
-public class ThreeCoralMode extends AutoBase {
+public class CustomThreeCoralMode extends AutoBase {
 
 	private Superstructure s = Superstructure.getInstance();
 	private Drive d = Drive.getInstance();
@@ -33,41 +31,68 @@ public class ThreeCoralMode extends AutoBase {
 	private double exitDistance = 1.5;
 	private double coralSpit = .1;
 
-	public ThreeCoralMode(StartingPosition startingPosition, PickupLocation pickupLocation) {
+	public CustomThreeCoralMode(StartingPosition startingPosition, PickupLocation pickupLocation, ScoringLocation firstScore, ScoringLocation secondScore, ScoringLocation thirdScore) {
 
  	boolean mirror = startingPosition.mirrored;
 	Trajectory startingTrajectory;
-	Trajectory followUpTrajectory;
+	Trajectory firstPickupTrajectory;
+	Trajectory secondScoreTrajectory;
+	Trajectory secondPickupTrajectory;
+	Trajectory thirdScoreTrajectory;
+	Trajectory thirdPickupTrajectory;
 
+	String startName;
+	String humanName;
+	String firstScoreName = firstScore.toString();
+	String secondScoreName = secondScore.toString();
+	String thirdScoreName = thirdScore.toString();
+	
 	switch (startingPosition) {
 		case CENTER_PROCESS:
 		case CENTER_BLANK:
-			startingTrajectory = l.TCTo3A;
-			followUpTrajectory = l.T3AToFH;
+			startName = "C";
 			break;
 		case BLANK_SIDE:
 		case PROCCESSOR_SIDE:
-
-			startingTrajectory = l.TSTo8A;
-			
-			followUpTrajectory = l.T8AToFH;
-		break;
+			startName = "S";
+			break;
 		default:
-			startingTrajectory = l.TCTo3A;
-			followUpTrajectory = l.T3AToFH;
-		break;
-
+			startName = "S";
+			break;
 	}
-		t = new TrajectorySet(
-				mirror,
-				startingTrajectory,
-				followUpTrajectory,
-				l.TFHTo7A,
-				l.T7AToFH,
-				l.TFHTo7B,
-				l.T7BToFH
-				);
-		// if()j
+
+
+	switch (pickupLocation) {
+		case CLOSE:
+			humanName = "CH";		
+			break;
+		case FAR:
+			humanName = "FH";
+			break;
+		default:
+			humanName = "FH";
+			break;
+	}
+
+
+	startingTrajectory = l.trajectories.get(startName + "To" + firstScoreName);
+	firstPickupTrajectory = l.trajectories.get(firstScoreName + "To" + humanName);
+	secondScoreTrajectory = l.trajectories.get(humanName + "To" + secondScoreName);
+	secondPickupTrajectory = l.trajectories.get(secondScoreName + "To" + humanName);
+	thirdScoreTrajectory = l.trajectories.get(humanName + "To" + thirdScoreName);
+	thirdPickupTrajectory = l.trajectories.get(thirdScoreName + "To" + humanName);
+	 
+	t = new TrajectorySet(
+			mirror,
+			startingTrajectory,
+			firstPickupTrajectory,
+			secondScoreTrajectory,
+			secondPickupTrajectory,
+			thirdScoreTrajectory,
+			thirdPickupTrajectory
+			);
+
+
 
 	}
 

@@ -7,31 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CTo3A"
+            "pathName": "CTo_3A"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3AToH"
+            "pathName": "_3AToFH"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "HTo7A"
+            "pathName": "FHTo_7A"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "7AToH"
+            "pathName": "_7AToFH"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "HTo7B"
+            "pathName": "FHTo_7B"
           }
         }
       ]
