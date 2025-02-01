@@ -378,7 +378,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.main_supply_current = mMainSupplyCurrentSignal.asSupplier().get().in(Amps);
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
-		if ((!Robot.isReal() && Constants.mode == Mode.SIM) || Constants.kSubsytemSim) {
+		if ( Constants.mode == Mode.SIM || Constants.kSubsytemSim) {
 			mServoInputs.error_rotations = (mServoOutputs.demand - mServoInputs.position_rots);
 			switch (mControlState) {
 				case OPEN_LOOP:

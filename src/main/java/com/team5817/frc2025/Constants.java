@@ -31,10 +31,12 @@ public class Constants {
 
 	public enum Mode {
 		SIM,
-		REPLAY
+		REPLAY,
+		REAL
 	}
 
-	public static Mode mode = Mode.SIM;
+	public static Mode mode = Mode.SIM;//Sim or Replay, Real is auto set for real robot
+	
 
 	// Disables extra smart dashboard outputs that slow down the robot
 	public static final boolean disableExtraTelemetry = false;

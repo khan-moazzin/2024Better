@@ -418,7 +418,7 @@ public class Drive extends Subsystem {
 	@Override
 	public void readPeriodicInputs() {
 		SwerveModuleState[] module_states = new SwerveModuleState[4];
-		if (!Robot.isReal() && Constants.mode == Constants.Mode.SIM) {
+		if ( Constants.mode == Constants.Mode.SIM) {
 			for (int i = 0; i < mModules.length; i++) {
 				module_states[i] = new SwerveModuleState(driveSimulation.getModules()[i].getCurrentState());
 			}
@@ -544,7 +544,7 @@ public class Drive extends Subsystem {
 				mModules[i].setVelocity(mPeriodicIO.des_module_states[i]);
 			}
 		}
-		if (!Robot.isReal() && Constants.mode == Constants.Mode.SIM) {
+		if (Constants.mode == Constants.Mode.SIM) {
 			driveSimulation.setRobotSpeeds(ChassisSpeeds
 					.fromFieldRelativeSpeeds(mPeriodicIO.setpoint.mChassisSpeeds, mPeriodicIO.heading.inverse()).wpi());
 		} else {

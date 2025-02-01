@@ -4,7 +4,11 @@ import com.team254.lib.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Contains basic functions that are used often.
@@ -190,5 +194,12 @@ public class Util {
 
 	public static double quaternionTo2dRadians(double w, double x, double y, double z) {
 		return new Rotation3d(new Quaternion(w, x, y, z)).toRotation2d().getRadians();
+	}
+	public static Optional<Boolean> isRed(){
+		try{
+		return Optional.of(DriverStation.getAlliance().get().equals(Alliance.Red));
+		}catch(Exception e){
+			return Optional.empty();
+		}
 	}
 }

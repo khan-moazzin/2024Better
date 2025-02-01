@@ -2,6 +2,8 @@ package com.team5817.lib.swerve;
 
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.util.SynchronousPIDF;
+import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.SwerveConstants;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -70,11 +72,31 @@ public class SwerveHeadingController {
 				SwerveConstants.kSnapSwerveHeadingKd,
 				SwerveConstants.kSnapSwerveHeadingKf);
 
+				if (Constants.mode == Constants.Mode.SIM) {
+					stabilizePID.setPIDF(
+						SwerveConstants.kStabilizeSwerveHeadingKp * 7,
+						SwerveConstants.kStabilizeSwerveHeadingKi * 7,
+						SwerveConstants.kStabilizeSwerveHeadingKd * 7,
+						SwerveConstants.kStabilizeSwerveHeadingKf * 7
+					);
+
+					snapPID.setPIDF(
+						SwerveConstants.kSnapSwerveHeadingKp * 7,
+						SwerveConstants.kSnapSwerveHeadingKi * 7,
+						SwerveConstants.kSnapSwerveHeadingKd * 7,
+						SwerveConstants.kSnapSwerveHeadingKf * 7
+					);
+				}
+
 		stabilizePID.setInputRange(-Math.PI, Math.PI);
 		stabilizePID.setContinuous();
 
 		stabilizePID.setOutputRange(-10 * Math.PI, 10 * Math.PI);
 
+		snapPID.setInputRange(-Math.PI, Math.PI);
+		snapPID.setContinuous();
+
+		snapPID.setOutputRange(-10 * Math.PI, 10 * Math.PI);
 		targetHeadingRadians = Rotation2d.identity();
 		lastUpdatedTimestamp = Timer.getFPGATimestamp();
 	}

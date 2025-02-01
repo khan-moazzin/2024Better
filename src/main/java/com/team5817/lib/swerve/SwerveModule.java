@@ -102,17 +102,17 @@ public class SwerveModule extends Subsystem {
 	}
 
 	public void refreshSignals() {
-		if (Robot.isReal()) {
+		if (Constants.mode == Constants.Mode.SIM) {
+			mInputs.driveVelocity = mOutputs.driveVelocity;
+			mInputs.drivePosition = 0;
+			mInputs.rotationPosition = mOutputs.rotTarget;
+		} else {
 			mInputs.driveVelocity = mDriveMotor.getRotorVelocity().getValue().in(RotationsPerSecond);
 			mInputs.drivePosition = mDriveMotor.getRotorPosition().getValueAsDouble();
 			mInputs.rotationPosition = Util.placeInAppropriate0To360Scope(0,
 					BaseStatusSignal.getLatencyCompensatedValue(
-							mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation));
+			mAngleMotor.getRotorPosition(), mAngleMotor.getRotorVelocity()).in(Rotation));
 			mInputs.absolutePosition = getCanCoder().getDegrees();
-		} else {
-			mInputs.driveVelocity = mOutputs.driveVelocity;
-			mInputs.drivePosition = 0;
-			mInputs.rotationPosition = mOutputs.rotTarget;
 		}
 	}
 

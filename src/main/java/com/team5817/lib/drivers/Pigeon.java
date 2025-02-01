@@ -49,7 +49,7 @@ public class Pigeon {
 	}
 
 	public Rotation2d getYaw() {
-		if (!Robot.isReal() && Constants.mode == Constants.Mode.SIM) {
+		if ( Constants.mode == Constants.Mode.SIM) {
 			return Rotation2d.fromDegrees(driveSim.getSimulatedDriveTrainPose().getRotation().getDegrees());
 		}
 		Rotation2d angle = getUnadjustedYaw().rotateBy(yawAdjustmentAngle.inverse());
@@ -64,7 +64,7 @@ public class Pigeon {
 	}
 
 	public Rotation2d getPitch() {
-		if (!Robot.isReal() && Constants.mode == Constants.Mode.SIM) {
+		if ( Constants.mode == Constants.Mode.SIM) {
 			return Rotation2d.identity();
 		}
 		return getUnadjustedPitch().rotateBy(pitchAdjustmentAngle.inverse()).inverse();

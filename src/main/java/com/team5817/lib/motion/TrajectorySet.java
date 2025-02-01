@@ -7,12 +7,25 @@ import com.team254.lib.geometry.Pose2d;
 
 public class TrajectorySet {
     List<Trajectory> mTrajectorySet = new ArrayList<>();
+    boolean mirrored;
 
     public TrajectorySet(Trajectory... trajectories) {
+        mirrored = false;
         for (Trajectory t : trajectories) {
+            t.setMirrored(mirrored);
             mTrajectorySet.add(t);
         }
     }
+
+    public TrajectorySet(Boolean mirrored, Trajectory... trajectories) {
+        this.mirrored = mirrored;
+        for (Trajectory t : trajectories) {
+            t.setMirrored(mirrored);
+            mTrajectorySet.add(t);
+        }
+
+    }
+
 
     public Trajectory next() {
         return mTrajectorySet.remove(0);

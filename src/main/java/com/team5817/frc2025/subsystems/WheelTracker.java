@@ -165,7 +165,7 @@ public class WheelTracker extends Subsystem {
 			last_velocity_sample = new_pose;
 		}
 		inputs.pose = new_pose;
-		if (!Robot.isReal() && Constants.mode == Mode.SIM) {
+		if (Constants.mode == Mode.SIM) {
 			inputs.pose = new Pose2d(Drive.driveSimulation.getSimulatedDriveTrainPose());
 			inputs.velocity = new ChassisSpeeds(
 					Drive.driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative()).getTranslation();

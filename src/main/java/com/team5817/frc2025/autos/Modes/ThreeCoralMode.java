@@ -29,9 +29,10 @@ public class ThreeCoralMode extends AutoBase {
 	private double exitDistance = 1.5;
 	private double coralSpit = .1;
 
-	public ThreeCoralMode() {
+	public ThreeCoralMode(boolean mirror) {
 
 		t = new TrajectorySet(
+				mirror,
 				l.TSTo3A,
 				l.T3AToH,
 				l.THTO7A,
@@ -44,7 +45,7 @@ public class ThreeCoralMode extends AutoBase {
 	// spotless:off
 	@Override
 	public void routine() {
-		if (!Robot.isReal() && Constants.mode == Constants.Mode.SIM) {
+		if (Constants.mode == Constants.Mode.SIM) {
 			mSim.setSimulationWorldPose(t.initalPose().wpi());
 		}
 		d.autoAlignFinishedOverrride(false);

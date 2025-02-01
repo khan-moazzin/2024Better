@@ -5,6 +5,10 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
+import com.team5817.lib.Util;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class PPTimeView {
 
@@ -29,12 +33,18 @@ public class PPTimeView {
     public PPPathPointState sample(double t) {
 
         PathPlannerTrajectoryState state = mTrajectory.sample(t);
+        Pose2d pose;
+        double xVelocity;
+        double yVelocity;
+        double omegaRadiansPerSecond;
 
-        Pose2d pose = new Pose2d(new Translation2d(state.pose.getTranslation()),
-                new Rotation2d(state.pose.getRotation()));
-        double xVelocity = state.fieldSpeeds.vxMetersPerSecond;
-        double yVelocity = state.fieldSpeeds.vyMetersPerSecond;
-        double omegaRadiansPerSecond = state.fieldSpeeds.omegaRadiansPerSecond;
+        
+            pose = new Pose2d(new Translation2d(state.pose.getTranslation()),
+                    new Rotation2d(state.pose.getRotation()));
+            xVelocity = state.fieldSpeeds.vxMetersPerSecond;
+            yVelocity = state.fieldSpeeds.vyMetersPerSecond;
+            omegaRadiansPerSecond = state.fieldSpeeds.omegaRadiansPerSecond;
+       
 
         return new PPPathPointState(pose, xVelocity, yVelocity, omegaRadiansPerSecond, t);
     }

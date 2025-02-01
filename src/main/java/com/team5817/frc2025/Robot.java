@@ -75,6 +75,8 @@ public class Robot extends LoggedRobot {
   @SuppressWarnings("resource")
   @Override
   public void robotInit() {
+    if(Robot.isReal())
+      Constants.mode = Constants.Mode.REAL;
     DriverStation.silenceJoystickConnectionWarning(true);
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, "limelight-dom.local", port);
@@ -93,7 +95,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
 
-    if (isReal()) {
+    if (Constants.mode == Constants.Mode.REAL) {
       // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
@@ -205,14 +207,15 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
+    
     l.update();
     mAutoModeSelector.updateModeCreator();
     Optional<AutoBase> autoMode = mAutoModeSelector.getAutoMode();
     if (autoMode.isPresent() && (autoMode.get() != mAutoExecuter.getAuto())) {
-      if (!Robot.isReal())
+      if (Constants.mode == Constants.Mode.SIM) 
         autoMode.get().registerDriveSimulation(mDriveSim);
       mAutoExecuter.setAuto(autoMode.get());
-
+      
     }
 
     // if(!disableGyroReset)

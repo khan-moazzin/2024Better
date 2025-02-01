@@ -5,25 +5,13 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
+import com.team5817.lib.Util;
 
 public class Trajectory {
     PathPlannerPath mPath;
     PathPlannerTrajectory mTrajectory;
-    boolean mUseSpecializied;
+    boolean mMirrored;
 
-    public Trajectory(String path_name, boolean useSpecialized) {
-        try {
-            mPath = PathPlannerPath.fromPathFile(path_name);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        mUseSpecializied = useSpecialized;
-        mTrajectory = mPath.getIdealTrajectory(SwerveConstants.mRobotConfig).get();
-
-        l.trajectories.add(this);
-
-    }
 
     public Trajectory(String path_name) {
         try {
@@ -31,21 +19,35 @@ public class Trajectory {
         } catch (Exception e) {
             System.out.println(e);
         }
-        mUseSpecializied = false;
+        mMirrored = false;
         mTrajectory = mPath.getIdealTrajectory(SwerveConstants.mRobotConfig).get();
 
         l.trajectories.add(this);
+    }
+
+    public void setMirrored(boolean mirrored){
+        mMirrored = mirrored;
     }
 
     public void update() {
         mTrajectory = mPath.getIdealTrajectory(SwerveConstants.mRobotConfig).get();
     }
 
-    public boolean useSpecialized() {
-        return mUseSpecializied;
-    }
-
     public TrajectoryIterator get() {
-        return new TrajectoryIterator(new PPTimeView(mTrajectory), mPath);
+        PathPlannerPath  flippedPath = mPath;
+
+        if(Util.isRed().get()){
+            flippedPath = mPath.flipPath();
+        }
+        if(Util.isRed().get() && mMirrored){
+            flippedPath = mPath.flipPath().mirrorPath();
+        }
+        else if(mMirrored){
+            flippedPath = mPath.mirrorPath();
+        }
+        
+ 
+       mTrajectory = flippedPath.getIdealTrajectory(SwerveConstants.mRobotConfig).get();
+        return new TrajectoryIterator(new PPTimeView(mTrajectory), flippedPath);
     }
 }

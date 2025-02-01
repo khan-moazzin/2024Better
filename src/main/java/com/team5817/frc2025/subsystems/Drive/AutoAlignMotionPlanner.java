@@ -9,6 +9,7 @@ import com.team254.lib.motion.ProfileFollower;
 import com.team254.lib.swerve.ChassisSpeeds;
 import com.team254.lib.util.Units;
 import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.lib.swerve.SwerveHeadingController;
 
@@ -35,7 +36,7 @@ public class AutoAlignMotionPlanner {
      */
     public AutoAlignMotionPlanner() {
         mThetaController = new SwerveHeadingController();
-
+        
     }
 
     /**

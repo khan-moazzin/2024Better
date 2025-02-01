@@ -76,7 +76,7 @@ public class VisionDeviceManager extends Subsystem {
 	@Override
 	public void readPeriodicInputs() {
 		mMovingAvgRead = mHeadingAvg.getAverage();
-		if (!Robot.isReal() && Constants.mode == Constants.Mode.SIM) {
+		if ( Constants.mode == Constants.Mode.SIM) {
 			RobotState.getInstance().addVisionUpdate(new VisionUpdate(1, Timer.getTimestamp(), 1.0,
 					RobotState.getInstance().getPoseFromOdom(Timer.getTimestamp()).getTranslation()));
 		} else {
