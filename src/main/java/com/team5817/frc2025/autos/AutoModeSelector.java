@@ -1,10 +1,8 @@
 package com.team5817.frc2025.autos;
 
-import edu.wpi.first.util.MsvcRuntimeException;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.security.PrivateKey;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +15,14 @@ public class AutoModeSelector {
 		THREE_CORAL_MODE;
 	}
 	public enum StartingPosition {
+
 		PROCCESSOR_SIDE(DesiredMode.THREE_CORAL_MODE,DesiredMode.DO_NOTHING),
-		CENTER(DesiredMode.DO_NOTHING),
+		CENTER_PROCESS(DesiredMode.THREE_CORAL_MODE,DesiredMode.DO_NOTHING),
+		CENTER_BLANK(true, DesiredMode.THREE_CORAL_MODE,DesiredMode.DO_NOTHING),
 		BLANK_SIDE(true,DesiredMode.THREE_CORAL_MODE,DesiredMode.DO_NOTHING);
-		List<DesiredMode> modes;
-		Boolean mirrored = false;
+
+		public List<DesiredMode> modes;
+		public Boolean mirrored = false;
 		private StartingPosition(DesiredMode... modes) {
 			this.modes = List.of(modes);
 			this.mirrored = false;
@@ -43,7 +44,8 @@ public class AutoModeSelector {
 
 	public AutoModeSelector() {
 		mStartingPositionSelector.setDefaultOption("Proccessor Side", StartingPosition.PROCCESSOR_SIDE);
-		mStartingPositionSelector.addOption("Center", StartingPosition.CENTER);
+		mStartingPositionSelector.addOption("Center Processor Side", StartingPosition.CENTER_PROCESS);
+		mStartingPositionSelector.addOption("Center Blank Side", StartingPosition.CENTER_BLANK);
 		mStartingPositionSelector.addOption("Blank Side", StartingPosition.BLANK_SIDE);
 	}
 	public void updateModeCreator() {
@@ -72,7 +74,7 @@ public class AutoModeSelector {
 
 
 			case THREE_CORAL_MODE:
-				return Optional.of(new ThreeCoralMode(mCachedStartingPosition.mirrored));
+				return Optional.of(new ThreeCoralMode(mCachedStartingPosition));
 			// break;
 
 		default:

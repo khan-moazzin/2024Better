@@ -2,6 +2,7 @@ package com.team5817.frc2025.autos.Modes;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.autos.AutoBase;
@@ -11,12 +12,14 @@ import com.team5817.frc2025.autos.Actions.SequentialAction;
 import com.team5817.frc2025.autos.Actions.TrajectoryAction;
 import com.team5817.frc2025.autos.Actions.WaitAction;
 import com.team5817.frc2025.autos.Actions.WaitToPassDistanceToReef;
+import com.team5817.frc2025.autos.AutoModeSelector.StartingPosition;
 import com.team5817.frc2025.autos.Actions.WaitForSuperstructureAction;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
+import com.team5817.lib.motion.Trajectory;
 import com.team5817.lib.motion.TrajectorySet;
 
 public class ThreeCoralMode extends AutoBase {
@@ -29,12 +32,34 @@ public class ThreeCoralMode extends AutoBase {
 	private double exitDistance = 1.5;
 	private double coralSpit = .1;
 
-	public ThreeCoralMode(boolean mirror) {
+	public ThreeCoralMode(StartingPosition startingPosition) {
 
+ 	boolean mirror = startingPosition.mirrored;
+	Trajectory startingTrajectory;
+	 Trajectory followUpTrajectory;
+
+	switch (startingPosition) {
+		case CENTER_PROCESS:
+		case CENTER_BLANK:
+			startingTrajectory = l.TCTo3A;
+			followUpTrajectory = l.T3AToH;
+			break;
+		case BLANK_SIDE:
+		case PROCCESSOR_SIDE:
+
+			startingTrajectory = l.TSTo8A;
+			followUpTrajectory = l.T8AToH;
+		break;
+		default:
+			startingTrajectory = l.TCTo3A;
+			followUpTrajectory = l.T3AToH;
+		break;
+
+	}
 		t = new TrajectorySet(
 				mirror,
-				l.TSTo3A,
-				l.T3AToH,
+				startingTrajectory,
+				followUpTrajectory,
 				l.THTO7A,
 				l.T7AToH,
 				l.THTO7B);
