@@ -5,18 +5,29 @@ import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 
 import com.team5817.frc2025.autos.Actions.Action;
 
+import edu.wpi.first.wpilibj.Timer;
+
 
 
 public abstract class AutoBase{
 
     protected SwerveDriveSimulation mSim;
+    private double startTime;
 
     boolean mActive = false;
     public void start() {
         mActive = true;
+        startTime = Timer.getTimestamp();
         routine();
+        end();
    }
+
+   public void end(){
+        System.out.println("Auto Ended in " + (Timer.getTimestamp() - startTime) + " seconds");
+   }
+
 	public abstract void routine();
+
     public void stop() {
         mActive = false;
     }

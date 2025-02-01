@@ -6,17 +6,17 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class SeriesAction implements Action {
+public class SequentialAction implements Action {
 	private Action mCurrentAction;
 	private final ArrayList<Action> mRemainingActions;
 
-	public SeriesAction(List<Action> actions) {
+	public SequentialAction(List<Action> actions) {
 		mRemainingActions = new ArrayList<>(actions.size());
 		mRemainingActions.addAll(actions);
 		mCurrentAction = null;
 	}
 
-	public SeriesAction(Action... actions) {
+	public SequentialAction(Action... actions) {
 		this(Arrays.asList(actions));
 	}
 

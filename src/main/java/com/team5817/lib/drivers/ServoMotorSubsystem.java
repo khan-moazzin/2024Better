@@ -372,11 +372,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
 		mMainStickyFault = mMain.getStickyFaultField();
 
-		if (mMain.getControlMode().getValue() == ControlModeValue.PositionDutyCycle) {
 			mServoInputs.error_rotations = mMainClosedLoopError.asSupplier().get();
-		} else {
-			mServoInputs.error_rotations = 0;
-		}
 		mServoInputs.error_rotations = mMainClosedLoopError.asSupplier().get();
 		mServoInputs.main_stator_current = mMainStatorCurrentSignal.asSupplier().get().in(Amps);
 		mServoInputs.main_supply_current = mMainSupplyCurrentSignal.asSupplier().get().in(Amps);
@@ -389,13 +385,18 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 					mServoInputs.position_rots += mServoOutputs.demand / dt;
 					break;
 				case MOTION_MAGIC:
-					mServoInputs.position_rots += mServoInputs.error_rotations / 1.1 * dt;// bad guess at motion for sim
-					break;
 				case POSITION_PID:
-					mServoInputs.position_rots += mServoInputs.error_rotations / 1.1 * dt;// bad guess at motion for sim
+					mServoInputs.position_rots += mServoInputs.error_rotations*dt/0.25;// bad guess at motion for sim
 					break;
-
+				default:
+					break;
 			}
+			if (mServoInputs.position_rots > unitsToRotations(mConstants.kMaxUnitsLimit)) {
+				mServoInputs.position_rots = unitsToRotations(mConstants.kMaxUnitsLimit);
+			} else if (mServoInputs.position_rots <unitsToRotations( mConstants.kMinUnitsLimit)) {
+				mServoInputs.position_rots = unitsToRotations(mConstants.kMinUnitsLimit);
+			}
+			
 		} else {
 			mServoInputs.position_rots = mMainPositionSignal.asSupplier().get().in(Rotations);
 		}

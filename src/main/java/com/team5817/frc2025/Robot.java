@@ -15,6 +15,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.pathplanner.lib.path.GoalEndState;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.swerve.ChassisSpeeds;
@@ -33,6 +34,7 @@ import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
+import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Util;
 
@@ -133,6 +135,7 @@ public class Robot extends LoggedRobot {
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
     mEnabledLooper.start();
+    Superstructure.getInstance().setGoal(GoalState.STOW);
   }
 
   @Override

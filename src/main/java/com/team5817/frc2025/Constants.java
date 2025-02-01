@@ -63,13 +63,15 @@ public class Constants {
 
 	public static final boolean kSubsytemSim = true;// Forces sim IO een if robot is real for partial robot(DB)
 
+    public static final double kDefaultDistanceToReef = 3;
+
 	public static final class SwerveConstants {
 
 		public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
 		/* Drivetrain Constants */
-		public static final double trackWidth = Units.inchesToMeters(29);
-		public static final double wheelBase = Units.inchesToMeters(29);
+		public static final double trackWidth = Units.inchesToMeters(22.25);
+		public static final double wheelBase = Units.inchesToMeters(22.25);
 
 		public static final double wheelDiameter = Units.inchesToMeters(4.00);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;

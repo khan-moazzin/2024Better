@@ -38,27 +38,20 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	final static double kLenientError = 5;
 
 	public enum State {
-		DEPLOY(.3, kStrictError, true), // TODO
+		DEPLOY(.3, kStrictError), // TODO
 		CLEAR(0.0, kLenientError), // TODO
 		UNJAM(0.0, kLenientError), // TODO
 		STOW(0.0, kMediumError),
-		ALGAE(0.0, kMediumError, true),
-		HUMAN(0.0, kStrictError, true),
+		ALGAE(0.0, kMediumError),
+		HUMAN(0.0, kStrictError),
 		ZERO(0.0, kStrictError);
 
 		double output = 0;
 		double allowable_error = 0;
-		boolean needs_to_home = false;
 
-		State(double output, double allowable_error, boolean needs_to_home) {
-			this.output = output;
-			this.allowable_error = allowable_error;
-			this.needs_to_home = needs_to_home;
-		}
 
 		State(double output, double allowable_error) {
 			this.output = output;
-			this.needs_to_home = false;
 			this.allowable_error = allowable_error;
 		}
 
@@ -85,11 +78,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public void onLoop(double timestamp) {
-				if (getSetpoint() == State.STOW.output && atHomingLocation() && mNeedsToHome && !mHoming) {
-					setWantHome(true);
-				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
-					setWantHome(false);
-				}
+				
 			}
 
 			@Override
@@ -99,18 +88,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		});
 	}
 
-	/**
-	 * Runs intake deploy rehoming sequence.
-	 * 
-	 * @param home Enable/Disable rehome sequence.
-	 */
-	public void setWantHome(boolean home) {
-		mHoming = home;
-
-		if (mHoming) {
-			mNeedsToHome = false;
-		}
-	}
+	
 
 	@Override
 	public void readPeriodicInputs() {
@@ -142,11 +120,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		Robot.desMechPoses[0] = new Pose3d(new Translation3d(-.325, 0, .261), new Rotation3d(Units.degreesToRadians(0),
 				Units.rotationsToRadians(0.3 - mServoOutputs.demand), Units.degreesToRadians(0)));
 
-		Logger.recordOutput("IntakeDeploy/Homing", mHoming);
-		Logger.recordOutput("IntakeDeploy/Within Homing Window", atHomingLocation());
-
-		SmartDashboard.putBoolean(mConstants.kName + "/Homing", mHoming);
-		SmartDashboard.putBoolean(mConstants.kName + "/Within Homing Window", atHomingLocation());
+		
 		super.outputTelemetry();
 	}
 
@@ -170,7 +144,6 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 			@Override
 			public void act() {
 				setSetpointMotionMagic(_wantedState.output);
-				mNeedsToHome = _wantedState.needs_to_home;
 			}
 
 			@Override

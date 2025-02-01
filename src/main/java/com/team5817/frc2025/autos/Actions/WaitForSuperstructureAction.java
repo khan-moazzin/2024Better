@@ -1,31 +1,34 @@
-// package com.team5817.frc2025.autos.Actions;
+package com.team5817.frc2025.autos.Actions;
 
 
-// import com.team5817.frc2025.subsystems.Superstructure;
+import com.team5817.frc2025.subsystems.Superstructure;
 
-// import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Timer;
 
-// public class WaitForSuperstructureAction implements Action {
-// 	private double mTimeToWait;
-// 	private double mStartTime;
+public class WaitForSuperstructureAction implements Action {
+	private double mTimeToWait;
+	private double mStartTime;
 
-// 	public WaitForSuperstructureAction(double timeToWait) {
-// 		mTimeToWait = timeToWait;
-// 	}
+	public WaitForSuperstructureAction(double timeToWait) {
+		mTimeToWait = timeToWait;
+	}
+    public WaitForSuperstructureAction() {
+		mTimeToWait = Double.MAX_VALUE;
+	}
 
-// 	@Override
-// 	public boolean isFinished() {
-// 		return Timer.getFPGATimestamp() - mStartTime >= mTimeToWait || Superstructure.getInstance().requestsCompleted();
-// 	}
+	@Override
+	public boolean isFinished() {
+		return Timer.getFPGATimestamp() - mStartTime >= mTimeToWait || Superstructure.getInstance().requestsCompleted();
+	}
 
 
-// 	@Override
-// 	public void start() {
-// 	}
+	@Override
+	public void start() {
+	}
 
-// 	@Override
-// 	public void update() {}
+	@Override
+	public void update() {}
 
-// 	@Override
-// 	public void done() {}
-// }
+	@Override
+	public void done() {}
+}

@@ -344,9 +344,10 @@ public class Drive extends Subsystem {
 		return mAutoAlignMotionPlanner.getAutoAlignComplete();
 	}
 
-	public void autoAlignFinishedOverrride() {
-		autoAlignFinishedOverrride = true;
+	public void autoAlignFinishedOverrride(boolean override) {
+		autoAlignFinishedOverrride = override;
 	}
+
 
 	public void updatePathFollower() {
 		final double now = Timer.getTimestamp();

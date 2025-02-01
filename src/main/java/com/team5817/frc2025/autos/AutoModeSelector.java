@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Optional;
 
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
-// import com.team5817.frc2025.autos.Modes.ThreeCoralMode;
 import com.team5817.frc2025.autos.Modes.ThreeCoralMode;
 
 public class AutoModeSelector {
@@ -46,6 +45,7 @@ public class AutoModeSelector {
 
 			case THREE_CORAL_MODE:
 				return Optional.of(new ThreeCoralMode());
+			// break;
 
 		default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);

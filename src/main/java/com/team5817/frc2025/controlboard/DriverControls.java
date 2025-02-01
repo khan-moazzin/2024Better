@@ -63,7 +63,7 @@ public class DriverControls {
 				if(autoAlignAllowed)
 					mDrive.autoAlign(AlignmentType.CORAL_SCORE);
 				else
-					mDrive.autoAlignFinishedOverrride();
+					mDrive.autoAlignFinishedOverrride(true);
 				s.setGoal(preparedGoal);
 			}
 			if(driver.rightBumper.isBeingPressed())
