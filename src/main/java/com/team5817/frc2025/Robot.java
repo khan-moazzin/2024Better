@@ -15,7 +15,6 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import com.pathplanner.lib.path.GoalEndState;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.swerve.ChassisSpeeds;
@@ -49,6 +48,9 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
+/**
+ * The main robot class that extends LoggedRobot and contains the robot's lifecycle methods.
+ */
 public class Robot extends LoggedRobot {
   public static Pose3d[] mechPoses = new Pose3d[6];
   public static Pose3d[] desMechPoses = new Pose3d[6];
@@ -75,6 +77,9 @@ public class Robot extends LoggedRobot {
 
   // HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @SuppressWarnings("resource")
+  /**
+   * This method is called when the robot is first started up and should be used for any initialization code.
+   */
   @Override
   public void robotInit() {
     if(Robot.isReal())
@@ -142,6 +147,9 @@ public class Robot extends LoggedRobot {
     Superstructure.getInstance().setGoal(GoalState.STOW);
   }
 
+  /**
+   * This method is called periodically, regardless of the robot's mode.
+   */
   @Override
   public void robotPeriodic() {
     Logger.recordOutput("Elastic/Match Time", Timer.getMatchTime());
@@ -152,6 +160,9 @@ public class Robot extends LoggedRobot {
 
   boolean disableGyroReset = false;
 
+  /**
+   * This method is called once each time the robot enters autonomous mode.
+   */
   @Override
   public void autonomousInit() {
     if (mVision.getMovingAverageRead() != null) {
@@ -170,7 +181,9 @@ public class Robot extends LoggedRobot {
 
   }
 
-  /** This function is called once when teleop is enabled. */
+  /**
+   * This method is called once each time the robot enters teleoperated mode.
+   */
   @Override
   public void teleopInit() {
     mEnabledLooper.start();
@@ -182,7 +195,9 @@ public class Robot extends LoggedRobot {
 
   }
 
-  /** This function is called periodically during operator control. */
+  /**
+   * This method is called periodically during teleoperated mode.
+   */
   @Override
   public void teleopPeriodic() {
     controls.twoControllerMode();
@@ -197,8 +212,9 @@ public class Robot extends LoggedRobot {
 
   }
 
-  /** This function is called once when the robot is disabled. */
-
+  /**
+   * This method is called once each time the robot is disabled.
+   */
   @Override
   public void disabledInit() {
     mSubsystemManager.stop();
@@ -212,7 +228,9 @@ public class Robot extends LoggedRobot {
     mAutoExecuter = new AutoExecuter();
   }
 
-  /** This function is called periodically when disabled. */
+  /**
+   * This method is called periodically when the robot is disabled.
+   */
   @Override
   public void disabledPeriodic() {
     
@@ -230,23 +248,33 @@ public class Robot extends LoggedRobot {
     // drive.zeroGyro(mVision.getMovingAverageRead());
   }
 
-  /** This function is called once when test mode is enabled. */
+  /**
+   * This method is called once each time the robot enters test mode.
+   */
   @Override
   public void testInit() {
     mAutoExecuter.setAuto(new TestRoutine()); 
     mAutoExecuter.start();
   }
 
-  /** This function is called periodically during test mode. */
+  /**
+   * This method is called periodically during test mode.
+   */
   @Override
   public void testPeriodic() {
   }
 
+  /**
+   * This method is called once when the simulation is initialized.
+   */
   @Override
   public void simulationInit() {
     SimulatedArena.getInstance().resetFieldForAuto();
   }
 
+  /**
+   * This method is called periodically during simulation.
+   */
   @Override
   public void simulationPeriodic() {
     SimulatedArena.getInstance().simulationPeriodic();

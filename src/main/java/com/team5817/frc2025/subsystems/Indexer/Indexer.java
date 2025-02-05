@@ -24,6 +24,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Indexer extends Subsystem {
 	private static Indexer mInstance;
 
+	/**
+	 * Gets the singleton instance of the Indexer.
+	 *
+	 * @return The singleton instance.
+	 */
 	public static Indexer getInstance() {
 		if (mInstance == null) {
 			mInstance = new Indexer();
@@ -49,11 +54,19 @@ public class Indexer extends Subsystem {
 	private IndexerInputsAutoLogged mIndexerInputs = new IndexerInputsAutoLogged();
 	private IndexerOutputsAutoLogged mIndexerOutputs = new IndexerOutputsAutoLogged();
 
+	/**
+	 * Private constructor for the Indexer subsystem.
+	 */
 	private Indexer() {
 		mRoller = new TalonFX(Ports.INTAKE_ROLLER.getDeviceNumber(), Ports.INTAKE_ROLLER.getBus());
 		TalonUtil.applyAndCheckConfiguration(mRoller, IntakeRollerConstants.RollerFXConfig());
 	}
 
+	/**
+	 * Registers the enabled loops for the Indexer.
+	 *
+	 * @param enabledLooper The enabled looper.
+	 */
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
@@ -112,6 +125,8 @@ public class Indexer extends Subsystem {
 	}
 
 	/**
+	 * Creates a new request that updates the intake rollers with the wanted state.
+	 *
 	 * @param _wantedState Wanted state for the intake rollers.
 	 * @return New request that updates the intake rollers with the wanted state.
 	 */

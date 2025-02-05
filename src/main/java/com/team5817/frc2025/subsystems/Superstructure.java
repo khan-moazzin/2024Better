@@ -28,7 +28,6 @@ import edu.wpi.first.units.measure.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends Subsystem {
@@ -73,8 +72,8 @@ public class Superstructure extends Subsystem {
 	private IntakeRollers mIntakeRollers;
 	private Indexer mIndexer;
 
-	private BeamBreak mIntakeBeam = new BeamBreak(0);//made it into intake
-	private BeamBreak mEndEffectoBeam = new BeamBreak(0);//made into end effector
+	private BeamBreak mIntakeBeam = new BeamBreak(0);// made it into intake
+	private BeamBreak mEndEffectoBeam = new BeamBreak(0);// made into end effector
 
 	public enum GameObject {
 		CORAL,
@@ -87,28 +86,28 @@ public class Superstructure extends Subsystem {
 				SuperstructureState.Type.IDLE)),
 		L1(new SuperstructureState(Elevator.State.L1, EndEffectorWrist.State.L1, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
-				SuperstructureState.Type.SCORING,AlignmentType.CORAL_SCORE)),
+				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		L2(new SuperstructureState(Elevator.State.L2, EndEffectorWrist.State.L2, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
-				SuperstructureState.Type.SCORING,AlignmentType.CORAL_SCORE)),
+				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		L3(new SuperstructureState(Elevator.State.L3, EndEffectorWrist.State.L3, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
-				SuperstructureState.Type.SCORING,AlignmentType.CORAL_SCORE)),
+				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		L4(new SuperstructureState(Elevator.State.L4, EndEffectorWrist.State.L4, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
-				SuperstructureState.Type.SCORING,AlignmentType.CORAL_SCORE)),
+				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.SCORING)),
 		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
-				SuperstructureState.Type.SCORING,AlignmentType.ALGAE_SCORE)),
+				SuperstructureState.Type.SCORING, AlignmentType.ALGAE_SCORE)),
 		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
-				SuperstructureState.Type.CLEAN,AlignmentType.ALGAE_CLEAN)),
+				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
 		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
-				SuperstructureState.Type.CLEAN,AlignmentType.ALGAE_CLEAN)),
+				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
 		GROUND_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING,
 				IntakeDeploy.State.DEPLOY, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE,
 				IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
@@ -269,7 +268,7 @@ public class Superstructure extends Subsystem {
 	 * 
 	 * @return The current goal state.
 	 */
-	public GoalState getGoalState(){
+	public GoalState getGoalState() {
 		return mGoal;
 	}
 
@@ -348,36 +347,16 @@ public class Superstructure extends Subsystem {
 	}
 
 	/**
-	 * Creates a request to update the state of LEDs based on BeamBreak readings.
-	 * 
-	 * @return A request to update the state of LEDs.
-	 */
-	private Request updateLEDsRequest() {
-		return new Request() {
-
-			@Override
-			public void act() {
-				updateLEDs();
-			}
-
-			@Override
-			public boolean isFinished() {
-				return true;
-			}
-		};
-	}
-
-	/**
 	 * Update state of LEDs based on BeamBreak readings.
 	 */
 	private void updateLEDs() {
 		switch (mLEDs.getState()) {
 			case INTAKING:
-				if(mIntakeBeam.wasTripped())
+				if (mIntakeBeam.wasTripped())
 					mLEDs.applyStates(TimedLEDState.INDEXING);
 				break;
 			case INDEXING:
-				if(mEndEffectoBeam.wasTripped())
+				if (mEndEffectoBeam.wasTripped())
 					mLEDs.applyStates(TimedLEDState.HOLDING);
 			default:
 				break;
@@ -449,7 +428,8 @@ public class Superstructure extends Subsystem {
 			return new ParallelRequest();
 		}
 		return new SequentialRequest(
-				new ParallelRequest(//TODO might need to add indexing as part of this, bring intake up but keep indexing to get in end effector
+				new ParallelRequest(// TODO might need to add indexing as part of this, bring intake up but keep
+									// indexing to get in end effector
 						mLEDs.stateRequest(TimedLEDState.INTAKING),
 						mElevator.stateRequest(goal.mElevatorState),
 						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
@@ -490,8 +470,6 @@ public class Superstructure extends Subsystem {
 				// breakWait(null, false),//TODO
 				mLEDs.stateRequest(TimedLEDState.IDLE)
 
-
-
 		).addName("Score");
 	}
 
@@ -514,7 +492,8 @@ public class Superstructure extends Subsystem {
 	}
 
 	/**
-	 * Determines the appropriate goal state for algae cleaning based on the current position.
+	 * Determines the appropriate goal state for algae cleaning based on the current
+	 * position.
 	 * 
 	 * @return The goal state for algae cleaning.
 	 */

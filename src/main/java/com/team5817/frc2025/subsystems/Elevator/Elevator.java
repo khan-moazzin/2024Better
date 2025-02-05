@@ -14,11 +14,17 @@ import edu.wpi.first.math.util.Units;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.signals.NeutralModeValue;
-
+/**
+ * Elevator subsystem for controlling the elevator mechanism.
+ */
 public class Elevator extends ServoMotorSubsystem {
 	public static Elevator mInstance;
 
+	/**
+	 * Returns the singleton instance of the Elevator.
+	 * 
+	 * @return the singleton instance of the Elevator
+	 */
 	public static Elevator getInstance() {
 		if (mInstance == null) {
 			mInstance = new Elevator(ElevatorConstants.kElevatorServoConstants);
@@ -30,6 +36,9 @@ public class Elevator extends ServoMotorSubsystem {
 	final static double kMediumError = 2;
 	final static double kLenientError = 5;
 
+	/**
+	 * Enum representing the different states of the elevator.
+	 */
 	public enum State {
 		L4(1.673, kStrictError),
 		L3(.986, kStrictError),
@@ -51,6 +60,11 @@ public class Elevator extends ServoMotorSubsystem {
 		}
 	}
 
+	/**
+	 * Constructs an Elevator with the given constants.
+	 * 
+	 * @param constants the constants for the elevator
+	 */
 	public Elevator(final ServoMotorSubsystemConstants constants) {
 		super(constants);
 		mMain.setPosition(homeAwareUnitsToRotations(0.0));
@@ -58,6 +72,11 @@ public class Elevator extends ServoMotorSubsystem {
 		setSetpointMotionMagic(State.ZERO.output);
 	}
 
+	/**
+	 * Registers the enabled loops for the elevator.
+	 * 
+	 * @param enabledLooper the enabled looper
+	 */
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
@@ -109,10 +128,20 @@ public class Elevator extends ServoMotorSubsystem {
 		return false;
 	}
 
+	/**
+	 * Conforms the elevator to the given state.
+	 * 
+	 * @param state the state to conform to
+	 */
 	public void conformToState(State state){
 		setSetpointMotionMagic(state.output);
 	}
 
+	/**
+	 * Returns a request to stow the elevator.
+	 * 
+	 * @return a request to stow the elevator
+	 */
 	public Request stowRequest() {
 		return new Request() {
 			@Override
@@ -127,6 +156,11 @@ public class Elevator extends ServoMotorSubsystem {
 		};
 	}
 
+	/**
+	 * Returns a request to zero the elevator.
+	 * 
+	 * @return a request to zero the elevator
+	 */
 	public Request zeroRequest() {
 		return new Request() {
 			@Override
@@ -141,6 +175,12 @@ public class Elevator extends ServoMotorSubsystem {
 		};
 	}
 
+	/**
+	 * Returns a request to wait for the elevator to extend to the given position.
+	 * 
+	 * @param position the position to wait for
+	 * @return a request to wait for the elevator to extend
+	 */
 	public Request waitForExtensionRequest(double position) {
 		return new Request() {
 			@Override
@@ -154,6 +194,12 @@ public class Elevator extends ServoMotorSubsystem {
 		};
 	}
 
+	/**
+	 * Returns a request to set the elevator to the given state.
+	 * 
+	 * @param _wantedState the state to set the elevator to
+	 * @return a request to set the elevator to the given state
+	 */
 	public Request stateRequest(State _wantedState) {
 		return new Request() {
 			@Override

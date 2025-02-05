@@ -18,6 +18,9 @@ import com.team5817.frc2025.autos.Actions.Action;
 import com.team5817.lib.PolynomialRegression;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 
+/**
+ * Class for characterizing the feedforward gains of a subsystem.
+ */
 public class FeedForwardCharacterization implements Action{
   private static final double startDelaySecs = 2.0;
   private static final double rampRateVoltsPerSec = 0.05;
@@ -26,14 +29,17 @@ public class FeedForwardCharacterization implements Action{
 
   private final ServoMotorSubsystem mSubsystem;
 
-
   private final FeedForwardCharacterizationData dataPrimary;
 
   private final Timer timer = new Timer();
 
-  /** Creates a new FeedForwardCharacterization for a differential drive. */
-  /** Creates a new FeedForwardCharacterization for a simple subsystem. */
-
+  /**
+   * Creates a new FeedForwardCharacterization for a simple subsystem.
+   *
+   * @param subsystem The subsystem to characterize.
+   * @param forwards Whether to run the characterization forwards or backwards.
+   * @param data The data object to store the characterization results.
+   */
   public FeedForwardCharacterization(
       ServoMotorSubsystem subsystem,
       boolean forwards,
@@ -43,14 +49,18 @@ public class FeedForwardCharacterization implements Action{
         this.dataPrimary = data;
   }
 
-  // Called when the command is initially scheduled.
+  /**
+   * Called when the command is initially scheduled.
+   */
   @Override
   public void start() {
     timer.reset();
     timer.start();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * Called every time the scheduler runs while the command is scheduled.
+   */
   @Override
   public void update() {
     if (timer.get() < startDelaySecs) {
@@ -62,7 +72,9 @@ public class FeedForwardCharacterization implements Action{
     }
   }
 
-  // Called once the command ends or is interrupted.
+  /**
+   * Called once the command ends or is interrupted.
+   */
   @Override
   public void done() {
     mSubsystem.applyVoltage(0);
@@ -70,21 +82,39 @@ public class FeedForwardCharacterization implements Action{
     dataPrimary.print();
  }
 
-  // Returns true when the command should end.
+  /**
+   * Returns true when the command should end.
+   *
+   * @return true if the command should end, false otherwise.
+   */
   @Override
   public boolean isFinished() {
     return DriverStation.isDisabled();
   }
 
+  /**
+   * Class to store and process feedforward characterization data.
+   */
   public static class FeedForwardCharacterizationData {
     private final String name;
     private final List<Double> velocityData = new LinkedList<>();
     private final List<Double> voltageData = new LinkedList<>();
 
+    /**
+     * Creates a new FeedForwardCharacterizationData object.
+     *
+     * @param name The name of the data set.
+     */
     public FeedForwardCharacterizationData(String name) {
       this.name = name;
     }
 
+    /**
+     * Adds a data point to the characterization data.
+     *
+     * @param velocity The velocity of the subsystem.
+     * @param voltage The voltage applied to the subsystem.
+     */
     public void add(double velocity, double voltage) {
       if (Math.abs(velocity) > 1E-4) {
         velocityData.add(Math.abs(velocity));
@@ -92,6 +122,9 @@ public class FeedForwardCharacterization implements Action{
       }
     }
 
+    /**
+     * Prints the characterization results.
+     */
     public void print() {
       if (velocityData.size() == 0 || voltageData.size() == 0) {
         return;
@@ -110,8 +143,4 @@ public class FeedForwardCharacterization implements Action{
       System.out.println(String.format("\tkV=%.5f", regression.beta(1)));
     }
   }
-
-
-
-
 }

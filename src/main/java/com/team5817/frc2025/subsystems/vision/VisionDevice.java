@@ -12,7 +12,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.util.Optional;
 
-
+/**
+ * VisionDevice class handles vision processing and updates.
+ */
 public class VisionDevice {
 	private VisionDeviceIO mPeriodicIO = new VisionDeviceIO();
 
@@ -20,6 +22,11 @@ public class VisionDevice {
 	private NetworkTable mOutputTable;
 	private MovingAverage mHeadingAverage = new MovingAverage(100);
 
+	/**
+	 * Constructor for VisionDevice.
+	 *
+	 * @param name the name of the vision device
+	 */
 	public VisionDevice(String name) {
 		this.mName = name;
 		mOutputTable = NetworkTableInstance.getDefault().getTable(name);
@@ -28,6 +35,11 @@ public class VisionDevice {
 
 	}
 
+	/**
+	 * Updates the vision device with the latest data.
+	 *
+	 * @param timestamp the current timestamp
+	 */
 	public void update(double timestamp) {
 
 		mPeriodicIO.seesTarget = LimelightHelpers.getTV(mName);
@@ -54,10 +66,20 @@ public class VisionDevice {
 
 	}
 
+	/**
+	 * Checks if the moving average is ready.
+	 *
+	 * @return true if the moving average is ready, false otherwise
+	 */
 	public boolean movingAverageReady() {
 		return mHeadingAverage.getSize() == 100;
 	}
 
+	/**
+	 * Adds a heading observation to the moving average.
+	 *
+	 * @param heading the heading to add
+	 */
 	public void addHeadingObservation(Rotation2d heading) {
 		double degrees = heading.getDegrees();
 		if (degrees < 0) {
@@ -66,17 +88,33 @@ public class VisionDevice {
 		mHeadingAverage.addNumber(degrees);
 	}
 
+	/**
+	 * Gets the estimated heading from the moving average.
+	 *
+	 * @return the estimated heading
+	 */
 	public double getEstimatedHeading() {
 		return mHeadingAverage.getAverage();
 	}
 
+	/**
+	 * Gets the latest vision update.
+	 *
+	 * @return an Optional containing the latest VisionUpdate, or empty if no update is available
+	 */
 	public Optional<VisionUpdate> getVisionUpdate() {
 		return mPeriodicIO.visionUpdate;
 	}
 
+	/**
+	 * Outputs telemetry data.
+	 */
 	public void outputTelemetry() {
 	}
 
+	/**
+	 * Inner class to hold periodic IO data for the vision device.
+	 */
 	public static class VisionDeviceIO {
 
 		// inputs

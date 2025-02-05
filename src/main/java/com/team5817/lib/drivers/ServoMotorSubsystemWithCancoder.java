@@ -9,11 +9,14 @@ import com.team5817.frc2025.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * Abstract class representing a servo motor subsystem with a CANcoder for absolute position feedback.
+ */
 public abstract class ServoMotorSubsystemWithCancoder extends ServoMotorSubsystem {
 
-
-
-
+	/**
+	 * Constants for configuring the absolute encoder.
+	 */
 	public static class AbsoluteEncoderConstants {
 		public FeedbackSensorSourceValue encoder_type;
 		public CanDeviceId remote_encoder_port;
@@ -24,6 +27,12 @@ public abstract class ServoMotorSubsystemWithCancoder extends ServoMotorSubsyste
 	private CANcoder mCancoder;
 	private AbsoluteEncoderConstants mEncoderConstants;
 
+	/**
+	 * Constructs a ServoMotorSubsystemWithCancoder.
+	 *
+	 * @param constants         The constants for the servo motor subsystem.
+	 * @param encoder_constants The constants for the absolute encoder.
+	 */
 	protected ServoMotorSubsystemWithCancoder(
 			ServoMotorSubsystemConstants constants, AbsoluteEncoderConstants encoder_constants) {
 		super(constants);
@@ -59,15 +68,30 @@ public abstract class ServoMotorSubsystemWithCancoder extends ServoMotorSubsyste
 		});
 	}
 
+	/**
+	 * Zeros the sensors. This implementation does nothing.
+	 */
 	@Override
 	public void zeroSensors() {
 		return;
 	}
 
+	/**
+	 * Sets the position of the CANcoder.
+	 *
+	 * @param value The position value to set.
+	 */
 	public void setPosition(double value) {
 		mCancoder.setPosition(value);
 	}
 
+	/**
+	 * Converts rotations to homed rotations, taking into account the encoder offset.
+	 *
+	 * @param input The input rotations.
+	 * @return The homed rotations.
+	 */
+	@SuppressWarnings("unused")
 	private double rotationsToHomedRotations(double input) {
 		double rot = input + mEncoderConstants.remote_encoder_offset;
 		while (rot > 1.0) {

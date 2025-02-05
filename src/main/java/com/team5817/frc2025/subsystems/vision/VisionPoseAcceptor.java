@@ -6,12 +6,25 @@ import com.team5817.frc2025.field.FieldLayout;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * This class is responsible for accepting or rejecting vision-based pose updates.
+ */
 public class VisionPoseAcceptor {
 	private static final double kFieldBorderMargin = 0.5;
 	private static final double kMaxVisionCorrection = 2.0; // Jump from fused pose
 
 	Pose2d mLastVisionFieldToVehicle = null;
 
+	/**
+	 * Determines whether the vision-based pose update should be accepted.
+	 *
+	 * @param timestamp The timestamp of the vision update.
+	 * @param visionFieldToVehicle The pose of the vehicle based on vision data.
+	 * @param lastFieldToVehicle The last known pose of the vehicle.
+	 * @param robotVelocity The current velocity of the robot.
+	 * @param isInAuto Whether the robot is in autonomous mode.
+	 * @return true if the vision update should be accepted, false otherwise.
+	 */
 	public boolean shouldAcceptVision(
 			double timestamp,
 			Pose2d visionFieldToVehicle,

@@ -13,18 +13,20 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.team254.lib.util.DelayedBoolean;
-
+/**
+ * The IntakeDeploy class controls the deployment mechanism of the intake system.
+ */
 public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 	public static IntakeDeploy mInstance;
 
+	/**
+	 * Gets the singleton instance of the IntakeDeploy class.
+	 *
+	 * @return The instance of the IntakeDeploy class.
+	 */
 	public static IntakeDeploy getInstance() {
 		if (mInstance == null) {
 			mInstance = new IntakeDeploy(IntakeDeployConstants.kDeployServoConstants,
@@ -37,6 +39,9 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	final static double kMediumError = 2;
 	final static double kLenientError = 5;
 
+	/**
+	 * Represents the different states of the intake deployment.
+	 */
 	public enum State {
 		DEPLOY(.245, kStrictError), // TODO
 		CLEAR(0.0, kLenientError), // TODO
@@ -49,7 +54,12 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		double output = 0;
 		double allowable_error = 0;
 
-
+		/**
+		 * Constructs a new State.
+		 *
+		 * @param output The output value for the state.
+		 * @param allowable_error The allowable error for the state.
+		 */
 		State(double output, double allowable_error) {
 			this.output = output;
 			this.allowable_error = allowable_error;
@@ -57,11 +67,13 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 	}
 
-	private boolean mHoming = false;
-	private boolean mNeedsToHome = false;
-	private final DelayedBoolean mHomingDelay = new DelayedBoolean(Timer.getTimestamp(),
-			Constants.IntakeDeployConstants.kHomingTimeout);
 
+	/**
+	 * Constructs a new IntakeDeploy subsystem.
+	 *
+	 * @param constants The constants for the servo motor subsystem.
+	 * @param encoder_constants The constants for the absolute encoder.
+	 */
 	public IntakeDeploy(final ServoMotorSubsystemConstants constants,
 			final AbsoluteEncoderConstants encoder_constants) {
 		super(constants, encoder_constants);
@@ -70,6 +82,11 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		setSetpointMotionMagic(State.DEPLOY.output);
 	}
 
+	/**
+	 * Registers the enabled loops for the subsystem.
+	 *
+	 * @param enabledLooper The looper to register the loops with.
+	 */
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
@@ -83,30 +100,26 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		});
 	}
 
-	
-
+	/**
+	 * Reads the periodic inputs for the subsystem.
+	 */
 	@Override
 	public void readPeriodicInputs() {
 		super.readPeriodicInputs();
 		Logger.processInputs("IntakeDeploy", mServoInputs);
 	}
 
+	/**
+	 * Writes the periodic outputs for the subsystem.
+	 */
 	@Override
 	public void writePeriodicOutputs() {
-		if (mHoming) {
-			setOpenLoop(Constants.IntakeDeployConstants.kHomingOutput / mConstants.kMaxForwardOutput);
-			if (mHomingDelay.update(
-					Timer.getFPGATimestamp(),
-					Math.abs(getVelocity()) < Constants.IntakeDeployConstants.kHomingVelocityWindow)) {
-				zeroSensors();
-				mHasBeenZeroed = true;
-				setSetpointMotionMagic(mConstants.kHomePosition);
-				mHoming = false;
-			}
-		}
 		super.writePeriodicOutputs();
 	}
 
+	/**
+	 * Outputs telemetry data for the subsystem.
+	 */
 	@Override
 	public void outputTelemetry() {
 		Robot.mechPoses[0] = new Pose3d(new Translation3d(-.325, 0, .261), new Rotation3d(Units.degreesToRadians(0),
@@ -119,21 +132,40 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		super.outputTelemetry();
 	}
 
+	/**
+	 * Stops the subsystem.
+	 */
 	@Override
 	public void stop() {
 	}
 
+	/**
+	 * Checks the system for any issues.
+	 *
+	 * @return True if the system is functioning correctly, false otherwise.
+	 */
 	@Override
 	public boolean checkSystem() {
 		return false;
 	}
 
+	/**
+	 * Checks if the intake is at the homing location.
+	 *
+	 * @return True if the intake is within the homing zone, false otherwise.
+	 */
 	@Override
 	public boolean atHomingLocation() {
 		// Check if intake is within 7.0 degrees of homing position
 		return mServoInputs.position_units - mConstants.kHomePosition > -Constants.IntakeDeployConstants.kHomingZone;
 	}
 
+	/**
+	 * Creates a request to change the state of the intake deployment.
+	 *
+	 * @param _wantedState The desired state.
+	 * @return The request to change the state.
+	 */
 	public Request stateRequest(State _wantedState) {
 		return new Request() {
 			@Override

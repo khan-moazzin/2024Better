@@ -21,6 +21,9 @@ import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.lib.motion.Trajectory;
 import com.team5817.lib.motion.TrajectorySet;
 
+/**
+ * CustomThreeCoralMode is an autonomous mode for handling three coral scoring actions.
+ */
 public class CustomThreeCoralMode extends AutoBase {
 
 	private Superstructure s = Superstructure.getInstance();
@@ -35,6 +38,15 @@ public class CustomThreeCoralMode extends AutoBase {
 	private String secondScoreName;
 	private String thirdScoreName;
 
+	/**
+	 * Constructs a CustomThreeCoralMode with the specified starting position, pickup location, and scoring locations.
+	 *
+	 * @param startingPosition the starting position of the robot
+	 * @param pickupLocation the location to pick up corals
+	 * @param firstScore the first scoring location
+	 * @param secondScore the second scoring location
+	 * @param thirdScore the third scoring location
+	 */
 	public CustomThreeCoralMode(StartingPosition startingPosition, PickupLocation pickupLocation, ScoringLocation firstScore, ScoringLocation secondScore, ScoringLocation thirdScore) {
 
  	boolean mirror = startingPosition.mirrored;
@@ -97,7 +109,9 @@ public class CustomThreeCoralMode extends AutoBase {
 			);
 	}
 
-	// spotless:off
+	/**
+	 * Executes the autonomous routine for scoring three corals.
+	 */
 	@Override
 	public void routine() {
 		if (Constants.mode == Constants.Mode.SIM) {

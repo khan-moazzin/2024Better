@@ -19,6 +19,10 @@ import java.util.List;
 
 import org.littletonrobotics.junction.AutoLog;
 
+/**
+ * The WheelTracker class is responsible for tracking the position and velocity of the robot
+ * using the swerve modules and a Pigeon IMU.
+ */
 public class WheelTracker extends Subsystem {
 	private final Pigeon mPigeon = Pigeon.getInstance();
 	private final SwerveModule[] mModules;
@@ -35,6 +39,12 @@ public class WheelTracker extends Subsystem {
 	private OdometryThread mOdometryThread;
 	private WheelTrackerInputsAutoLogged inputs = new WheelTrackerInputsAutoLogged();
 
+	/**
+	 * Constructs a WheelTracker with the given swerve modules.
+	 *
+	 * @param modules The swerve modules used for odometry.
+	 * @throws IllegalArgumentException if the number of modules is not 4.
+	 */
 	public WheelTracker(SwerveModule[] modules) {
 		if (modules.length != 4) {
 			throw new IllegalArgumentException("Odometry needs 4 modules to run");
@@ -72,10 +82,16 @@ public class WheelTracker extends Subsystem {
 		mOdometryThread.start();
 	}
 
+	/**
+	 * Starts the WheelTracker.
+	 */
 	public void start() {
 		mIsEnabled = true;
 	}
 
+	/**
+	 * Stops the WheelTracker.
+	 */
 	public void stop() {
 		mIsEnabled = false;
 	}
@@ -109,6 +125,11 @@ public class WheelTracker extends Subsystem {
 	private Pose2d last_velocity_sample = new Pose2d();
 	private double last_sample_timestamp = 0.0;
 
+	/**
+	 * Updates the robot's pose based on the current timestamp.
+	 *
+	 * @param timestamp The current timestamp.
+	 */
 	private void updateRobotPose(double timestamp) {
 		double x = 0.0;
 		double y = 0.0;
@@ -180,6 +201,12 @@ public class WheelTracker extends Subsystem {
 		Translation2d velocity = new Translation2d();
 	}
 
+	/**
+	 * Updates the odometry for a single wheel module.
+	 *
+	 * @param module The swerve module.
+	 * @param props  The properties of the wheel.
+	 */
 	private void updateWheelOdometry(SwerveModule module, WheelProperties props) {
 		double currentEncDistance = module.getDriveDistanceMeters();
 		double deltaEncDistance = currentEncDistance - props.previousEncDistance;
@@ -213,6 +240,11 @@ public class WheelTracker extends Subsystem {
 		props.previousEncDistance = currentEncDistance;
 	}
 
+	/**
+	 * Resets the poses of the modules to the given robot pose.
+	 *
+	 * @param robotPose The new robot pose.
+	 */
 	private void resetModulePoses(Pose2d robotPose) {
 		for (int i = 0; i < mModules.length; i++) {
 			WheelProperties props = wheels[i];
@@ -223,6 +255,9 @@ public class WheelTracker extends Subsystem {
 		}
 	}
 
+	/**
+	 * Resets the poses of the modules to their starting positions.
+	 */
 	private void resetModulePoses() {
 		for (int i = 0; i < mModules.length; i++) {
 			WheelProperties props = wheels[i];
@@ -230,6 +265,11 @@ public class WheelTracker extends Subsystem {
 		}
 	}
 
+	/**
+	 * Resets the robot's pose to the given pose.
+	 *
+	 * @param pose The new robot pose.
+	 */
 	public void resetPose(Pose2d pose) {
 		inputs.pose = pose;
 		resetModulePoses(inputs.pose);
@@ -242,14 +282,29 @@ public class WheelTracker extends Subsystem {
 		private Pose2d estimatedRobotPose = new Pose2d();
 	}
 
+	/**
+	 * Returns the current robot pose.
+	 *
+	 * @return The current robot pose.
+	 */
 	public Pose2d getRobotPose() {
 		return inputs.pose;
 	}
 
+	/**
+	 * Returns the measured velocity of the robot.
+	 *
+	 * @return The measured velocity.
+	 */
 	public Translation2d getMeasuredVelocity() {
 		return inputs.velocity;
 	}
 
+	/**
+	 * Returns the current timestamp.
+	 *
+	 * @return The current timestamp.
+	 */
 	public double getTimestamp() {
 		return mTimestamp;
 	}

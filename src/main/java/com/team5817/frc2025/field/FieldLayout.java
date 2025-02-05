@@ -231,6 +231,13 @@ public class FieldLayout {
 
     }
 	
+	/**
+     * Handles the alliance flip for a given pose.
+     *
+     * @param blue_pose The pose in the blue alliance frame.
+     * @param is_red_alliance Whether the alliance is red.
+     * @return The pose in the correct alliance frame.
+     */
 	public static Pose2d handleAllianceFlip(Pose2d blue_pose, boolean is_red_alliance) {
 		if (is_red_alliance) {
 			blue_pose = blue_pose.mirrorAboutX(kFieldLength / 2.0);
@@ -238,6 +245,13 @@ public class FieldLayout {
 		return blue_pose;
 	}
 
+	/**
+     * Handles the alliance flip for a given translation.
+     *
+     * @param blue_translation The translation in the blue alliance frame.
+     * @param is_red_alliance Whether the alliance is red.
+     * @return The translation in the correct alliance frame.
+     */
 	public static Translation2d handleAllianceFlip(Translation2d blue_translation, boolean is_red_alliance) {
 		if (is_red_alliance) {
 			blue_translation = blue_translation.mirrorAboutX(kFieldLength / 2.0);
@@ -245,6 +259,13 @@ public class FieldLayout {
 		return blue_translation;
 	}
 
+	/**
+     * Handles the alliance flip for a given rotation.
+     *
+     * @param blue_rotation The rotation in the blue alliance frame.
+     * @param is_red_alliance Whether the alliance is red.
+     * @return The rotation in the correct alliance frame.
+     */
 	public static Rotation2d handleAllianceFlip(Rotation2d blue_rotation, boolean is_red_alliance) {
 		if (is_red_alliance) {
 			blue_rotation = blue_rotation.mirrorAboutX();
@@ -252,6 +273,13 @@ public class FieldLayout {
 		return blue_rotation;
 	}
 
+	/**
+     * Calculates the distance from the alliance wall.
+     *
+     * @param x_coordinate The x-coordinate.
+     * @param is_red_alliance Whether the alliance is red.
+     * @return The distance from the alliance wall.
+     */
 	public static double distanceFromAllianceWall(double x_coordinate, boolean is_red_alliance) {
 		if (is_red_alliance) {
 			return kFieldLength - x_coordinate;
@@ -259,6 +287,11 @@ public class FieldLayout {
 		return x_coordinate;
 	}
 
+	/**
+     * Gets the reef pose based on the alliance.
+     *
+     * @return The reef pose in the correct alliance frame.
+     */
     public static Translation2d getReefPose() {
         var blue = new Translation2d(4.5,4);
         if(DriverStation.getAlliance().get().equals(Alliance.Red))

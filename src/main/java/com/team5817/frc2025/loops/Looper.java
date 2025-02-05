@@ -10,6 +10,9 @@ import java.util.List;
  * powers up and stopped after the match.
  */
 public class Looper implements ILooper {
+	/**
+	 * The period of the loop in seconds.
+	 */
 	public final double kPeriod;
 
 	private boolean running_;
@@ -19,22 +22,38 @@ public class Looper implements ILooper {
 	private double timestamp_ = 0;
 	private double dt_ = 0;
 
+	/**
+	 * Returns the time delta between loops.
+	 *
+	 * @return The time delta in seconds.
+	 */
 	public double dt() {
 		return dt_;
 	}
 
-
-
+	/**
+	 * Constructs a Looper with a specified loop time.
+	 *
+	 * @param loop_time The period of the loop in seconds.
+	 */
 	public Looper(double loop_time) {
 		running_ = false;
 		loops_ = new ArrayList<>();
 		kPeriod = loop_time;
 	}
 
+	/**
+	 * Constructs a Looper with the default loop time from Constants.
+	 */
 	public Looper() {
 		this(Constants.kLooperDt);
 	}
 
+	/**
+	 * Registers a loop to be run.
+	 *
+	 * @param loop The loop to be registered.
+	 */
 	@Override
 	public synchronized void register(Loop loop) {
 		synchronized (taskRunningLock_) {
@@ -42,6 +61,9 @@ public class Looper implements ILooper {
 		}
 	}
 
+	/**
+	 * Starts all registered loops.
+	 */
 	public synchronized void start() {
 		if (!running_) {
 			System.out.println("Starting loops");
@@ -54,6 +76,10 @@ public class Looper implements ILooper {
 			}
 		}
 	}
+
+	/**
+	 * Updates all registered loops.
+	 */
 	public synchronized void update(){
 		if(running_){
 			for (Loop loop : loops_) {

@@ -13,6 +13,11 @@ public class ControlBoard {
 
 	private static ControlBoard mInstance = null;
 
+	/**
+	 * Returns the singleton instance of the ControlBoard.
+	 * 
+	 * @return the singleton instance of the ControlBoard
+	 */
 	public static ControlBoard getInstance() {
 		if (mInstance == null) {
 			mInstance = new ControlBoard();
@@ -29,6 +34,9 @@ public class ControlBoard {
 		operator = new CustomXboxController(Constants.kButtonGamepadPort);
 	}
 
+	/**
+	 * Updates the state of the driver and operator controllers.
+	 */
 	public void update() {
 		driver.update();
 		operator.update();
@@ -36,10 +44,21 @@ public class ControlBoard {
 
 	/* DRIVER METHODS */
 	double scalar = 1;
-	public void setSwerveScalar(double scalar){
+
+	/**
+	 * Sets the scalar value for swerve drive.
+	 * 
+	 * @param scalar the scalar value to set
+	 */
+	public void setSwerveScalar(double scalar) {
 		this.scalar = scalar;
 	}
 
+	/**
+	 * Gets the swerve translation based on the driver's controller input.
+	 * 
+	 * @return the swerve translation as a Translation2d object
+	 */
 	public Translation2d getSwerveTranslation() {
 		double forwardAxis = driver.getRawAxis(Axis.kLeftY.value);
 		double strafeAxis = driver.getRawAxis(Axis.kLeftX.value);
@@ -66,6 +85,11 @@ public class ControlBoard {
 		}
 	}
 
+	/**
+	 * Gets the swerve rotation based on the driver's controller input.
+	 * 
+	 * @return the swerve rotation value
+	 */
 	public double getSwerveRotation() {
 		double rotAxis = driver.getRightX() * 0.80;
 		rotAxis = Constants.SwerveConstants.invertRAxis ? rotAxis : -rotAxis;
@@ -79,12 +103,23 @@ public class ControlBoard {
 		}
 	}
 
+	/**
+	 * Checks if the gyro should be zeroed based on the driver's controller input.
+	 * 
+	 * @return true if the gyro should be zeroed, false otherwise
+	 */
 	public boolean zeroGyro() {
 		return driver.startButton.isBeingPressed() && driver.backButton.isBeingPressed();
 	}
 
 
 	// Only Driver
+
+	/**
+	 * Checks if the top buttons on the driver's controller are clear.
+	 * 
+	 * @return true if the top buttons are clear, false otherwise
+	 */
 	public boolean topButtonsClearDriver() {
 		return !(driver.leftBumper.isBeingPressed()
 				|| driver.rightBumper.isBeingPressed()
@@ -95,6 +130,11 @@ public class ControlBoard {
 
 	// Driver and Operator
 
+	/**
+	 * Checks if the top buttons on the operator's controller are clear.
+	 * 
+	 * @return true if the top buttons are clear, false otherwise
+	 */
 	public boolean topButtonsClearOperator() {
 		return !(operator.leftBumper.isBeingPressed()
 				|| operator.rightBumper.isBeingPressed()

@@ -1,19 +1,35 @@
 package com.team5817.frc2025.autos.Actions;
 
-
+/**
+ * An empty action that does nothing.
+ */
 public class EmptyAction implements Action {
 
-	@Override
-	public void start() {}
+    /**
+     * Called when the action starts.
+     */
+    @Override
+    public void start() {}
 
-	@Override
-	public void update() {}
+    /**
+     * Called periodically to update the action.
+     */
+    @Override
+    public void update() {}
 
-	@Override
-	public boolean isFinished() {
-		return true;
-	}
+    /**
+     * Checks if the action is finished.
+     * 
+     * @return true since this action does nothing and is always finished.
+     */
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 
-	@Override
-	public void done() {}
+    /**
+     * Called when the action is done.
+     */
+    @Override
+    public void done() {}
 }

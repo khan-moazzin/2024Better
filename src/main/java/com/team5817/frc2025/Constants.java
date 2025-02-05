@@ -8,7 +8,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.pathplanner.lib.auto.AutoBuilder.TriFunction;
 import com.pathplanner.lib.config.RobotConfig;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
@@ -28,8 +27,16 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
 
+/**
+ * Constants class holds all the robot-wide numerical or boolean constants.
+ * This class should not be used for any other purpose. All constants should be
+ * declared globally (i.e. public static). Do not put anything functional in this class.
+ */
 public class Constants {
 
+	/**
+	 * Enum representing the different modes the robot can operate in.
+	 */
 	public enum Mode {
 		SIM,
 		REPLAY,
@@ -69,6 +76,9 @@ public class Constants {
 
     public static final double kDefaultDistanceToReef = 3;
 
+	/**
+	 * Constants related to the Swerve drive system.
+	 */
 	public static final class SwerveConstants {
 
 		public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
@@ -187,6 +197,9 @@ public class Constants {
 
 		/*** MODULE SPECIFIC CONSTANTS ***/
 		/* Front Left Module - Module 0 */
+		/**
+		 * Constants specific to the front left swerve module.
+		 */
 		public static final class Mod0 {
 			public static final double compAngleOffset = 180;
 
@@ -199,6 +212,9 @@ public class Constants {
 		}
 
 		/* Front Right Module - Module 1 */
+		/**
+		 * Constants specific to the front right swerve module.
+		 */
 		public static final class Mod1 {
 			public static final double compAngleOffset = 0;
 
@@ -211,6 +227,9 @@ public class Constants {
 		}
 
 		/* Back Left Module - Module 2 */
+		/**
+		 * Constants specific to the back left swerve module.
+		 */
 		public static final class Mod2 {
 			public static final double compAngleOffset = 180;
 
@@ -223,6 +242,9 @@ public class Constants {
 		}
 
 		/* Back Right Module - Module 3 */
+		/**
+		 * Constants specific to the back right swerve module.
+		 */
 		public static final class Mod3 {
 			public static final double compAngleOffset = 0;
 
@@ -295,6 +317,9 @@ public class Constants {
 		public static final double kCancoderBootAllowanceSeconds = 10.0;
 	}
 
+	/**
+	 * Constants related to the Pose Estimator.
+	 */
 	public static final class PoseEstimatorConstants {
 		public record CameraConfig(Pose3d offset, String config) {
 		};
@@ -327,6 +352,9 @@ public class Constants {
 
 	}
 
+	/**
+	 * Constants related to the Intake Deploy subsystem.
+	 */
 	public static final class IntakeDeployConstants {
 		// 115.93
 		// 7.92
@@ -384,6 +412,9 @@ public class Constants {
 
 	}
 
+	/**
+	 * Constants related to the Intake Roller subsystem.
+	 */
 	public static final class IntakeRollerConstants {
 		public static TalonFXConfiguration RollerFXConfig() {
 			TalonFXConfiguration config = new TalonFXConfiguration();
@@ -402,6 +433,9 @@ public class Constants {
 		}
 	}
 
+	/**
+	 * Constants related to the Elevator subsystem.
+	 */
 	public static final class ElevatorConstants {
 		// 115.93
 		// 7.92
@@ -448,6 +482,9 @@ public class Constants {
 		public static final double kCoralClearHeight = 0.15; // rotations
 	}
 
+	/**
+	 * Constants related to the Climb subsystem.
+	 */
 	public static final class ClimbConstants {
 		// 115.93
 		// 7.92
@@ -493,6 +530,9 @@ public class Constants {
 
 	}
 
+	/**
+	 * Constants related to the End Effector Wrist subsystem.
+	 */
 	public static final class EndEffectorWristConstants {
 		// 115.93
 		// 7.92
@@ -545,6 +585,9 @@ public class Constants {
 
 	}
 
+	/**
+	 * Constants related to the End Effector Roller subsystem.
+	 */
 	public static final class EndEffectorRollerConstants {
 		public static TalonFXConfiguration RollerFXConfig() {
 			TalonFXConfiguration config = new TalonFXConfiguration();

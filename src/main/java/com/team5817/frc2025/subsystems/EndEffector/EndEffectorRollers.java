@@ -20,9 +20,17 @@ import com.team5817.lib.requests.Request;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
+/**
+ * The EndEffectorRollers subsystem controls the rollers of the end effector.
+ */
 public class EndEffectorRollers extends Subsystem {
 	private static EndEffectorRollers mInstance;
 
+	/**
+	 * Gets the singleton instance of the EndEffectorRollers subsystem.
+	 *
+	 * @return The singleton instance.
+	 */
 	public static EndEffectorRollers getInstance() {
 		if (mInstance == null) {
 			mInstance = new EndEffectorRollers();
@@ -50,11 +58,19 @@ public class EndEffectorRollers extends Subsystem {
 	private EndEffectorRollerInputsAutoLogged mEndEffectorRollerInputs = new EndEffectorRollerInputsAutoLogged();
 	private EndEffectorRollerOutputsAutoLogged mEndEffectorRollerOutputs = new EndEffectorRollerOutputsAutoLogged();
 
+	/**
+	 * Private constructor for the EndEffectorRollers subsystem.
+	 */
 	private EndEffectorRollers() {
 		mRoller = new TalonFX(Ports.ENDEFFECTOR_ROLLER.getDeviceNumber(), Ports.ENDEFFECTOR_ROLLER.getBus());
 		TalonUtil.applyAndCheckConfiguration(mRoller, EndEffectorRollerConstants.RollerFXConfig());
 	}
 
+	/**
+	 * Registers the enabled loops for the subsystem.
+	 *
+	 * @param enabledLooper The enabled looper.
+	 */
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
@@ -87,6 +103,8 @@ public class EndEffectorRollers extends Subsystem {
 	}
 
 	/**
+	 * Creates a new request that updates the intake rollers with the wanted state.
+	 *
 	 * @param _wantedState Wanted state for the intake rollers.
 	 * @return New request that updates the intake rollers with the wanted state.
 	 */
@@ -104,6 +122,11 @@ public class EndEffectorRollers extends Subsystem {
 		};
 	}
 
+	/**
+	 * Creates a new request that sets the intake rollers to the idle state.
+	 *
+	 * @return New request that sets the intake rollers to the idle state.
+	 */
 	public Request idleRequest() {
 		return new Request() {
 			@Override

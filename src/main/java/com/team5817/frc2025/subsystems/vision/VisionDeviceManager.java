@@ -1,7 +1,6 @@
 package com.team5817.frc2025.subsystems.vision;
 
 import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.RobotState;
 import com.team5817.frc2025.Constants.PoseEstimatorConstants;
 import com.team5817.frc2025.RobotState.VisionUpdate;
@@ -22,9 +21,20 @@ import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 
+/**
+ * Manages vision devices and processes vision data.
+ */
 public class VisionDeviceManager extends Subsystem {
 
+	/**
+	 * Singleton instance of VisionDeviceManager.
+	 */
 	public static VisionDeviceManager mInstance;
+
+	/**
+	 * Returns the singleton instance of VisionDeviceManager.
+	 * @return the singleton instance.
+	 */
 	public static VisionDeviceManager getInstance() {
 		if (mInstance == null) {
 			mInstance = new VisionDeviceManager();
@@ -46,6 +56,9 @@ public class VisionDeviceManager extends Subsystem {
 	private static boolean disable_vision = false;
 	double timeOfLastUpdate = Double.MIN_VALUE;
 
+	/**
+	 * Constructor for VisionDeviceManager.
+	 */
 	public VisionDeviceManager() {
 		mDomCamera = new VisionDevice("limelight-right");
 		mSubCamera = new VisionDevice("limelight-left");
@@ -53,6 +66,10 @@ public class VisionDeviceManager extends Subsystem {
 		mRobotState = RobotState.getInstance();
 	}
 
+	/**
+	 * Registers the enabled loops.
+	 * @param enabledLooper the enabled looper.
+	 */
 	@Override
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
@@ -68,6 +85,9 @@ public class VisionDeviceManager extends Subsystem {
 		});
 	}
 
+	/**
+	 * Reads periodic inputs from vision devices.
+	 */
 	@Override
 	public void readPeriodicInputs() {
 		mMovingAvgRead = mHeadingAvg.getAverage();
@@ -100,10 +120,16 @@ public class VisionDeviceManager extends Subsystem {
 		}
 	}
 
+	/**
+	 * Writes periodic outputs.
+	 */
 	@Override
 	public void writePeriodicOutputs() {
 	}
 
+	/**
+	 * Outputs telemetry data to the dashboard.
+	 */
 	@Override
 	public void outputTelemetry() {
 		Logger.recordOutput("Elastic/Time Since Last Update", Timer.getTimestamp() - timeOfLastUpdate);
@@ -114,12 +140,22 @@ public class VisionDeviceManager extends Subsystem {
 		}
 	}
 
+	/**
+	 * Returns the best vision device based on the vision update.
+	 * @return the best vision device.
+	 */
 	public VisionDevice getBestDevice() {
 		if (mDomCamera.getVisionUpdate().get().getTa() > mSubCamera.getVisionUpdate().get().getTa())
 			return mDomCamera;
 		return mSubCamera;
 	}
 
+	/**
+	 * Verifies epipolar geometry between two sets of points.
+	 * @param pointsCam1 points from the first camera.
+	 * @param pointsCam2 points from the second camera.
+	 * @return true if the points satisfy the epipolar constraint, false otherwise.
+	 */
 	public boolean epipolarVerification(List<Translation2d> pointsCam1, List<Translation2d> pointsCam2) {
 
 		if (pointsCam1.size() != pointsCam2.size()) {
@@ -142,6 +178,12 @@ public class VisionDeviceManager extends Subsystem {
 
 	}
 
+	/**
+	 * Applies a translational filter to the vision data.
+	 * @param domTargetToCamera the pose of the dominant target to the camera.
+	 * @param subDevice the pose of the subordinate device.
+	 * @return true if the error is within the threshold, false otherwise.
+	 */
 	public boolean translationalFilter(Pose3d domTargetToCamera, Pose3d subDevice) {
 		Transform3d expectedDelta = PoseEstimatorConstants.kDomVisionDevice.kRobotToCamera
 				.plus(PoseEstimatorConstants.kSubVisionDevice.kRobotToCamera.inverse());
@@ -153,38 +195,77 @@ public class VisionDeviceManager extends Subsystem {
 
 	}
 
+	/**
+	 * Returns the moving average read value.
+	 * @return the moving average read value.
+	 */
 	public Double getMovingAverageRead() {
 		return mMovingAvgRead;
 	}
 
+	/**
+	 * Returns the moving average object.
+	 * @return the moving average object.
+	 */
 	public MovingAverage getMovingAverage() {
 		return mHeadingAvg;
 	}
 
+	/**
+	 * Returns the left vision device.
+	 * @return the left vision device.
+	 */
 	public VisionDevice getLeftVision() {
 		return mDomCamera;
 	}
 
+	/**
+	 * Returns the right vision device.
+	 * @return the right vision device.
+	 */
 	public VisionDevice getRightVision() {
 		return mSubCamera;
 	}
 
+	/**
+	 * Returns the timestamp offset.
+	 * @return the timestamp offset.
+	 */
 	public static double getTimestampOffset() {
 		return timestampOffset;
 	}
 
+	/**
+	 * Checks if vision is disabled.
+	 * @return true if vision is disabled, false otherwise.
+	 */
 	public static boolean visionDisabled() {
 		return disable_vision;
 	}
 
+	/**
+	 * Sets the vision disabled state.
+	 * @param disable the new state of vision disabled.
+	 */
 	public static void setDisableVision(boolean disable) {
 		disable_vision = disable;
 	}
 
+	/**
+	 * Checks if the system is fully connected.
+	 * @return true if fully connected, false otherwise.
+	 */
 	public boolean fullyConnected() {
 		return false;//TODO
 	}
 
+	/**
+	 * Verifies epipolar geometry between two sets of points using a fundamental matrix.
+	 * @param pointsCam1 points from the first camera.
+	 * @param pointsCam2 points from the second camera.
+	 * @param fundamentalMatrix the fundamental matrix.
+	 * @return true if the points satisfy the epipolar constraint, false otherwise.
+	 */
 	public static boolean verifyEpipolarGeometry(List<Translation2d> pointsCam1,
 			List<Translation2d> pointsCam2,
 			double[][] fundamentalMatrix) {
@@ -214,13 +295,18 @@ public class VisionDeviceManager extends Subsystem {
 
 	/**
 	 * Converts a Translation2D to homogeneous coordinates (Translation3D).
+	 * @param point the 2D point.
+	 * @return the 3D point in homogeneous coordinates.
 	 */
 	private static Translation3d toHomogeneous(Translation2d point) {
 		return new Translation3d(point.x(), point.y(), 1.0);
 	}
 
 	/**
-	 * Multiplies a 3x3 matrix with a 3d vector.
+	 * Multiplies a 3x3 matrix with a 3D vector.
+	 * @param matrix the 3x3 matrix.
+	 * @param vector the 3D vector.
+	 * @return the resulting 3D vector.
 	 */
 	private static Translation3d multiplyMatrixVector(double[][] matrix, Translation3d vector) {
 		double x = matrix[0][0] * vector.x() + matrix[0][1] * vector.y() + matrix[0][2] * vector.z();

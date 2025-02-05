@@ -146,6 +146,11 @@ public class Drive extends Subsystem {
 
 	}
 
+	/**
+	 * Sets the control state of the drive system.
+	 *
+	 * @param newState The new control state to set.
+	 */
 	public void setControlState(DriveControlState newState) {
 		if (newState != mControlState) {
 			mControlState = newState;
@@ -153,6 +158,11 @@ public class Drive extends Subsystem {
 		}
 	}
 
+	/**
+	 * Sets whether to use a specialized pose for path following.
+	 *
+	 * @param use True to use a specialized pose, false otherwise.
+	 */
 	public void setUseSpecializedPoseForPath(boolean use) {
 		if(Robot.isReal()){
 			useSpecailizedPoseForPath = use;
@@ -233,6 +243,11 @@ public class Drive extends Subsystem {
 		mPeriodicIO.des_chassis_speeds = speeds;
 	}
 
+	/**
+	 * Sets the open loop control state with the given speeds.
+	 *
+	 * @param speeds The desired chassis speeds.
+	 */
 	public void setOpenLoop(ChassisSpeeds speeds) {
 		mPeriodicIO.des_chassis_speeds = speeds;
 		if (mControlState != DriveControlState.OPEN_LOOP) {
@@ -240,6 +255,11 @@ public class Drive extends Subsystem {
 		}
 	}
 
+	/**
+	 * Sets the velocity control state with the given speeds.
+	 *
+	 * @param speeds The desired chassis speeds.
+	 */
 	public void setVelocity(ChassisSpeeds speeds) {
 		mPeriodicIO.des_chassis_speeds = speeds;
 		if (mControlState != DriveControlState.VELOCITY) {
@@ -260,7 +280,6 @@ public class Drive extends Subsystem {
 	}
 
 	/**
-	 * `
 	 * Instructs the drivetrain to stabilize heading around target angle.
 	 *
 	 * @param angle Target angle to stabilize around.
@@ -273,6 +292,11 @@ public class Drive extends Subsystem {
 
 	}
 
+	/**
+	 * Sets the alignment type for auto alignment.
+	 *
+	 * @param alignment The alignment type.
+	 */
 	public void setAlignment(AlignmentType alignment) {
 		mAlignment = alignment;
 	}
@@ -322,6 +346,11 @@ public class Drive extends Subsystem {
 
 	boolean autoAlignFinishedOverrride = false;
 
+	/**
+	 * Initiates auto alignment with the specified alignment type.
+	 *
+	 * @param type The alignment type.
+	 */
 	public void autoAlign(AlignmentType type) {
 		setAlignment(type);
 		autoAlignFinishedOverrride = false;
@@ -338,6 +367,11 @@ public class Drive extends Subsystem {
 		}
 	}
 
+	/**
+	 * Sets the trajectory for the motion planner.
+	 *
+	 * @param trajectory The trajectory to follow.
+	 */
 	public void setTrajectory(Trajectory trajectory) {
 		mOverrideTrajectory = false;
 		mMotionPlanner.reset();
@@ -346,17 +380,30 @@ public class Drive extends Subsystem {
 		setControlState(DriveControlState.PATH_FOLLOWING);
 	}
 
+	/**
+	 * Checks if auto alignment is complete.
+	 *
+	 * @return True if auto alignment is complete, false otherwise.
+	 */
 	public boolean getAutoAlignComplete() {
 		if (autoAlignFinishedOverrride)
 			return true;
 		return mAutoAlignMotionPlanner.getAutoAlignComplete();
 	}
 
+	/**
+	 * Overrides the auto alignment completion status.
+	 *
+	 * @param override True to override, false otherwise.
+	 */
 	public void autoAlignFinishedOverrride(boolean override) {
 		autoAlignFinishedOverrride = override;
 	}
 
 
+	/**
+	 * Updates the path follower.
+	 */
 	public void updatePathFollower() {
 		final double now = Timer.getTimestamp();
 		ChassisSpeeds output = mMotionPlanner.update(now, useSpecailizedPoseForPath? getSpecializedPose() : getPose());
@@ -368,6 +415,11 @@ public class Drive extends Subsystem {
 		mPeriodicIO.path_setpoint = mMotionPlanner.getSetpoint();
 	}
 
+	/**
+	 * Checks if the trajectory is finished.
+	 *
+	 * @return True if the trajectory is finished, false otherwise.
+	 */
 	public boolean isTrajectoryFinished() {
 		return mMotionPlanner.isPathFinished();
 	}
@@ -445,8 +497,9 @@ public class Drive extends Subsystem {
 	}
 
 	/**
-	 * @param pid_enable Switches between using PID control or Pure Pursuit control
-	 *                   to follow trajectories.
+	 * Sets whether to use PID control for trajectory following.
+	 *
+	 * @param pid_enable True to use PID control, false to use Pure Pursuit control.
 	 */
 	public void setUsePIDControl(boolean pid_enable) {
 		if (pid_enable) {
@@ -457,9 +510,9 @@ public class Drive extends Subsystem {
 	}
 
 	/**
-	 * Exits trajectory following early.
-	 * 
-	 * @param value Whether to override the current trajectory.
+	 * Overrides the current trajectory.
+	 *
+	 * @param value True to override the trajectory, false otherwise.
 	 */
 	public void overrideTrajectory(boolean value) {
 		mOverrideTrajectory = value;
@@ -505,23 +558,34 @@ public class Drive extends Subsystem {
 
 	}
 
+	/**
+	 * Resets the modules to their absolute positions.
+	 */
 	public void resetModulesToAbsolute() {
 		for (SwerveModule module : mModules) {
 			module.resetToAbsolute();
 		}
 	}
 
+	/**
+	 * Zeros the gyro.
+	 */
 	public void zeroGyro() {
 		zeroGyro(0.0);
 	}
 
+	/**
+	 * Zeros the gyro to a specific angle.
+	 *
+	 * @param reset_deg The angle to reset the gyro to.
+	 */
 	public void zeroGyro(double reset_deg) {
 		mPigeon.setYaw(reset_deg);
 		enableFieldToOdom = null;
 	}
 
 	/**
-	 * Configs if module drive motors should brake when commanded neutral output.
+	 * Configures if module drive motors should brake when commanded neutral output.
 	 * 
 	 * @param brake Enable brake
 	 */
@@ -555,6 +619,11 @@ public class Drive extends Subsystem {
 
 	}
 
+	/**
+	 * Gets the states of the swerve modules.
+	 *
+	 * @return An array of SwerveModuleState objects representing the states of the modules.
+	 */
 	public SwerveModuleState[] getModuleStates() {
 		SwerveModuleState[] states = new SwerveModuleState[4];
 		for (SwerveModule mod : mModules) {
@@ -563,6 +632,11 @@ public class Drive extends Subsystem {
 		return states;
 	}
 
+	/**
+	 * Gets the positions of the swerve modules.
+	 *
+	 * @return An array of SwerveModulePosition objects representing the positions of the modules.
+	 */
 	public SwerveModulePosition[] getModulePositions() {
 		SwerveModulePosition[] states = new SwerveModulePosition[4];
 		for (SwerveModule mod : mModules) {
@@ -571,6 +645,11 @@ public class Drive extends Subsystem {
 		return states;
 	}
 
+	/**
+	 * Gets the positions of the swerve modules in WPILib format.
+	 *
+	 * @return An array of WPILib SwerveModulePosition objects representing the positions of the modules.
+	 */
 	public edu.wpi.first.math.kinematics.SwerveModulePosition[] getWpiModulePositions() {
 		edu.wpi.first.math.kinematics.SwerveModulePosition[] states = new edu.wpi.first.math.kinematics.SwerveModulePosition[4];
 		for (SwerveModule mod : mModules) {
@@ -579,6 +658,11 @@ public class Drive extends Subsystem {
 		return states;
 	}
 
+	/**
+	 * Gets the states of the swerve modules in WPILib format.
+	 *
+	 * @return An array of WPILib SwerveModuleState objects representing the states of the modules.
+	 */
 	public edu.wpi.first.math.kinematics.SwerveModuleState[] getWpiModuleStates() {
 		edu.wpi.first.math.kinematics.SwerveModuleState[] states = new edu.wpi.first.math.kinematics.SwerveModuleState[4];
 		for (SwerveModule mod : mModules) {
@@ -587,40 +671,85 @@ public class Drive extends Subsystem {
 		return states;
 	}
 
+	/**
+	 * Gets the pose of the robot in WPILib format.
+	 *
+	 * @return The pose of the robot.
+	 */
 	public edu.wpi.first.math.geometry.Pose2d getWpiPose() {
 		return getPose().wpi();
 	}
 
+	/**
+	 * Gets the pose of the robot.
+	 *
+	 * @return The pose of the robot.
+	 */
 	public Pose2d getPose() {
 		return RobotState.getInstance().getLatestGlobalKalmanPose();
 	}
 
+	/**
+	 * Gets the specialized pose of the robot.
+	 *
+	 * @return The specialized pose of the robot.
+	 */
 	public Pose2d getSpecializedPose() {
 		return RobotState.getInstance().getLatestSpecializedKalmanPose();
 	}
 
+	/**
+	 * Resets the odometry to a specific pose.
+	 *
+	 * @param pose The pose to reset the odometry to.
+	 */
 	public void resetOdometry(Pose2d pose) {
 		odometryReset = true;
 		Pose2d wanted_pose = pose;
 		mWheelTracker.resetPose(wanted_pose);
 	}
 
+	/**
+	 * Resets the odometry to a specific pose in WPILib format.
+	 *
+	 * @param pose The pose to reset the odometry to.
+	 */
 	public void resetOdometry(edu.wpi.first.math.geometry.Pose2d pose) {
 		resetOdometry(Util.to254Pose(pose));
 	}
 
+	/**
+	 * Checks if the robot is ready for autonomous mode.
+	 *
+	 * @return True if the robot is ready for autonomous mode, false otherwise.
+	 */
 	public boolean readyForAuto() {
 		return odometryReset;
 	}
 
+	/**
+	 * Gets the heading of the robot.
+	 *
+	 * @return The heading of the robot.
+	 */
 	public Rotation2d getHeading() {
 		return mPigeon.getYaw();
 	}
 
+	/**
+	 * Gets the motion planner.
+	 *
+	 * @return The motion planner.
+	 */
 	public DriveMotionPlanner getMotionPlanner() {
 		return mMotionPlanner;
 	}
 
+	/**
+	 * Gets the kinematic limits.
+	 *
+	 * @return The kinematic limits.
+	 */
 	public SwerveKinematicLimits getKinematicLimits() {
 		return mKinematicLimits;
 	}
@@ -695,6 +824,11 @@ public class Drive extends Subsystem {
 		}
 	}
 
+	/**
+	 * Gets the current control state.
+	 *
+	 * @return The current control state.
+	 */
 	public DriveControlState getControlState() {
 		return mControlState;
 	}

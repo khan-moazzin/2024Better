@@ -13,12 +13,19 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import org.littletonrobotics.junction.Logger;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 
+	/**
+	 * Singleton instance of the EndEffectorWrist.
+	 */
 	public static EndEffectorWrist mInstance;
 
+	/**
+	 * Returns the singleton instance of the EndEffectorWrist.
+	 * 
+	 * @return The instance of EndEffectorWrist.
+	 */
 	public static EndEffectorWrist getInstance() {
 		if (mInstance == null) {
 			mInstance = new EndEffectorWrist(EndEffectorWristConstants.kWristServoConstants,
@@ -53,6 +60,12 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 		}
 	}
 
+	/**
+	 * Constructs an EndEffectorWrist with the given constants.
+	 * 
+	 * @param constants The servo motor subsystem constants.
+	 * @param encoder_constants The absolute encoder constants.
+	 */
 	public EndEffectorWrist(final ServoMotorSubsystemConstants constants,
 			final AbsoluteEncoderConstants encoder_constants) {
 		super(constants, encoder_constants);
@@ -62,6 +75,11 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 		setSetpointMotionMagic(State.STOW.output);
 	}
 
+	/**
+	 * Registers the enabled loops.
+	 * 
+	 * @param enabledLooper The enabled looper.
+	 */
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
@@ -109,6 +127,11 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 		return false;
 	}
 
+	/**
+	 * Returns a request to stow the end effector wrist.
+	 * 
+	 * @return The stow request.
+	 */
 	public Request stowRequest() {
 		return new Request() {
 			@Override
@@ -123,6 +146,11 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 		};
 	}
 
+	/**
+	 * Returns a request to zero the end effector wrist.
+	 * 
+	 * @return The zero request.
+	 */
 	public Request zeroRequest() {
 		return new Request() {
 			@Override
@@ -137,6 +165,12 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 		};
 	}
 
+	/**
+	 * Returns a request to set the end effector wrist to the given state.
+	 * 
+	 * @param _wantedState The desired state.
+	 * @return The state request.
+	 */
 	public Request stateRequest(State _wantedState) {
 		return new Request() {
 			@Override

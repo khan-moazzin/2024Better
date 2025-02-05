@@ -9,11 +9,16 @@ import com.team5817.lib.requests.Request;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.signals.NeutralModeValue;
-
+/**
+ * The Climb subsystem controls the climbing mechanism of the robot.
+ */
 public class Climb extends ServoMotorSubsystem {
 	public static Climb mInstance;
 
+	/**
+	 * Returns the singleton instance of the Climb subsystem.
+	 * @return The Climb instance.
+	 */
 	public static Climb getInstance() {
 		if (mInstance == null) {
 			mInstance = new Climb(ClimbConstants.kClimbServoConstants);
@@ -34,6 +39,11 @@ public class Climb extends ServoMotorSubsystem {
         double output = 0;
 		double allowable_error = 0;
 
+        /**
+         * Constructs a State with the specified output and allowable error.
+         * @param output The output position.
+         * @param allowable_error The allowable error margin.
+         */
         State(double output, double allowable_error) {
         this.output = output;
 		this.allowable_error = allowable_error;
@@ -41,6 +51,10 @@ public class Climb extends ServoMotorSubsystem {
     }
 
 
+	/**
+	 * Constructs the Climb subsystem with the specified constants.
+	 * @param constants The constants for the servo motor subsystem.
+	 */
 	public Climb(final ServoMotorSubsystemConstants constants) {
 		super(constants);
 		mMain.setPosition(homeAwareUnitsToRotations(120.0));
@@ -48,6 +62,10 @@ public class Climb extends ServoMotorSubsystem {
 		setSetpointMotionMagic(State.ZERO.output);
 	}
 
+	/**
+	 * Registers the enabled loops for the Climb subsystem.
+	 * @param enabledLooper The enabled looper.
+	 */
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
@@ -84,7 +102,11 @@ public class Climb extends ServoMotorSubsystem {
 		return false;
 	}
 
-	
+	/**
+	 * Creates a request to change the state of the Climb subsystem.
+	 * @param _wantedState The desired state.
+	 * @return The request to change the state.
+	 */
 	public Request stateRequest(State _wantedState) {
 		return new Request() {
 			@Override

@@ -1,10 +1,7 @@
 package com.team5817.frc2025.controlboard;
 
-import java.util.HashMap;
-
 import org.littletonrobotics.junction.Logger;
 
-import com.team254.lib.geometry.Pose2d;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.subsystems.LEDs;
 import com.team5817.frc2025.subsystems.Superstructure;
@@ -14,6 +11,10 @@ import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
 
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * The DriverControls class handles the input from the driver and co-driver controllers
+ * and translates them into actions for the robot's subsystems.
+ */
 public class DriverControls {
 
 	ControlBoard mControlBoard = ControlBoard.getInstance();
@@ -21,6 +22,11 @@ public class DriverControls {
 	Superstructure s;
 	Drive mDrive;
 	LEDs mLEDs = LEDs.getInstance();
+
+	/**
+	 * Constructor for the DriverControls class.
+	 * Initializes the Drive and Superstructure instances and sets the initial goal state.
+	 */
 	public DriverControls(){
 		mDrive = Drive.getInstance();
 		s = Superstructure.getInstance();
@@ -29,6 +35,10 @@ public class DriverControls {
 
 	/* ONE CONTROLLER */
 
+	/**
+	 * Handles the input for the one controller mode.
+	 * This mode is used when only one controller is available for the driver.
+	 */
 	public void oneControllerMode() {
 			// mDrive.overrideHeading(true);
 		if(driver.getStartButton())
@@ -45,6 +55,11 @@ public class DriverControls {
 	/* TWO CONTROLLERS */
 	GoalState preparedGoal = GoalState.L4;
 	Timer practiceTimer = new Timer();
+
+	/**
+	 * Handles the input for the two controller mode.
+	 * This mode is used when both driver and co-driver controllers are available.
+	 */
 	public void twoControllerMode() {
 		if(driver.getBButton())
 			practiceTimer.start();

@@ -24,6 +24,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class IntakeRollers extends Subsystem {
 	private static IntakeRollers mInstance;
 
+	/**
+	 * Gets the singleton instance of the IntakeRollers.
+	 *
+	 * @return The singleton instance.
+	 */
 	public static IntakeRollers getInstance() {
 		if (mInstance == null) {
 			mInstance = new IntakeRollers();
@@ -50,11 +55,19 @@ public class IntakeRollers extends Subsystem {
 	private IntakeRollerInputsAutoLogged mIntakeRollerInputs = new IntakeRollerInputsAutoLogged();
 	private IntakeRollerOutputsAutoLogged mIntakeRollerOutputs = new IntakeRollerOutputsAutoLogged();
 
+	/**
+	 * Private constructor for the IntakeRollers subsystem.
+	 */
 	private IntakeRollers() {
 		mRoller = new TalonFX(Ports.INTAKE_ROLLER.getDeviceNumber(), Ports.INTAKE_ROLLER.getBus());
 		TalonUtil.applyAndCheckConfiguration(mRoller, IntakeRollerConstants.RollerFXConfig());
 	}
 
+	/**
+	 * Registers the enabled loops for the subsystem.
+	 *
+	 * @param enabledLooper The looper to register.
+	 */
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
@@ -87,6 +100,8 @@ public class IntakeRollers extends Subsystem {
 	}
 
 	/**
+	 * Creates a new request to update the intake rollers with the wanted state.
+	 *
 	 * @param _wantedState Wanted state for the intake rollers.
 	 * @return New request that updates the intake rollers with the wanted state.
 	 */

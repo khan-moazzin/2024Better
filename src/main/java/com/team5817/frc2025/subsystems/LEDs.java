@@ -22,6 +22,11 @@ import edu.wpi.first.wpilibj.Timer;
 public class LEDs extends Subsystem {
 	private static LEDs mInstance;
 
+	/**
+	 * Gets the singleton instance of the LEDs subsystem.
+	 *
+	 * @return The singleton instance of LEDs.
+	 */
 	public static LEDs getInstance() {
 		if (mInstance == null) {
 			mInstance = new LEDs();
@@ -34,6 +39,9 @@ public class LEDs extends Subsystem {
 	private final CANdle mCandle = new CANdle(Ports.LEDS.getDeviceNumber(), Ports.LEDS.getBus());
 	private LEDSection mLEDStatus = new LEDSection(0, kNumLeds);
 
+	/**
+	 * Constructor for the LEDs subsystem.
+	 */
 	public LEDs() {
 		CANdleConfiguration configAll = new CANdleConfiguration();
 		configAll.statusLedOffWhenActive = false;
@@ -48,6 +56,11 @@ public class LEDs extends Subsystem {
 		applyStates(TimedLEDState.DISABLE_BLUE);
 	}
 
+	/**
+	 * Registers the enabled loops for the LEDs subsystem.
+	 *
+	 * @param mEnabledLooper The enabled looper to register.
+	 */
 	@Override
 	public void registerEnabledLoops(ILooper mEnabledLooper) {
 		mEnabledLooper.register(new Loop() {
@@ -62,6 +75,9 @@ public class LEDs extends Subsystem {
 		});
 	}
 
+	/**
+	 * Reads the periodic inputs for the LEDs subsystem.
+	 */
 	@Override
 	public void readPeriodicInputs() {
 		if (DriverStation.isDisabled()) {
@@ -88,10 +104,20 @@ public class LEDs extends Subsystem {
 		mCandle.setLEDs(color.r, color.g, color.b, 0, mLEDStatus.startIDx, 100);
 	}
 
-	// setter functions
+	/**
+	 * Applies the given TimedLEDState to the LEDs.
+	 *
+	 * @param TimedState The TimedLEDState to apply.
+	 */
 	public void applyStates(TimedLEDState TimedState) {
 		mLEDStatus.setState(TimedState);
 	}
+
+	/**
+	 * Gets the current TimedLEDState of the LEDs.
+	 *
+	 * @return The current TimedLEDState.
+	 */
 	public TimedLEDState getState() {
 		return mLEDStatus.state;
 	}
@@ -110,9 +136,10 @@ public class LEDs extends Subsystem {
 	}
 
 	/**
-	 * Updates the LEDs to a specific color or animation.
+	 * Creates a request to update the LEDs to a specific color or animation.
 	 *
-	 * @param wanted_state Wanted LED color/animation.
+	 * @param wanted_state The desired LED color/animation.
+	 * @return A Request to update the LEDs.
 	 */
 	public Request stateRequest(TimedLEDState wanted_state) {
 		return new Request() {
@@ -129,7 +156,6 @@ public class LEDs extends Subsystem {
 		};
 	}
 
-
 	// Class for holding information about each section
 	private class LEDSection {
 		private TimedLEDState state = TimedLEDState.OFF; // current TimedState
@@ -137,11 +163,22 @@ public class LEDs extends Subsystem {
 		private int colorIndex = 0; // tracks current color in array
 		private int startIDx, LEDCount; // start and end of section
 
+		/**
+		 * Constructor for LEDSection.
+		 *
+		 * @param startIndex The start index of the LED section.
+		 * @param endIndex The end index of the LED section.
+		 */
 		public LEDSection(int startIndex, int endIndex) {
 			startIDx = startIndex;
 			LEDCount = endIndex - startIndex;
 		}
 
+		/**
+		 * Sets the state of the LED section.
+		 *
+		 * @param wantedTimedState The desired TimedLEDState.
+		 */
 		public void setState(TimedLEDState wantedTimedState) {
 			if (wantedTimedState != state) {
 				colorIndex = 0;
@@ -150,6 +187,11 @@ public class LEDs extends Subsystem {
 			}
 		}
 
+		/**
+		 * Gets the current color of the LED section.
+		 *
+		 * @return The current color.
+		 */
 		public Color getWantedColor() {
 			Color color;
 			try {
@@ -160,7 +202,9 @@ public class LEDs extends Subsystem {
 			return color;
 		}
 
-		// cycle to next color in array
+		/**
+		 * Cycles to the next color in the array.
+		 */
 		public void nextColor() {
 			if (state.colors.length == 1) {
 				return;
@@ -172,6 +216,9 @@ public class LEDs extends Subsystem {
 			}
 		}
 
+		/**
+		 * Resets the LED section to the default state.
+		 */
 		public void reset() {
 			state = TimedLEDState.OFF;
 			lastSwitchTime = 0.0;

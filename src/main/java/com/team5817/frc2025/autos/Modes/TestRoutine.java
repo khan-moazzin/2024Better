@@ -17,6 +17,9 @@ import com.team5817.lib.Elastic;
 import com.team5817.lib.Elastic.Notification;
 import com.team5817.lib.Elastic.Notification.NotificationLevel;
 
+/**
+ * TestRoutine is an autonomous routine for testing various subsystems.
+ */
 public class TestRoutine extends AutoBase {
     
     
@@ -31,7 +34,9 @@ public class TestRoutine extends AutoBase {
 	private Indexer mIndexer;
     private Superstructure s;
 
-
+    /**
+     * Constructs a new TestRoutine and initializes subsystem instances.
+     */
     public TestRoutine(){
         s = Superstructure.getInstance();
         mElevator = Elevator.getInstance();
@@ -43,6 +48,9 @@ public class TestRoutine extends AutoBase {
         mIndexer = Indexer.getInstance();
     }
 
+    /**
+     * Executes the test routine, which involves various subsystem state changes and waits for controller input.
+     */
     public void routine(){
 
         System.out.println("Starting Test Routine");

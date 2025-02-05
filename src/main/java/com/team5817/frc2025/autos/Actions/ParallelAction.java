@@ -9,40 +9,59 @@ import java.util.List;
  */
 public class ParallelAction implements Action {
 
-	private final ArrayList<Action> mActions;
+    private final ArrayList<Action> mActions;
 
-	public ParallelAction(List<Action> actions) {
-		mActions = new ArrayList<>(actions);
-	}
+    /**
+     * Constructs a ParallelAction with the specified list of actions.
+     * 
+     * @param actions the list of actions to run in parallel
+     */
+    public ParallelAction(List<Action> actions) {
+        mActions = new ArrayList<>(actions);
+    }
 
-	@Override
-	public boolean isFinished() {
-		for (Action action : mActions) {
-			if (!action.isFinished()) {
-				return false;
-			}
-		}
-		return true;
-	}
+    /**
+     * Checks if all sub-actions are finished.
+     * 
+     * @return true if all sub-actions are finished, false otherwise
+     */
+    @Override
+    public boolean isFinished() {
+        for (Action action : mActions) {
+            if (!action.isFinished()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public void update() {
-		for (Action action : mActions) {
-			action.update();
-		}
-	}
+    /**
+     * Updates all sub-actions.
+     */
+    @Override
+    public void update() {
+        for (Action action : mActions) {
+            action.update();
+        }
+    }
 
-	@Override
-	public void done() {
-		for (Action action : mActions) {
-			action.done();
-		}
-	}
+    /**
+     * Calls the done method on all sub-actions.
+     */
+    @Override
+    public void done() {
+        for (Action action : mActions) {
+            action.done();
+        }
+    }
 
-	@Override
-	public void start() {
-		for (Action action : mActions) {
-			action.start();
-		}
-	}
+    /**
+     * Starts all sub-actions.
+     */
+    @Override
+    public void start() {
+        for (Action action : mActions) {
+            action.start();
+        }
+    }
 }

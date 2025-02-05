@@ -8,7 +8,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -20,7 +19,6 @@ import com.team254.lib.motion.MotionState;
 import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.Util;
 import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.Mode;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
@@ -141,6 +139,11 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	protected double mForwardSoftLimitRotations;
 	protected double mReverseSoftLimitRotations;
 
+	/**
+	 * Constructor for ServoMotorSubsystem.
+	 *
+	 * @param constants The constants for the subsystem.
+	 */
 	protected ServoMotorSubsystem(final ServoMotorSubsystemConstants constants) {
 		mConstants = constants;
 		mMain = TalonFXFactory.createDefaultTalon(mConstants.kMainConstants.id, false);
@@ -255,6 +258,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		stop();
 	}
 
+	/**
+	 * Sets the stator current limit.
+	 *
+	 * @param currentLimit The current limit in amps.
+	 * @param enable       Whether to enable the current limit.
+	 */
 	public void setStatorCurrentLimit(double currentLimit, boolean enable) {
 		changeTalonConfig((conf) -> {
 			conf.CurrentLimits.StatorCurrentLimit = currentLimit;
@@ -263,6 +272,11 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		});
 	}
 
+	/**
+	 * Enables or disables the soft limits.
+	 *
+	 * @param enable Whether to enable the soft limits.
+	 */
 	public void enableSoftLimits(boolean enable) {
 		UnaryOperator<TalonFXConfiguration> configChanger = (conf) -> {
 			conf.SoftwareLimitSwitch.ForwardSoftLimitEnable = enable;
@@ -283,6 +297,11 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		writeConfigs();
 	}
 
+	/**
+	 * Sets the neutral mode of the motor.
+	 *
+	 * @param mode The neutral mode.
+	 */
 	public void setNeutralMode(NeutralModeValue mode) {
 		changeTalonConfig((conf) -> {
 			conf.MotorOutput.NeutralMode = mode;
@@ -290,6 +309,11 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		});
 	}
 
+	/**
+	 * Changes the Talon configuration.
+	 *
+	 * @param configChanger The function to change the configuration.
+	 */
 	public void changeTalonConfig(UnaryOperator<TalonFXConfiguration> configChanger) {
 		for (int i = 0; i < mFollowers.length; ++i) {
 			mFollowerConfigs[i] = configChanger.apply(mFollowerConfigs[i]);
@@ -298,6 +322,9 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		writeConfigs();
 	}
 
+	/**
+	 * Writes the configurations to the Talon.
+	 */
 	public void writeConfigs() {
 		for (int i = 0; i < mFollowers.length; ++i) {
 			TalonFX follower = mFollowers[i];
@@ -365,6 +392,9 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	protected boolean mHasBeenZeroed = false;
 	protected StatusSignal<Integer> mMainStickyFault;
 
+	/**
+	 * Reads the periodic inputs from the Talon.
+	 */
 	@Override
 	public void readPeriodicInputs() {
 		mServoInputs.timestamp = Timer.getFPGATimestamp();
@@ -431,6 +461,9 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		lastTimestamp = Timer.getTimestamp();
 	}
 
+	/**
+	 * Writes the periodic outputs to the Talon.
+	 */
 	@Override
 	public void writePeriodicOutputs() {
 		if (mControlState == ControlState.MOTION_MAGIC) {
@@ -445,9 +478,19 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 	}
 
+	/**
+	 * Handles the main reset.
+	 *
+	 * @param reset Whether a reset occurred.
+	 */
 	public void handleMainReset(boolean reset) {
 	}
 
+	/**
+	 * Registers the enabled loops.
+	 *
+	 * @param mEnabledLooper The enabled looper.
+	 */
 	@Override
 	public void registerEnabledLoops(ILooper mEnabledLooper) {
 		mEnabledLooper.register(new Loop() {
@@ -482,24 +525,47 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		});
 	}
 
+	/**
+	 * Gets the position in rotations.
+	 *
+	 * @return The position in rotations.
+	 */
 	public double getPositionRotations() {
 		return mServoInputs.position_rots;
 	}
 
-	// In "Units"
+	/**
+	 * Gets the position in units.
+	 *
+	 * @return The position in units.
+	 */
 	public double getPosition() {
 		return rotationsToHomedUnits(mServoInputs.position_rots);
 	}
 
-	// In "Units per second"
+	/**
+	 * Gets the velocity in units per second.
+	 *
+	 * @return The velocity in units per second.
+	 */
 	public double getVelocity() {
 		return rotationsToUnits(mServoInputs.velocity_rps);
 	}
 
+	/**
+	 * Gets the pure velocity in rotations per second.
+	 *
+	 * @return The pure velocity in rotations per second.
+	 */
 	public double getPureVelocity(){
 		return mServoInputs.velocity_rps;
 	}
 
+	/**
+	 * Gets the velocity error.
+	 *
+	 * @return The velocity error.
+	 */
 	public double getVelError() {
 		if (mMotionStateSetpoint == null) {
 			return 0.0;
@@ -507,23 +573,44 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		return rotationsToUnits(mMotionStateSetpoint.vel() - mServoInputs.velocity_rps);
 	}
 
+	/**
+	 * Checks if the trajectory has finished.
+	 *
+	 * @return True if the trajectory has finished, false otherwise.
+	 */
 	public boolean hasFinishedTrajectory() {
 		return Util.epsilonEquals(
 				mServoInputs.active_trajectory_position, getSetpoint(), Math.max(1, mConstants.kDeadband));
 	}
 
+	/**
+	 * Gets the setpoint in units.
+	 *
+	 * @return The setpoint in units.
+	 */
 	public double getSetpoint() {
 		return (mControlState == ControlState.MOTION_MAGIC || mControlState == ControlState.POSITION_PID)
 				? rotationsToHomedUnits(mServoOutputs.demand)
 				: Double.NaN;
 	}
 
+	/**
+	 * Gets the setpoint in homed units.
+	 *
+	 * @return The setpoint in homed units.
+	 */
 	public double getSetpointHomed() {
 		return (mControlState == ControlState.MOTION_MAGIC || mControlState == ControlState.POSITION_PID)
 				? rotationsToHomedUnits(mServoOutputs.demand)
 				: Double.NaN;
 	}
 
+	/**
+	 * Sets the setpoint for motion magic.
+	 *
+	 * @param units        The setpoint in units.
+	 * @param feedforward_v The feedforward voltage.
+	 */
 	public void setSetpointMotionMagic(double units, double feedforward_v) {
 		mServoOutputs.demand = constrainRotations(homeAwareUnitsToRotations(units));
 		if (mControlState != ControlState.MOTION_MAGIC) {
@@ -531,10 +618,21 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 	}
 
+	/**
+	 * Sets the setpoint for motion magic.
+	 *
+	 * @param units The setpoint in units.
+	 */
 	public void setSetpointMotionMagic(double units) {
 		setSetpointMotionMagic(units, 0.0);
 	}
 
+	/**
+	 * Sets the setpoint for position PID.
+	 *
+	 * @param units        The setpoint in units.
+	 * @param feedforward_v The feedforward voltage.
+	 */
 	public void setSetpointPositionPID(double units, double feedforward_v) {
 		mServoOutputs.demand = constrainRotations(homeAwareUnitsToRotations(units));
 		if (mControlState != ControlState.POSITION_PID) {
@@ -542,31 +640,71 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 	}
 
+	/**
+	 * Sets the setpoint for position PID.
+	 *
+	 * @param units The setpoint in units.
+	 */
 	public void setSetpointPositionPID(double units) {
 		setSetpointPositionPID(units, 0.0);
 	}
 
+	/**
+	 * Converts rotations to units.
+	 *
+	 * @param rotations The rotations.
+	 * @return The units.
+	 */
 	protected double rotationsToUnits(double rotations) {
 		return rotations / mConstants.kRotationsPerUnitDistance;
 	}
 
+	/**
+	 * Converts rotations to homed units.
+	 *
+	 * @param rotations The rotations.
+	 * @return The homed units.
+	 */
 	protected double rotationsToHomedUnits(double rotations) {
 		double val = rotationsToUnits(rotations);
 		return val + mConstants.kHomePosition;
 	}
 
+	/**
+	 * Converts units to rotations.
+	 *
+	 * @param units The units.
+	 * @return The rotations.
+	 */
 	protected double unitsToRotations(double units) {
 		return units * mConstants.kRotationsPerUnitDistance;
 	}
 
+	/**
+	 * Converts home-aware units to rotations.
+	 *
+	 * @param units The units.
+	 * @return The rotations.
+	 */
 	protected double homeAwareUnitsToRotations(double units) {
 		return unitsToRotations(units - mConstants.kHomePosition);
 	}
 
+	/**
+	 * Constrains the rotations within the soft limits.
+	 *
+	 * @param rotations The rotations.
+	 * @return The constrained rotations.
+	 */
 	protected double constrainRotations(double rotations) {
 		return Util.limit(rotations, mReverseSoftLimitRotations, mForwardSoftLimitRotations);
 	}
 
+	/**
+	 * Sets the open loop control.
+	 *
+	 * @param percentage The percentage output.
+	 */
 	public void setOpenLoop(double percentage) {
 		if (mControlState != ControlState.OPEN_LOOP) {
 			mControlState = ControlState.OPEN_LOOP;
@@ -574,6 +712,11 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoOutputs.demand = percentage;
 	}
 
+	/**
+	 * Applies a voltage to the motor.
+	 *
+	 * @param voltage The voltage.
+	 */
 	public void applyVoltage(double voltage){
 		if(mControlState != ControlState.VOLTAGE){
 			mControlState = ControlState.VOLTAGE;
@@ -581,14 +724,30 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoOutputs.demand = voltage;		
 	}
 
+	/**
+	 * Gets the active trajectory position.
+	 *
+	 * @return The active trajectory position.
+	 */
 	public double getActiveTrajectoryPosition() {
 		return rotationsToHomedUnits((mServoInputs.active_trajectory_position));
 	}
 
+	/**
+	 * Gets the control state as a string.
+	 *
+	 * @return The control state.
+	 */
 	public String getControlState() {
 		return mControlState.toString();
 	}
 
+	/**
+	 * Gets the predicted position in units after a lookahead time.
+	 *
+	 * @param lookahead_secs The lookahead time in seconds.
+	 * @return The predicted position in units.
+	 */
 	public double getPredictedPositionUnits(double lookahead_secs) {
 		double predicted_units = mServoInputs.active_trajectory_position
 				+ lookahead_secs * mServoInputs.active_trajectory_velocity
@@ -600,30 +759,55 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 	}
 
+	/**
+	 * Checks if the mechanism is at the homing location.
+	 *
+	 * @return True if at the homing location, false otherwise.
+	 */
 	public boolean atHomingLocation() {
 		return false;
 	}
 
+	/**
+	 * Resets the sensors if at the homing location.
+	 */
 	public void resetIfAtHome() {
 		if (atHomingLocation()) {
 			zeroSensors();
 		}
 	}
 
+	/**
+	 * Zeros the sensors.
+	 */
 	@Override
 	public void zeroSensors() {
 		Phoenix6Util.checkErrorAndRetry(() -> mMain.setPosition(0, mConstants.kCANTimeout));
 		mHasBeenZeroed = true;
 	}
 
+	/**
+	 * Forces the sensors to zero.
+	 */
 	public void forceZero() {
 		Phoenix6Util.checkErrorAndRetry(() -> mMain.setPosition(0, mConstants.kCANTimeout));
 	}
 
+	/**
+	 * Checks if the sensors have been zeroed.
+	 *
+	 * @return True if the sensors have been zeroed, false otherwise.
+	 */
 	public boolean hasBeenZeroed() {
 		return mHasBeenZeroed;
 	}
 
+	/**
+	 * Sets the supply current limit.
+	 *
+	 * @param value  The current limit in amps.
+	 * @param enable Whether to enable the current limit.
+	 */
 	public void setSupplyCurrentLimit(double value, boolean enable) {
 		mMainConfig.CurrentLimits.SupplyCurrentLimit = value;
 		mMainConfig.CurrentLimits.SupplyCurrentLimitEnable = enable;
@@ -631,6 +815,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		TalonUtil.applyAndCheckConfiguration(mMain, mMainConfig);
 	}
 
+	/**
+	 * Sets the supply current limit without checking the configuration.
+	 *
+	 * @param value  The current limit in amps.
+	 * @param enable Whether to enable the current limit.
+	 */
 	public void setSupplyCurrentLimitUnchecked(double value, boolean enable) {
 		mMainConfig.CurrentLimits.SupplyCurrentLimit = value;
 		mMainConfig.CurrentLimits.SupplyCurrentLimitEnable = enable;
@@ -638,6 +828,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mMain.getConfigurator().apply(mMainConfig);
 	}
 
+	/**
+	 * Sets the stator current limit without checking the configuration.
+	 *
+	 * @param value  The current limit in amps.
+	 * @param enable Whether to enable the current limit.
+	 */
 	public void setStatorCurrentLimitUnchecked(double value, boolean enable) {
 		mMainConfig.CurrentLimits.StatorCurrentLimit = value;
 		mMainConfig.CurrentLimits.StatorCurrentLimitEnable = enable;
@@ -645,12 +841,24 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mMain.getConfigurator().apply(mMainConfig);
 	}
 
+	/**
+	 * Sets the motion magic configurations without checking the configuration.
+	 *
+	 * @param accel The acceleration.
+	 * @param jerk  The jerk.
+	 */
 	public void setMotionMagicConfigsUnchecked(double accel, double jerk) {
 		mMainConfig.MotionMagic.MotionMagicAcceleration = accel;
 		mMainConfig.MotionMagic.MotionMagicJerk = jerk;
 		mMain.getConfigurator().apply(mMainConfig.MotionMagic);
 	}
 
+	/**
+	 * Sets the motion magic configurations.
+	 *
+	 * @param accel    The acceleration.
+	 * @param velocity The cruise velocity.
+	 */
 	public void setMotionMagicConfigs(double accel, double velocity) {
 		mMainConfig.MotionMagic.MotionMagicAcceleration = unitsToRotations(accel);
 		mMainConfig.MotionMagic.MotionMagicCruiseVelocity = unitsToRotations(velocity);
@@ -659,17 +867,28 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	}
 
 
+	/**
+	 * Outputs telemetry data.
+	 */
 	@Override
 	public void outputTelemetry() {
 		Logger.recordOutput(mConstants.kName + "/Control Mode", mControlState);
 		Logger.recordOutput(mConstants.kName + "/Demand", mServoOutputs.demand);
 	}
 
+	/**
+	 * Rewrites the device configuration.
+	 */
 	@Override
 	public void rewriteDeviceConfiguration() {
 		writeConfigs();
 	}
 
+	/**
+	 * Checks the device configuration.
+	 *
+	 * @return True if the configuration is correct, false otherwise.
+	 */
 	@Override
 	public boolean checkDeviceConfiguration() {
 		if (!TalonUtil.readAndVerifyConfiguration(mMain, mMainConfig)) {

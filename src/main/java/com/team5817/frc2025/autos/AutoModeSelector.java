@@ -10,6 +10,9 @@ import com.team5817.frc2025.autos.Modes.CustomThreeCoralMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
 import com.team5817.frc2025.autos.Modes.ThreeCoralMode;
 
+/**
+ * This class is responsible for selecting the autonomous mode for the robot.
+ */
 public class AutoModeSelector {
 
 	public enum ScoringLocation{
@@ -69,6 +72,10 @@ public class AutoModeSelector {
 	private static SendableChooser<ScoringLocation> mThirdScoreSelector = new SendableChooser<>();
 
 
+	/**
+	 * Constructor for AutoModeSelector.
+	 * Initializes the SendableChoosers for starting position, pickup location, and scoring locations.
+	 */
 	public AutoModeSelector() {
 		mStartingPositionSelector.setDefaultOption("Proccessor Side", StartingPosition.PROCCESSOR_SIDE);
 		mStartingPositionSelector.addOption("Center Processor Side", StartingPosition.CENTER_PROCESS);
@@ -94,6 +101,11 @@ public class AutoModeSelector {
 		mThirdScoreSelector.addOption("3A", ScoringLocation._3A);
 		mThirdScoreSelector.addOption("6B", ScoringLocation._6B);
 	}
+
+	/**
+	 * Updates the mode creator based on the selected starting position and desired mode.
+	 * Updates the cached values for pickup location and scoring locations.
+	 */
 	public void updateModeCreator() {
 		if(mCachedStartingPosition!=mStartingPositionSelector.getSelected()&&mStartingPositionSelector.getSelected()!=null){
 			mModeChooser = new SendableChooser<>();
@@ -125,6 +137,12 @@ public class AutoModeSelector {
 		
 }
 
+	/**
+	 * Returns the AutoBase instance for the given desired mode.
+	 *
+	 * @param mode The desired autonomous mode.
+	 * @return An Optional containing the AutoBase instance if a valid mode is found, otherwise an empty Optional.
+	 */
 	private Optional<AutoBase> getAutoModeForParams(DesiredMode mode) {
 		switch (mode) {
 			case DO_NOTHING:
@@ -147,24 +165,45 @@ public class AutoModeSelector {
 		return Optional.empty();
 	}
 
+	/**
+	 * Returns the SendableChooser for selecting the desired mode.
+	 *
+	 * @return The SendableChooser for desired mode.
+	 */
 	public static SendableChooser<DesiredMode> getModeChooser() {
 		return mModeChooser;
 	}
 
+	/**
+	 * Returns the cached desired autonomous mode.
+	 *
+	 * @return The cached desired mode.
+	 */
 	public DesiredMode getDesiredAutomode() {
 		return mCachedDesiredMode;
 	}
 
+	/**
+	 * Resets the AutoModeSelector by clearing the cached auto mode and desired mode.
+	 */
 	public void reset() {
 		mAutoMode = Optional.empty();
 		mCachedDesiredMode = null;
 	}
 
+	/**
+	 * Outputs the selected autonomous mode and starting position to the SmartDashboard.
+	 */
 	public void outputToSmartDashboard() {
 		SmartDashboard.putString("AutoModeSelected", mCachedDesiredMode.name());
 		SmartDashboard.putString("Starting Position Selected", mCachedStartingPosition.name());
 	}
 
+	/**
+	 * Returns the currently selected AutoBase instance.
+	 *
+	 * @return An Optional containing the AutoBase instance if present, otherwise an empty Optional.
+	 */
 	public Optional<AutoBase> getAutoMode() {
 
 		if (!mAutoMode.isPresent()) {

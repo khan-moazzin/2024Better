@@ -1,13 +1,16 @@
 package com.team5817.frc2025.autos;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import com.team5817.lib.motion.Trajectory;
 
+/**
+ * A library of predefined trajectories for the robot.
+ */
 public class TrajectoryLibrary {
 
+    /**
+     * A nested class containing static trajectory instances and a method to update them.
+     */
     public static class l {
         public static HashMap<String, Trajectory> trajectories = new HashMap<>();
 
@@ -53,6 +56,9 @@ public class TrajectoryLibrary {
 
 
 
+        /**
+         * Updates all trajectories in the library.
+         */
         public static void update(){
             for(Trajectory t : trajectories.values()){
                 t.update();

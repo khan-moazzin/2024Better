@@ -6,6 +6,10 @@ import com.team5817.lib.Util;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
+/**
+ * Custom Xbox controller class that extends the WPILib XboxController class.
+ * Provides additional functionality such as deadband handling and rumble control.
+ */
 public class CustomXboxController extends XboxController {
 	private static final double PRESS_THRESHOLD = 0.05;
 	private double DEAD_BAND = 0.15;
@@ -47,10 +51,20 @@ public class CustomXboxController extends XboxController {
 	public static final int POV_135 = -8;
 	public static final int POV_225 = -9;
 
+	/**
+	 * Sets the deadband value for the controller.
+	 * 
+	 * @param deadband the deadband value to set
+	 */
 	public void setDeadband(double deadband) {
 		DEAD_BAND = deadband;
 	}
 
+	/**
+	 * Constructor for the CustomXboxController.
+	 * 
+	 * @param usb the USB port number the controller is connected to
+	 */
 	public CustomXboxController(int usb) {
 		super(usb);
 		aButton = new ButtonCheck(A_BUTTON);
@@ -103,26 +117,49 @@ public class CustomXboxController extends XboxController {
 		return Util.deadBand(getRawAxis(3), PRESS_THRESHOLD);
 	}
 
+	/**
+	 * Gets the direction of the POV (D-pad) as a Rotation2d object.
+	 * 
+	 * @return the direction of the POV
+	 */
 	public Rotation2d getPOVDirection() {
 		System.out.println(getPOV());
 		return Rotation2d.fromDegrees(getPOV());
 	}
 
+	/**
+	 * Starts a rumble effect on the controller.
+	 * 
+	 * @param rumblesPerSecond the frequency of the rumble in rumbles per second
+	 * @param numberOfSeconds the duration of the rumble in seconds
+	 */
 	public void rumble(double rumblesPerSecond, double numberOfSeconds) {
 		if (!rumbling) {
 			RumbleThread r = new RumbleThread(rumblesPerSecond, numberOfSeconds);
 			r.start();
 		}
 	}
-	public boolean releasedAny(ButtonCheck... buttons){
-	for (ButtonCheck button : buttons) {
-		if (button.wasReleased()) {
-			return true;
+
+	/**
+	 * Checks if any of the specified buttons were released.
+	 * 
+	 * @param buttons the buttons to check
+	 * @return true if any of the buttons were released, false otherwise
+	 */
+	public boolean releasedAny(ButtonCheck... buttons) {
+		for (ButtonCheck button : buttons) {
+			if (button.wasReleased()) {
+				return true;
+			}
 		}
-	}
-	return false;
+		return false;
 	}
 
+	/**
+	 * Checks if the controller is currently rumbling.
+	 * 
+	 * @return true if the controller is rumbling, false otherwise
+	 */
 	public boolean isRumbling() {
 		return rumbling;
 	}
@@ -306,6 +343,9 @@ public class CustomXboxController extends XboxController {
 		}
 	}
 
+	/**
+	 * Updates the state of all buttons.
+	 */
 	public void update() {
 		aButton.update();
 		bButton.update();

@@ -3,8 +3,6 @@ package com.team5817.frc2025.autos.Actions;
 import java.util.EnumMap;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
-import com.pathplanner.lib.path.GoalEndState;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.swerve.ChassisSpeeds;
 import com.team5817.frc2025.controlboard.ControlBoard;
