@@ -31,6 +31,10 @@ public class CustomThreeCoralMode extends AutoBase {
 	private double exitDistance = 1.5;
 	private double coralSpit = .1;
 
+	private String firstScoreName;
+	private String secondScoreName;
+	private String thirdScoreName;
+
 	public CustomThreeCoralMode(StartingPosition startingPosition, PickupLocation pickupLocation, ScoringLocation firstScore, ScoringLocation secondScore, ScoringLocation thirdScore) {
 
  	boolean mirror = startingPosition.mirrored;
@@ -43,9 +47,9 @@ public class CustomThreeCoralMode extends AutoBase {
 
 	String startName;
 	String humanName;
-	String firstScoreName = firstScore.toString();
-	String secondScoreName = secondScore.toString();
-	String thirdScoreName = thirdScore.toString();
+	firstScoreName = firstScore.toString();
+	secondScoreName = secondScore.toString();
+	thirdScoreName = thirdScore.toString();
 	
 	switch (startingPosition) {
 		case CENTER_PROCESS:
@@ -106,13 +110,13 @@ public class CustomThreeCoralMode extends AutoBase {
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));
-		System.out.println("Aligning to 3A");
+		System.out.println("Aligning to " + firstScoreName);
 		d.autoAlignFinishedOverrride(true);
 
 		r(new WaitForSuperstructureAction());
 		r(new WaitAction(coralSpit));
 
-		System.out.println("Scored 3A");
+		System.out.println("Scored " + firstScoreName);
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
@@ -120,6 +124,7 @@ public class CustomThreeCoralMode extends AutoBase {
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.HUMAN_CORAL_INTAKE);
 						}))))));
+		r(new WaitAction(1));
 		System.out.println("Collected 1st coral");
 
 		d.autoAlignFinishedOverrride(false);
@@ -132,12 +137,12 @@ public class CustomThreeCoralMode extends AutoBase {
 							s.setGoal(GoalState.L4);
 						}))))));
 
-		System.out.println("Aligning to 7A");
+		System.out.println("Aligning to " + secondScoreName);
 		d.autoAlignFinishedOverrride(true);
 
 		r(new WaitForSuperstructureAction());
 		r(new WaitAction(coralSpit));
-		System.out.println("Scored 7A");
+		System.out.println("Scored " + secondScoreName);
 		d.setUseSpecializedPoseForPath(false);
 
 		r(new ParallelAction(List.of(
@@ -147,8 +152,9 @@ public class CustomThreeCoralMode extends AutoBase {
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.HUMAN_CORAL_INTAKE);
 						}))))));
-		System.out.println("Collected 2nd coral");
 
+		r(new WaitAction(1));
+		System.out.println("Collected 2nd coral");
 		d.autoAlignFinishedOverrride(false);
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),
@@ -159,10 +165,10 @@ public class CustomThreeCoralMode extends AutoBase {
 							s.setGoal(GoalState.L4);
 						}))))));
 
-		System.out.println("Aligning to 7B");
+		System.out.println("Aligning to " + thirdScoreName);
 		d.autoAlignFinishedOverrride(true);
 		r(new WaitAction(coralSpit));
-		System.out.println("Scored 7B");
+		System.out.println("Scored " + thirdScoreName);
 
 		d.setUseSpecializedPoseForPath(false);
 

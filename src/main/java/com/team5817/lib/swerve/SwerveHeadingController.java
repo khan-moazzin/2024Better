@@ -3,7 +3,6 @@ package com.team5817.lib.swerve;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.util.SynchronousPIDF;
 import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.SwerveConstants;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -74,17 +73,17 @@ public class SwerveHeadingController {
 
 				if (Constants.mode == Constants.Mode.SIM) {
 					stabilizePID.setPIDF(
-						SwerveConstants.kStabilizeSwerveHeadingKp * 7,
-						SwerveConstants.kStabilizeSwerveHeadingKi * 7,
-						SwerveConstants.kStabilizeSwerveHeadingKd * 7,
-						SwerveConstants.kStabilizeSwerveHeadingKf * 7
+						SwerveConstants.kStabilizeSwerveHeadingKp * 2,
+						SwerveConstants.kStabilizeSwerveHeadingKi * 2,
+						SwerveConstants.kStabilizeSwerveHeadingKd * 2,
+						SwerveConstants.kStabilizeSwerveHeadingKf * 2
 					);
 
 					snapPID.setPIDF(
-						SwerveConstants.kSnapSwerveHeadingKp * 7,
-						SwerveConstants.kSnapSwerveHeadingKi * 7,
-						SwerveConstants.kSnapSwerveHeadingKd * 7,
-						SwerveConstants.kSnapSwerveHeadingKf * 7
+						SwerveConstants.kSnapSwerveHeadingKp * 2,
+						SwerveConstants.kSnapSwerveHeadingKi * 2,
+						SwerveConstants.kSnapSwerveHeadingKd * 2,
+						SwerveConstants.kSnapSwerveHeadingKf * 2
 					);
 				}
 

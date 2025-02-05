@@ -1,7 +1,10 @@
 package com.team5817.frc2025.autos.Actions;
 
 import java.util.EnumMap;
+import java.util.List;
 
+import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
+import com.pathplanner.lib.path.GoalEndState;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.swerve.ChassisSpeeds;
 import com.team5817.frc2025.controlboard.ControlBoard;
@@ -18,6 +21,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ControlsCheck implements Action{
 
     public final EnumMap<GoalState, Boolean> mGoalMap = new EnumMap<>(Superstructure.GoalState.class);
+
+    public static List<String> statesToCheck = List.of(
+        "GROUND_CORAL_INTAKE",
+        "A2",
+        "L4",
+        "STOW",
+        "CLIMB_PREPARE",
+        "CLIMB_PULL",
+        "NET",
+        "PROCESS"
+    );
+
     public Superstructure s;
     public DriverControls controls;
     public ControlBoard controlBoard;
@@ -38,9 +53,9 @@ public class ControlsCheck implements Action{
         d = Drive.getInstance();
         controls = new DriverControls();
 
-        for (GoalState goal : Superstructure.GoalState.class) {
-            mGoalMap.put(goal, false);
-
+        for (GoalState goal : GoalState.values()) {
+            if(statesToCheck.contains(goal.toString()))
+                mGoalMap.put(goal, false);
         }
 
     }
@@ -59,13 +74,14 @@ public class ControlsCheck implements Action{
         if(new Translation2d(controlBoard.getSwerveTranslation().x(), controlBoard.getSwerveTranslation().y()).norm() >.5)
             swerveChecked = true;
 
-
-        if(mGoalMap.get(s.getGoalState()) != true){
-            mGoalMap.put(s.getGoalState(), true);
+        var currentGoal = s.getGoalState();
+        if(statesToCheck.contains(currentGoal.toString())){
+            if(mGoalMap.get(currentGoal) != true){
+                mGoalMap.put(currentGoal, true);
+            }
         }
-
         for (GoalState goal : mGoalMap.keySet()) {
-            SmartDashboard.putBoolean(goal.toString(), mGoalMap.get(goal));
+            SmartDashboard.putBoolean("TestRoutine/" +goal.toString(), mGoalMap.get(goal));
         }
     }
 
