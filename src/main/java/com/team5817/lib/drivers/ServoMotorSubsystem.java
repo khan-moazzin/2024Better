@@ -70,6 +70,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		public double kCANTimeout = 0.010; // use for important on the fly updates
 		public int kLongCANTimeoutMs = 100; // use for constructors
 
+		public boolean simIO = false;
+
 		public TalonFXConstants kMainConstants = new TalonFXConstants();
 		public TalonFXConstants[] kFollowerConstants = new TalonFXConstants[0];
 
@@ -384,7 +386,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.main_supply_current = mMainSupplyCurrentSignal.asSupplier().get().in(Amps);
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
-		if ( Constants.mode == Mode.SIM || Constants.kSubsytemSim) {
+		if (Constants.mode == Mode.SIM || mConstants.simIO) {
 			mServoInputs.error_rotations = (mServoOutputs.demand - mServoInputs.position_rots);
 			switch (mControlState) {
 				case OPEN_LOOP:

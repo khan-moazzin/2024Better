@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.auto.AutoBuilder.TriFunction;
 import com.pathplanner.lib.config.RobotConfig;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
@@ -65,7 +66,6 @@ public class Constants {
 
 	public static final double kBumberSideLength = Units.inchesToMeters(29);
 
-	public static final boolean kSubsytemSim = true;// Forces sim IO een if robot is real for partial robot(DB)
 
     public static final double kDefaultDistanceToReef = 3;
 
@@ -336,6 +336,8 @@ public class Constants {
 
 		static {
 			kDeployServoConstants.kName = "Deploy";
+			
+			kDeployServoConstants.simIO = true;
 
 			kDeployServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
 			kDeployServoConstants.kMainConstants.counterClockwisePositive = false;
@@ -408,6 +410,8 @@ public class Constants {
 		static {
 			kElevatorServoConstants.kName = "Elevator";
 
+			kElevatorServoConstants.simIO = true;
+
 			kElevatorServoConstants.kMainConstants.id = Ports.ELEVATOR;
 			kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
 
@@ -451,6 +455,8 @@ public class Constants {
 
 		static {
 			kClimbServoConstants.kName = "Climb";
+
+			kClimbServoConstants.simIO = true;
 
 			kClimbServoConstants.kMainConstants.id = Ports.ELEVATOR;
 			kClimbServoConstants.kMainConstants.counterClockwisePositive = false;
@@ -496,6 +502,8 @@ public class Constants {
 
 		static {
 			kWristServoConstants.kName = "Wrist";
+
+			kWristServoConstants.simIO = true;
 
 			kWristServoConstants.kMainConstants.id = Ports.ENDEFFECTOR_WRIST;
 			kWristServoConstants.kMainConstants.counterClockwisePositive = false;
