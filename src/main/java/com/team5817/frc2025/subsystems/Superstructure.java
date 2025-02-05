@@ -23,6 +23,7 @@ import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Time;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,11 @@ public class Superstructure extends Subsystem {
 
 	private static Superstructure mInstance;
 
+	/**
+	 * Returns the singleton instance of the Superstructure.
+	 * 
+	 * @return The singleton instance of the Superstructure.
+	 */
 	public static Superstructure getInstance() {
 		if (mInstance == null) {
 			mInstance = new Superstructure();
@@ -53,8 +59,6 @@ public class Superstructure extends Subsystem {
 
 	// LEDs
 	private final LEDs mLEDs = LEDs.getInstance();
-	private TimedLEDState mHeldState = TimedLEDState.NOTE_HELD_SHOT;
-
 	// Target tracking
 	private Drive mDrive;
 	private double mDistanceToTarget = 0.0;
@@ -68,6 +72,9 @@ public class Superstructure extends Subsystem {
 	private EndEffectorRollers mEndEffectorRollers;
 	private IntakeRollers mIntakeRollers;
 	private Indexer mIndexer;
+
+	private BeamBreak mIntakeBeam = new BeamBreak(0);//made it into intake
+	private BeamBreak mEndEffectoBeam = new BeamBreak(0);//made into end effector
 
 	public enum GameObject {
 		CORAL,
@@ -125,6 +132,9 @@ public class Superstructure extends Subsystem {
 		}
 	}
 
+	/**
+	 * Constructor for the Superstructure class.
+	 */
 	Superstructure() {
 		mDrive = Drive.getInstance();
 		mElevator = Elevator.getInstance();
@@ -136,25 +146,48 @@ public class Superstructure extends Subsystem {
 		mIndexer = Indexer.getInstance();
 	}
 
+	/**
+	 * Checks if all requests have been completed.
+	 * 
+	 * @return True if all requests are complete, false otherwise.
+	 */
 	public boolean requestsCompleted() {
 		return allRequestsComplete;
 	}
 
+	/**
+	 * Sets a new active request and clears the request queue.
+	 * 
+	 * @param r The new request to be set as active.
+	 */
 	public void request(Request r) {
 		setActiveRequest(r);
 		clearRequestQueue();
 	}
 
+	/**
+	 * Sets the active request.
+	 * 
+	 * @param request The request to be set as active.
+	 */
 	public void setActiveRequest(Request request) {
 		activeRequest = request;
 		hasNewRequest = true;
 		allRequestsComplete = false;
 	}
 
+	/**
+	 * Clears the request queue.
+	 */
 	public void clearRequestQueue() {
 		queuedRequests.clear();
 	}
 
+	/**
+	 * Sets the request queue with a list of requests.
+	 * 
+	 * @param requests The list of requests to be added to the queue.
+	 */
 	public void setRequestQueue(List<Request> requests) {
 		clearRequestQueue();
 		for (Request req : requests) {
@@ -162,11 +195,22 @@ public class Superstructure extends Subsystem {
 		}
 	}
 
+	/**
+	 * Sets the request queue with an active request and a list of requests.
+	 * 
+	 * @param activeRequest The active request to be set.
+	 * @param requests      The list of requests to be added to the queue.
+	 */
 	public void setRequestQueue(Request activeRequest, ArrayList<Request> requests) {
 		request(activeRequest);
 		setRequestQueue(requests);
 	}
 
+	/**
+	 * Adds a request to the queue.
+	 * 
+	 * @param req The request to be added to the queue.
+	 */
 	public void addRequestToQueue(Request req) {
 		queuedRequests.add(req);
 	}
@@ -202,10 +246,6 @@ public class Superstructure extends Subsystem {
 				}
 			}
 
-			@Override
-			public void onStop(double timestamp) {
-				stop();
-			}
 		});
 	}
 
@@ -224,6 +264,11 @@ public class Superstructure extends Subsystem {
 	public void readPeriodicInputs() {
 	}
 
+	/**
+	 * Gets the current goal state.
+	 * 
+	 * @return The current goal state.
+	 */
 	public GoalState getGoalState(){
 		return mGoal;
 	}
@@ -284,6 +329,11 @@ public class Superstructure extends Subsystem {
 		};
 	}
 
+	/**
+	 * Creates a request to wait for auto alignment to complete.
+	 * 
+	 * @return A request that waits for auto alignment to complete.
+	 */
 	private Request autoAlignWait() {
 		return new Request() {
 			@Override
@@ -298,7 +348,9 @@ public class Superstructure extends Subsystem {
 	}
 
 	/**
-	 * Update state of LEDs based on BeamBreak readings.
+	 * Creates a request to update the state of LEDs based on BeamBreak readings.
+	 * 
+	 * @return A request to update the state of LEDs.
 	 */
 	private Request updateLEDsRequest() {
 		return new Request() {
@@ -319,6 +371,17 @@ public class Superstructure extends Subsystem {
 	 * Update state of LEDs based on BeamBreak readings.
 	 */
 	private void updateLEDs() {
+		switch (mLEDs.getState()) {
+			case INTAKING:
+				if(mIntakeBeam.wasTripped())
+					mLEDs.applyStates(TimedLEDState.INDEXING);
+				break;
+			case INDEXING:
+				if(mEndEffectoBeam.wasTripped())
+					mLEDs.applyStates(TimedLEDState.HOLDING);
+			default:
+				break;
+		}
 	}
 
 	/**
@@ -328,6 +391,11 @@ public class Superstructure extends Subsystem {
 		return new ParallelRequest().addName("Idle");
 	}
 
+	/**
+	 * Sets the goal state and creates a corresponding request.
+	 * 
+	 * @param goal The goal state to be set.
+	 */
 	public void setGoal(GoalState goal) {
 		Request r = idleRequest();
 		if (mGoal != goal) {
@@ -349,6 +417,12 @@ public class Superstructure extends Subsystem {
 		Logger.recordOutput("Goal", goal);
 	}
 
+	/**
+	 * Creates a request for cleaning based on the goal state.
+	 * 
+	 * @param goal The goal state.
+	 * @return A request for cleaning.
+	 */
 	private Request CleanRequest(SuperstructureState goal) {
 		return new SequentialRequest(
 				new ParallelRequest(
@@ -359,18 +433,24 @@ public class Superstructure extends Subsystem {
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState),
 						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
 						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))
-		// breakWait(null, true)
+		// breakWait(null, true),
 		).addName("Clean");
 	}
 
+	/**
+	 * Creates a request for intaking based on the goal state.
+	 * 
+	 * @param goal The goal state.
+	 * @return A request for intaking.
+	 */
 	private Request IntakeRequest(SuperstructureState goal) {
 		if (!(goal.mType == SuperstructureState.Type.INTAKING)) {
 			System.out.println("Wrong Goal Type");
 			return new ParallelRequest();
 		}
 		return new SequentialRequest(
-
-				new ParallelRequest(
+				new ParallelRequest(//TODO might need to add indexing as part of this, bring intake up but keep indexing to get in end effector
+						mLEDs.stateRequest(TimedLEDState.INTAKING),
 						mElevator.stateRequest(goal.mElevatorState),
 						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
 						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
@@ -378,16 +458,23 @@ public class Superstructure extends Subsystem {
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 						mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState))
-		// breakWait(null, true)
-		).addName("Intake");
+		// breakWait(null, true),
+		).addName("Intaking");
 	}
 
+	/**
+	 * Creates a request for scoring based on the goal state.
+	 * 
+	 * @param goal The goal state.
+	 * @return A request for scoring.
+	 */
 	private Request ScoreGoalRequest(SuperstructureState goal) {
 		if (!(goal.mType == SuperstructureState.Type.SCORING)) {
 			System.out.println("Wrong Goal Type");
 		}
 		return new SequentialRequest(
 				new ParallelRequest(
+						mLEDs.stateRequest(TimedLEDState.PREPARING),
 						mElevator.stateRequest(goal.mElevatorState),
 						mIndexer.stateRequest(goal.mIndexerState),
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
@@ -397,13 +484,22 @@ public class Superstructure extends Subsystem {
 								mElevator.waitForExtensionRequest(Constants.ElevatorConstants.kCoralClearHeight),
 								mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))),
 				autoAlignWait(),
+				mLEDs.stateRequest(TimedLEDState.PREPARED),
 				ReadyToScoreRequest(),
-				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState)
-		// breakWait(null, false),//TODO
+				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
+				// breakWait(null, false),//TODO
+				mLEDs.stateRequest(TimedLEDState.IDLE)
+
+
 
 		).addName("Score");
 	}
 
+	/**
+	 * Creates a request to wait until the system is ready to score.
+	 * 
+	 * @return A request to wait until the system is ready to score.
+	 */
 	private Request ReadyToScoreRequest() {
 		return (new Request() {
 			@Override
@@ -417,10 +513,20 @@ public class Superstructure extends Subsystem {
 		}).addName("Driver Score Wait");
 	}
 
+	/**
+	 * Determines the appropriate goal state for algae cleaning based on the current position.
+	 * 
+	 * @return The goal state for algae cleaning.
+	 */
 	public GoalState AlgaeSmartCleanRequest() {
 		return isAlgaeHigh() ? GoalState.A2 : GoalState.A1;
 	}
 
+	/**
+	 * Determines if the algae is high based on the current position.
+	 * 
+	 * @return True if the algae is high, false otherwise.
+	 */
 	private boolean isAlgaeHigh() {
 		Translation2d reef_to_odom = FieldLayout.getReefPose().inverse().translateBy(mDrive.getPose().getTranslation());
 		double angle = Math.atan2(reef_to_odom.x(), reef_to_odom.y());

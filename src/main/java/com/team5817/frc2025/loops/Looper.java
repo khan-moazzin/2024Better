@@ -61,20 +61,4 @@ public class Looper implements ILooper {
 			}
 		}
 	}
-
-	public synchronized void stop() {
-		if (running_) {
-			System.out.println("Stopping loops");
-			synchronized (taskRunningLock_) {
-				running_ = false;
-				timestamp_ = Timer.getTimestamp();
-				for (Loop loop : loops_) {
-					System.out.println("Stopping " + loop);
-					loop.onStop(timestamp_);
-				}
-			}
-		}
-	}
-
-
 }

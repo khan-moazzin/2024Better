@@ -476,15 +476,9 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 				}
 			}
 
-			@Override
-			public void onStop(double timestamp) {
-				if (mCSVWriter != null) {
-					mCSVWriter.flush();
-					mCSVWriter = null;
-				}
 
-				stop();
-			}
+
+			
 		});
 	}
 
@@ -664,11 +658,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		TalonUtil.applyAndCheckConfiguration(mMain, mMainConfig);
 	}
 
-@Override
-	public void stop() {
-		setOpenLoop(0.0);
-		mMain.stopMotor();
-	}
 
 	@Override
 	public void outputTelemetry() {

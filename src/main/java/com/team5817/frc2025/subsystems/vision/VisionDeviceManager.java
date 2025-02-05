@@ -65,10 +65,6 @@ public class VisionDeviceManager extends Subsystem {
 
 			}
 
-			@Override
-			public void onStop(double timestamp) {
-			}
-
 		});
 	}
 
@@ -186,7 +182,7 @@ public class VisionDeviceManager extends Subsystem {
 	}
 
 	public boolean fullyConnected() {
-		return false;
+		return false;//TODO
 	}
 
 	public static boolean verifyEpipolarGeometry(List<Translation2d> pointsCam1,

@@ -31,7 +31,6 @@ public class LEDs extends Subsystem {
 
 	private final int kNumLeds = 8 + 18;
 
-	private boolean mDisabled = true;
 	private final CANdle mCandle = new CANdle(Ports.LEDS.getDeviceNumber(), Ports.LEDS.getBus());
 	private LEDSection mLEDStatus = new LEDSection(0, kNumLeds);
 
@@ -54,26 +53,18 @@ public class LEDs extends Subsystem {
 		mEnabledLooper.register(new Loop() {
 			@Override
 			public void onStart(double timestamp) {
-				mDisabled = false;
 				applyStates(TimedLEDState.OFF);
 			}
 
 			@Override
 			public void onLoop(double timestamp) {
 			}
-
-			@Override
-			public void onStop(double timestamp) {
-				mDisabled = true;
-				mLEDStatus.reset();
-				applyStates(TimedLEDState.DISABLE_BLUE);
-			}
 		});
 	}
 
 	@Override
 	public void readPeriodicInputs() {
-		if (mDisabled) {
+		if (DriverStation.isDisabled()) {
 			if (!VisionDeviceManager.getInstance().fullyConnected()) {
 				applyStates(TimedLEDState.NO_VISION);
 			} else {
@@ -100,6 +91,9 @@ public class LEDs extends Subsystem {
 	// setter functions
 	public void applyStates(TimedLEDState TimedState) {
 		mLEDStatus.setState(TimedState);
+	}
+	public TimedLEDState getState() {
+		return mLEDStatus.state;
 	}
 
 	@Override
@@ -134,6 +128,7 @@ public class LEDs extends Subsystem {
 			}
 		};
 	}
+
 
 	// Class for holding information about each section
 	private class LEDSection {

@@ -72,10 +72,6 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 			public void onLoop(double timestamp) {
 			}
 
-			@Override
-			public void onStop(double timestamp) {
-				setNeutralMode(NeutralModeValue.Brake);
-			}
 		});
 	}
 

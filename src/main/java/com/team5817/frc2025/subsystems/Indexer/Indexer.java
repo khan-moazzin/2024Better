@@ -64,10 +64,6 @@ public class Indexer extends Subsystem {
 			public void onLoop(double timestamp) {
 				mIndexerOutputs.roller_demand = mState.roller_voltage;
 			}
-
-			@Override
-			public void onStop(double timestamp) {
-			}
 		});
 	}
 

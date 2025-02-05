@@ -67,11 +67,6 @@ public class Elevator extends ServoMotorSubsystem {
 			@Override
 			public void onLoop(double timestamp) {
 			}
-
-			@Override
-			public void onStop(double timestamp) {
-				setNeutralMode(NeutralModeValue.Brake);
-			}
 		});
 	}
 

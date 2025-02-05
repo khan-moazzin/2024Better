@@ -28,6 +28,7 @@ import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.controlboard.ControlBoard;
 import com.team5817.frc2025.controlboard.DriverControls;
 import com.team5817.frc2025.loops.Looper;
+import com.team5817.frc2025.subsystems.LEDs;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Climb.Climb;
 import com.team5817.frc2025.subsystems.Drive.Drive;
@@ -134,10 +135,10 @@ public class Robot extends LoggedRobot {
         Climb.getInstance(),
         Elevator.getInstance(),
         EndEffectorRollers.getInstance(),
-        EndEffectorWrist.getInstance());
+        EndEffectorWrist.getInstance(),
+        LEDs.getInstance());
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
-    mEnabledLooper.start();
     Superstructure.getInstance().setGoal(GoalState.STOW);
   }
 
@@ -172,6 +173,8 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    mEnabledLooper.start();
+
     // swerve.fieldzeroSwerve();
     mDrive.resetModulesToAbsolute();
     mDrive.feedTeleopSetpoint(new ChassisSpeeds(0, 0, 0));

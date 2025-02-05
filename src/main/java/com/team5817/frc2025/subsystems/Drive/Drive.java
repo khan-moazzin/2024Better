@@ -412,14 +412,6 @@ public class Drive extends Subsystem {
 				mWheelTracker.readPeriodicInputs();
 
 			}
-
-			@Override
-			public void onStop(double timestamp) {
-				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds();
-				mControlState = DriveControlState.OPEN_LOOP;
-				mWheelTracker.stop();
-				enableFieldToOdom = null;
-			}
 		});
 	}
 

@@ -92,11 +92,6 @@ public class SubsystemManager implements ILooper {
 			// Telemetry
 			outputTelemetry();
 		}
-
-		@Override
-		public void onStop(double timestamp) {
-			mLoops.forEach(l -> l.onStop(timestamp));
-		}
 	}
 
 	public void registerEnabledLoops(Looper enabledLooper) {
