@@ -1,5 +1,7 @@
 package com.team5817.frc2025.controlboard;
 
+import java.util.HashMap;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.team254.lib.geometry.Pose2d;
@@ -34,6 +36,7 @@ public class DriverControls {
 		
 			
 	}
+
 	boolean climbAllowed = false;
 	boolean autoAlignAllowed = true;
 	boolean codriverManual = false;
@@ -49,8 +52,7 @@ public class DriverControls {
 			Logger.recordOutput("Timer: ", practiceTimer.get());
 			practiceTimer.stop();
 			practiceTimer.reset();}
-		if(driver.getBackButton())
-			mDrive.resetOdometry(new Pose2d());
+
 		if(driver.getStartButton())
 			mDrive.zeroGyro();
 		
@@ -60,8 +62,8 @@ public class DriverControls {
 				s.setGoal(GoalState.GROUND_CORAL_INTAKE);
 			}
 			if(driver.leftTrigger.isBeingPressed()){
-				if(autoAlignAllowed)
-					mDrive.autoAlign(AlignmentType.CORAL_SCORE);
+				if(autoAlignAllowed&&preparedGoal.goal.mAlignmentType!=AlignmentType.NONE)
+					mDrive.autoAlign(preparedGoal.goal.mAlignmentType);
 				else
 					mDrive.autoAlignFinishedOverrride(true);
 				s.setGoal(preparedGoal);
@@ -76,12 +78,11 @@ public class DriverControls {
 			}
 				// s.AlgaeSmartCleanRequest();
 			if(driver.bButton.isBeingPressed())
-				s.setGoal(GoalState.GROUND_CORAL_INTAKE);
+				s.setGoal(GoalState.HUMAN_CORAL_INTAKE);
 			
 			if(driver.xButton.isBeingPressed())
-				s.setGoal(GoalState.L3);
-			if(driver.yButton.isBeingPressed())
-				s.setGoal(GoalState.L1);
+				s.setGoal(GoalState.GROUND_ALGAE_INTAKE);
+
 			
 			if(driver.releasedAny(driver.leftBumper,driver.leftTrigger,driver.aButton)){
 				s.setGoal(GoalState.STOW);

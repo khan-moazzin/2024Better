@@ -37,7 +37,7 @@ public class Elevator extends ServoMotorSubsystem {
 		L1(0.304, kStrictError),
 		A1(0.59, kMediumError),
 		A2(.896, kMediumError),
-		NET(0.0, kMediumError),
+		NET(2, kMediumError),
 		ZERO(0.0, kLenientError),
 		PROCESS(0.0, kLenientError),
 		STOW(0.0, kStrictError);
@@ -112,6 +112,10 @@ public class Elevator extends ServoMotorSubsystem {
 	@Override
 	public boolean checkSystem() {
 		return false;
+	}
+
+	public void conformToState(State state){
+		setSetpointMotionMagic(state.output);
 	}
 
 	public Request stowRequest() {

@@ -18,6 +18,7 @@ import com.team5817.frc2025.loops.ILooper;
  * instantializing all member components at the start of the match.
  */
 public abstract class Subsystem {
+
 	public void writeToLog() {
 	}
 

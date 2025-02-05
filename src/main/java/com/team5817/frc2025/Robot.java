@@ -23,6 +23,7 @@ import com.team5817.BuildConstants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.AutoExecuter;
 import com.team5817.frc2025.autos.AutoModeSelector;
+import com.team5817.frc2025.autos.Modes.TestRoutine;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.controlboard.ControlBoard;
 import com.team5817.frc2025.controlboard.DriverControls;
@@ -156,7 +157,6 @@ public class Robot extends LoggedRobot {
       mDrive.zeroGyro(mVision.getMovingAverageRead());
     }
     mDrive.resetModulesToAbsolute();
-    RobotState.getInstance();
     mAutoExecuter.start();
     // Superstructure.getInstance().setState(Superstructure.AUTO);
     // autoExecuter.setAuto(auto);
@@ -201,6 +201,11 @@ public class Robot extends LoggedRobot {
     mSubsystemManager.stop();
     // Superstructure.getInstance().clearQueues();
     // autoExecuter.stop();
+
+    if(mAutoExecuter!=null){
+      mAutoExecuter.stop();
+    }
+
     mAutoExecuter = new AutoExecuter();
   }
 
@@ -225,6 +230,8 @@ public class Robot extends LoggedRobot {
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
+    mAutoExecuter.setAuto(new TestRoutine()); 
+    mAutoExecuter.start();
   }
 
   /** This function is called periodically during test mode. */

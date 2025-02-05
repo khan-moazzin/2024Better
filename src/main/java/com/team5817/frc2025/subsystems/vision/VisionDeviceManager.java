@@ -24,8 +24,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class VisionDeviceManager extends Subsystem {
 
-	private static VisionDeviceManager mInstance;
-
+	public static VisionDeviceManager mInstance;
 	public static VisionDeviceManager getInstance() {
 		if (mInstance == null) {
 			mInstance = new VisionDeviceManager();
@@ -48,8 +47,8 @@ public class VisionDeviceManager extends Subsystem {
 	double timeOfLastUpdate = Double.MIN_VALUE;
 
 	public VisionDeviceManager() {
-		mDomCamera = new VisionDevice("limelight-dom");
-		mSubCamera = new VisionDevice("limelight-sub");
+		mDomCamera = new VisionDevice("limelight-right");
+		mSubCamera = new VisionDevice("limelight-left");
 		mAllCameras = List.of(mDomCamera, mSubCamera);
 		mRobotState = RobotState.getInstance();
 	}

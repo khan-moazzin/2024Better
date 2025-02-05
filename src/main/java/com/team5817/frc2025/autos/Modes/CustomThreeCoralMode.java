@@ -91,9 +91,6 @@ public class CustomThreeCoralMode extends AutoBase {
 			thirdScoreTrajectory,
 			thirdPickupTrajectory
 			);
-
-
-
 	}
 
 	// spotless:off
@@ -177,7 +174,7 @@ public class CustomThreeCoralMode extends AutoBase {
 							s.setGoal(GoalState.HUMAN_CORAL_INTAKE);
 						}))))));
 	
-		
+						
 
 	}
 }

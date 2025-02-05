@@ -9,7 +9,10 @@ import com.team5817.frc2025.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ServoMotorSubsystemWithCancoder extends ServoMotorSubsystem {
+public abstract class ServoMotorSubsystemWithCancoder extends ServoMotorSubsystem {
+
+
+
 
 	public static class AbsoluteEncoderConstants {
 		public FeedbackSensorSourceValue encoder_type;

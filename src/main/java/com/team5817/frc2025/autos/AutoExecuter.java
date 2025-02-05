@@ -7,6 +7,8 @@ public class AutoExecuter{
 
     private AutoBase mAuto = null;
 
+    private boolean mActive;
+
 
     public void setAuto(AutoBase auto){
         this.mAuto = auto;
@@ -17,16 +19,28 @@ public class AutoExecuter{
     }
 
     public void start(){
+        mActive = true;
         if(mThread == null){
             mThread = new Thread(new Runnable(){
                 @Override
                 public void run(){
-                    if(mAuto != null)
-                        mAuto.start();   
+                    if(mActive){
+                        if(mAuto != null)
+                            mAuto.start();   
+                    }
                 }
             });
             mThread.start();
         }
+
+   }
+
+   public void stop(){
+        if(mAuto != null){
+            mAuto.stop();
+        }
+        mActive = false;
+        mThread = null;
 
    }
 

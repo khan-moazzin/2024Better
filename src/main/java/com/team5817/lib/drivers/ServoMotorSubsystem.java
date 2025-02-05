@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -50,6 +51,8 @@ import org.littletonrobotics.junction.Logger;
 public abstract class ServoMotorSubsystem extends Subsystem {
 	protected static final int kMotionMagicSlot = 0;
 	protected static final int kPositionPIDSlot = 1;
+
+
 
 	// Recommend initializing in a static block!
 	public static class TalonFXConstants {
@@ -332,6 +335,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 	}
 
+	
+
 	@AutoLog
 	public static class ServoOutputs implements Sendable {
 		// OUTPUTS
@@ -346,7 +351,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	protected enum ControlState {
 		OPEN_LOOP,
 		MOTION_MAGIC,
-		POSITION_PID
+		POSITION_PID,
+		VOLTAGE
 	}
 
 	private double lastTimestamp = 0;
@@ -372,7 +378,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
 		mMainStickyFault = mMain.getStickyFaultField();
 
-			mServoInputs.error_rotations = mMainClosedLoopError.asSupplier().get();
+		mServoInputs.error_rotations = mMainClosedLoopError.asSupplier().get();
 		mServoInputs.error_rotations = mMainClosedLoopError.asSupplier().get();
 		mServoInputs.main_stator_current = mMainStatorCurrentSignal.asSupplier().get().in(Amps);
 		mServoInputs.main_supply_current = mMainSupplyCurrentSignal.asSupplier().get().in(Amps);
@@ -429,7 +435,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			mMain.setControl(new MotionMagicVoltage(mServoOutputs.demand).withSlot(kMotionMagicSlot));
 		} else if (mControlState == ControlState.POSITION_PID) {
 			mMain.setControl(new PositionDutyCycle(mServoOutputs.demand).withSlot(kPositionPIDSlot));
-		} else {
+		} else if (mControlState == ControlState.VOLTAGE) {
+			mMain.setControl(new VoltageOut(mServoOutputs.demand));
+		}
+		else {
 			mMain.setControl(new DutyCycleOut(mServoOutputs.demand));
 		}
 	}
@@ -489,6 +498,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	// In "Units per second"
 	public double getVelocity() {
 		return rotationsToUnits(mServoInputs.velocity_rps);
+	}
+
+	public double getPureVelocity(){
+		return mServoInputs.velocity_rps;
 	}
 
 	public double getVelError() {
@@ -563,6 +576,13 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			mControlState = ControlState.OPEN_LOOP;
 		}
 		mServoOutputs.demand = percentage;
+	}
+
+	public void applyVoltage(double voltage){
+		if(mControlState != ControlState.VOLTAGE){
+			mControlState = ControlState.VOLTAGE;
+		}
+		mServoOutputs.demand = voltage;		
 	}
 
 	public double getActiveTrajectoryPosition() {
@@ -642,7 +662,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		TalonUtil.applyAndCheckConfiguration(mMain, mMainConfig);
 	}
 
-	@Override
+@Override
 	public void stop() {
 		setOpenLoop(0.0);
 		mMain.stopMotor();
