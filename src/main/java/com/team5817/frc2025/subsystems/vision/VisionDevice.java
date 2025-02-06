@@ -12,13 +12,15 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
+
 /**
  * VisionDevice class handles vision processing and updates.
  */
 public class VisionDevice {
 	private VisionDeviceIO mPeriodicIO = new VisionDeviceIO();
 
-	private String mName;
+	public String mName;
 	private NetworkTable mOutputTable;
 	private MovingAverage mHeadingAverage = new MovingAverage(100);
 
@@ -42,7 +44,9 @@ public class VisionDevice {
 	 */
 	public void update(double timestamp) {
 
-		mPeriodicIO.seesTarget = LimelightHelpers.getTV(mName);
+		PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mName);
+		mPeriodicIO.seesTarget = poseEstimate.pose.getTranslation().getNorm() != 0 && LimelightHelpers.getTV(mName);
+		Logger.recordOutput("Vision Norm" + mName, poseEstimate.pose.getTranslation().getNorm());
 		if (mPeriodicIO.seesTarget) {
 			final double realTime = timestamp - mPeriodicIO.latency;
 			mPeriodicIO.fps = mOutputTable.getEntry("fps").getInteger(0);
@@ -50,7 +54,6 @@ public class VisionDevice {
 			mPeriodicIO.tagId = mOutputTable.getEntry("tid").getNumber(-1).intValue();
 
 			mPeriodicIO.mt1Pose = new Pose2d(LimelightHelpers.getBotPose2d_wpiBlue(mName));
-			PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mName);
 			mPeriodicIO.targetToCamera = LimelightHelpers.getTargetPose3d_CameraSpace(mName);
 			mPeriodicIO.tagCounts = poseEstimate.tagCount;
 			mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
@@ -100,7 +103,8 @@ public class VisionDevice {
 	/**
 	 * Gets the latest vision update.
 	 *
-	 * @return an Optional containing the latest VisionUpdate, or empty if no update is available
+	 * @return an Optional containing the latest VisionUpdate, or empty if no update
+	 *         is available
 	 */
 	public Optional<VisionUpdate> getVisionUpdate() {
 		return mPeriodicIO.visionUpdate;

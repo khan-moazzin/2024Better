@@ -72,8 +72,8 @@ public class Superstructure extends Subsystem {
 	private IntakeRollers mIntakeRollers;
 	private Indexer mIndexer;
 
-	private BeamBreak mIntakeBeam = new BeamBreak(0);// made it into intake
-	private BeamBreak mEndEffectoBeam = new BeamBreak(0);// made into end effector
+	// private BeamBreak mIntakeBeam = new BeamBreak(0);// made it into intake
+	// private BeamBreak mEndEffectoBeam = new BeamBreak(1);// made into end effector
 
 	public enum GameObject {
 		CORAL,
@@ -350,17 +350,17 @@ public class Superstructure extends Subsystem {
 	 * Update state of LEDs based on BeamBreak readings.
 	 */
 	private void updateLEDs() {
-		switch (mLEDs.getState()) {
-			case INTAKING:
-				if (mIntakeBeam.wasTripped())
-					mLEDs.applyStates(TimedLEDState.INDEXING);
-				break;
-			case INDEXING:
-				if (mEndEffectoBeam.wasTripped())
-					mLEDs.applyStates(TimedLEDState.HOLDING);
-			default:
-				break;
-		}
+	// 	switch (mLEDs.getState()) {
+	// 		case INTAKING:
+	// 			if (mIntakeBeam.wasTripped())
+	// 				mLEDs.applyStates(TimedLEDState.INDEXING);
+	// 			break;
+	// 		case INDEXING:
+	// 			if (mEndEffectoBeam.wasTripped())
+	// 				mLEDs.applyStates(TimedLEDState.HOLDING);
+	// 		default:
+	// 			break;
+	// 	}
 	}
 
 	/**

@@ -311,6 +311,8 @@ public class RobotState {
                 DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
             }
         } else {
+
+            System.out.println("Ran");
             // Handle case when there's no recent vision update or initial pose error
             double visionTimestamp = visionUpdate.timestamp;
             Pose2d proximatePose = poseFromOdom.getInterpolated(new InterpolatingDouble(visionTimestamp));
