@@ -262,6 +262,10 @@ public class Superstructure extends Subsystem {
 	@Override
 	public void readPeriodicInputs() {
 	}
+	@Override
+	public void writePeriodicOutputs() {
+		updateLEDs();
+	}
 
 	/**
 	 * Gets the current goal state.
@@ -350,17 +354,17 @@ public class Superstructure extends Subsystem {
 	 * Update state of LEDs based on BeamBreak readings.
 	 */
 	private void updateLEDs() {
-	// 	switch (mLEDs.getState()) {
-	// 		case INTAKING:
-	// 			if (mIntakeBeam.wasTripped())
-	// 				mLEDs.applyStates(TimedLEDState.INDEXING);
-	// 			break;
-	// 		case INDEXING:
-	// 			if (mEndEffectoBeam.wasTripped())
-	// 				mLEDs.applyStates(TimedLEDState.HOLDING);
-	// 		default:
-	// 			break;
-	// 	}
+		switch (mLEDs.getState()) {
+			case INTAKING:
+				if (mIntakeBeam.wasTripped())
+					mLEDs.applyStates(TimedLEDState.INDEXING);
+				break;
+			case INDEXING:
+				if (mEndEffectoBeam.wasTripped())
+					mLEDs.applyStates(TimedLEDState.HOLDING);
+			default:
+				break;
+		}
 	}
 
 	/**
