@@ -5,7 +5,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 import java.util.Map;
 import java.util.Optional;
@@ -30,7 +29,6 @@ public class RobotState {
     private UnscentedKalmanFilter<N2, N2, N2> mKalmanFilter;
     private VisionPoseAcceptor mPoseAcceptor;
     private Pose2d mDisplayVisionPose;
-    public Field2d mField2d;
     private boolean mHasBeenEnabled = false;
 
     // New variables for the specialized Kalman filter and vision update handling

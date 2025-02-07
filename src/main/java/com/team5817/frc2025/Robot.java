@@ -22,6 +22,7 @@ import com.team5817.BuildConstants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.AutoExecuter;
 import com.team5817.frc2025.autos.AutoModeSelector;
+import com.team5817.frc2025.autos.Modes.Characterize;
 import com.team5817.frc2025.autos.Modes.TestRoutine;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.controlboard.ControlBoard;
@@ -37,7 +38,11 @@ import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
+import com.team5817.lib.Elastic;
 import com.team5817.lib.Util;
+import com.team5817.lib.diagnostic.FeedForwardCharacterization;
+import com.team5817.lib.diagnostic.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import com.team5817.lib.drivers.ServoMotorSubsystem;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.net.PortForwarder;
@@ -129,7 +134,8 @@ public class Robot extends LoggedRobot {
 
     mDrive = Drive.getInstance();
     mSubsystemManager = SubsystemManager.getInstance();
-    mAutoExecuter = new AutoExecuter();
+
+    Elastic.selectTab("Pre Match");
 
     controls = new DriverControls();
     mSubsystemManager.setSubsystems(
@@ -144,6 +150,7 @@ public class Robot extends LoggedRobot {
         LEDs.getInstance());
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+    mEnabledLooper.start();
     Superstructure.getInstance().setGoal(GoalState.STOW);
   }
 
@@ -165,6 +172,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
+    Elastic.selectTab("Autonomous");
     if (mVision.getMovingAverageRead() != null) {
       mDrive.zeroGyro(mVision.getMovingAverageRead());
     }
@@ -186,7 +194,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void teleopInit() {
-    mEnabledLooper.start();
+    Elastic.selectTab("Teleoperated");
 
     // swerve.fieldzeroSwerve();
     mDrive.resetModulesToAbsolute();
@@ -253,8 +261,12 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void testInit() {
-    mAutoExecuter.setAuto(new TestRoutine()); 
+    Elastic.selectTab("Systems Test");
+    // mAutoExecuter.setAuto(new TestRoutine()); 
+
+    mAutoExecuter.setAuto(new Characterize(Elevator.getInstance(),true));
     mAutoExecuter.start();
+
   }
 
   /**

@@ -2,7 +2,6 @@ package com.team5817.frc2025.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.Mode;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.drivers.Pigeon;
@@ -32,7 +31,6 @@ public class WheelTracker extends Subsystem {
 	private double robotHeading;
 
 	private double mTimestamp;
-	private boolean mIsEnabled = false;
 
 	private BaseStatusSignal[] mAllSignals;
 
@@ -80,20 +78,6 @@ public class WheelTracker extends Subsystem {
 		mOdometryThread = new OdometryThread();
 		mOdometryThread.setDaemon(true);
 		mOdometryThread.start();
-	}
-
-	/**
-	 * Starts the WheelTracker.
-	 */
-	public void start() {
-		mIsEnabled = true;
-	}
-
-	/**
-	 * Stops the WheelTracker.
-	 */
-	public void stop() {
-		mIsEnabled = false;
 	}
 
 	@Override

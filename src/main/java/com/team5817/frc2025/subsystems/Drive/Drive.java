@@ -431,7 +431,6 @@ public class Drive extends Subsystem {
 			public void onStart(double timestamp) {
 				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds();
 				mControlState = DriveControlState.OPEN_LOOP;
-				mWheelTracker.start();
 			}
 
 			@Override
