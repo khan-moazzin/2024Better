@@ -164,7 +164,7 @@ public class Drive extends Subsystem {
 	 * @param use True to use a specialized pose, false otherwise.
 	 */
 	public void setUseSpecializedPoseForPath(boolean use) {
-		if(Robot.isReal()){
+		if (Robot.isReal()) {
 			useSpecailizedPoseForPath = use;
 			return;
 		}
@@ -359,7 +359,7 @@ public class Drive extends Subsystem {
 			return;
 		}
 		mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
-		Logger.recordOutput("target pose", targetPoint);
+		Logger.recordOutput("target pose", targetPoint.wpi());
 		mAutoAlignMotionPlanner.setTargetPoint(targetPoint);
 		if (mControlState != DriveControlState.AUTOALIGN) {
 			mAutoAlignMotionPlanner.reset();
@@ -400,13 +400,12 @@ public class Drive extends Subsystem {
 		autoAlignFinishedOverrride = override;
 	}
 
-
 	/**
 	 * Updates the path follower.
 	 */
 	public void updatePathFollower() {
 		final double now = Timer.getTimestamp();
-		ChassisSpeeds output = mMotionPlanner.update(now, useSpecailizedPoseForPath? getSpecializedPose() : getPose());
+		ChassisSpeeds output = mMotionPlanner.update(now, useSpecailizedPoseForPath ? getSpecializedPose() : getPose());
 		if (output != null) {
 			mPeriodicIO.des_chassis_speeds = output;
 		}
@@ -469,7 +468,7 @@ public class Drive extends Subsystem {
 	@Override
 	public void readPeriodicInputs() {
 		SwerveModuleState[] module_states = new SwerveModuleState[4];
-		if ( Constants.mode == Constants.Mode.SIM) {
+		if (Constants.mode == Constants.Mode.SIM) {
 			for (int i = 0; i < mModules.length; i++) {
 				module_states[i] = new SwerveModuleState(driveSimulation.getModules()[i].getCurrentState());
 			}
@@ -621,7 +620,8 @@ public class Drive extends Subsystem {
 	/**
 	 * Gets the states of the swerve modules.
 	 *
-	 * @return An array of SwerveModuleState objects representing the states of the modules.
+	 * @return An array of SwerveModuleState objects representing the states of the
+	 *         modules.
 	 */
 	public SwerveModuleState[] getModuleStates() {
 		SwerveModuleState[] states = new SwerveModuleState[4];
@@ -634,7 +634,8 @@ public class Drive extends Subsystem {
 	/**
 	 * Gets the positions of the swerve modules.
 	 *
-	 * @return An array of SwerveModulePosition objects representing the positions of the modules.
+	 * @return An array of SwerveModulePosition objects representing the positions
+	 *         of the modules.
 	 */
 	public SwerveModulePosition[] getModulePositions() {
 		SwerveModulePosition[] states = new SwerveModulePosition[4];
@@ -647,7 +648,8 @@ public class Drive extends Subsystem {
 	/**
 	 * Gets the positions of the swerve modules in WPILib format.
 	 *
-	 * @return An array of WPILib SwerveModulePosition objects representing the positions of the modules.
+	 * @return An array of WPILib SwerveModulePosition objects representing the
+	 *         positions of the modules.
 	 */
 	public edu.wpi.first.math.kinematics.SwerveModulePosition[] getWpiModulePositions() {
 		edu.wpi.first.math.kinematics.SwerveModulePosition[] states = new edu.wpi.first.math.kinematics.SwerveModulePosition[4];
@@ -660,7 +662,8 @@ public class Drive extends Subsystem {
 	/**
 	 * Gets the states of the swerve modules in WPILib format.
 	 *
-	 * @return An array of WPILib SwerveModuleState objects representing the states of the modules.
+	 * @return An array of WPILib SwerveModuleState objects representing the states
+	 *         of the modules.
 	 */
 	public edu.wpi.first.math.kinematics.SwerveModuleState[] getWpiModuleStates() {
 		edu.wpi.first.math.kinematics.SwerveModuleState[] states = new edu.wpi.first.math.kinematics.SwerveModuleState[4];

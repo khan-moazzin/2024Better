@@ -1,6 +1,7 @@
 package com.team5817.frc2025.subsystems.Drive;
 
 import com.team254.lib.geometry.Pose2d;
+import com.team254.lib.geometry.Transform2d;
 import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.motion.IMotionProfileGoal;
 import com.team254.lib.motion.MotionProfileGoal;
@@ -21,8 +22,8 @@ import java.util.OptionalDouble;
  */
 public class AutoAlignMotionPlanner {
 
-    private ProfileFollower mXController = new ProfileFollower(2.5, 0.0, 0.0, 1.0, 0.0, 0.0);
-    private ProfileFollower mYController = new ProfileFollower(2.5, 0.0, 0.0, 1.0, 0.0, 0.0);
+    private ProfileFollower mXController = new ProfileFollower(4, 0.0, 0.0, 1.0, 0.0, 0.0);
+    private ProfileFollower mYController = new ProfileFollower(4, 0.0, 0.0, 2.0, 0.0, 0.0);
     private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;
@@ -72,11 +73,11 @@ public class AutoAlignMotionPlanner {
 
         mXController.setGoalAndConstraints(
                 new MotionProfileGoal(mFieldToTargetPoint.getTranslation().x(), 0,
-                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.08, 0.05),
+                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.1, 0.05),
                 SwerveConstants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
                 new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 0,
-                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.02, 0.05),
+                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.051, 0.05),
                 SwerveConstants.kPositionMotionProfileConstraints);
         mThetaController.setSnapTarget(mFieldToTargetPoint.getRotation());
         double currentRotation = current_pose.getRotation().getRadians();

@@ -7,6 +7,7 @@ import com.team5817.frc2025.RobotState.VisionUpdate;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.lib.drivers.Subsystem;
+import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Translation3d;
 import com.team254.lib.util.MovingAverage;
@@ -102,7 +103,7 @@ public class VisionDeviceManager extends Subsystem {
 				if (!device.getVisionUpdate().isEmpty()) {
 					VisionUpdate update = device.getVisionUpdate().get();
 					RobotState.getInstance().addVisionUpdate(update);
-
+					Logger.recordOutput("Vision Pose" + device.mName, Pose2d.fromTranslation(update.getFieldToVision()).wpi());
 					if (DriverStation.getAlliance().get() == Alliance.Red) {
 						if (PoseEstimatorConstants.redTagIDFilters.contains(update.getID())||DriverStation.isDisabled()) {
 							mRobotState.addSpecializedVisionUpdate(update);
