@@ -72,8 +72,8 @@ public class Superstructure extends Subsystem {
 	private IntakeRollers mIntakeRollers;
 	private Indexer mIndexer;
 
-	// private BeamBreak mIntakeBeam = new BeamBreak(0);// made it into intake
-	// private BeamBreak mEndEffectoBeam = new BeamBreak(1);// made into end effector
+	private BeamBreak mIntakeBeam = new BeamBreak(0);// made it into intake
+	private BeamBreak mEndEffectoBeam = new BeamBreak(1);// made into end effector
 
 	public enum GameObject {
 		CORAL,
@@ -262,6 +262,10 @@ public class Superstructure extends Subsystem {
 	@Override
 	public void readPeriodicInputs() {
 	}
+	@Override
+	public void writePeriodicOutputs() {
+		updateLEDs();
+	}
 
 	/**
 	 * Gets the current goal state.
@@ -350,17 +354,17 @@ public class Superstructure extends Subsystem {
 	 * Update state of LEDs based on BeamBreak readings.
 	 */
 	private void updateLEDs() {
-	// 	switch (mLEDs.getState()) {
-	// 		case INTAKING:
-	// 			if (mIntakeBeam.wasTripped())
-	// 				mLEDs.applyStates(TimedLEDState.INDEXING);
-	// 			break;
-	// 		case INDEXING:
-	// 			if (mEndEffectoBeam.wasTripped())
-	// 				mLEDs.applyStates(TimedLEDState.HOLDING);
-	// 		default:
-	// 			break;
-	// 	}
+		switch (mLEDs.getState()) {
+			case INTAKING:
+				if (mIntakeBeam.wasTripped())
+					mLEDs.applyStates(TimedLEDState.INDEXING);
+				break;
+			case INDEXING:
+				if (mEndEffectoBeam.wasTripped())
+					mLEDs.applyStates(TimedLEDState.HOLDING);
+			default:
+				break;
+		}
 	}
 
 	/**
@@ -508,12 +512,8 @@ public class Superstructure extends Subsystem {
 	 */
 	private boolean isAlgaeHigh() {
 		Translation2d reef_to_odom = FieldLayout.getReefPose().inverse().translateBy(mDrive.getPose().getTranslation());
-		double angle = Math.atan2(reef_to_odom.x(), reef_to_odom.y());
-		angle = Units.radiansToDegrees(angle);
-		angle += 30;
-		int side = (int) Math.round(angle / 60);
-		Integer low = Math.floorMod(side, 2);
-		return low == 0;
+		double angle = Math.toDegrees(Math.atan2(reef_to_odom.x(), reef_to_odom.y())) + 30;
+		return Math.floorMod(Math.round(angle / 60), 2) == 0;
 	}
 
 	/**

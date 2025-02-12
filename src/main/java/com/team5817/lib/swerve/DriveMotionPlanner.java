@@ -3,11 +3,7 @@ package com.team5817.lib.swerve;
 
 
 
-import org.dyn4j.exception.SameObjectException;
-import org.littletonrobotics.junction.Logger;
-
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
@@ -16,8 +12,6 @@ import com.team254.lib.swerve.ChassisSpeeds;
 import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.lib.motion.PPPathPointState;
-
-import edu.wpi.first.wpilibj.Timer;
 
 
 public class DriveMotionPlanner {

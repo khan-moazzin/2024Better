@@ -391,7 +391,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	protected ReflectingCSVWriter<ServoInputs> mCSVWriter = null;
 	protected boolean mHasBeenZeroed = false;
 	protected StatusSignal<Integer> mMainStickyFault;
-
+	private double lastPosRots = 0;
 	/**
 	 * Reads the periodic inputs from the Talon.
 	 */
@@ -416,6 +416,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.main_supply_current = mMainSupplyCurrentSignal.asSupplier().get().in(Amps);
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
+		mServoInputs.velocity_rps = mMainVelocitySignal.asSupplier().get().in(RotationsPerSecond);
 		if (Constants.mode == Mode.SIM || mConstants.simIO) {
 			mServoInputs.error_rotations = (mServoOutputs.demand - mServoInputs.position_rots);
 			switch (mControlState) {
@@ -426,6 +427,9 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 				case POSITION_PID:
 					mServoInputs.position_rots += mServoInputs.error_rotations*dt/0.25;// bad guess at motion for sim
 					break;
+				case VOLTAGE:
+					mServoInputs.position_rots += mServoOutputs.demand / dt/1000;
+					mServoInputs.output_voltage = mServoOutputs.demand;
 				default:
 					break;
 			}
@@ -434,12 +438,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			} else if (mServoInputs.position_rots <unitsToRotations( mConstants.kMinUnitsLimit)) {
 				mServoInputs.position_rots = unitsToRotations(mConstants.kMinUnitsLimit);
 			}
+			mServoInputs.velocity_rps = (mServoInputs.position_rots-lastPosRots)/dt;
 			
 		} else {
 			mServoInputs.position_rots = mMainPositionSignal.asSupplier().get().in(Rotations);
 		}
 		mServoInputs.position_units = rotationsToHomedUnits(mServoInputs.position_rots);
-		mServoInputs.velocity_rps = mMainVelocitySignal.asSupplier().get().in(RotationsPerSecond);
 		mServoInputs.active_trajectory_position = mMainClosedLoopReferenceSignal.asSupplier().get();
 
 		final double newVelocity = mMainClosedLoopReferenceSlopeSignal.asSupplier().get();
@@ -459,6 +463,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			mCSVWriter.add(mServoInputs);
 		}
 		lastTimestamp = Timer.getTimestamp();
+		lastPosRots =  mServoInputs.position_rots;
 	}
 
 	/**

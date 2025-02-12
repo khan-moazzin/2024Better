@@ -59,9 +59,9 @@ public abstract class AutoBase {
                 e.printStackTrace();
             }
         }
+        action.done();
         if (!mActive)
             throw new Error("Action Interrupted");
-        action.done();
     }
 
     /**

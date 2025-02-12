@@ -31,7 +31,6 @@ public class WheelTracker extends Subsystem {
 	private double robotHeading;
 
 	private double mTimestamp;
-	private boolean mIsEnabled = false;
 
 	private BaseStatusSignal[] mAllSignals;
 
@@ -79,20 +78,6 @@ public class WheelTracker extends Subsystem {
 		mOdometryThread = new OdometryThread();
 		mOdometryThread.setDaemon(true);
 		mOdometryThread.start();
-	}
-
-	/**
-	 * Starts the WheelTracker.
-	 */
-	public void start() {
-		mIsEnabled = true;
-	}
-
-	/**
-	 * Stops the WheelTracker.
-	 */
-	public void stop() {
-		mIsEnabled = false;
 	}
 
 	@Override

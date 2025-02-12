@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.Timer;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.team5817.frc2025.autos.Actions.Action;
 import com.team5817.lib.PolynomialRegression;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
@@ -26,6 +28,7 @@ public class FeedForwardCharacterization implements Action{
   private static final double rampRateVoltsPerSec = 0.05;
 
   private final boolean forwards;
+  private boolean done = false;
 
   private final ServoMotorSubsystem mSubsystem;
 
@@ -67,6 +70,7 @@ public class FeedForwardCharacterization implements Action{
         mSubsystem.applyVoltage(0);
    } else {
       double voltage = (timer.get() - startDelaySecs) * rampRateVoltsPerSec * (forwards ? 1 : -1);
+      done = voltage >= 12;
         mSubsystem.applyVoltage(voltage);
       dataPrimary.add(mSubsystem.getVelocity(), voltage);
     }
@@ -89,7 +93,7 @@ public class FeedForwardCharacterization implements Action{
    */
   @Override
   public boolean isFinished() {
-    return DriverStation.isDisabled();
+    return done;
   }
 
   /**
