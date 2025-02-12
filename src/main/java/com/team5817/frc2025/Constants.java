@@ -154,13 +154,13 @@ public class Constants {
 		/* Heading Controller */
 
 		// Stabilize Heading PID Values
-		public static final double kStabilizeSwerveHeadingKp = 10.0;
+		public static final double kStabilizeSwerveHeadingKp = 8.0;
 		public static final double kStabilizeSwerveHeadingKi = 0.0;
 		public static final double kStabilizeSwerveHeadingKd = 0.3;
 		public static final double kStabilizeSwerveHeadingKf = 2.0;
 
 		// Snap Heading PID Values
-		public static final double kSnapSwerveHeadingKp = 10.0;
+		public static final double kSnapSwerveHeadingKp = 8.0;
 		public static final double kSnapSwerveHeadingKi = 0.0;
 		public static final double kSnapSwerveHeadingKd = 0.6;
 		public static final double kSnapSwerveHeadingKf = 1.0;
@@ -171,7 +171,7 @@ public class Constants {
 
 		static {
 			kSwerveKinematicLimits.kMaxDriveVelocity = maxSpeed;
-			kSwerveKinematicLimits.kMaxDriveAcceleration = 40;
+			kSwerveKinematicLimits.kMaxDriveAcceleration = 80;
 			kSwerveKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
 
@@ -188,7 +188,7 @@ public class Constants {
 		public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
 				maxSpeed,
 				-maxSpeed,
-				maxAcceleration);
+				80);
 
 		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
 				5,
@@ -278,8 +278,8 @@ public class Constants {
 			config.MotorOutput.Inverted = inverse ? InvertedValue.Clockwise_Positive
 					: InvertedValue.CounterClockwise_Positive;
 
-			config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
-			config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
+			config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0;
+			config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0;
 			return config;
 		}
 

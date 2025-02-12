@@ -2,7 +2,6 @@ package com.team5817.frc2025.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.Mode;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.drivers.Pigeon;

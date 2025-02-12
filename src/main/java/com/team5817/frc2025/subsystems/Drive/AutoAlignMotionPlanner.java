@@ -1,7 +1,7 @@
 package com.team5817.frc2025.subsystems.Drive;
 
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Transform2d;
+import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.motion.IMotionProfileGoal;
 import com.team254.lib.motion.MotionProfileGoal;
@@ -16,6 +16,8 @@ import com.team5817.lib.swerve.SwerveHeadingController;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.util.OptionalDouble;
+
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Class responsible for planning the motion for auto-alignment.
@@ -89,10 +91,10 @@ public class AutoAlignMotionPlanner {
         }
 
         double xOutput = mXController.update(
-                new MotionState(timestamp, current_pose.getTranslation().x(), current_vel.dx / 2, 0.0),
+                new MotionState(timestamp, current_pose.getTranslation().x(), 0, 0.0),
                 timestamp + Constants.kLooperDt);
         double yOutput = mYController.update(
-                new MotionState(timestamp, current_pose.getTranslation().y(), current_vel.dy / 2, 0.0),
+                new MotionState(timestamp, current_pose.getTranslation().y(), 0, 0.0),
                 timestamp + Constants.kLooperDt);
         double thetaOutput = mThetaController.update(current_pose.getRotation(), timestamp);
         ChassisSpeeds setpoint = new ChassisSpeeds();

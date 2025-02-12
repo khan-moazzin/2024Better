@@ -19,7 +19,6 @@ import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.motion.PPPathPointState;
 import com.team5817.lib.motion.Trajectory;
 import com.team5817.lib.swerve.DriveMotionPlanner;
-import com.team5817.lib.swerve.DriveMotionPlanner.FollowerType;
 
 import com.team5817.lib.swerve.SwerveHeadingController;
 import com.team5817.lib.swerve.SwerveModule;
@@ -89,7 +88,7 @@ public class Drive extends Subsystem {
 
 	private Rotation2d mTrackingAngle = Rotation2d.identity();
 
-	private SwerveKinematicLimits mKinematicLimits = SwerveConstants.kSwerveKinematicLimits;
+	private SwerveKinematicLimits mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 	private SwerveKinematicLimits mUncappedKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 
 	private static AlignmentType mAlignment = AlignmentType.CORAL_SCORE;
@@ -220,13 +219,17 @@ public class Drive extends Subsystem {
 		}
 
 		if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
-			mKinematicLimits = SwerveConstants.kSwerveKinematicLimits;
+			mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 			double x = speeds.vxMetersPerSecond;
 			double y = speeds.vyMetersPerSecond;
 
 			if (Math.abs(speeds.omegaRadiansPerSecond) > .1) {
 				omega = speeds.omegaRadiansPerSecond;
 
+			}
+
+			if(Math.abs(omega) < .05){
+				omega = 0;
 			}
 
 			mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(x, y, omega);
@@ -359,7 +362,6 @@ public class Drive extends Subsystem {
 			return;
 		}
 		mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
-		Logger.recordOutput("target pose", targetPoint.wpi());
 		mAutoAlignMotionPlanner.setTargetPoint(targetPoint);
 		if (mControlState != DriveControlState.AUTOALIGN) {
 			mAutoAlignMotionPlanner.reset();
@@ -493,19 +495,6 @@ public class Drive extends Subsystem {
 				twist_vel.dtheta);
 		mPeriodicIO.timestamp = Timer.getFPGATimestamp();
 
-	}
-
-	/**
-	 * Sets whether to use PID control for trajectory following.
-	 *
-	 * @param pid_enable True to use PID control, false to use Pure Pursuit control.
-	 */
-	public void setUsePIDControl(boolean pid_enable) {
-		if (pid_enable) {
-			mMotionPlanner.setFollowerType(FollowerType.PID);
-		} else {
-			mMotionPlanner.setFollowerType(FollowerType.PURE_PURSUIT);
-		}
 	}
 
 	/**
@@ -798,15 +787,14 @@ public class Drive extends Subsystem {
 			PPLibTelemetry.setVelocities(speeds.norm(), Math.hypot(feedforwards.getXVel(), feedforwards.getYVel()),
 					speeds.dtheta, feedforwards.getThetaVel());
 		}
-		PPLibTelemetry.registerHotReloadAuto(null, null);
-		edu.wpi.first.math.kinematics.SwerveModuleState[] uncappedstates = new edu.wpi.first.math.kinematics.SwerveModuleState[4];
+		edu.wpi.first.math.kinematics.SwerveModuleState[] currentStates = new edu.wpi.first.math.kinematics.SwerveModuleState[4];
 		edu.wpi.first.math.kinematics.SwerveModuleState[] states = new edu.wpi.first.math.kinematics.SwerveModuleState[4];
 		for (SwerveModule mod : mModules) {
 			states[mod.moduleNumber()] = mod.getWpiState();
-			uncappedstates[mod.moduleNumber()] = mPeriodicIO.uncapped_module_states[mod.moduleNumber()].wpi();
+			currentStates[mod.moduleNumber()] = mPeriodicIO.des_module_states[mod.moduleNumber()].wpi();
 		}
-		Logger.recordOutput("Drive/Desired States", states);
-		Logger.recordOutput("Drive/Uncapped States", uncappedstates);
+
+		Logger.recordOutput("Drive/desired States", currentStates);
 		Logger.recordOutput("Drive/Current States", getWpiModuleStates());
 		Logger.recordOutput("Drive/DesiredSpeed", mPeriodicIO.des_chassis_speeds.wpi());
 		Logger.recordOutput("Drive/State", mControlState);

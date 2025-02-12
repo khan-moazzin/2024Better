@@ -12,13 +12,15 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.AutoLog;
+
 
 /**
  * VisionDevice class handles vision processing and updates.
  */
 public class VisionDevice {
-	private VisionDeviceIO mPeriodicIO = new VisionDeviceIO();
+	private VisionDeviceIOAutoLogged mPeriodicIO = new VisionDeviceIOAutoLogged();
+	public Optional<VisionUpdate> visionUpdate = Optional.empty();
 
 	public String mName;
 	private NetworkTable mOutputTable;
@@ -46,7 +48,6 @@ public class VisionDevice {
 
 		PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mName);
 		mPeriodicIO.seesTarget = poseEstimate.pose.getTranslation().getNorm() != 0 && LimelightHelpers.getTV(mName);
-		Logger.recordOutput("Vision Norm" + mName, poseEstimate.pose.getTranslation().getNorm());
 		if (mPeriodicIO.seesTarget) {
 			final double realTime = timestamp - mPeriodicIO.latency;
 			mPeriodicIO.fps = mOutputTable.getEntry("fps").getInteger(0);
@@ -60,10 +61,10 @@ public class VisionDevice {
 
 			VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, realTime, mPeriodicIO.ta,
 					mPeriodicIO.mt2Pose.getTranslation());
-			mPeriodicIO.visionUpdate = Optional.of(visionUpdate);
+			this.visionUpdate = Optional.of(visionUpdate);
 
 		} else {
-			mPeriodicIO.visionUpdate = Optional.empty();
+			this.visionUpdate = Optional.empty();
 		}
 		LimelightHelpers.SetRobotOrientation(mName, Pigeon.getInstance().getYaw().getDegrees(), 0, 0, 0, 0, 0);
 
@@ -107,7 +108,7 @@ public class VisionDevice {
 	 *         is available
 	 */
 	public Optional<VisionUpdate> getVisionUpdate() {
-		return mPeriodicIO.visionUpdate;
+		return this.visionUpdate;
 	}
 
 	/**
@@ -119,6 +120,7 @@ public class VisionDevice {
 	/**
 	 * Inner class to hold periodic IO data for the vision device.
 	 */
+	@AutoLog
 	public static class VisionDeviceIO {
 
 		// inputs
@@ -134,7 +136,6 @@ public class VisionDevice {
 		public double latency = 0;
 		public int tagId = 0;
 		public boolean seesTarget = true;
-		public Optional<VisionUpdate> visionUpdate = Optional.empty();
 		public double ta = 0;
 		public boolean useVision = true;
 		public double tagCounts = 0;

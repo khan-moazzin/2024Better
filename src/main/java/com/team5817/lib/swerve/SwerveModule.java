@@ -26,6 +26,7 @@ import com.team254.lib.drivers.Phoenix6Util;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.swerve.SwerveModuleState;
 
+import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint.MinMax;
 import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveModule extends Subsystem {
@@ -227,8 +228,8 @@ public class SwerveModule extends Subsystem {
 	}
 
 	public edu.wpi.first.math.kinematics.SwerveModuleState getWpiState() {
-		return new edu.wpi.first.math.kinematics.SwerveModuleState(mOutputs.driveVelocity,
-				edu.wpi.first.math.geometry.Rotation2d.fromDegrees(target_angle));
+		return new edu.wpi.first.math.kinematics.SwerveModuleState( getCurrentVelocity(),
+				edu.wpi.first.math.geometry.Rotation2d.fromRotations(mInputs.rotationPosition));
 	}
 
 	public SwerveModulePosition getPosition() {

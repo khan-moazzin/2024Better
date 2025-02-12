@@ -29,8 +29,7 @@ public class DriveMotionPlanner {
 	public static final double kAdaptiveErrorLookaheadCoefficient = 0.01;
 
 	public enum FollowerType {
-		PID,
-		PURE_PURSUIT,
+		PID
 	}
 
 	FollowerType mFollowerType = FollowerType.PID;

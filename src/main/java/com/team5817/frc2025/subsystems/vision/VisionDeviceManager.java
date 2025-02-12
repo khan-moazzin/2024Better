@@ -106,12 +106,12 @@ public class VisionDeviceManager extends Subsystem {
 					Logger.recordOutput("Vision Pose" + device.mName, Pose2d.fromTranslation(update.getFieldToVision()).wpi());
 					if (DriverStation.getAlliance().get() == Alliance.Red) {
 						if (PoseEstimatorConstants.redTagIDFilters.contains(update.getID())||DriverStation.isDisabled()) {
-							mRobotState.addSpecializedVisionUpdate(update);
+							// mRobotState.addSpecializedVisionUpdate(update);
 						}
 
 					} else {
 						if (PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())||DriverStation.isDisabled()) {
-							mRobotState.addSpecializedVisionUpdate(update);
+							// mRobotState.addSpecializedVisionUpdate(update);
 						}
 					}
 					if (update.getTimestamp() > timeOfLastUpdate)
@@ -182,7 +182,7 @@ public class VisionDeviceManager extends Subsystem {
 	/**
 	 * Applies a translational filter to the vision data.
 	 * @param domTargetToCamera the pose of the dominant target to the camera.
-	 * @param subDevice the pose of the subordinate device.
+	 * @param subDevice the pose of the subordinate device. HI MIKEY HI MIKEY HI MKIEY HI HUBERT HI HUBERT
 	 * @return true if the error is within the threshold, false otherwise.
 	 */
 	public boolean translationalFilter(Pose3d domTargetToCamera, Pose3d subDevice) {
@@ -306,7 +306,7 @@ public class VisionDeviceManager extends Subsystem {
 	/**
 	 * Multiplies a 3x3 matrix with a 3D vector.
 	 * @param matrix the 3x3 matrix.
-	 * @param vector the 3D vector.
+	 * @param vector the 3D vector./
 	 * @return the resulting 3D vector.
 	 */
 	private static Translation3d multiplyMatrixVector(double[][] matrix, Translation3d vector) {
