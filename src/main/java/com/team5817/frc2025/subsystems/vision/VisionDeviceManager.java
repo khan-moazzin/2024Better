@@ -61,7 +61,7 @@ public class VisionDeviceManager extends Subsystem {
 	 * Constructor for VisionDeviceManager.
 	 */
 	public VisionDeviceManager() {
-		mDomCamera = new VisionDevice("limelight-right");
+		mDomCamera = new VisionDevice("limelight-left");
 		mSubCamera = new VisionDevice("limelight-left");
 		mAllCameras = List.of(mDomCamera, mSubCamera);
 		mRobotState = RobotState.getInstance();

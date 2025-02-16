@@ -47,7 +47,9 @@ public class VisionDevice {
 	public void update(double timestamp) {
 
 		PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mName);
-		mPeriodicIO.seesTarget = poseEstimate.pose.getTranslation().getNorm() != 0 && LimelightHelpers.getTV(mName);
+		mPeriodicIO.seesTarget = false;
+		if(poseEstimate!=null)
+			mPeriodicIO.seesTarget = poseEstimate.pose.getTranslation().getNorm() != 0 && LimelightHelpers.getTV(mName);
 		if (mPeriodicIO.seesTarget) {
 			final double realTime = timestamp - mPeriodicIO.latency;
 			mPeriodicIO.fps = mOutputTable.getEntry("fps").getInteger(0);

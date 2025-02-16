@@ -56,7 +56,7 @@ public class Constants {
 	public static final double kJoystickThreshold = 0.2;
 	public static final int kButtonGamepadPort = 1;
 
-	public static final double stickDeadband = 0.1;
+	public static final double stickDedband = 0.1;
 
 	public static final double specializedVisionTimeout = 5;
 
@@ -71,10 +71,13 @@ public class Constants {
 			{ 0.0, 0.0, 0.0 }
 	};
 
-	public static final double kBumberSideLength = Units.inchesToMeters(45);
+	public static final double kBumberSideLength = Units.inchesToMeters(36.125);
 
 
     public static final double kDefaultDistanceToReef = 3;
+
+
+    public static final double stickDeadband = 0.1;
 
 	/**
 	 * Constants related to the Swerve drive system.
@@ -90,8 +93,8 @@ public class Constants {
 		public static final double wheelDiameter = Units.inchesToMeters(4.00);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
-		public static final double driveGearRatio = 6.25;
-		public static final double angleGearRatio = 15.43;
+		public static final double driveGearRatio = 6.39;
+		public static final double angleGearRatio = 12.1;
 
 		public static final Translation2d[] swerveModuleLocations = {
 				new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
