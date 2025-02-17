@@ -264,7 +264,7 @@ public class Robot extends LoggedRobot {
     Elastic.selectTab("Systems Test");
     // mAutoExecuter.setAuto(new TestRoutine()); 
 
-    mAutoExecuter.setAuto(new Characterize(Elevator.getInstance(),true));
+    mAutoExecuter.setAuto(new Characterize(Elevator.getInstance(),false));
     mAutoExecuter.start();
 
   }

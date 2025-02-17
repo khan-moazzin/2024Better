@@ -447,23 +447,24 @@ public class Constants {
 		static {
 			kElevatorServoConstants.kName = "Elevator";
 
-			kElevatorServoConstants.simIO = true;
+			kElevatorServoConstants.simIO = false;
 
 			kElevatorServoConstants.kMainConstants.id = Ports.ELEVATOR;
 			kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
 
 			kElevatorServoConstants.kHomePosition = 0; // degrees
-			kElevatorServoConstants.kRotationsPerUnitDistance = 1;
+			kElevatorServoConstants.kRotationsPerUnitDistance = 72.82/1.4;
 
 			kElevatorServoConstants.kMaxUnitsLimit = 128.1;
 			kElevatorServoConstants.kMinUnitsLimit = 0.0;
 
-			kElevatorServoConstants.kKp = 3.0;
+			kElevatorServoConstants.kKp = 0.0;
 			kElevatorServoConstants.kKi = 0.0;
 			kElevatorServoConstants.kKd = 0.0;
 			kElevatorServoConstants.kKa = 0.0;
-			kElevatorServoConstants.kKs = 0.2;
-			kElevatorServoConstants.kKg = 0.2;
+			kElevatorServoConstants.kKs = 1.05983;
+			kElevatorServoConstants.kKv = 7.52928;
+			kElevatorServoConstants.kKg = 0.0;
 
 			kElevatorServoConstants.kCruiseVelocity = 400.0; // degrees / s
 			kElevatorServoConstants.kAcceleration = 10000.0; // degrees / s^2
@@ -498,7 +499,7 @@ public class Constants {
 
 			kClimbServoConstants.simIO = true;
 
-			kClimbServoConstants.kMainConstants.id = Ports.ELEVATOR;
+			kClimbServoConstants.kMainConstants.id = Ports.CLIMB;
 			kClimbServoConstants.kMainConstants.counterClockwisePositive = false;
 
 			kClimbServoConstants.kHomePosition = 0; // degrees
