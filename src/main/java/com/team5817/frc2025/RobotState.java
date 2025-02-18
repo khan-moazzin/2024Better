@@ -335,7 +335,7 @@ public class RobotState {
      */
     public void addSpecializedVisionUpdate(VisionUpdate visionUpdate) {
         // Use the same logic as addVisionUpdate but with the specialized Kalman filter
-        if ((!mLatestSpecializedVisionUpdate.isEmpty() || initialPoseErrorSpecialized.isPresent()) && Timer.getTimestamp() - mLatestSpecializedVisionUpdate.get().getTimestamp() < Constants.specializedVisionTimeout) {
+        if (!mLatestSpecializedVisionUpdate.isEmpty() || initialPoseErrorSpecialized.isPresent()){
             // Get the Timestamp of the Vision Reading
             double visionTimestamp = mLatestSpecializedVisionUpdate.get().getTimestamp();
 
@@ -353,7 +353,6 @@ public class RobotState {
             // filter
             Translation2d visionOdomError = visionFieldToVehicle.getTranslation()
                     .translateBy(odomToVehicle.getTranslation().inverse());
-            mDisplayVisionPose = visionFieldToVehicle;
 
             try {
                 // Use the specialized Kalman filter
@@ -531,7 +530,7 @@ public class RobotState {
          * 
          * @return the ID
          */
-        public int getID() {
+        public Integer getID() {
             return mID;
         }
     }

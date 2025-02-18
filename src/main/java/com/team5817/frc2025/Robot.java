@@ -4,6 +4,10 @@
 
 package com.team5817.frc2025;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -152,6 +156,7 @@ public class Robot extends LoggedRobot {
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
     mEnabledLooper.start();
     Superstructure.getInstance().setGoal(GoalState.STOW);
+    Logger.recordOutput("isComp", Constants.isComp);
   }
 
   /**
@@ -173,9 +178,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     Elastic.selectTab("Autonomous");
-    if (mVision.getMovingAverageRead() != null) {
-      mDrive.zeroGyro(mVision.getMovingAverageRead());
-    }
     mDrive.resetModulesToAbsolute();
     mAutoExecuter.start();
     // Superstructure.getInstance().setState(Superstructure.AUTO);
@@ -188,12 +190,14 @@ public class Robot extends LoggedRobot {
   public void autonomousPeriodic() {
 
   }
-
+  boolean neverEnabled = true;
   /**
    * This method is called once each time the robot enters teleoperated mode.
    */
   @Override
   public void teleopInit() {
+    neverEnabled = false;
+
     Elastic.selectTab("Teleoperated");
 
     // swerve.fieldzeroSwerve();
@@ -232,7 +236,8 @@ public class Robot extends LoggedRobot {
     if(mAutoExecuter!=null){
       mAutoExecuter.stop();
     }
-
+    mVision.clearHeading();
+    mVision.preset(mDrive.getHeading());
     mAutoExecuter = new AutoExecuter();
   }
 
@@ -243,6 +248,8 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     
     l.update();
+    if(mVision.getMovingAverage().getSize()!=0&&neverEnabled)
+      mDrive.zeroGyro(mVision.getMovingAverage().getAverage());
     mAutoModeSelector.updateModeCreator();
     Optional<AutoBase> autoMode = mAutoModeSelector.getAutoMode();
     if (autoMode.isPresent() && (autoMode.get() != mAutoExecuter.getAuto())) {
@@ -264,7 +271,7 @@ public class Robot extends LoggedRobot {
     Elastic.selectTab("Systems Test");
     // mAutoExecuter.setAuto(new TestRoutine()); 
 
-    mAutoExecuter.setAuto(new Characterize(Elevator.getInstance(),false));
+    mAutoExecuter.setAuto(new Characterize(Elevator.getInstance(),true));
     mAutoExecuter.start();
 
   }

@@ -44,6 +44,7 @@ public class Ports {
 	public static final int PIGEON = 23;
 
 	public static final CanDeviceId LEDS = new CanDeviceId(21, "rio");
+	public static final CanDeviceId ELEVATOR_2 = null;
 
 	/* BEAM BREAK DIO CHANNELS */
 	// spotless:on

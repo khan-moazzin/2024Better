@@ -57,7 +57,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		public CanDeviceId id = new CanDeviceId(-1);
 		public boolean counterClockwisePositive = true;
 		public boolean invert_sensor_phase = false;
-		public int encoder_ppr = 2048;
 	}
 
 	// Recommend initializing in a static block!

@@ -3,6 +3,8 @@ package com.team5817.lib.swerve;
 
 
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
@@ -110,6 +112,7 @@ public class DriveMotionPlanner {
 		mOutput = updatePIDChassis(chassis_speeds);
 
 		mPathIsFinished = distance(current_state, mCurrentTrajectoryLength) < SwerveConstants.kTrajectoryDeadband;
+		Logger.recordOutput("PathDistance", distance(current_state, mCurrentTrajectoryLength));
 		mOutput = ChassisSpeeds.fromFieldRelativeSpeeds(chassis_speeds, current_state.getRotation());
 
 		return mOutput;

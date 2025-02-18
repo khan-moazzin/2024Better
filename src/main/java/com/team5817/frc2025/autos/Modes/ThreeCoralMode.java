@@ -74,6 +74,7 @@ public class ThreeCoralMode extends AutoBase {
 		if (Constants.mode == Constants.Mode.SIM) {
 			mSim.setSimulationWorldPose(t.initalPose().wpi());
 		}
+	
 		d.autoAlignFinishedOverrride(false);
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),
@@ -102,7 +103,7 @@ public class ThreeCoralMode extends AutoBase {
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
 						new WaitToPassDistanceToReef(enterDistance),
-						new LambdaAction(()-> d.setUseSpecializedPoseForPath(true)),
+						// new LambdaAction(()-> d.setUseSpecializedPoseForPath(true)),
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));
@@ -113,7 +114,7 @@ public class ThreeCoralMode extends AutoBase {
 		r(new WaitForSuperstructureAction());
 		r(new WaitAction(coralSpit));
 		System.out.println("Scored 7A");
-		d.setUseSpecializedPoseForPath(false);
+		// d.setUseSpecializedPoseForPath(false);
 
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),
@@ -129,7 +130,7 @@ public class ThreeCoralMode extends AutoBase {
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
 						new WaitToPassDistanceToReef(enterDistance),
-						new LambdaAction(() -> d.setUseSpecializedPoseForPath(true)),
+						// new LambdaAction(() -> d.setUseSpecializedPoseForPath(true)),
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));
@@ -139,7 +140,7 @@ public class ThreeCoralMode extends AutoBase {
 		r(new WaitAction(coralSpit));
 		System.out.println("Scored 7B");
 
-		d.setUseSpecializedPoseForPath(false);
+		// d.setUseSpecializedPoseForPath(false);
 
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),

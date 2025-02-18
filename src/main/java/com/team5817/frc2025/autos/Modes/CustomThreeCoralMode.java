@@ -146,7 +146,7 @@ public class CustomThreeCoralMode extends AutoBase {
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
 						new WaitToPassDistanceToReef(enterDistance),
-						new LambdaAction(()-> d.setUseSpecializedPoseForPath(true)),
+						new LambdaAction(()-> d.setUseSpecializedPoseForPath(false)),
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));
@@ -174,7 +174,7 @@ public class CustomThreeCoralMode extends AutoBase {
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
 						new WaitToPassDistanceToReef(enterDistance),
-						new LambdaAction(() -> d.setUseSpecializedPoseForPath(true)),
+						new LambdaAction(() -> d.setUseSpecializedPoseForPath(false)),
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));

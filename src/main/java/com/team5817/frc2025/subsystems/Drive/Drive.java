@@ -802,6 +802,8 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
 		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestGlobalKalmanPose().wpi());
 		Logger.recordOutput("RobotState/Odom Pose", RobotState.getInstance().getLatestPoseFromOdom().getValue().wpi());
+		// Logger.recordOutput("RobotState/Specialized Pose", RobotState.getInstance().getLatestSpecializedKalmanPose().wpi());
+
 		Logger.recordOutput("Drive/Control State Changed", mControlStateHasChanged);
 
 		// elastic

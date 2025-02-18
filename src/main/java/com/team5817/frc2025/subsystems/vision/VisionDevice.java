@@ -1,6 +1,8 @@
 package com.team5817.frc2025.subsystems.vision;
 
+import com.team5817.frc2025.Constants.PoseEstimatorConstants;
 import com.team5817.frc2025.RobotState.VisionUpdate;
+import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.subsystems.vision.LimelightHelpers.PoseEstimate;
 import com.team5817.lib.drivers.Pigeon;
 import com.team254.lib.geometry.Pose2d;
@@ -9,11 +11,12 @@ import com.team254.lib.util.MovingAverage;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.Optional;
 
 import org.littletonrobotics.junction.AutoLog;
-
+import org.littletonrobotics.junction.Logger;
 
 /**
  * VisionDevice class handles vision processing and updates.
@@ -24,7 +27,7 @@ public class VisionDevice {
 
 	public String mName;
 	private NetworkTable mOutputTable;
-	private MovingAverage mHeadingAverage = new MovingAverage(100);
+	private MovingAverage mHeadingAverage = new MovingAverage(1000);
 
 	/**
 	 * Constructor for VisionDevice.
@@ -57,19 +60,23 @@ public class VisionDevice {
 			mPeriodicIO.tagId = mOutputTable.getEntry("tid").getNumber(-1).intValue();
 
 			mPeriodicIO.mt1Pose = new Pose2d(LimelightHelpers.getBotPose2d_wpiBlue(mName));
+			addHeadingObservation(mPeriodicIO.mt1Pose.getRotation());
 			mPeriodicIO.targetToCamera = LimelightHelpers.getTargetPose3d_CameraSpace(mName);
 			mPeriodicIO.tagCounts = poseEstimate.tagCount;
 			mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
 
 			VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, realTime, mPeriodicIO.ta,
 					mPeriodicIO.mt2Pose.getTranslation());
+					Logger.recordOutput(mName+"/ID", mPeriodicIO.tagId);
+					Logger.recordOutput(mName+"/Specialized", PoseEstimatorConstants.redTagIDFilters.contains( mPeriodicIO.tagId));
 			this.visionUpdate = Optional.of(visionUpdate);
 
 		} else {
 			this.visionUpdate = Optional.empty();
 		}
 		LimelightHelpers.SetRobotOrientation(mName, Pigeon.getInstance().getYaw().getDegrees(), 0, 0, 0, 0, 0);
-
+		Logger.recordOutput(mName+"/mt1", mPeriodicIO.mt1Pose.wpi());
+		Logger.recordOutput(mName+"/avg heading", getEstimatedHeading());
 	}
 
 	/**
@@ -88,10 +95,14 @@ public class VisionDevice {
 	 */
 	public void addHeadingObservation(Rotation2d heading) {
 		double degrees = heading.getDegrees();
-		if (degrees < 0) {
+		while (degrees < 0) {
 			degrees += 360;
 		}
 		mHeadingAverage.addNumber(degrees);
+	}
+
+	public MovingAverage getMovingAverage(){
+		return mHeadingAverage;
 	}
 
 	/**

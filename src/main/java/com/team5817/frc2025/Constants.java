@@ -1,6 +1,13 @@
 package com.team5817.frc2025;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -11,6 +18,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.RobotConfig;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
+import com.team5817.lib.drivers.ServoMotorSubsystem.TalonFXConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
 import com.team5817.lib.swerve.SwerveModule.SwerveModuleConstants;
 import com.team254.lib.geometry.Translation2d;
@@ -26,6 +34,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 
 /**
  * Constants class holds all the robot-wide numerical or boolean constants.
@@ -56,7 +65,7 @@ public class Constants {
 	public static final double kJoystickThreshold = 0.2;
 	public static final int kButtonGamepadPort = 1;
 
-	public static final double stickDedband = 0.1;
+	public static final double stickDeadband = 0.1;
 
 	public static final double specializedVisionTimeout = 5;
 
@@ -76,9 +85,6 @@ public class Constants {
 
     public static final double kDefaultDistanceToReef = 3;
 
-
-    public static final double stickDeadband = 0.1;
-
 	/**
 	 * Constants related to the Swerve drive system.
 	 */
@@ -93,8 +99,8 @@ public class Constants {
 		public static final double wheelDiameter = Units.inchesToMeters(4.00);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
-		public static final double driveGearRatio = 6.39;
-		public static final double angleGearRatio = 12.1;
+		public static final double driveGearRatio = isComp? 6.39 : 6.25;
+		public static final double angleGearRatio = isComp? 12.1 : 15.43;
 
 		public static final Translation2d[] swerveModuleLocations = {
 				new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
@@ -168,7 +174,7 @@ public class Constants {
 		public static final double kSnapSwerveHeadingKd = 0.6;
 		public static final double kSnapSwerveHeadingKf = 1.0;
 
-		public static final double kTrajectoryDeadband = .01;
+		public static final double kTrajectoryDeadband = .05;
 
 		public static final SwerveKinematicLimits kSwerveKinematicLimits = new SwerveKinematicLimits();
 
@@ -338,9 +344,10 @@ public class Constants {
 		public static List<Integer> blueTagIDFilters;
 
 		static {
-			redTagIDFilters = List.of();
-			blueTagIDFilters = List.of();
+			redTagIDFilters = List.of(6,7,8,9,10,11);
+			blueTagIDFilters = List.of(17,18,19,20,21,22);
 
+		
 			kDomVisionDevice.kTableName = "limelight-Dom";
 			kDomVisionDevice.kRobotToCamera = new Transform3d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325),
 					Units.inchesToMeters(0),
@@ -447,10 +454,17 @@ public class Constants {
 		static {
 			kElevatorServoConstants.kName = "Elevator";
 
-			kElevatorServoConstants.simIO = false;
+			kElevatorServoConstants.simIO = isComp? false:true;
 
 			kElevatorServoConstants.kMainConstants.id = Ports.ELEVATOR;
 			kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
+
+			TalonFXConstants followerConstants = new TalonFXConstants();
+				followerConstants.id = Ports.ELEVATOR_2;
+				followerConstants.counterClockwisePositive = false;
+				followerConstants.invert_sensor_phase = false;
+
+			kElevatorServoConstants.kFollowerConstants = new TalonFXConstants[]{followerConstants};
 
 			kElevatorServoConstants.kHomePosition = 0; // degrees
 			kElevatorServoConstants.kRotationsPerUnitDistance = 72.82/1.4;
@@ -458,7 +472,7 @@ public class Constants {
 			kElevatorServoConstants.kMaxUnitsLimit = 128.1;
 			kElevatorServoConstants.kMinUnitsLimit = 0.0;
 
-			kElevatorServoConstants.kKp = 0.0;
+			kElevatorServoConstants.kKp = 1.0;
 			kElevatorServoConstants.kKi = 0.0;
 			kElevatorServoConstants.kKd = 0.0;
 			kElevatorServoConstants.kKa = 0.0;
@@ -609,5 +623,15 @@ public class Constants {
 			return config;
 		}
 	}
-
+	public static final boolean isComp = isComp();
+	private static boolean isComp(){
+		final Path commentPath = Path.of("/etc/machine-info");
+		try {
+			var comment = Files.readString(commentPath);
+			return comment.contains("Comp");
+		} catch (IOException e) {
+			System.out.println(e);
+			return false;
+		}
+		}
 }

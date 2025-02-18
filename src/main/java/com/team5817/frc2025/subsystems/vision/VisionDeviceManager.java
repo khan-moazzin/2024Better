@@ -8,6 +8,7 @@ import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.lib.drivers.Subsystem;
 import com.team254.lib.geometry.Pose2d;
+import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Translation3d;
 import com.team254.lib.util.MovingAverage;
@@ -61,7 +62,7 @@ public class VisionDeviceManager extends Subsystem {
 	 * Constructor for VisionDeviceManager.
 	 */
 	public VisionDeviceManager() {
-		mDomCamera = new VisionDevice("limelight-left");
+		mDomCamera = new VisionDevice("limelight-right");
 		mSubCamera = new VisionDevice("limelight-left");
 		mAllCameras = List.of(mDomCamera, mSubCamera);
 		mRobotState = RobotState.getInstance();
@@ -91,7 +92,6 @@ public class VisionDeviceManager extends Subsystem {
 	 */
 	@Override
 	public void readPeriodicInputs() {
-		mMovingAvgRead = mHeadingAvg.getAverage();
 		if ( Constants.mode == Constants.Mode.SIM) {
 			RobotState.getInstance().addVisionUpdate(new VisionUpdate(1, Timer.getTimestamp(), 1.0,
 					RobotState.getInstance().getPoseFromOdom(Timer.getTimestamp()).getTranslation()));
@@ -99,19 +99,18 @@ public class VisionDeviceManager extends Subsystem {
 
 			for (VisionDevice device : mAllCameras) {
 				device.update(Timer.getTimestamp());
-				mHeadingAvg.addNumber(device.getEstimatedHeading());
 				if (!device.getVisionUpdate().isEmpty()) {
+					if(device.mName == "limelight-right")
+					mHeadingAvg.addNumber(device.getEstimatedHeading());
 					VisionUpdate update = device.getVisionUpdate().get();
 					RobotState.getInstance().addVisionUpdate(update);
-					Logger.recordOutput("Vision Pose" + device.mName, Pose2d.fromTranslation(update.getFieldToVision()).wpi());
-					if (DriverStation.getAlliance().get() == Alliance.Red) {
+					if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
 						if (PoseEstimatorConstants.redTagIDFilters.contains(update.getID())||DriverStation.isDisabled()) {
-							// mRobotState.addSpecializedVisionUpdate(update);
+							mRobotState.addSpecializedVisionUpdate(update);
 						}
-
 					} else {
 						if (PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())||DriverStation.isDisabled()) {
-							// mRobotState.addSpecializedVisionUpdate(update);
+							mRobotState.addSpecializedVisionUpdate(update);
 						}
 					}
 					if (update.getTimestamp() > timeOfLastUpdate)
@@ -134,7 +133,6 @@ public class VisionDeviceManager extends Subsystem {
 	@Override
 	public void outputTelemetry() {
 		Logger.recordOutput("Elastic/Time Since Last Update", Timer.getTimestamp() - timeOfLastUpdate);
-		SmartDashboard.putNumber("Vision heading moving avg", getMovingAverageRead());
 		SmartDashboard.putBoolean("vision disabled", visionDisabled());
 		for (VisionDevice device : mAllCameras) {
 			device.outputTelemetry();
@@ -196,13 +194,7 @@ public class VisionDeviceManager extends Subsystem {
 
 	}
 
-	/**
-	 * Returns the moving average read value.
-	 * @return the moving average read value.
-	 */
-	public Double getMovingAverageRead() {
-		return mMovingAvgRead;
-	}
+
 
 	/**
 	 * Returns the moving average object.
@@ -219,6 +211,18 @@ public class VisionDeviceManager extends Subsystem {
 	public VisionDevice getLeftVision() {
 		return mDomCamera;
 	}
+
+	public void clearHeading(){
+		for (VisionDevice visionDevice : mAllCameras) {
+			visionDevice.getMovingAverage().clear();
+		}
+	}
+	public void preset(Rotation2d rot){
+		for (VisionDevice visionDevice : mAllCameras) {
+			visionDevice.getMovingAverage().addNumber(rot.getDegrees());
+		}
+	}
+
 
 	/**
 	 * Returns the right vision device.

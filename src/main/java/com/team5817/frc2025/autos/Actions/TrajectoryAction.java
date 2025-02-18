@@ -62,5 +62,7 @@ public class TrajectoryAction implements Action{
 	 */
 	@Override
 	public void done() {
+		System.out.println("Segement Complete");
+		mDrive.setControlState(Drive.DriveControlState.OPEN_LOOP);
 	}
 }
