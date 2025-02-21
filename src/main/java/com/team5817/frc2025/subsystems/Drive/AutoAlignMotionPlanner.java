@@ -24,13 +24,14 @@ import org.littletonrobotics.junction.Logger;
  */
 public class AutoAlignMotionPlanner {
 
-    private ProfileFollower mXController = new ProfileFollower(4, 0.0, 0.0, 1.0, 0.0, 0.0);
-    private ProfileFollower mYController = new ProfileFollower(4, 0.0, 0.0, 2.0, 0.0, 0.0);
+    private ProfileFollower mXController = new ProfileFollower(4, 0.5, 0.0, 1.0, 0.0, 0.0);
+    private ProfileFollower mYController = new ProfileFollower(4, 0.5, 0.0, 2.0, 0.0, 0.0);
     private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;
 
     private Pose2d mFieldToTargetPoint;
+    private Pose2d poseDeadband;
     private OptionalDouble mStartTime;
 
     /**
@@ -47,9 +48,11 @@ public class AutoAlignMotionPlanner {
     public void reset() {
         mStartTime = OptionalDouble.of(Timer.getFPGATimestamp());
         mXController.resetProfile();
+        mXController.resetIntegral();
         mXController.resetSetpoint();
         mYController.resetProfile();
         mYController.resetSetpoint();
+        mYController.resetIntegral();
         mAutoAlignComplete = false;
     }
 
@@ -58,9 +61,12 @@ public class AutoAlignMotionPlanner {
      * 
      * @param targetPoint The target point to align to.
      */
-    public void setTargetPoint(Pose2d targetPoint) {
+    public void setTargetPoint(Pose2d targetPoint, Pose2d poseDeadband) {
         mFieldToTargetPoint = targetPoint;
-
+        mXController.resetIntegral();
+        mYController.resetIntegral();
+        this.poseDeadband = Pose2d.fromTranslation(poseDeadband.getTranslation().rotateBy(targetPoint.getRotation())).withRotation(poseDeadband.getRotation());
+        Logger.recordOutput("Align Point",new edu.wpi.first.math.geometry.Pose2d(mFieldToTargetPoint.getTranslation().wpi(),mFieldToTargetPoint.getRotation().wpi()));
     }
 
     /**
@@ -72,14 +78,13 @@ public class AutoAlignMotionPlanner {
      * @return The updated chassis speeds.
      */
     public ChassisSpeeds updateAutoAlign(double timestamp, Pose2d current_pose, Twist2d current_vel) {
-
         mXController.setGoalAndConstraints(
                 new MotionProfileGoal(mFieldToTargetPoint.getTranslation().x(), 0,
-                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.1, 0.05),
+                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, Math.abs(poseDeadband.getTranslation().x()), 0.05),
                 SwerveConstants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
                 new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 0,
-                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.051, 0.05),
+                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, Math.abs(poseDeadband.getTranslation().y()), 0.05),
                 SwerveConstants.kPositionMotionProfileConstraints);
         mThetaController.setSnapTarget(mFieldToTargetPoint.getRotation());
         double currentRotation = current_pose.getRotation().getRadians();
@@ -99,8 +104,8 @@ public class AutoAlignMotionPlanner {
         double thetaOutput = mThetaController.update(current_pose.getRotation(), timestamp);
         ChassisSpeeds setpoint = new ChassisSpeeds();
 
-        boolean thetaWithinDeadband = current_pose.getRotation().distance(mFieldToTargetPoint.getRotation()) < Units
-                .degrees_to_radians(1) && Math.abs(thetaOutput) < 0.02;
+        boolean thetaWithinDeadband = current_pose.getRotation().distance(mFieldToTargetPoint.getRotation()) < 
+        poseDeadband.getRotation().getRadians() && Math.abs(thetaOutput) < 0.02;
         boolean xWithinDeadband = mXController.onTarget();
         boolean yWithinDeadband = mYController.onTarget();
 

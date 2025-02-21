@@ -195,4 +195,18 @@ public class EndEffectorRollers extends Subsystem {
 	public void outputTelemetry() {
 
 	}
+
+    public Request hasAlgaeRequest() {
+		return new Request() {
+
+			@Override
+			public void act() {
+			}
+			@Override
+			public boolean isFinished() {
+				return mEndEffectorRollerOutputs.roller_demand == State.ALGAE_INTAKE.roller_voltage&&mEndEffectorRollerInputs.roller_stator_current>0.5;//TODO: check current value
+			}
+			
+		};
+	}
 }

@@ -2,6 +2,7 @@ package com.team5817.frc2025.field;
 
 import java.util.List;
 
+import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
 
 /**
@@ -27,11 +28,18 @@ public class AlignmentPoint {
      * Enum representing the types of alignments that can be allowed at an alignment point.
      */
     public enum AlignmentType{
-        CORAL_SCORE,
+        CORAL_SCORE(new Pose2d(0.05, 0.051, 1)),
         ALGAE_CLEAN,
         ALGAE_SCORE,
         HUMAN,
-        NONE
+        NONE;
+        public Pose2d tolerance;
+        private AlignmentType(Pose2d tolerance){
+            this.tolerance = tolerance;
+        }
+        private AlignmentType(){
+            this.tolerance = new Pose2d(.01, 0.1, 1);
+        }
     }
 
     /**

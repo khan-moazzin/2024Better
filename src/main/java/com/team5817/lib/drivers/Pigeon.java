@@ -30,7 +30,7 @@ public class Pigeon {
 	 */
 	public static Pigeon getInstance() {
 		if (mInstance == null) {
-			mInstance = new Pigeon(Ports.PIGEON);
+			mInstance = new Pigeon(Ports.PIGEON.getDeviceNumber(),Ports.PIGEON.getBus());
 		}
 		return mInstance;
 	}
@@ -44,8 +44,8 @@ public class Pigeon {
 	private Rotation2d rollAdjustmentAngle = new Rotation2d();
 	private Rotation2d pitchAdjustmentAngle = new Rotation2d();
 
-	private Pigeon(int port) {
-		mGyro = new Pigeon2(port, "canivore1");
+	private Pigeon(int port, String bus) {
+		mGyro = new Pigeon2(port, bus);
 		mGyro.getConfigurator().apply(new Pigeon2Configuration());
 	}
 

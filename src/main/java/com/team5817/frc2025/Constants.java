@@ -80,7 +80,7 @@ public class Constants {
 			{ 0.0, 0.0, 0.0 }
 	};
 
-	public static final double kBumberSideLength = Units.inchesToMeters(36.125);
+	public static final double kBumberSideLength = Units.inchesToMeters(36.125-3);
 
 
     public static final double kDefaultDistanceToReef = 3;

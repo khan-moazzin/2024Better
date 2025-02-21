@@ -3,6 +3,7 @@ package com.team5817.frc2025.subsystems;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.TimeDelayedBoolean;
 import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
@@ -21,9 +22,6 @@ import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.requests.ParallelRequest;
 import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
-
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Time;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +70,8 @@ public class Superstructure extends Subsystem {
 	private IntakeRollers mIntakeRollers;
 	private Indexer mIndexer;
 
-	private BeamBreak mIntakeBeam = new BeamBreak(0);// made it into intake
-	private BeamBreak mEndEffectoBeam = new BeamBreak(1);// made into end effector
+	private BeamBreak mIndexerBeam = new BeamBreak(Ports.INDEXER_BEAM_BREAK);// made it into intake
+	private BeamBreak mEndEffectorBeam = new BeamBreak(Ports.END_EFFECTOR_BEAM_BREAK);// made into end effector
 
 	public enum GameObject {
 		CORAL,
@@ -301,6 +299,9 @@ public class Superstructure extends Subsystem {
 
 			@Override
 			public boolean isFinished() {
+				if(Constants.mode==Constants.Mode.SIM){
+					return true;
+				}
 				return mBreak.get() == target_state;
 			}
 		};
@@ -327,6 +328,9 @@ public class Superstructure extends Subsystem {
 
 			@Override
 			public boolean isFinished() {
+				if(Constants.mode==Constants.Mode.SIM){
+					return timeout.update(true, delayed_wait_seconds);
+				}
 				return timeout.update(mBreak.get() == target_state, delayed_wait_seconds);
 			}
 		};
@@ -356,11 +360,11 @@ public class Superstructure extends Subsystem {
 	private void updateLEDs() {
 		switch (mLEDs.getState()) {
 			case INTAKING:
-				if (mIntakeBeam.wasTripped())
+				if (mIndexerBeam.wasTripped())
 					mLEDs.applyStates(TimedLEDState.INDEXING);
 				break;
 			case INDEXING:
-				if (mEndEffectoBeam.wasTripped())
+				if (mEndEffectorBeam.wasTripped())
 					mLEDs.applyStates(TimedLEDState.HOLDING);
 			default:
 				break;
@@ -415,9 +419,9 @@ public class Superstructure extends Subsystem {
 						mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState),
 						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
-						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))
-		// breakWait(null, true),
-		).addName("Clean");
+						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState)),
+					mEndEffectorRollers.hasAlgaeRequest()
+				).addName("Clean");
 	}
 
 	/**
@@ -441,8 +445,8 @@ public class Superstructure extends Subsystem {
 						mIndexer.stateRequest(goal.mIndexerState),
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 						mClimb.stateRequest(goal.mClimbState),
-						mIntakeRollers.stateRequest(goal.mIntakeRollersState))
-		// breakWait(null, true),
+						mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
+		breakWait(mIndexerBeam, true)
 		).addName("Intaking");
 	}
 
@@ -471,9 +475,8 @@ public class Superstructure extends Subsystem {
 				mLEDs.stateRequest(TimedLEDState.PREPARED),
 				ReadyToScoreRequest(),
 				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
-				// breakWait(null, false),//TODO
+				breakWait(mEndEffectorBeam, false),
 				mLEDs.stateRequest(TimedLEDState.IDLE)
-
 		).addName("Score");
 	}
 
