@@ -49,6 +49,7 @@ public class Indexer extends Subsystem {
 	}
 
 	private final TalonFX mRoller;
+	private final TalonFX mRoller2;
 
 	private State mState = State.IDLE;
 	private IndexerInputsAutoLogged mIndexerInputs = new IndexerInputsAutoLogged();
@@ -58,8 +59,10 @@ public class Indexer extends Subsystem {
 	 * Private constructor for the Indexer subsystem.
 	 */
 	private Indexer() {
-		mRoller = new TalonFX(Ports.INTAKE_ROLLER.getDeviceNumber(), Ports.INTAKE_ROLLER.getBus());
+		mRoller = new TalonFX(Ports.INDEXER.getDeviceNumber(), Ports.INDEXER.getBus());
+		mRoller2 = new TalonFX(Ports.INDEXER2.getDeviceNumber(), Ports.INDEXER2.getBus());
 		TalonUtil.applyAndCheckConfiguration(mRoller, IntakeRollerConstants.RollerFXConfig());
+		TalonUtil.applyAndCheckConfiguration(mRoller2, IntakeRollerConstants.RollerFXConfig());
 	}
 
 	/**
@@ -156,6 +159,7 @@ public class Indexer extends Subsystem {
 	@Override
 	public void writePeriodicOutputs() {
 		mRoller.setControl(new VoltageOut(mIndexerOutputs.roller_demand));
+		mRoller2.setControl(new VoltageOut(mIndexerOutputs.roller_demand));
 	}
 
 	@Override

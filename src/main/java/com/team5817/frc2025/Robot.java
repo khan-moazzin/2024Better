@@ -181,7 +181,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     Elastic.selectTab("Autonomous");
-    mDrive.resetModulesToAbsolute();
     mAutoExecuter.start();
     // Superstructure.getInstance().setState(Superstructure.AUTO);
     // autoExecuter.setAuto(auto);
@@ -202,9 +201,8 @@ public class Robot extends LoggedRobot {
     neverEnabled = false;
 
     Elastic.selectTab("Teleoperated");
-
-    // swerve.fieldzeroSwerve();
     mDrive.resetModulesToAbsolute();
+    // swerve.fieldzeroSwerve();
     mDrive.feedTeleopSetpoint(new ChassisSpeeds(0, 0, 0));
     mDrive.setOpenLoop(new ChassisSpeeds());
 
@@ -274,8 +272,11 @@ public class Robot extends LoggedRobot {
     Elastic.selectTab("Systems Test");
     // mAutoExecuter.setAuto(new TestRoutine()); 
 
-    mAutoExecuter.setAuto(new Characterize(Elevator.getInstance(),true));
-    mAutoExecuter.start();
+    // mAutoExecuter.setAuto(new Characterize(EndEffectorWrist.getInstance(),true));
+    // mAutoExecuter.start();
+    Elevator.getInstance().conformToState(Elevator.State.ZERO
+    );
+    // Elevator.getInstance().applyVoltage(-1.2);
 
   }
 

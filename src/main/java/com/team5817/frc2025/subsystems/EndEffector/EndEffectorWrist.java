@@ -5,7 +5,7 @@ import com.team5817.frc2025.Constants.EndEffectorWristConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.lib.Util;
-import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder;
+import com.team5817.lib.drivers.ServoMotorSubsystem;
 import com.team5817.lib.requests.Request;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -14,7 +14,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import org.littletonrobotics.junction.Logger;
 
-public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
+public class EndEffectorWrist extends ServoMotorSubsystem{
 
 	/**
 	 * Singleton instance of the EndEffectorWrist.
@@ -28,8 +28,7 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 	 */
 	public static EndEffectorWrist getInstance() {
 		if (mInstance == null) {
-			mInstance = new EndEffectorWrist(EndEffectorWristConstants.kWristServoConstants,
-					EndEffectorWristConstants.kWristEncoderConstants);
+			mInstance = new EndEffectorWrist(EndEffectorWristConstants.kWristServoConstants);
 		}
 		return mInstance;
 	}
@@ -40,16 +39,16 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 
 	public enum State {
 
-		L4(.23, kStrictError),
-		L3(.1, kStrictError),
-		L2(.1, kStrictError),
+		L4(82.2, kStrictError),
+		L3(0, kStrictError),
+		L2(15, kStrictError),
 		L1(0, kStrictError),
-		A1(0.48, kMediumError),
-		A2(0.48, kMediumError),
-		NET(0.48, kMediumError),
-		ZERO(.0, kLenientError),
-		INTAKING(.48, kStrictError),
-		STOW(0.48, kStrictError);
+		A1(208, kMediumError),
+		A2(208, kMediumError),
+		NET(208, kMediumError),
+		ZERO(0, kLenientError),
+		INTAKING(150, kStrictError),
+		STOW(150, kStrictError);
 
 		double output = 0;
 		double allowable_error = 0;
@@ -66,11 +65,10 @@ public class EndEffectorWrist extends ServoMotorSubsystemWithCancoder {
 	 * @param constants The servo motor subsystem constants.
 	 * @param encoder_constants The absolute encoder constants.
 	 */
-	public EndEffectorWrist(final ServoMotorSubsystemConstants constants,
-			final AbsoluteEncoderConstants encoder_constants) {
-		super(constants, encoder_constants);
+	public EndEffectorWrist(final ServoMotorSubsystemConstants constants) {
+		super(constants);
 
-		mMain.setPosition(homeAwareUnitsToRotations(120.0));
+		mMain.setPosition(homeAwareUnitsToRotations(0));
 		enableSoftLimits(false);
 		setSetpointMotionMagic(State.STOW.output);
 	}

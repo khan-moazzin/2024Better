@@ -1,6 +1,8 @@
 package com.team5817.frc2025.subsystems.Elevator;
 
 import com.team5817.frc2025.Robot;
+import com.team254.lib.util.DelayedBoolean;
+import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Constants.ElevatorConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
@@ -8,9 +10,13 @@ import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 import com.team5817.lib.requests.Request;
 
+import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
+
+import java.security.PrivilegedActionException;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -32,32 +38,44 @@ public class Elevator extends ServoMotorSubsystem {
 		return mInstance;
 	}
 
-	final static double kStrictError = .5;
-	final static double kMediumError = 2;
-	final static double kLenientError = 5;
+	private static boolean mHoming = false;
+	private static boolean mWantsHome = false;
+	private final DelayedBoolean mHomingDelay =
+			new DelayedBoolean(Timer.getFPGATimestamp(), Constants.ElevatorConstants.kHomingTimeout);
+
+	final static double kStrictError = .05;
+	final static double kMediumError = .1;
+	final static double kLenientError = .2;
 
 	/**
 	 * Enum representing the different states of the elevator.
 	 */
 	public enum State {
-		L4(1.673, kStrictError),
+		L4(1.75, kStrictError),
 		L3(.986, kStrictError),
-		L2(0.563, kStrictError),
+		L2(0.533, kStrictError),
 		L1(0.304, kStrictError),
 		A1(0.59, kMediumError),
 		A2(1, kMediumError),
 		NET(2, kMediumError),
-		ZERO(0.0, kLenientError),
+		ZERO(.1, kLenientError, true),
 		PROCESS(0.0, kLenientError),
 		STOW(0.0, kStrictError);
 
 		double output = 0;
 		double allowable_error = 20;
+		boolean home = false;
 
 		State(double output, double allowable_error) {
+			this(output, allowable_error, false);
+		}
+
+		State(double output, double allowable_error, boolean home) {
 			this.output = output;
 			this.allowable_error = allowable_error;
+			this.home = home;
 		}
+
 	}
 
 	/**
@@ -85,8 +103,21 @@ public class Elevator extends ServoMotorSubsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
+				if (getSetpoint() == mConstants.kHomePosition && atHomingLocation() && mWantsHome && !mHoming) {
+					setWantHome(true);
+				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
+					setWantHome(false);
+				}
 			}
 		});
+	}
+
+	public void setWantHome(boolean wantHome){
+		mHoming = wantHome;
+
+		if (mHoming) {
+			mWantsHome = false;
+		}
 	}
 
 	@Override
@@ -97,6 +128,18 @@ public class Elevator extends ServoMotorSubsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
+		if (mHoming) {
+			setOpenLoop(Constants.ElevatorConstants.kHomingOutput / mConstants.kMaxForwardOutput);
+			if (mHomingDelay.update(
+					Timer.getFPGATimestamp(),
+					Math.abs(getVelocity()) < Constants.ElevatorConstants.kHomingVelocityWindow)) {
+				zeroSensors();
+				mHasBeenZeroed = true;
+				setSetpointMotionMagic(mConstants.kHomePosition);
+				mHoming = false;
+			}
+		}
+
 		super.writePeriodicOutputs();
 	}
 
@@ -205,6 +248,7 @@ public class Elevator extends ServoMotorSubsystem {
 			@Override
 			public void act() {
 				setSetpointMotionMagic(_wantedState.output);
+				mWantsHome = _wantedState.home;
 			}
 
 			@Override

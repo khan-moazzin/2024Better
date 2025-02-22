@@ -5,8 +5,6 @@ import com.team5817.lib.diagnostic.FeedForwardCharacterization;
 import com.team5817.lib.diagnostic.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 
-import edu.wpi.first.wpilibj.Servo;
-
 public class Characterize extends AutoBase{
 
     FeedForwardCharacterization characterization;

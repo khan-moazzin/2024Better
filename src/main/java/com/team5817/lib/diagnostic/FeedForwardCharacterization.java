@@ -68,9 +68,11 @@ public class FeedForwardCharacterization implements Action{
   public void update() {
     if (timer.get() < startDelaySecs) {
         mSubsystem.applyVoltage(0);
+        System.out.println("Nothing");
    } else {
       double voltage = (timer.get() - startDelaySecs) * rampRateVoltsPerSec * (forwards ? 1 : -1);
       done = voltage >= 12;
+      Logger.recordOutput("Characterization/Voltage", voltage);
         mSubsystem.applyVoltage(voltage);
       dataPrimary.add(mSubsystem.getVelocity(), voltage);
     }
@@ -131,6 +133,7 @@ public class FeedForwardCharacterization implements Action{
      */
     public void print() {
       if (velocityData.size() == 0 || voltageData.size() == 0) {
+        Logger.recordOutput("Characterization/Worked", false);
         return;
       }
 
@@ -139,12 +142,15 @@ public class FeedForwardCharacterization implements Action{
               velocityData.stream().mapToDouble(Double::doubleValue).toArray(),
               voltageData.stream().mapToDouble(Double::doubleValue).toArray(),
               1);
+        Logger.recordOutput("Characterization/Worked", true);
 
-      System.out.println("FF Characterization Results (" + name + "):");
-      System.out.println("\tCount=" + Integer.toString(velocityData.size()) + "");
-      System.out.println(String.format("\tR2=%.5f", regression.R2()));
-      System.out.println(String.format("\tkS=%.5f", regression.beta(0)));
-      System.out.println(String.format("\tkV=%.5f", regression.beta(1)));
+      Logger.recordOutput("Characterization/Name", name);
+      Logger.recordOutput("Characterization/Count", velocityData.size());
+      Logger.recordOutput("Characterization/R2", regression.R2());
+      Logger.recordOutput("Characterization/Ks", regression.beta(0));
+      Logger.recordOutput("Characterization/Kv", regression.beta(1));
+
+
     }
   }
 }

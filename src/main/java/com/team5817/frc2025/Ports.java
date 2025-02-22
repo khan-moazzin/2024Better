@@ -34,6 +34,8 @@ public class Ports {
 	public static final CanDeviceId INTAKE_ROLLER = new CanDeviceId(13);
 	public static final CanDeviceId ELEVATOR = new CanDeviceId(11);
 	public static final CanDeviceId INDEXER = new CanDeviceId(14);
+	public static final CanDeviceId INDEXER2 = new CanDeviceId(16);
+
 	public static final CanDeviceId ENDEFFECTOR_WRIST = new CanDeviceId(9);
 	public static final CanDeviceId ENDEFFECTOR_ROLLER = new CanDeviceId(10);
 	public static final CanDeviceId CLIMB = new CanDeviceId(15);
@@ -41,7 +43,7 @@ public class Ports {
 
 	public static final CanDeviceId INTAKE_CANCODER = new CanDeviceId(19);
 
-	public static final CanDeviceId PIGEON = new CanDeviceId(23,"canivore1");
+	public static final CanDeviceId PIGEON = new CanDeviceId(23);
 
 	public static final CanDeviceId LEDS = new CanDeviceId(21, "rio");
 	public static final CanDeviceId ELEVATOR_2 = new CanDeviceId(22);

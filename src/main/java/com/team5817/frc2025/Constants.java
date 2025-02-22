@@ -150,7 +150,7 @@ public class Constants {
 
 		/* Motor Inverts */
 		public static final boolean driveMotorInvert = false;
-		public static final boolean angleMotorInvert = true;
+		public static final boolean angleMotorInvert = false;
 
 		/* Angle Encoder Invert */
 		public static final SensorDirectionValue canCoderInvert = SensorDirectionValue.CounterClockwise_Positive;
@@ -295,7 +295,7 @@ public class Constants {
 		public static TalonFXConfiguration AzimuthFXConfig(boolean inverse) {
 			TalonFXConfiguration config = new TalonFXConfiguration();
 
-			config.Slot0.kP = 1.0005;
+			config.Slot0.kP = .25;
 			config.Slot0.kI = 0.0;
 			config.Slot0.kD = 0.0004;
 			config.Slot0.kS = 0.0;
@@ -457,7 +457,7 @@ public class Constants {
 			kElevatorServoConstants.simIO = isComp? false:true;
 
 			kElevatorServoConstants.kMainConstants.id = Ports.ELEVATOR;
-			kElevatorServoConstants.kMainConstants.counterClockwisePositive = false;
+			kElevatorServoConstants.kMainConstants.counterClockwisePositive = true;
 
 			TalonFXConstants followerConstants = new TalonFXConstants();
 				followerConstants.id = Ports.ELEVATOR_2;
@@ -469,18 +469,18 @@ public class Constants {
 			kElevatorServoConstants.kHomePosition = 0; // degrees
 			kElevatorServoConstants.kRotationsPerUnitDistance = 72.82/1.4;
 
-			kElevatorServoConstants.kMaxUnitsLimit = 128.1;
+			kElevatorServoConstants.kMaxUnitsLimit = 2;
 			kElevatorServoConstants.kMinUnitsLimit = 0.0;
 
-			kElevatorServoConstants.kKp = 1.0;
+			kElevatorServoConstants.kKp = 8.0;
 			kElevatorServoConstants.kKi = 0.0;
-			kElevatorServoConstants.kKd = 0.0;
+			kElevatorServoConstants.kKd = 0.15;
 			kElevatorServoConstants.kKa = 0.0;
 			kElevatorServoConstants.kKs = 1.05983;
 			kElevatorServoConstants.kKv = 7.52928;
 			kElevatorServoConstants.kKg = 0.0;
 
-			kElevatorServoConstants.kCruiseVelocity = 400.0; // degrees / s
+			kElevatorServoConstants.kCruiseVelocity = 80000.0; // degrees / s
 			kElevatorServoConstants.kAcceleration = 10000.0; // degrees / s^2
 
 			kElevatorServoConstants.kMaxForwardOutput = 12.0;
@@ -494,10 +494,19 @@ public class Constants {
 			kElevatorServoConstants.kEnableStatorCurrentLimit = true;
 			kElevatorServoConstants.kStatorCurrentLimit = 80; // amps
 
-			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
+			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Coast;
+			
+			
+
 		}
 
+		public static double kHomingZone = 7.0; // degrees
+		public static double kHomingTimeout = 0.2; // seconds
+		public static double kHomingVelocityWindow = 5.0; // "units" / second
+		public static double kHomingOutput = 4.0; // volts
 		public static final double kCoralClearHeight = 0.15; // rotations
+
+
 	}
 
 	/**
@@ -567,12 +576,12 @@ public class Constants {
 			kWristServoConstants.kMainConstants.counterClockwisePositive = false;
 
 			kWristServoConstants.kHomePosition = 0; // degrees
-			kWristServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0) * (45.0 / 1.0);
+			kWristServoConstants.kRotationsPerUnitDistance = (1/360.0) * 2;
 
 			kWristServoConstants.kMaxUnitsLimit = 128.1;
 			kWristServoConstants.kMinUnitsLimit = 0.0;
 
-			kWristServoConstants.kKp = 3.0;
+			kWristServoConstants.kKp = 1.0;
 			kWristServoConstants.kKi = 0.0;
 			kWristServoConstants.kKd = 0.0;
 			kWristServoConstants.kKa = 0.0;
@@ -584,6 +593,7 @@ public class Constants {
 
 			kWristServoConstants.kMaxForwardOutput = 12.0;
 			kWristServoConstants.kMaxReverseOutput = -12.0;
+			
 
 			kWristServoConstants.kEnableSupplyCurrentLimit = true;
 			kWristServoConstants.kSupplyCurrentLimit = 40; // amps
@@ -595,10 +605,10 @@ public class Constants {
 
 			kWristServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
-			kWristEncoderConstants.encoder_type = FeedbackSensorSourceValue.FusedCANcoder;
-			kWristEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
-			kWristEncoderConstants.rotor_rotations_per_output = 314.0;
-			kWristEncoderConstants.remote_encoder_offset = 0;
+			kWristEncoderConstants.encoder_type = FeedbackSensorSourceValue.RotorSensor;
+			// kWristEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
+			// kWristEncoderConstants.rotor_rotations_per_output = 314.0;
+			// kWristEncoderConstants.remote_encoder_offset = 0;
 		}
 
 	}

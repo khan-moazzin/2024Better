@@ -233,7 +233,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
 		for (int i = 0; i < mFollowers.length; ++i) {
 			mFollowers[i] = TalonFXFactory.createPermanentFollowerTalon(
-					mConstants.kFollowerConstants[i].id, mConstants.kMainConstants.id, false);
+					mConstants.kFollowerConstants[i].id, mConstants.kMainConstants.id, true);//TODO "Explain"
 
 			TalonFX follower = mFollowers[i];
 			mFollowerConfigs[i] = new TalonFXConfiguration();
@@ -246,11 +246,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			followerConfig.MotorOutput.NeutralMode = mConstants.kNeutralMode;
 			followerConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
 			followerConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
-			follower.setControl(new Follower(mConstants.kMainConstants.id.getDeviceNumber(), false));
+			follower.setControl(new Follower(mConstants.kMainConstants.id.getDeviceNumber(), true));
 
 			TalonUtil.applyAndCheckConfiguration(follower, followerConfig);
 		}
-
 		TalonUtil.applyAndCheckConfiguration(mMain, mMainConfig);
 
 		// Send a neutral command.
@@ -350,6 +349,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		public double active_trajectory_position;
 		public double active_trajectory_velocity;
 		public double active_trajectory_acceleration;
+		public double rotor_position;
 
 		@Override
 		public void initSendable(SendableBuilder builder) {
@@ -381,6 +381,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		MOTION_MAGIC,
 		POSITION_PID,
 		VOLTAGE
+
 	}
 
 	private double lastTimestamp = 0;
@@ -416,6 +417,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
 		mServoInputs.velocity_rps = mMainVelocitySignal.asSupplier().get().in(RotationsPerSecond);
+		mServoInputs.rotor_position = rotationsToUnits(mMain.getPosition().getValueAsDouble());
 		if (Constants.mode == Mode.SIM || mConstants.simIO) {
 			mServoInputs.error_rotations = (mServoOutputs.demand - mServoInputs.position_rots);
 			switch (mControlState) {
@@ -463,6 +465,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 		lastTimestamp = Timer.getTimestamp();
 		lastPosRots =  mServoInputs.position_rots;
+		
 	}
 
 	/**

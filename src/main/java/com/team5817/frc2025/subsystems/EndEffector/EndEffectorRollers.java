@@ -79,6 +79,7 @@ public class EndEffectorRollers extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
+				Logger.recordOutput("en", mState);
 				mEndEffectorRollerOutputs.roller_demand = mState.roller_voltage;
 			}
 		});

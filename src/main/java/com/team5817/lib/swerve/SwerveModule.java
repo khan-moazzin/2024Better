@@ -203,7 +203,6 @@ public class SwerveModule extends Subsystem {
 	@Override
 	public void outputTelemetry() {
 		// spotless:off
-
 		// spotless:on
 	}
 
