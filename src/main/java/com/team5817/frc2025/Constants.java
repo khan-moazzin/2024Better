@@ -504,7 +504,7 @@ public class Constants {
 		public static double kHomingTimeout = 0.2; // seconds
 		public static double kHomingVelocityWindow = 5.0; // "units" / second
 		public static double kHomingOutput = 4.0; // volts
-		public static final double kCoralClearHeight = 0.15; // rotations
+		public static final double kCoralClearHeight = 0.35; // rotations
 
 
 	}
