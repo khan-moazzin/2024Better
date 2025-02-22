@@ -65,7 +65,7 @@ public class Superstructure extends Subsystem {
 	private Elevator mElevator;
 	private EndEffectorWrist mEndEffectorWrist;
 	private IntakeDeploy mIntakeDeploy;
-	private Climb mClimb;
+	// private Climb mClimb;
 	private EndEffectorRollers mEndEffectorRollers;
 	private IntakeRollers mIntakeRollers;
 	private Indexer mIndexer;
@@ -137,7 +137,7 @@ public class Superstructure extends Subsystem {
 		mElevator = Elevator.getInstance();
 		mEndEffectorWrist = EndEffectorWrist.getInstance();
 		mIntakeDeploy = IntakeDeploy.getInstance();
-		mClimb = Climb.getInstance();
+		// mClimb = Climb.getInstance();
 		mEndEffectorRollers = EndEffectorRollers.getInstance();
 		mIntakeRollers = IntakeRollers.getInstance();
 		mIndexer = Indexer.getInstance();
@@ -416,7 +416,7 @@ public class Superstructure extends Subsystem {
 						mElevator.stateRequest(goal.mElevatorState),
 						mIndexer.stateRequest(goal.mIndexerState),
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
-						mClimb.stateRequest(goal.mClimbState),
+						// mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState),
 						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
 						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState)),
@@ -444,7 +444,7 @@ public class Superstructure extends Subsystem {
 						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
 						mIndexer.stateRequest(goal.mIndexerState),
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
-						mClimb.stateRequest(goal.mClimbState),
+						// mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
 		breakWait(mIndexerBeam, true)
 		).addName("Intaking");
@@ -466,7 +466,7 @@ public class Superstructure extends Subsystem {
 						mElevator.stateRequest(goal.mElevatorState),
 						mIndexer.stateRequest(goal.mIndexerState),
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
-						mClimb.stateRequest(goal.mClimbState),
+						// mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState),
 						new SequentialRequest(
 								mElevator.waitForExtensionRequest(Constants.ElevatorConstants.kCoralClearHeight),

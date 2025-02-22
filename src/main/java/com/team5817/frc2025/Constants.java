@@ -375,7 +375,7 @@ public class Constants {
 		static {
 			kDeployServoConstants.kName = "Deploy";
 			
-			kDeployServoConstants.simIO = true;
+			kDeployServoConstants.simIO = isComp? false:true;
 
 			kDeployServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
 			kDeployServoConstants.kMainConstants.counterClockwisePositive = false;
@@ -570,7 +570,7 @@ public class Constants {
 		static {
 			kWristServoConstants.kName = "Wrist";
 
-			kWristServoConstants.simIO = true;
+			kWristServoConstants.simIO = isComp? false:true;
 
 			kWristServoConstants.kMainConstants.id = Ports.ENDEFFECTOR_WRIST;
 			kWristServoConstants.kMainConstants.counterClockwisePositive = false;

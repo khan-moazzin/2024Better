@@ -150,7 +150,7 @@ public class Robot extends LoggedRobot {
         Superstructure.getInstance(),
         VisionDeviceManager.getInstance(),
         IntakeDeploy.getInstance(),
-        Climb.getInstance(),
+        // Climb.getInstance(),
         Elevator.getInstance(),
         EndEffectorRollers.getInstance(),
         EndEffectorWrist.getInstance(),

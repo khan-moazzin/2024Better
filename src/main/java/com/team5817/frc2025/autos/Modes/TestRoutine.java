@@ -5,7 +5,7 @@ import com.team5817.frc2025.autos.Actions.ControlsCheck;
 import com.team5817.frc2025.autos.Actions.WaitAction;
 import com.team5817.frc2025.autos.Actions.WaitforControllerInput;
 import com.team5817.frc2025.subsystems.Superstructure;
-import com.team5817.frc2025.subsystems.Climb.Climb;
+// import com.team5817.frc2025.subsystems.Climb.Climb;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
@@ -28,7 +28,7 @@ public class TestRoutine extends AutoBase {
 	private Elevator mElevator;
 	private EndEffectorWrist mEndEffectorWrist;
 	private IntakeDeploy mIntakeDeploy;
-	private Climb mClimb;
+	// private Climb mClimb;
 	private EndEffectorRollers mEndEffectorRollers;
 	private IntakeRollers mIntakeRollers;
 	private Indexer mIndexer;
@@ -42,7 +42,7 @@ public class TestRoutine extends AutoBase {
         mElevator = Elevator.getInstance();
         mEndEffectorWrist = EndEffectorWrist.getInstance();
         mIntakeDeploy = IntakeDeploy.getInstance();
-        mClimb = Climb.getInstance();
+        // mClimb = Climb.getInstance();
         mEndEffectorRollers = EndEffectorRollers.getInstance();
         mIntakeRollers = IntakeRollers.getInstance();
         mIndexer = Indexer.getInstance();
@@ -88,15 +88,15 @@ public class TestRoutine extends AutoBase {
         r(new WaitforControllerInput());
         r(new WaitAction(1));
 
-        mClimb.stateRequest(Climb.State.PULL).act();
-        System.out.println("Climb PULLING");
-        Elastic.sendNotification(new Notification(NotificationLevel.INFO, "TEST ROUTINE", "Climb PULLING"));
-        r(new WaitforControllerInput());
-        mClimb.stateRequest(Climb.State.ZERO).act();
-        System.out.println("Climb should be at Zero");
-        Elastic.sendNotification(new Notification(NotificationLevel.INFO, "TEST ROUTINE", "Climb should be at ZERO"));
-        r(new WaitforControllerInput());
-        r(new WaitAction(1));
+        // mClimb.stateRequest(Climb.State.PULL).act();
+        // System.out.println("Climb PULLING");
+        // Elastic.sendNotification(new Notification(NotificationLevel.INFO, "TEST ROUTINE", "Climb PULLING"));
+        // r(new WaitforControllerInput());
+        // mClimb.stateRequest(Climb.State.ZERO).act();
+        // System.out.println("Climb should be at Zero");
+        // Elastic.sendNotification(new Notification(NotificationLevel.INFO, "TEST ROUTINE", "Climb should be at ZERO"));
+        // r(new WaitforControllerInput());
+        // r(new WaitAction(1));
         
         mEndEffectorWrist.stateRequest(EndEffectorWrist.State.INTAKING).act();
         mEndEffectorRollers.stateRequest(EndEffectorRollers.State.CORAL_INTAKE).act();
