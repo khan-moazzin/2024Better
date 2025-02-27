@@ -81,7 +81,10 @@ public class Superstructure extends Subsystem {
 	}
 
 	public enum GoalState {
-		STOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
+		STOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
+				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				SuperstructureState.Type.IDLE)),
+		PREINTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.IDLE)),
 		EXHAUST(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
@@ -227,28 +230,32 @@ public class Superstructure extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				try {
-					if (hasNewRequest && activeRequest != null) {
-						activeRequest.act();
-						hasNewRequest = false;
-					}
+				manageRequests();
+				updateLEDs();
+			}
+		});
+	}
 
-					if (activeRequest == null) {
-						if (queuedRequests.isEmpty()) {
-							allRequestsComplete = true;
-						} else {
-							request(queuedRequests.remove(0));
-						}
-					} else if (activeRequest.isFinished()) {
-						activeRequest = null;
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+	public void manageRequests(){
+		try {
+			if (hasNewRequest && activeRequest != null) {
+				activeRequest.act();
+				hasNewRequest = false;
 			}
 
-		});
+			if (activeRequest == null) {
+				if (queuedRequests.isEmpty()) {
+					allRequestsComplete = true;
+				} else {
+					request(queuedRequests.remove(0));
+				}
+			} else if (activeRequest.isFinished()) {
+				activeRequest = null;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

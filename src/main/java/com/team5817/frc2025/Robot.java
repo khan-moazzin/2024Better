@@ -157,7 +157,7 @@ public class Robot extends LoggedRobot {
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
     mEnabledLooper.start();
-    Superstructure.getInstance().setGoal(GoalState.STOW);
+    Superstructure.getInstance().setGoal(GoalState.PREINTAKE);
     Logger.recordOutput("isComp", Constants.isComp);
     mDrive.zeroGyro();
   }
@@ -270,7 +270,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void testInit() {
     Elastic.selectTab("Systems Test");
-    // mAutoExecuter.setAuto(new TestRoutine()); 
+    mAutoExecuter.setAuto(new TestRoutine()); 
 
     // mAutoExecuter.setAuto(new Characterize(IntakeDeploy.getInstance(),true))
     // mAutoExecuter.start();

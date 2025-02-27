@@ -34,7 +34,6 @@ public class DriverControls {
 	public DriverControls(){
 		mDrive = Drive.getInstance();
 		s = Superstructure.getInstance();
-		s.setGoal(GoalState.STOW);
 	}
 
 	/* ONE CONTROLLER */
@@ -116,7 +115,10 @@ public class DriverControls {
 
 			
 			if(driver.releasedAny(driver.leftBumper,driver.bButton,driver.xButton)){
-				s.setGoal(GoalState.STOW);
+				if(s.mEndEffectorRollers.hasPiece())
+					s.setGoal(GoalState.STOW);
+				else
+					s.setGoal(GoalState.PREINTAKE);
 				mDrive.setControlState(DriveControlState.OPEN_LOOP);
 			}
 
@@ -125,7 +127,10 @@ public class DriverControls {
 				wantStow = true;
 			}
 			if(wantStow&&clearReef()){
-				s.setGoal(GoalState.STOW);
+				if(s.mEndEffectorRollers.hasPiece())
+					s.setGoal(GoalState.STOW);
+				else
+					s.setGoal(GoalState.PREINTAKE);
 				mDrive.setControlState(DriveControlState.OPEN_LOOP);
 				wantStow = false;
 			}
@@ -142,7 +147,7 @@ public class DriverControls {
 
 
 		if(codriver.getLeftTriggerAxis()==1)
-			s.setGoal(GoalState.STOW);
+			s.setGoal(GoalState.PREINTAKE);
 
 		if(codriver.yButton.isBeingPressed())
 			preparedGoal = GoalState.L4;

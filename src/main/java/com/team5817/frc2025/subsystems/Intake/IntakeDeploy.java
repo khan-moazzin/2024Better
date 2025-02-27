@@ -46,11 +46,13 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		STOW(161.538461538462, kMediumError),
 		ALGAE(64.6153846153846, kMediumError),
 		HUMAN(150.076923076923, kStrictError),
-		ZERO(0, kStrictError,true);
+		ZERO(0, kStrictError,true),
+		DISABLE(true);
 
 		double output = 0;
 		double allowable_error = 0;
 		boolean home = false;
+		boolean disable = false;
 
 		/**
 		 * Constructs a new State.
@@ -65,6 +67,9 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		}
 		State(double output, double allowable_error){
 			this(output, allowable_error,false);
+		}
+		State(boolean disable){
+			this.disable = disable;
 		}
 
 	}
@@ -153,6 +158,12 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	public boolean checkSystem() {
 		return false;
 	}
+	public void conformToState(State _wantedState){
+		if(!_wantedState.disable)
+			setSetpointMotionMagic(_wantedState.output);
+		else
+			setOpenLoop(0);
+	}
 
 	/**
 	 * Checks if the intake is at the homing location.
@@ -169,8 +180,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		return new Request() {
 			@Override
 			public void act() {
-				
-				setSetpointMotionMagic(_wantedState.output);
+				conformToState(_wantedState);
 			}
 
 			@Override

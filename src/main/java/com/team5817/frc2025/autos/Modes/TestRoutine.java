@@ -136,7 +136,7 @@ public class TestRoutine extends AutoBase {
 
         r(new ControlsCheck());
         r(new WaitAction(1));
-        s.setGoal(GoalState.STOW);       
+        s.setGoal(GoalState.PREINTAKE);       
 
         System.out.println("Test Routine Finished");
         Elastic.sendNotification(new Notification(NotificationLevel.INFO, "TEST ROUTINE", "Test Routine Finished"));

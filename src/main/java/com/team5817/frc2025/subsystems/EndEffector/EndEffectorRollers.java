@@ -4,12 +4,15 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
+
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.team254.lib.drivers.TalonUtil;
+import com.team254.lib.util.TimeDelayedBoolean;
 import com.team5817.frc2025.Constants.EndEffectorRollerConstants;
 import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.loops.ILooper;
@@ -19,6 +22,7 @@ import com.team5817.lib.requests.Request;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The EndEffectorRollers subsystem controls the rollers of the end effector.
@@ -37,7 +41,7 @@ public class EndEffectorRollers extends Subsystem {
 		}
 		return mInstance;
 	}
-
+	private double roller_demand = 0;
 	public enum State {
 		IDLE(2.0),
 		CORAL_INTAKE(4.0),
@@ -56,7 +60,6 @@ public class EndEffectorRollers extends Subsystem {
 
 	private State mState = State.IDLE;
 	private EndEffectorRollerInputsAutoLogged mEndEffectorRollerInputs = new EndEffectorRollerInputsAutoLogged();
-	private EndEffectorRollerOutputsAutoLogged mEndEffectorRollerOutputs = new EndEffectorRollerOutputsAutoLogged();
 
 	/**
 	 * Private constructor for the EndEffectorRollers subsystem.
@@ -79,7 +82,7 @@ public class EndEffectorRollers extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				mEndEffectorRollerOutputs.roller_demand = mState.roller_voltage;
+				roller_demand = mState.roller_voltage;
 			}
 		});
 	}
@@ -101,6 +104,12 @@ public class EndEffectorRollers extends Subsystem {
 	public void setState(State state) {
 		mState = state;
 	}
+	
+	TimeDelayedBoolean mHasPieceManager = new TimeDelayedBoolean();
+	boolean hasPiece = false;
+	public boolean hasPiece(){
+		return hasPiece;
+	}
 
 	/**
 	 * Creates a new request that updates the intake rollers with the wanted state.
@@ -117,7 +126,7 @@ public class EndEffectorRollers extends Subsystem {
 
 			@Override
 			public boolean isFinished() {
-				return mEndEffectorRollerOutputs.roller_demand == _wantedState.roller_voltage;
+				return roller_demand == _wantedState.roller_voltage;
 			}
 		};
 	}
@@ -136,7 +145,7 @@ public class EndEffectorRollers extends Subsystem {
 
 			@Override
 			public boolean isFinished() {
-				return mEndEffectorRollerOutputs.roller_demand == State.IDLE.roller_voltage;
+				return roller_demand == State.IDLE.roller_voltage;
 			}
 		};
 	}
@@ -156,16 +165,8 @@ public class EndEffectorRollers extends Subsystem {
 		}
 	}
 
-	@AutoLog
-	public static class EndEffectorRollerOutputsAutoLogged implements Sendable {
-		// OUTPUTS
-		public double roller_demand;
 
-		@Override
-		public void initSendable(SendableBuilder builder) {
-			builder.addDoubleProperty("Demand", () -> roller_demand, null);
-		}
-	}
+
 
 	@Override
 	public void readPeriodicInputs() {
@@ -173,17 +174,19 @@ public class EndEffectorRollers extends Subsystem {
 		mEndEffectorRollerInputs.roller_stator_current = mRoller.getStatorCurrent().getValue().in(Amps);
 		mEndEffectorRollerInputs.roller_velocity = mRoller.getVelocity().getValue().in(RotationsPerSecond);
 
+		hasPiece = mHasPieceManager.update(mEndEffectorRollerInputs.roller_stator_current>20, 0.1);
+
 		Logger.processInputs("EndEffectorRollers", mEndEffectorRollerInputs);
 	}
 
 	@Override
 	public void writePeriodicOutputs() {
-		mRoller.setControl(new VoltageOut(mEndEffectorRollerOutputs.roller_demand));
+		mRoller.setControl(new VoltageOut(roller_demand));
 	}
 
 	@Override
 	public void stop() {
-		mEndEffectorRollerOutputs.roller_demand = 0.0;
+		roller_demand = 0.0;
 	}
 
 	@Override
@@ -204,7 +207,7 @@ public class EndEffectorRollers extends Subsystem {
 			}
 			@Override
 			public boolean isFinished() {
-				return mEndEffectorRollerOutputs.roller_demand == State.ALGAE_INTAKE.roller_voltage&&mEndEffectorRollerInputs.roller_stator_current>0.5;//TODO: check current value
+				return true;//TODO: add
 			}
 			
 		};
