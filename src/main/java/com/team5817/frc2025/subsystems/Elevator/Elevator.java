@@ -1,8 +1,6 @@
 package com.team5817.frc2025.subsystems.Elevator;
 
 import com.team5817.frc2025.Robot;
-import com.team254.lib.util.DelayedBoolean;
-import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Constants.ElevatorConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
@@ -10,13 +8,10 @@ import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 import com.team5817.lib.requests.Request;
 
-import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
-
-import java.security.PrivilegedActionException;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -38,10 +33,7 @@ public class Elevator extends ServoMotorSubsystem {
 		return mInstance;
 	}
 
-	private static boolean mHoming = false;
-	private static boolean mWantsHome = false;
-	private final DelayedBoolean mHomingDelay =
-			new DelayedBoolean(Timer.getFPGATimestamp(), Constants.ElevatorConstants.kHomingTimeout);
+
 
 	final static double kStrictError = .05;
 	final static double kMediumError = .1;
@@ -51,14 +43,14 @@ public class Elevator extends ServoMotorSubsystem {
 	 * Enum representing the different states of the elevator.
 	 */
 	public enum State {
-		L4(1.75, kStrictError),
-		L3(.986, kStrictError),
+		L4(1.8, kStrictError),
+		L3(.886, kStrictError),
 		L2(0.533, kStrictError),
 		L1(0.304, kStrictError),
 		A1(0.59, kMediumError),
 		A2(1, kMediumError),
 		NET(2, kMediumError),
-		ZERO(.1, kLenientError, true),
+		ZERO(0, kLenientError, true),
 		PROCESS(0.0, kLenientError),
 		STOW(0.0, kStrictError);
 
@@ -108,17 +100,16 @@ public class Elevator extends ServoMotorSubsystem {
 				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
 					setWantHome(false);
 				}
+
 			}
 		});
 	}
-
-	public void setWantHome(boolean wantHome){
-		mHoming = wantHome;
-
-		if (mHoming) {
-			mWantsHome = false;
-		}
+	@Override
+	public boolean atHomingLocation() {
+		return true;
+		// return Util.epsilonEquals(mServoInputs.position_units, mConstants.kHomePosition,ElevatorConstants.kHomingZone);
 	}
+
 
 	@Override
 	public void readPeriodicInputs() {
@@ -129,10 +120,10 @@ public class Elevator extends ServoMotorSubsystem {
 	@Override
 	public void writePeriodicOutputs() {
 		if (mHoming) {
-			setOpenLoop(Constants.ElevatorConstants.kHomingOutput / mConstants.kMaxForwardOutput);
+			setOpenLoop(mConstants.kHomingOutput / mConstants.kMaxForwardOutput);
 			if (mHomingDelay.update(
 					Timer.getFPGATimestamp(),
-					Math.abs(getVelocity()) < Constants.ElevatorConstants.kHomingVelocityWindow)) {
+					Math.abs(getVelocity()) < mConstants.kHomingVelocityWindow)) {
 				zeroSensors();
 				mHasBeenZeroed = true;
 				setSetpointMotionMagic(mConstants.kHomePosition);
@@ -152,8 +143,8 @@ public class Elevator extends ServoMotorSubsystem {
 		Robot.mechPoses[3] = current.div(3).times(2);
 		Robot.mechPoses[4] = current;
 
-		Pose3d desired = new Pose3d(Math.cos(Units.degreesToRadians(84)) * mServoOutputs.demand, 0,
-				Math.sin(Units.degreesToRadians(84)) * mServoOutputs.demand, new Rotation3d());
+		Pose3d desired = new Pose3d(Math.cos(Units.degreesToRadians(84)) * demand, 0,
+				Math.sin(Units.degreesToRadians(84)) * demand, new Rotation3d());
 
 		Robot.desMechPoses[2] = desired.div(3);
 		Robot.desMechPoses[3] = desired.div(3).times(2);
@@ -178,45 +169,9 @@ public class Elevator extends ServoMotorSubsystem {
 	 */
 	public void conformToState(State state){
 		setSetpointMotionMagic(state.output);
+		mWantsHome = state.home;
 	}
 
-	/**
-	 * Returns a request to stow the elevator.
-	 * 
-	 * @return a request to stow the elevator
-	 */
-	public Request stowRequest() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.STOW.output);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.STOW.output, State.STOW.allowable_error);
-			}
-		};
-	}
-
-	/**
-	 * Returns a request to zero the elevator.
-	 * 
-	 * @return a request to zero the elevator
-	 */
-	public Request zeroRequest() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.ZERO.output);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.ZERO.output, State.ZERO.allowable_error);
-			}
-		};
-	}
 
 	/**
 	 * Returns a request to wait for the elevator to extend to the given position.
@@ -247,8 +202,7 @@ public class Elevator extends ServoMotorSubsystem {
 		return new Request() {
 			@Override
 			public void act() {
-				setSetpointMotionMagic(_wantedState.output);
-				mWantsHome = _wantedState.home;
+				conformToState(_wantedState);
 			}
 
 			@Override

@@ -30,9 +30,9 @@ public class CustomThreeCoralMode extends AutoBase {
 	private Drive d = Drive.getInstance();
 	private TrajectorySet t;
 
-	private double enterDistance = 3;
+	private double enterDistance = 4;
 	private double exitDistance = 1.5;
-	private double coralSpit = .1;
+	private double coralSpit = .5;
 
 	private String firstScoreName;
 	private String secondScoreName;
@@ -117,7 +117,7 @@ public class CustomThreeCoralMode extends AutoBase {
 		if (Constants.mode == Constants.Mode.SIM) {
 			mSim.setSimulationWorldPose(t.initalPose().wpi());
 		}
-		d.autoAlignFinishedOverrride(false);
+		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
@@ -125,7 +125,8 @@ public class CustomThreeCoralMode extends AutoBase {
 							s.setGoal(GoalState.L4);
 						}))))));
 		System.out.println("Aligning to " + firstScoreName);
-		d.autoAlignFinishedOverrride(true);
+		r(new WaitAction(1));
+		s.setReadyToScore(true);
 
 		r(new WaitForSuperstructureAction());
 		r(new WaitAction(coralSpit));
@@ -141,7 +142,7 @@ public class CustomThreeCoralMode extends AutoBase {
 		r(new WaitAction(1));
 		System.out.println("Collected 1st coral");
 
-		d.autoAlignFinishedOverrride(false);
+		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
@@ -152,7 +153,7 @@ public class CustomThreeCoralMode extends AutoBase {
 						}))))));
 
 		System.out.println("Aligning to " + secondScoreName);
-		d.autoAlignFinishedOverrride(true);
+		s.setReadyToScore(true);
 
 		r(new WaitForSuperstructureAction());
 		r(new WaitAction(coralSpit));
@@ -169,7 +170,7 @@ public class CustomThreeCoralMode extends AutoBase {
 
 		r(new WaitAction(1));
 		System.out.println("Collected 2nd coral");
-		d.autoAlignFinishedOverrride(false);
+		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
@@ -180,7 +181,7 @@ public class CustomThreeCoralMode extends AutoBase {
 						}))))));
 
 		System.out.println("Aligning to " + thirdScoreName);
-		d.autoAlignFinishedOverrride(true);
+		s.setReadyToScore(true);
 		r(new WaitAction(coralSpit));
 		System.out.println("Scored " + thirdScoreName);
 

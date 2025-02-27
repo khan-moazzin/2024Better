@@ -135,12 +135,4 @@ public class SubsystemManager implements ILooper {
         mLoops.add(loop);
     }
 
-    /**
-     * Outputs the loop times to the SmartDashboard.
-     */
-    public void outputLoopTimes() {
-        SmartDashboard.putNumber("LooperTimes/ReadDT", read_dt);
-        SmartDashboard.putNumber("LooperTimes/OnLoopDT", on_loop_dt);
-        SmartDashboard.putNumber("LooperTimes/WriteDT", write_dt);
-    }
 }

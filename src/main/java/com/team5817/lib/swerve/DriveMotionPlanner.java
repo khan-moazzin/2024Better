@@ -10,6 +10,7 @@ import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Twist2d;
+import com.team254.lib.motion.SetpointGenerator.Setpoint;
 import com.team254.lib.swerve.ChassisSpeeds;
 import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team5817.frc2025.Constants.SwerveConstants;
@@ -103,7 +104,7 @@ public class DriveMotionPlanner {
 
 		sample_point = mCurrentTrajectory.advance(mDt);
 		mSetpoint = sample_point;
-
+		Logger.recordOutput("Following Pose", (mSetpoint.getPose().wpi()));
 		var chassis_speeds = new ChassisSpeeds(
 				sample_point.getXVel(),
 				sample_point.getYVel(),
@@ -112,8 +113,7 @@ public class DriveMotionPlanner {
 		mOutput = updatePIDChassis(chassis_speeds);
 
 		mPathIsFinished = distance(current_state, mCurrentTrajectoryLength) < SwerveConstants.kTrajectoryDeadband;
-		Logger.recordOutput("PathDistance", distance(current_state, mCurrentTrajectoryLength));
-		mOutput = ChassisSpeeds.fromFieldRelativeSpeeds(chassis_speeds, current_state.getRotation());
+		mOutput = ChassisSpeeds.fromFieldRelativeSpeeds(mOutput, current_state.getRotation());
 
 		return mOutput;
 	}

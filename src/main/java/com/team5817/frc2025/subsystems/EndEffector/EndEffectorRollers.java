@@ -39,10 +39,10 @@ public class EndEffectorRollers extends Subsystem {
 	}
 
 	public enum State {
-		IDLE(0.0),
-		CORAL_INTAKE(8.0),
+		IDLE(2.0),
+		CORAL_INTAKE(4.0),
 		CORAL_OUTTAKE(-6.0),
-		ALGAE_INTAKE(8.0),
+		ALGAE_INTAKE(4.0),
 		ALGAE_OUTTAKE(-6.0);
 
 		public double roller_voltage;
@@ -79,7 +79,6 @@ public class EndEffectorRollers extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				Logger.recordOutput("en", mState);
 				mEndEffectorRollerOutputs.roller_demand = mState.roller_voltage;
 			}
 		});

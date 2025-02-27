@@ -37,32 +37,32 @@ public class Indexer extends Subsystem {
 	}
 
 	public enum State {
-		IDLE(0.0),
-		INDEXING(8.0),
-		EXHAUST(-6.0);
+		IDLE(0.0,0),
+		INDEXING(1,5.0),
+		EXHAUST(-6.0,-6.0);
 
-		public double roller_voltage;
+		public double side_voltage;
+		public double bottom_voltage;
 
-		State(double roller_voltage) {
-			this.roller_voltage = roller_voltage;
+		State(double bottom_voltage,double roller_voltage) {
+			this.side_voltage = roller_voltage;
+			this.bottom_voltage  =bottom_voltage;
 		}
 	}
 
-	private final TalonFX mRoller;
-	private final TalonFX mRoller2;
+	private final TalonFX SideRollers;
+	private final TalonFX BottomRollers;
 
-	private State mState = State.IDLE;
 	private IndexerInputsAutoLogged mIndexerInputs = new IndexerInputsAutoLogged();
-	private IndexerOutputsAutoLogged mIndexerOutputs = new IndexerOutputsAutoLogged();
 
 	/**
 	 * Private constructor for the Indexer subsystem.
 	 */
 	private Indexer() {
-		mRoller = new TalonFX(Ports.INDEXER.getDeviceNumber(), Ports.INDEXER.getBus());
-		mRoller2 = new TalonFX(Ports.INDEXER2.getDeviceNumber(), Ports.INDEXER2.getBus());
-		TalonUtil.applyAndCheckConfiguration(mRoller, IntakeRollerConstants.RollerFXConfig());
-		TalonUtil.applyAndCheckConfiguration(mRoller2, IntakeRollerConstants.RollerFXConfig());
+		SideRollers = new TalonFX(Ports.SIDE_INDEXER.getDeviceNumber(), Ports.SIDE_INDEXER.getBus());
+		BottomRollers = new TalonFX(Ports.BOTTOM_INDEXER.getDeviceNumber(), Ports.BOTTOM_INDEXER.getBus());
+		TalonUtil.applyAndCheckConfiguration(SideRollers, IntakeRollerConstants.RollerFXConfig());
+		TalonUtil.applyAndCheckConfiguration(BottomRollers, IntakeRollerConstants.RollerFXConfig());
 	}
 
 	/**
@@ -78,7 +78,6 @@ public class Indexer extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				mIndexerOutputs.roller_demand = mState.roller_voltage;
 			}
 		});
 	}
@@ -98,16 +97,10 @@ public class Indexer extends Subsystem {
 		}
 	}
 
-	@AutoLog
-	public static class IndexerOutputs implements Sendable {
 		// OUTPUTS
-		public double roller_demand;
+		public State mState = State.IDLE;
 
-		@Override
-		public void initSendable(SendableBuilder builder) {
-			builder.addDoubleProperty("Demand", () -> roller_demand, null);
-		}
-	}
+	
 
 	/**
 	 * Gets the current state of the intake rollers.
@@ -142,29 +135,29 @@ public class Indexer extends Subsystem {
 
 			@Override
 			public boolean isFinished() {
-				return mIndexerOutputs.roller_demand == _wantedState.roller_voltage;
+				return true;
 			}
 		};
 	}
 
 	@Override
 	public void readPeriodicInputs() {
-		mIndexerInputs.roller_output_voltage = mRoller.getMotorVoltage().getValue().in(Volts);
-		mIndexerInputs.roller_stator_current = mRoller.getStatorCurrent().getValue().in(Amps);
-		mIndexerInputs.roller_velocity = mRoller.getVelocity().getValue().in(RotationsPerSecond);
+		mIndexerInputs.roller_output_voltage = SideRollers.getMotorVoltage().getValue().in(Volts);
+		mIndexerInputs.roller_stator_current = SideRollers.getStatorCurrent().getValue().in(Amps);
+		mIndexerInputs.roller_velocity = SideRollers.getVelocity().getValue().in(RotationsPerSecond);
 
 		Logger.processInputs("Indexer", mIndexerInputs);
 	}
 
 	@Override
 	public void writePeriodicOutputs() {
-		mRoller.setControl(new VoltageOut(mIndexerOutputs.roller_demand));
-		mRoller2.setControl(new VoltageOut(mIndexerOutputs.roller_demand));
+		SideRollers.setControl(new VoltageOut(mState.side_voltage));
+		BottomRollers.setControl(new VoltageOut(mState.bottom_voltage));
 	}
 
 	@Override
 	public void stop() {
-		mIndexerOutputs.roller_demand = 0.0;
+		mState = State.IDLE;
 	}
 
 	@Override
@@ -174,9 +167,6 @@ public class Indexer extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
-		SmartDashboard.putString("IntakeRollers/State", mState.toString());
-		SmartDashboard.putData("IntakeRollers/I", mIndexerInputs);
-		SmartDashboard.putData("IntakeRollers/O", mIndexerOutputs);
 	}
 
 }

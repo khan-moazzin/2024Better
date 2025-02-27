@@ -1,6 +1,5 @@
 package com.team5817.frc2025.subsystems.Intake;
 
-import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.IntakeDeployConstants;
 import com.team5817.frc2025.loops.ILooper;
@@ -29,30 +28,29 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 */
 	public static IntakeDeploy getInstance() {
 		if (mInstance == null) {
-			mInstance = new IntakeDeploy(IntakeDeployConstants.kDeployServoConstants,
-					IntakeDeployConstants.kDeployEncoderConstants);
+			mInstance = new IntakeDeploy(IntakeDeployConstants.kDeployServoConstants, IntakeDeployConstants.kDeployEncoderConstants);
 		}
 		return mInstance;
 	}
 
-	final static double kStrictError = .5;
-	final static double kMediumError = 2;
-	final static double kLenientError = 5;
+	final static double kStrictError = 20;
+	final static double kMediumError = 50;
+	final static double kLenientError = 80;
 
 	/**
 	 * Represents the different states of the intake deployment.
 	 */
 	public enum State {
-		DEPLOY(.245, kStrictError), // TODO
-		CLEAR(0.0, kLenientError), // TODO
-		UNJAM(0.0, kLenientError), // TODO
-		STOW(0.0, kMediumError),
-		ALGAE(0.134, kMediumError),
-		HUMAN(0.0, kStrictError),
-		ZERO(0.0, kStrictError);
+		DEPLOY(35.7692307692308, kStrictError), 
+		CLEAR(0.0, kLenientError), 
+		STOW(161.538461538462, kMediumError),
+		ALGAE(64.6153846153846, kMediumError),
+		HUMAN(150.076923076923, kStrictError),
+		ZERO(0, kStrictError,true);
 
 		double output = 0;
 		double allowable_error = 0;
+		boolean home = false;
 
 		/**
 		 * Constructs a new State.
@@ -60,9 +58,13 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		 * @param output The output value for the state.
 		 * @param allowable_error The allowable error for the state.
 		 */
-		State(double output, double allowable_error) {
+		State(double output, double allowable_error,boolean home) {
 			this.output = output;
 			this.allowable_error = allowable_error;
+			this.home = home;
+		}
+		State(double output, double allowable_error){
+			this(output, allowable_error,false);
 		}
 
 	}
@@ -74,13 +76,12 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 * @param constants The constants for the servo motor subsystem.
 	 * @param encoder_constants The constants for the absolute encoder.
 	 */
-	public IntakeDeploy(final ServoMotorSubsystemConstants constants,
-			final AbsoluteEncoderConstants encoder_constants) {
+	public IntakeDeploy(final ServoMotorSubsystemConstants constants, final AbsoluteEncoderConstants encoder_constants) {
 		super(constants, encoder_constants);
-		mMain.setPosition(homeAwareUnitsToRotations(0.0));
 		enableSoftLimits(false);
 		setSetpointMotionMagic(State.DEPLOY.output);
 	}
+
 
 	/**
 	 * Registers the enabled loops for the subsystem.
@@ -95,7 +96,11 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public void onLoop(double timestamp) {
-				
+				if (getSetpoint() == mConstants.kHomePosition  && mWantsHome && !mHoming) {
+					setWantHome(true);
+				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
+					setWantHome(false);
+				}
 			}
 		});
 	}
@@ -123,10 +128,10 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	@Override
 	public void outputTelemetry() {
 		Robot.mechPoses[0] = new Pose3d(new Translation3d(-.325, 0, .261), new Rotation3d(Units.degreesToRadians(0),
-				Units.rotationsToRadians(0.3 - mServoInputs.position_units), Units.degreesToRadians(0)));
+			Units.degreesToRadians(mServoInputs.position_units-14.3), Units.degreesToRadians(0)));
 
 		Robot.desMechPoses[0] = new Pose3d(new Translation3d(-.325, 0, .261), new Rotation3d(Units.degreesToRadians(0),
-				Units.rotationsToRadians(0.3 - mServoOutputs.demand), Units.degreesToRadians(0)));
+				Units.degreesToRadians(demand-14.3), Units.degreesToRadians(0)));
 
 		
 		super.outputTelemetry();
@@ -154,12 +159,6 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 *
 	 * @return True if the intake is within the homing zone, false otherwise.
 	 */
-	@Override
-	public boolean atHomingLocation() {
-		// Check if intake is within 7.0 degrees of homing position
-		return mServoInputs.position_units - mConstants.kHomePosition > -Constants.IntakeDeployConstants.kHomingZone;
-	}
-
 	/**
 	 * Creates a request to change the state of the intake deployment.
 	 *
@@ -170,6 +169,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		return new Request() {
 			@Override
 			public void act() {
+				
 				setSetpointMotionMagic(_wantedState.output);
 			}
 

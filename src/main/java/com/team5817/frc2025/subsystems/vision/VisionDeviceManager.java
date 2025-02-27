@@ -44,8 +44,10 @@ public class VisionDeviceManager extends Subsystem {
 		return mInstance;
 	}
 
-	private VisionDevice mDomCamera;
-	private VisionDevice mSubCamera;
+	private VisionDevice mRightCamera;
+	private VisionDevice mLeftCamera;
+	private VisionDevice mUpCamera;
+
 	private RobotState mRobotState;
 
 	private List<VisionDevice> mAllCameras;
@@ -62,9 +64,11 @@ public class VisionDeviceManager extends Subsystem {
 	 * Constructor for VisionDeviceManager.
 	 */
 	public VisionDeviceManager() {
-		mDomCamera = new VisionDevice("limelight-right");
-		mSubCamera = new VisionDevice("limelight-left");
-		mAllCameras = List.of(mDomCamera, mSubCamera);
+		mRightCamera = new VisionDevice("limelight-right");
+		mLeftCamera = new VisionDevice("limelight-left");
+		mUpCamera = new VisionDevice("limelight-up");
+
+		mAllCameras = List.of(mRightCamera, mLeftCamera, mUpCamera);
 		mRobotState = RobotState.getInstance();
 	}
 
@@ -133,7 +137,6 @@ public class VisionDeviceManager extends Subsystem {
 	@Override
 	public void outputTelemetry() {
 		Logger.recordOutput("Elastic/Time Since Last Update", Timer.getTimestamp() - timeOfLastUpdate);
-		SmartDashboard.putBoolean("vision disabled", visionDisabled());
 		for (VisionDevice device : mAllCameras) {
 			device.outputTelemetry();
 		}
@@ -144,9 +147,19 @@ public class VisionDeviceManager extends Subsystem {
 	 * @return the best vision device.
 	 */
 	public VisionDevice getBestDevice() {
-		if (mDomCamera.getVisionUpdate().get().getTa() > mSubCamera.getVisionUpdate().get().getTa())
-			return mDomCamera;
-		return mSubCamera;
+		double bestTa = 0;
+		VisionDevice bestDevice = null;
+		for(VisionDevice device : mAllCameras){
+			if(device.getVisionUpdate().isEmpty()){
+				continue;
+			}
+			if(device.getVisionUpdate().get().getTa() > bestTa){
+				bestTa = device.getVisionUpdate().get().getTa();
+				bestDevice = device;
+			}
+		}
+		return bestDevice;
+		
 	}
 
 	/**
@@ -209,7 +222,7 @@ public class VisionDeviceManager extends Subsystem {
 	 * @return the left vision device.
 	 */
 	public VisionDevice getLeftVision() {
-		return mDomCamera;
+		return mRightCamera;
 	}
 
 	public void clearHeading(){
@@ -229,7 +242,7 @@ public class VisionDeviceManager extends Subsystem {
 	 * @return the right vision device.
 	 */
 	public VisionDevice getRightVision() {
-		return mSubCamera;
+		return mLeftCamera;
 	}
 
 	/**

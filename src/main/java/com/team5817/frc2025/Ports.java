@@ -33,8 +33,8 @@ public class Ports {
 	public static final CanDeviceId INTAKE_PIVOT = new CanDeviceId(12);
 	public static final CanDeviceId INTAKE_ROLLER = new CanDeviceId(13);
 	public static final CanDeviceId ELEVATOR = new CanDeviceId(11);
-	public static final CanDeviceId INDEXER = new CanDeviceId(14);
-	public static final CanDeviceId INDEXER2 = new CanDeviceId(16);
+	public static final CanDeviceId SIDE_INDEXER = new CanDeviceId(14);
+	public static final CanDeviceId BOTTOM_INDEXER = new CanDeviceId(16);
 
 	public static final CanDeviceId ENDEFFECTOR_WRIST = new CanDeviceId(9);
 	public static final CanDeviceId ENDEFFECTOR_ROLLER = new CanDeviceId(10);

@@ -1,7 +1,10 @@
 package com.team5817.frc2025.subsystems.EndEffector;
 
 import com.team5817.frc2025.Robot;
+import com.team254.lib.util.DelayedBoolean;
+import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Constants.EndEffectorWristConstants;
+import com.team5817.frc2025.Constants.IntakeDeployConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.lib.Util;
@@ -12,6 +15,10 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
+
+import java.util.function.DoubleBinaryOperator;
+
 import org.littletonrobotics.junction.Logger;
 
 public class EndEffectorWrist extends ServoMotorSubsystem{
@@ -32,10 +39,11 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		}
 		return mInstance;
 	}
+	
 
-	final static double kStrictError = .5 / 360;
-	final static double kMediumError = 2 / 360;
-	final static double kLenientError = 5 / 360;
+	final static double kStrictError = 1;
+	final static double kMediumError = 2 ;
+	final static double kLenientError = 5;
 
 	public enum State {
 
@@ -46,17 +54,23 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		A1(208, kMediumError),
 		A2(208, kMediumError),
 		NET(208, kMediumError),
-		ZERO(0, kLenientError),
-		INTAKING(150, kStrictError),
-		STOW(150, kStrictError);
+		ZERO(0, kLenientError,true),
+		INTAKING(165, kStrictError),
+		STOW(169, kStrictError);
 
 		double output = 0;
 		double allowable_error = 0;
+		boolean home = false;
 
-		State(double output, double allowable_error) {
+		State(double output, double allowable_error,boolean home) {
 			this.output = output;
 			this.allowable_error = allowable_error;
+			this.home = home;
 		}
+		State(double output, double allowable_error){
+			this(output,allowable_error,false);
+		}
+		
 	}
 
 	/**
@@ -68,9 +82,10 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	public EndEffectorWrist(final ServoMotorSubsystemConstants constants) {
 		super(constants);
 
-		mMain.setPosition(homeAwareUnitsToRotations(0));
+		conformToState(State.ZERO);
 		enableSoftLimits(false);
-		setSetpointMotionMagic(State.STOW.output);
+		mMain.setPosition(0);
+		// setSetpointMotionMagic(State.STOW.output);
 	}
 
 	/**
@@ -86,6 +101,11 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 			@Override
 			public void onLoop(double timestamp) {
+				if (getSetpoint() == mConstants.kHomePosition  && mWantsHome && !mHoming) {
+					setWantHome(true);
+				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
+					setWantHome(false);
+				}
 			}
 
 		});
@@ -100,6 +120,8 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 	@Override
 	public void writePeriodicOutputs() {
+		
+
 		super.writePeriodicOutputs();
 	}
 
@@ -107,11 +129,11 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	public void outputTelemetry() {
 		Robot.mechPoses[5] = Robot.mechPoses[4]
 				.transformBy(new Transform3d(new Translation3d(.221, 0, .278), new Rotation3d(Units.degreesToRadians(0),
-						Units.rotationsToRadians(-.48 + mServoInputs.position_units), Units.degreesToRadians(0))));
+						Units.degreesToRadians(180+14.252+mServoInputs.position_units), Units.degreesToRadians(0))));
 
 		Robot.desMechPoses[5] = Robot.desMechPoses[4]
 				.transformBy(new Transform3d(new Translation3d(.221, 0, .278), new Rotation3d(Units.degreesToRadians(0),
-						Units.rotationsToRadians(-.48 + mServoOutputs.demand), Units.degreesToRadians(0))));
+						Units.degreesToRadians(180+14.252+demand), Units.degreesToRadians(0))));
 
 		super.outputTelemetry();
 	}
@@ -124,43 +146,9 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	public boolean checkSystem() {
 		return false;
 	}
-
-	/**
-	 * Returns a request to stow the end effector wrist.
-	 * 
-	 * @return The stow request.
-	 */
-	public Request stowRequest() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.STOW.output);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.STOW.output, State.STOW.allowable_error);
-			}
-		};
-	}
-
-	/**
-	 * Returns a request to zero the end effector wrist.
-	 * 
-	 * @return The zero request.
-	 */
-	public Request zeroRequest() {
-		return new Request() {
-			@Override
-			public void act() {
-				setSetpointMotionMagic(State.ZERO.output);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), State.ZERO.output, State.ZERO.allowable_error);
-			}
-		};
+	public void conformToState(State state){
+		setSetpointMotionMagic(state.output);
+		mWantsHome = state.home;
 	}
 
 	/**
@@ -173,7 +161,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		return new Request() {
 			@Override
 			public void act() {
-				setSetpointMotionMagic(_wantedState.output);
+				conformToState(_wantedState);
 			}
 
 			@Override

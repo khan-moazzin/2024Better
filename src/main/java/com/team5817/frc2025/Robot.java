@@ -39,7 +39,9 @@ import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
+import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
+import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Elastic;
@@ -59,6 +61,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The main robot class that extends LoggedRobot and contains the robot's lifecycle methods.
@@ -80,14 +83,11 @@ public class Robot extends LoggedRobot {
   private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
   DriverControls controls;
   ControlBoard controlBoard = ControlBoard.getInstance();
-  // public LoggedDashboardChooser<AutoBase> autoChooser = new
-  // LoggedDashboardChooser<>("AutoChooser");
   private final Looper mEnabledLooper = new Looper();
 
   SwerveDriveSimulation mDriveSim;
   Drive mDrive;
 
-  // HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @SuppressWarnings("resource")
   /**
    * This method is called when the robot is first started up and should be used for any initialization code.
@@ -98,18 +98,14 @@ public class Robot extends LoggedRobot {
       Constants.mode = Constants.Mode.REAL;
     DriverStation.silenceJoystickConnectionWarning(true);
     for (int port = 5800; port <= 5809; port++) {
-      PortForwarder.add(port, "limelight-dom.local", port);
-      PortForwarder.add(port + 10, "limelight-sub.local", port);
+      PortForwarder.add(port, "limelight-right.local", port);
+      PortForwarder.add(port + 10, "limelight-left.local", port);
+      PortForwarder.add(port + 20, "limelight-up.local", port);
 
     }
     DriverStation.startDataLog(DataLogManager.getLog());
 
     RobotState.getInstance().reset();
-    // for(HashMap.Entry<String, AutoBase> entry : autos.entrySet()) {
-    // String N = entry.getKey();
-    // AutoBase A = entry.getValue();
-    // autoChooser.addOption(N, A);
-    // }
 
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -154,12 +150,16 @@ public class Robot extends LoggedRobot {
         Elevator.getInstance(),
         EndEffectorRollers.getInstance(),
         EndEffectorWrist.getInstance(),
-        LEDs.getInstance());
+        Indexer.getInstance(),
+        IntakeRollers.getInstance()
+        // LEDs.getInstance()
+        );
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
     mEnabledLooper.start();
     Superstructure.getInstance().setGoal(GoalState.STOW);
     Logger.recordOutput("isComp", Constants.isComp);
+    mDrive.zeroGyro();
   }
 
   /**
@@ -249,8 +249,8 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     
     l.update();
-    if(mVision.getMovingAverage().getSize()!=0&&neverEnabled)
-      mDrive.zeroGyro(mVision.getMovingAverage().getAverage());
+    // if(mVision.getMovingAverage().getSize()!=0&&neverEnabled)
+    //   mDrive.zeroGyro(mVision.getMovingAverage().getAverage());
     mAutoModeSelector.updateModeCreator();
     Optional<AutoBase> autoMode = mAutoModeSelector.getAutoMode();
     if (autoMode.isPresent() && (autoMode.get() != mAutoExecuter.getAuto())) {
@@ -272,19 +272,20 @@ public class Robot extends LoggedRobot {
     Elastic.selectTab("Systems Test");
     // mAutoExecuter.setAuto(new TestRoutine()); 
 
-    // mAutoExecuter.setAuto(new Characterize(EndEffectorWrist.getInstance(),true));
+    // mAutoExecuter.setAuto(new Characterize(IntakeDeploy.getInstance(),true))
     // mAutoExecuter.start();
-    Elevator.getInstance().conformToState(Elevator.State.ZERO
-    );
+    // ControlBoard.getInstance().
     // Elevator.getInstance().applyVoltage(-1.2);
 
   }
 
   /**
    * This method is called periodically during test mode.
-   */
+   */      
   @Override
   public void testPeriodic() {
+
+    controls.oneControllerMode();
   }
 
   /**

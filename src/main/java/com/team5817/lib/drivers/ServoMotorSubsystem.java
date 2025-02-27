@@ -9,6 +9,7 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team254.lib.drivers.CanDeviceId;
@@ -16,6 +17,7 @@ import com.team254.lib.drivers.Phoenix6Util;
 import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.drivers.TalonUtil;
 import com.team254.lib.motion.MotionState;
+import com.team254.lib.util.DelayedBoolean;
 import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.Util;
 import com.team5817.frc2025.Constants;
@@ -72,6 +74,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		public TalonFXConstants kMainConstants = new TalonFXConstants();
 		public TalonFXConstants[] kFollowerConstants = new TalonFXConstants[0];
 
+
+		public GravityTypeValue kGravityType = GravityTypeValue.Elevator_Static;
 		public NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 		public double kHomePosition = 0.0; // Units
 		public double kRotationsPerUnitDistance = 1.0;
@@ -82,7 +86,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		public double kKv = 0;
 		public double kKa = 0;
 		public double kKs = 0;
-		public double kKg = 0;
+		public double kKg = 0;		
 		public int kDeadband = 0; // rotation
 
 		public double kPositionKp = 0;
@@ -113,11 +117,22 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		public double kMinUnitsLimit = Double.NEGATIVE_INFINITY;
 
 		public int kStatusFrame8UpdateRate = 1000;
+
+		public double kHomingTimeout = 0;
+		public double kHomingVelocityWindow= 0;
+		public double kHomingOutput = 0;
+
 	}
 
 	protected final ServoMotorSubsystemConstants mConstants;
 	protected final TalonFX mMain;
 	protected final TalonFX[] mFollowers;
+
+	protected static boolean mHoming = false;
+	protected static boolean mWantsHome = false;
+	protected final DelayedBoolean mHomingDelay;
+
+	protected double demand = 0;
 
 	protected TalonFXConfiguration mMainConfig;
 	protected final TalonFXConfiguration[] mFollowerConfigs;
@@ -145,6 +160,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	 */
 	protected ServoMotorSubsystem(final ServoMotorSubsystemConstants constants) {
 		mConstants = constants;
+		mHomingDelay = new DelayedBoolean(Timer.getFPGATimestamp(), mConstants.kHomingTimeout);
 		mMain = TalonFXFactory.createDefaultTalon(mConstants.kMainConstants.id, false);
 		mFollowers = new TalonFX[mConstants.kFollowerConstants.length];
 		mFollowerConfigs = new TalonFXConfiguration[mConstants.kFollowerConstants.length];
@@ -196,6 +212,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mMainConfig.Slot0.kG = mConstants.kKg;
 		mMainConfig.Slot0.kA = mConstants.kKa;
 		mMainConfig.Slot0.kS = mConstants.kKs;
+		mMainConfig.Slot0.GravityType = mConstants.kGravityType;
 
 		mMainConfig.Slot1.kP = mConstants.kPositionKp;
 		mMainConfig.Slot1.kI = mConstants.kPositionKi;
@@ -212,7 +229,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mMainConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = mConstants.kRampRate;
 		mMainConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = mConstants.kRampRate;
 		mMainConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = mConstants.kRampRate;
-
 		mMainConfig.CurrentLimits.SupplyCurrentLimit = mConstants.kSupplyCurrentLimit;
 		mMainConfig.CurrentLimits.SupplyCurrentLimitEnable = mConstants.kEnableSupplyCurrentLimit;
 
@@ -268,6 +284,14 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			conf.CurrentLimits.StatorCurrentLimitEnable = enable;
 			return conf;
 		});
+	}
+
+	public void setWantHome(boolean wantHome){
+		mHoming = wantHome;
+
+		if (mHoming) {
+			mWantsHome = false;
+		}
 	}
 
 	/**
@@ -365,16 +389,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
 	
 
-	@AutoLog
-	public static class ServoOutputs implements Sendable {
-		// OUTPUTS
-		public double demand;
-
-		@Override
-		public void initSendable(SendableBuilder builder) {
-			builder.addDoubleProperty("Demand", () -> demand, null);
-		}
-	}
+	
 
 	protected enum ControlState {
 		OPEN_LOOP,
@@ -386,7 +401,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
 	private double lastTimestamp = 0;
 	protected ServoInputsAutoLogged mServoInputs = new ServoInputsAutoLogged();
-	protected ServoOutputsAutoLogged mServoOutputs = new ServoOutputsAutoLogged();
 	protected ControlState mControlState = ControlState.OPEN_LOOP;
 	protected ReflectingCSVWriter<ServoInputs> mCSVWriter = null;
 	protected boolean mHasBeenZeroed = false;
@@ -417,20 +431,20 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.output_voltage = mMainOutputVoltageSignal.asSupplier().get().in(Volts);
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
 		mServoInputs.velocity_rps = mMainVelocitySignal.asSupplier().get().in(RotationsPerSecond);
-		mServoInputs.rotor_position = rotationsToUnits(mMain.getPosition().getValueAsDouble());
+		mServoInputs.rotor_position = rotationsToUnits(mMain.getPosition().getValue().in(Rotations));
 		if (Constants.mode == Mode.SIM || mConstants.simIO) {
-			mServoInputs.error_rotations = (mServoOutputs.demand - mServoInputs.position_rots);
+			mServoInputs.error_rotations = (demand - mServoInputs.position_rots);
 			switch (mControlState) {
 				case OPEN_LOOP:
-					mServoInputs.position_rots += mServoOutputs.demand / dt;
+					mServoInputs.position_rots += demand / dt;
 					break;
 				case MOTION_MAGIC:
 				case POSITION_PID:
 					mServoInputs.position_rots += mServoInputs.error_rotations*dt/0.25;// bad guess at motion for sim
 					break;
 				case VOLTAGE:
-					mServoInputs.position_rots += mServoOutputs.demand / dt/1000;
-					mServoInputs.output_voltage = mServoOutputs.demand;
+					mServoInputs.position_rots += demand / dt/1000;
+					mServoInputs.output_voltage = demand;
 				default:
 					break;
 			}
@@ -473,15 +487,27 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	 */
 	@Override
 	public void writePeriodicOutputs() {
+		if (mHoming) {
+			setOpenLoop(mConstants.kHomingOutput / mConstants.kMaxForwardOutput);
+			if (mHomingDelay.update(
+					Timer.getFPGATimestamp(),
+					Math.abs(getVelocity()) < mConstants.kHomingVelocityWindow)) {
+				zeroSensors();
+				mHasBeenZeroed = true;
+				setSetpointMotionMagic(mConstants.kHomePosition);
+				mHoming = false;
+			}
+			return;
+		}
 		if (mControlState == ControlState.MOTION_MAGIC) {
-			mMain.setControl(new MotionMagicVoltage(mServoOutputs.demand).withSlot(kMotionMagicSlot));
+			mMain.setControl(new MotionMagicVoltage(demand).withSlot(kMotionMagicSlot));
 		} else if (mControlState == ControlState.POSITION_PID) {
-			mMain.setControl(new PositionDutyCycle(mServoOutputs.demand).withSlot(kPositionPIDSlot));
+			mMain.setControl(new PositionDutyCycle(demand).withSlot(kPositionPIDSlot));
 		} else if (mControlState == ControlState.VOLTAGE) {
-			mMain.setControl(new VoltageOut(mServoOutputs.demand));
+			mMain.setControl(new VoltageOut(demand));
 		}
 		else {
-			mMain.setControl(new DutyCycleOut(mServoOutputs.demand));
+			mMain.setControl(new DutyCycleOut(demand));
 		}
 	}
 
@@ -524,11 +550,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 						System.out.println(mConstants.kName + ": Follower Talon reset occurred");
 					}
 				}
-			}
-
-
-
-			
+			}			
 		});
 	}
 
@@ -547,7 +569,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	 * @return The position in units.
 	 */
 	public double getPosition() {
-		return rotationsToHomedUnits(mServoInputs.position_rots);
+		return mServoInputs.position_units;
 	}
 
 	/**
@@ -597,7 +619,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	 */
 	public double getSetpoint() {
 		return (mControlState == ControlState.MOTION_MAGIC || mControlState == ControlState.POSITION_PID)
-				? rotationsToHomedUnits(mServoOutputs.demand)
+				? rotationsToHomedUnits(demand)
 				: Double.NaN;
 	}
 
@@ -608,7 +630,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	 */
 	public double getSetpointHomed() {
 		return (mControlState == ControlState.MOTION_MAGIC || mControlState == ControlState.POSITION_PID)
-				? rotationsToHomedUnits(mServoOutputs.demand)
+				? rotationsToHomedUnits(demand)
 				: Double.NaN;
 	}
 
@@ -619,7 +641,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	 * @param feedforward_v The feedforward voltage.
 	 */
 	public void setSetpointMotionMagic(double units, double feedforward_v) {
-		mServoOutputs.demand = constrainRotations(homeAwareUnitsToRotations(units));
+		demand = constrainRotations(homeAwareUnitsToRotations(units));
 		if (mControlState != ControlState.MOTION_MAGIC) {
 			mControlState = ControlState.MOTION_MAGIC;
 		}
@@ -641,7 +663,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	 * @param feedforward_v The feedforward voltage.
 	 */
 	public void setSetpointPositionPID(double units, double feedforward_v) {
-		mServoOutputs.demand = constrainRotations(homeAwareUnitsToRotations(units));
+		demand = constrainRotations(homeAwareUnitsToRotations(units));
 		if (mControlState != ControlState.POSITION_PID) {
 			mControlState = ControlState.POSITION_PID;
 		}
@@ -716,7 +738,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		if (mControlState != ControlState.OPEN_LOOP) {
 			mControlState = ControlState.OPEN_LOOP;
 		}
-		mServoOutputs.demand = percentage;
+		demand = percentage;
 	}
 
 	/**
@@ -728,7 +750,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		if(mControlState != ControlState.VOLTAGE){
 			mControlState = ControlState.VOLTAGE;
 		}
-		mServoOutputs.demand = voltage;		
+		demand = voltage;		
 	}
 
 	/**
@@ -759,10 +781,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		double predicted_units = mServoInputs.active_trajectory_position
 				+ lookahead_secs * mServoInputs.active_trajectory_velocity
 				+ 0.5 * mServoInputs.active_trajectory_acceleration * lookahead_secs * lookahead_secs;
-		if (mServoOutputs.demand >= mServoInputs.active_trajectory_position) {
-			return Math.min(predicted_units, mServoOutputs.demand);
+		if (demand >= mServoInputs.active_trajectory_position) {
+			return Math.min(predicted_units, demand);
 		} else {
-			return Math.max(predicted_units, mServoOutputs.demand);
+			return Math.max(predicted_units, demand);
 		}
 	}
 
@@ -880,7 +902,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	@Override
 	public void outputTelemetry() {
 		Logger.recordOutput(mConstants.kName + "/Control Mode", mControlState);
-		Logger.recordOutput(mConstants.kName + "/Demand", mServoOutputs.demand);
+		Logger.recordOutput(mConstants.kName + "/Demand", demand);
+		Logger.recordOutput(mConstants.kName+ "/Homing", mHoming);
 	}
 
 	/**

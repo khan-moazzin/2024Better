@@ -1,13 +1,9 @@
 package com.team5817.frc2025;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -21,6 +17,7 @@ import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants
 import com.team5817.lib.drivers.ServoMotorSubsystem.TalonFXConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
 import com.team5817.lib.swerve.SwerveModule.SwerveModuleConstants;
+import com.team254.lib.drivers.CanDeviceId;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.motion.MotionProfileConstraints;
 import com.team254.lib.swerve.SwerveDriveKinematics;
@@ -34,7 +31,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 
 /**
  * Constants class holds all the robot-wide numerical or boolean constants.
@@ -65,7 +61,7 @@ public class Constants {
 	public static final double kJoystickThreshold = 0.2;
 	public static final int kButtonGamepadPort = 1;
 
-	public static final double stickDeadband = 0.1;
+	public static final double stickDeadband = 0.06;
 
 	public static final double specializedVisionTimeout = 5;
 
@@ -174,7 +170,7 @@ public class Constants {
 		public static final double kSnapSwerveHeadingKd = 0.6;
 		public static final double kSnapSwerveHeadingKf = 1.0;
 
-		public static final double kTrajectoryDeadband = .05;
+		public static final double kTrajectoryDeadband = .03;
 
 		public static final SwerveKinematicLimits kSwerveKinematicLimits = new SwerveKinematicLimits();
 
@@ -182,6 +178,13 @@ public class Constants {
 			kSwerveKinematicLimits.kMaxDriveVelocity = maxSpeed;
 			kSwerveKinematicLimits.kMaxDriveAcceleration = 80;
 			kSwerveKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
+		}
+		public static final SwerveKinematicLimits kExtendedKinematicLimits = new SwerveKinematicLimits();
+
+		static {
+			kExtendedKinematicLimits.kMaxDriveVelocity = maxSpeed;
+			kExtendedKinematicLimits.kMaxDriveAcceleration = 10;
+			kExtendedKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
 
 		public static final SwerveKinematicLimits kSwerveUncappedKinematicLimits = new SwerveKinematicLimits();
@@ -373,52 +376,53 @@ public class Constants {
 		public static final AbsoluteEncoderConstants kDeployEncoderConstants = new AbsoluteEncoderConstants();
 
 		static {
+
 			kDeployServoConstants.kName = "Deploy";
 			
 			kDeployServoConstants.simIO = isComp? false:true;
 
 			kDeployServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
 			kDeployServoConstants.kMainConstants.counterClockwisePositive = false;
+			
 
 			kDeployServoConstants.kHomePosition = 0; // degrees
-			kDeployServoConstants.kRotationsPerUnitDistance = 1;
+			kDeployServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0)*13/3;
 
-			kDeployServoConstants.kMaxUnitsLimit = 1.5;
-			kDeployServoConstants.kMinUnitsLimit = 0.0;
+			kDeployServoConstants.kMaxUnitsLimit = 100000;
+			kDeployServoConstants.kMinUnitsLimit = -100000;
 
-			kDeployServoConstants.kKp = 3.0;
-			kDeployServoConstants.kKi = 0.0;
-			kDeployServoConstants.kKd = 0.0;
-			kDeployServoConstants.kKa = 0.0;
-			kDeployServoConstants.kKs = 0.2;
-			kDeployServoConstants.kKg = 0.2;
+			kDeployServoConstants.kKp = 18;
+			kDeployServoConstants.kKi = 0.0;   
+			kDeployServoConstants.kKd = 0;
+			kDeployServoConstants.kKa = 0;
+			kDeployServoConstants.kKs = 0;
+			kDeployServoConstants.kKv = 0;
+			kDeployServoConstants.kKg = 1.7;
 
-			kDeployServoConstants.kCruiseVelocity = 400.0; // degrees / s
-			kDeployServoConstants.kAcceleration = 10000.0; // degrees / s^2
+ 
+			kDeployServoConstants.kCruiseVelocity = 8*360*3/13; 
+			kDeployServoConstants.kAcceleration = 7*360*3/13; 
 
 			kDeployServoConstants.kMaxForwardOutput = 12.0;
 			kDeployServoConstants.kMaxReverseOutput = -12.0;
 
 			kDeployServoConstants.kEnableSupplyCurrentLimit = true;
-			kDeployServoConstants.kSupplyCurrentLimit = 40; // amps
-			kDeployServoConstants.kSupplyCurrentThreshold = 40; // amps
+			kDeployServoConstants.kSupplyCurrentLimit = 80; // amps
+			kDeployServoConstants.kSupplyCurrentThreshold = 80; // amps
 			kDeployServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
 
 			kDeployServoConstants.kEnableStatorCurrentLimit = true;
-			kDeployServoConstants.kStatorCurrentLimit = 80; // amps
+			kDeployServoConstants.kStatorCurrentLimit = 120; // amps
 
 			kDeployServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
-			kDeployEncoderConstants.encoder_type = FeedbackSensorSourceValue.FusedCANcoder;
+			kDeployEncoderConstants.rotor_to_sensor_ratio = 13/3;
 			kDeployEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
-			kDeployEncoderConstants.rotor_rotations_per_output = 314.0;
-			kDeployEncoderConstants.remote_encoder_offset = 0;
-		}
 
-		public static double kHomingZone = 7.0; // degrees
-		public static double kHomingTimeout = 0.2; // seconds
-		public static double kHomingVelocityWindow = 5.0; // "units" / secon
-		public static double kHomingOutput = 4.0; // volts
+			kDeployServoConstants.kHomingOutput = -2;
+			kDeployServoConstants.kHomingTimeout = 0.2;
+			kDeployServoConstants.kHomingVelocityWindow = 5;
+		}
 
 	}
 
@@ -496,15 +500,14 @@ public class Constants {
 
 			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Coast;
 			
-			
+			kElevatorServoConstants.kHomingTimeout = 0.2;
+			kElevatorServoConstants.kHomingOutput = -1;
+			kElevatorServoConstants.kHomingVelocityWindow = 0.1;
 
 		}
 
-		public static double kHomingZone = 7.0; // degrees
-		public static double kHomingTimeout = 0.2; // seconds
-		public static double kHomingVelocityWindow = 5.0; // "units" / second
-		public static double kHomingOutput = 4.0; // volts
-		public static final double kCoralClearHeight = 0.35; // rotations
+		public static double kHomingZone = 0.1; // degrees
+		public static final double kCoralClearHeight = 0.15; // rotations
 
 
 	}
@@ -578,18 +581,19 @@ public class Constants {
 			kWristServoConstants.kHomePosition = 0; // degrees
 			kWristServoConstants.kRotationsPerUnitDistance = (1/360.0) * 2;
 
-			kWristServoConstants.kMaxUnitsLimit = 128.1;
+			kWristServoConstants.kMaxUnitsLimit = 200;
 			kWristServoConstants.kMinUnitsLimit = 0.0;
 
-			kWristServoConstants.kKp = 1.0;
+			kWristServoConstants.kKp = 50;
 			kWristServoConstants.kKi = 0.0;
-			kWristServoConstants.kKd = 0.0;
+			kWristServoConstants.kKd = .5;
 			kWristServoConstants.kKa = 0.0;
 			kWristServoConstants.kKs = 0.2;
-			kWristServoConstants.kKg = 0.2;
+			kWristServoConstants.kKv = .5;
 
-			kWristServoConstants.kCruiseVelocity = 4000.0; // degrees / s
-			kWristServoConstants.kAcceleration = 100000.0; // degrees / s^2
+
+			kWristServoConstants.kCruiseVelocity = 80000; // degrees / s
+			kWristServoConstants.kAcceleration = 20000.0; // degrees / s^2
 
 			kWristServoConstants.kMaxForwardOutput = 12.0;
 			kWristServoConstants.kMaxReverseOutput = -12.0;
@@ -605,12 +609,10 @@ public class Constants {
 
 			kWristServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
-			kWristEncoderConstants.encoder_type = FeedbackSensorSourceValue.RotorSensor;
-			// kWristEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
-			// kWristEncoderConstants.rotor_rotations_per_output = 314.0;
-			// kWristEncoderConstants.remote_encoder_offset = 0;
+			kWristServoConstants.kHomingTimeout = 2;
+			kWristServoConstants.kHomingOutput = -5;
+			kWristServoConstants.kHomingVelocityWindow = 1;
 		}
-
 	}
 
 	/**

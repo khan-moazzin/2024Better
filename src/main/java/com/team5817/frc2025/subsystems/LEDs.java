@@ -36,13 +36,14 @@ public class LEDs extends Subsystem {
 
 	private final int kNumLeds = 8 + 18;
 
-	private final CANdle mCandle = new CANdle(Ports.LEDS.getDeviceNumber(), Ports.LEDS.getBus());
+	private final CANdle mCandle;
 	private LEDSection mLEDStatus = new LEDSection(0, kNumLeds);
 
 	/**
 	 * Constructor for the LEDs subsystem.
 	 */
 	public LEDs() {
+		mCandle = new CANdle(Ports.LEDS.getDeviceNumber(), Ports.LEDS.getBus());
 		CANdleConfiguration configAll = new CANdleConfiguration();
 		configAll.statusLedOffWhenActive = false;
 		configAll.disableWhenLOS = true;

@@ -1,10 +1,11 @@
 package com.team5817.frc2025.subsystems.vision;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Twist2d;
 import com.team5817.frc2025.field.FieldLayout;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This class is responsible for accepting or rejecting vision-based pose updates.
@@ -46,24 +47,24 @@ public class VisionPoseAcceptor {
 				|| visionFieldToVehicle.getTranslation().x() > FieldLayout.kFieldLength + kFieldBorderMargin
 				|| visionFieldToVehicle.getTranslation().y() < -kFieldBorderMargin
 				|| visionFieldToVehicle.getTranslation().y() > FieldLayout.kFieldWidth + kFieldBorderMargin) {
-			SmartDashboard.putString("Vision validation", "Outside field");
+			Logger.recordOutput("Vision validation", "Outside field");
 			return false;
 		}
 
 		if (robotVelocity.norm() > 4.0) {
-			SmartDashboard.putString("Vision validation", "Max velocity");
+			Logger.recordOutput("Vision validation", "Max velocity");
 			return false;
 		}
 
 		if (isInAuto) {
 			// Check max correction
 			if (visionFieldToVehicle.distance(lastFieldToVehicle) > kMaxVisionCorrection) {
-				SmartDashboard.putString("Vision validation", "Max correction");
+				Logger.recordOutput("Vision validation", "Max correction");
 				return false;
 			}
 		}
 
-		SmartDashboard.putString("Vision validation", "OK");
+		Logger.recordOutput("Vision validation", "OK");
 		return true;
 	}
 }

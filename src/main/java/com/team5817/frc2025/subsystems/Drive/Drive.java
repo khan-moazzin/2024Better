@@ -8,6 +8,7 @@ import com.team5817.frc2025.Constants.SwerveConstants.Mod0;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod1;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod2;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod3;
+import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
@@ -33,6 +34,9 @@ import com.team254.lib.swerve.SwerveKinematicLimits;
 import com.team254.lib.swerve.SwerveModuleState;
 import com.team254.lib.swerve.SwerveSetpoint;
 import com.team254.lib.swerve.SwerveSetpointGenerator;
+
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -88,7 +92,8 @@ public class Drive extends Subsystem {
 
 	private Rotation2d mTrackingAngle = Rotation2d.identity();
 
-	private SwerveKinematicLimits mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
+	private SwerveKinematicLimits mKinematicLimits = SwerveConstants.kSwerveKinematicLimits;
+	private SwerveKinematicLimits driverKinematicLimits = mKinematicLimits;
 	private SwerveKinematicLimits mUncappedKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 
 	private static AlignmentType mAlignment = AlignmentType.CORAL_SCORE;
@@ -103,10 +108,10 @@ public class Drive extends Subsystem {
 
 	public static final DriveTrainSimulationConfig mapleSimConfig = DriveTrainSimulationConfig.Default()
 			.withRobotMass(Pound.of(115))
-			.withTrackLengthTrackWidth(Inches.of(29), Inches.of(29))
+			.withTrackLengthTrackWidth(Inches.of(35), Inches.of(35))
 			.withGyro(COTS.ofPigeon2())
 			.withSwerveModule(new SwerveModuleSimulationConfig(
-					DCMotor.getKrakenX60(1),
+					DCMotor.getKrakenX60Foc(1),
 					DCMotor.getFalcon500(1),
 					SwerveConstants.driveGearRatio,
 					SwerveConstants.angleGearRatio,
@@ -219,7 +224,7 @@ public class Drive extends Subsystem {
 		}
 
 		if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
-			mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
+			mKinematicLimits = driverKinematicLimits;
 			double x = speeds.vxMetersPerSecond;
 			double y = speeds.vyMetersPerSecond;
 
@@ -268,6 +273,9 @@ public class Drive extends Subsystem {
 		if (mControlState != DriveControlState.VELOCITY) {
 			mControlState = DriveControlState.VELOCITY;
 		}
+	}
+	public void setDriverKinematicLimits(SwerveKinematicLimits limits){
+		driverKinematicLimits = limits;
 	}
 
 	/**
@@ -800,15 +808,15 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Predicted Velocity", mPeriodicIO.predicted_velocity.wpi());
 		Logger.recordOutput("Drive/Heading", mPeriodicIO.heading);
 		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
-		Logger.recordOutput("RobotState/Filtered Pose", RobotState.getInstance().getLatestGlobalKalmanPose().wpi());
-		Logger.recordOutput("RobotState/Odom Pose", RobotState.getInstance().getLatestPoseFromOdom().getValue().wpi());
+		Logger.recordOutput("RobotState/Filtered Pose", new Pose3d(RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getX(),RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getY(),0.025, new Rotation3d(0,0,RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getRotation().getRadians())));
+		Logger.recordOutput("RobotState/Odom Pose", new Pose3d(RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getX(),RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getY(),0.025, new Rotation3d(0,0,RobotState.getInstance().getLatestPoseFromOdom().getValue().wpi().getRotation().getRadians())));
 		// Logger.recordOutput("RobotState/Specialized Pose", RobotState.getInstance().getLatestSpecializedKalmanPose().wpi());
 
 		Logger.recordOutput("Drive/Control State Changed", mControlStateHasChanged);
 
 		// elastic
 		mField2d.setRobotPose(RobotState.getInstance().getLatestGlobalKalmanPose().wpi());
-		SmartDashboard.putData("Elastic/Field2d", mField2d);
+		SmartDashboard.putData("Elastic/Pose", mField2d);
 
 		for (SwerveModule module : mModules) {
 			module.outputTelemetry();
