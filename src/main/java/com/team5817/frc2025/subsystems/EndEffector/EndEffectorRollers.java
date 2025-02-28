@@ -104,7 +104,7 @@ public class EndEffectorRollers extends Subsystem {
 	public void setState(State state) {
 		mState = state;
 	}
-	
+
 	TimeDelayedBoolean mHasPieceManager = new TimeDelayedBoolean();
 	boolean hasPiece = false;
 	public boolean hasPiece(){
@@ -196,7 +196,7 @@ public class EndEffectorRollers extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
-
+		Logger.recordOutput("EndEffectorRollers/hasPiece", hasPiece);
 	}
 
     public Request hasAlgaeRequest() {
