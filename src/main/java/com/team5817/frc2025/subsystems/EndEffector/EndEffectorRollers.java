@@ -46,7 +46,7 @@ public class EndEffectorRollers extends Subsystem {
 		IDLE(2.0),
 		CORAL_INTAKE(4.0),
 		CORAL_OUTTAKE(-6.0),
-		ALGAE_INTAKE(4.0),
+		ALGAE_INTAKE(8.0),
 		ALGAE_OUTTAKE(-6.0);
 
 		public double roller_voltage;
