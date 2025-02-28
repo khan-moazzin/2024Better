@@ -174,7 +174,7 @@ public class EndEffectorRollers extends Subsystem {
 		mEndEffectorRollerInputs.roller_stator_current = mRoller.getStatorCurrent().getValue().in(Amps);
 		mEndEffectorRollerInputs.roller_velocity = mRoller.getVelocity().getValue().in(RotationsPerSecond);
 
-		hasPiece = mHasPieceManager.update(mEndEffectorRollerInputs.roller_stator_current>20, 0.1);
+		hasPiece = mHasPieceManager.update(mEndEffectorRollerInputs.roller_stator_current>47, 0.1);
 
 		Logger.processInputs("EndEffectorRollers", mEndEffectorRollerInputs);
 	}
