@@ -52,6 +52,7 @@ public class Elevator extends ServoMotorSubsystem {
 		NET(2, kMediumError),
 		ZERO(0, kLenientError, true),
 		PROCESS(0.0, kLenientError),
+		CLEAR(1.9,kStrictError),
 		STOW(0.0, kStrictError);
 
 		double output = 0;

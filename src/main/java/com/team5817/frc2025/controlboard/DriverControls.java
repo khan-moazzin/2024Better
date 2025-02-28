@@ -114,7 +114,7 @@ public class DriverControls {
 			}
 
 			
-			if(driver.releasedAny(driver.leftBumper,driver.bButton,driver.xButton)){
+			if(driver.releasedAny(driver.leftBumper,driver.bButton)){
 				if(s.mEndEffectorRollers.hasPiece())
 					s.setGoal(GoalState.STOW);
 				else
@@ -123,7 +123,7 @@ public class DriverControls {
 			}
 
 
-			if(driver.releasedAny(driver.leftTrigger,driver.aButton) ){
+			if(driver.releasedAny(driver.leftTrigger,driver.aButton,driver.xButton) ){
 				wantStow = true;
 			}
 			if(wantStow&&clearReef()){
@@ -137,7 +137,13 @@ public class DriverControls {
 
 			if(driver.releasedAny(driver.rightTrigger))
 				mDrive.setControlState(DriveControlState.OPEN_LOOP);
-		
+			
+			if(driver.leftTrigger.isBeingPressed())
+				s.setReadyToScore(driver.rightBumper.isBeingPressed());
+			else if(driver.xButton.isBeingPressed()&&driver.rightBumper.isBeingPressed()){
+				s.setGoal(GoalState.GROUND_ALGAE_SHOOT);
+			}else if(driver.rightBumper.isBeingPressed())
+				s.setGoal(GoalState.EXHAUST);
 		}else {
 			if (driver.aButton.wasActivated())
 				s.setGoal(GoalState.CLIMB_PREPARE);
@@ -148,6 +154,8 @@ public class DriverControls {
 
 		if(codriver.getLeftTriggerAxis()==1)
 			s.setGoal(GoalState.PREINTAKE);
+		if(codriver.getRightTriggerAxis()==1)
+			s.setGoal(GoalState.CLEAR);
 
 		if(codriver.yButton.isBeingPressed())
 			preparedGoal = GoalState.L4;
@@ -167,10 +175,7 @@ public class DriverControls {
 		}
 
 		
-		if(driver.leftTrigger.isBeingPressed())
-			s.setReadyToScore(driver.rightBumper.isBeingPressed());
-		else if(driver.rightBumper.isBeingPressed())
-			s.setGoal(GoalState.EXHAUST);
+		
 
 		Logger.recordOutput("Elastic/Codriver Manual", codriverManual);
 		Logger.recordOutput("Elastic/Auto Align Allowed", autoAlignAllowed);

@@ -24,6 +24,7 @@ import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.requests.ParallelRequest;
 import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
+import com.team5817.lib.requests.WaitRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +88,9 @@ public class Superstructure extends Subsystem {
 		PREINTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.IDLE)),
+		CLEAR(new SuperstructureState(Elevator.State.CLEAR, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
+				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				SuperstructureState.Type.IDLE)),
 		EXHAUST(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
 				SuperstructureState.Type.IDLE)),	
@@ -120,6 +124,9 @@ public class Superstructure extends Subsystem {
 		GROUND_ALGAE_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW,
 				IntakeDeploy.State.ALGAE, Climb.State.STOW, EndEffectorRollers.State.IDLE,
 				IntakeRollers.State.INTAKING_ALGAE, Indexer.State.IDLE, SuperstructureState.Type.INTAKING)),
+		GROUND_ALGAE_SHOOT(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW,
+				IntakeDeploy.State.ALGAE, Climb.State.STOW, EndEffectorRollers.State.IDLE,
+				IntakeRollers.State.SHOOTING_ALGAE, Indexer.State.IDLE, SuperstructureState.Type.INTAKING)),
 		HUMAN_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING,
 				IntakeDeploy.State.HUMAN, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE,
 				IntakeRollers.State.IDLE, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
@@ -475,7 +482,8 @@ public class Superstructure extends Subsystem {
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 						// mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
-		breakWait(mIndexerBeam, true)
+			new WaitRequest(0.3)
+		// breakWait(mIndexerBeam, true)
 		).addName("Intaking");
 	}
 
