@@ -8,6 +8,7 @@ import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.subsystems.LEDs;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
+import com.team5817.lib.Util;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
@@ -74,7 +75,7 @@ public class DriverControls {
 	public void twoControllerMode() {
 
 		if(driver.getStartButton())
-			mDrive.zeroGyro();
+			mDrive.zeroGyro(Util.isRed().get()?0:180);
 		
 		if(!climbAllowed){
 			// if(driver.\)sswaaaaaa

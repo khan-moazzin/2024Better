@@ -159,7 +159,7 @@ public class Robot extends LoggedRobot {
     mEnabledLooper.start();
     Superstructure.getInstance().setGoal(GoalState.PREINTAKE);
     Logger.recordOutput("isComp", Constants.isComp);
-    mDrive.zeroGyro();
+    mDrive.zeroGyro(Util.isRed().get()?0:180);
   }
 
   /**

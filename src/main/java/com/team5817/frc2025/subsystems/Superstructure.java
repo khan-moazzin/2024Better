@@ -18,6 +18,7 @@ import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
+import com.team5817.lib.Util;
 import com.team5817.lib.Lights.TimedLEDState;
 import com.team5817.lib.drivers.BeamBreak;
 import com.team5817.lib.drivers.Subsystem;
@@ -560,6 +561,7 @@ public class Superstructure extends Subsystem {
 	private boolean isAlgaeHigh() {
 		Translation2d reef_to_odom = FieldLayout.getReefPose().inverse().translateBy(mDrive.getPose().getTranslation());
 		double angle = Math.toDegrees(Math.atan2(reef_to_odom.x(), reef_to_odom.y())) + 30;
-		return Math.floorMod(Math.round(angle / 60), 2) == 0;
+		boolean out = Math.floorMod(Math.round(angle / 60), 2) == 0;
+		return Util.isRed().get()?out:!out;
 	}
 }
