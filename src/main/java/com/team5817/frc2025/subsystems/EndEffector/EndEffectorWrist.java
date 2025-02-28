@@ -47,16 +47,17 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 	public enum State {
 
-		L4(82.2, kStrictError),
+		L4(81.2, kStrictError),
 		L3(0, kStrictError),
 		L2(15, kStrictError),
 		L1(0, kStrictError),
-		A1(208, kMediumError),
-		A2(208, kMediumError),
-		NET(208, kMediumError),
+		A1(207, kMediumError),
+		A2(207, kMediumError),
+		NET(207, kMediumError),
 		ZERO(0, kLenientError,true),
-		INTAKING(165, kStrictError),
-		STOW(169, kStrictError);
+		INTAKING(164, kStrictError),
+		STOW(168
+		, kStrictError);
 
 		double output = 0;
 		double allowable_error = 0;
