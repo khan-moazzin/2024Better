@@ -1,6 +1,7 @@
 package com.team5817.frc2025.subsystems.Indexer;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -88,12 +89,14 @@ public class Indexer extends Subsystem {
 		public double roller_output_voltage;
 		public double roller_stator_current;
 		public double roller_velocity;
+		public double roller_temperature;
 
 		@Override
 		public void initSendable(SendableBuilder builder) {
 			builder.addDoubleProperty("VelocityRpS", () -> roller_velocity, null);
 			builder.addDoubleProperty("OutputVoltage", () -> roller_output_voltage, null);
 			builder.addDoubleProperty("StatorCurrent", () -> roller_stator_current, null);
+			builder.addDoubleProperty("RoolerTemp", () -> roller_temperature, null);
 		}
 	}
 
@@ -145,6 +148,7 @@ public class Indexer extends Subsystem {
 		mIndexerInputs.roller_output_voltage = SideRollers.getMotorVoltage().getValue().in(Volts);
 		mIndexerInputs.roller_stator_current = SideRollers.getStatorCurrent().getValue().in(Amps);
 		mIndexerInputs.roller_velocity = SideRollers.getVelocity().getValue().in(RotationsPerSecond);
+		mIndexerInputs.roller_temperature = SideRollers.getDeviceTemp().getValue().in(Fahrenheit);
 
 		Logger.processInputs("Indexer", mIndexerInputs);
 	}
