@@ -48,7 +48,7 @@ public class EndEffectorRollers extends Subsystem {
 		l4(-6.0),
 		l3(-6.0),
 		l2(-6.0),
-		l1(-6.0),
+		l1(-1.2),
 		ALGAE_INTAKE(8.0),
 		ALGAE_OUTTAKE(-6.0);
 
