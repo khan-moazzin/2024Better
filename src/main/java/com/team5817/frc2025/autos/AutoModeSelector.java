@@ -32,14 +32,14 @@ public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
 		THREE_CORAL_MODE,
-		CUSTOM_THREE_CORAL_MODE,
+		CUSTOM_MODE,
 	}
 	public enum StartingPosition {
 
-		PROCCESSOR_SIDE(DesiredMode.CUSTOM_THREE_CORAL_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING),
-		CENTER_PROCESS(DesiredMode.CUSTOM_THREE_CORAL_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING),
-		CENTER_BLANK(true, DesiredMode.CUSTOM_THREE_CORAL_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING),
-		BLANK_SIDE(true, DesiredMode.CUSTOM_THREE_CORAL_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING);
+		PROCCESSOR_SIDE(DesiredMode.CUSTOM_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING),
+		CENTER_PROCESS(DesiredMode.CUSTOM_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING),
+		CENTER_BLANK(true, DesiredMode.CUSTOM_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING),
+		BLANK_SIDE(true, DesiredMode.CUSTOM_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING);
 
 		public List<DesiredMode> modes;
 		public Boolean mirrored = false;
@@ -59,6 +59,7 @@ public class AutoModeSelector {
 	private ScoringLocation mCachedFirstScore = ScoringLocation._3A;
 	private ScoringLocation mCachedSecondScore = ScoringLocation._7A;
 	private ScoringLocation mCachedThirdScore = ScoringLocation._7B;
+	private int mCachedScoreAmount = 3;
 
 
 	private Optional<AutoBase> mAutoMode = Optional.empty();
@@ -70,6 +71,7 @@ public class AutoModeSelector {
 	private static SendableChooser<ScoringLocation> mFirstScoreSelector = new SendableChooser<>();
 	private static SendableChooser<ScoringLocation> mSecondScoreSelector = new SendableChooser<>();
 	private static SendableChooser<ScoringLocation> mThirdScoreSelector = new SendableChooser<>();
+	private static SendableChooser<Integer> mScoreAmountSelector = new SendableChooser<>();
 
 
 	/**
@@ -100,6 +102,11 @@ public class AutoModeSelector {
 		mThirdScoreSelector.addOption("8B", ScoringLocation._8B);
 		mThirdScoreSelector.addOption("3A", ScoringLocation._3A);
 		mThirdScoreSelector.addOption("6B", ScoringLocation._6B);
+
+		mScoreAmountSelector.setDefaultOption("3", 1);
+		mScoreAmountSelector.addOption("2", 2);
+		mScoreAmountSelector.addOption("1", 3);
+		
 	}
 
 	/**
@@ -124,15 +131,18 @@ public class AutoModeSelector {
 		mCachedFirstScore = mFirstScoreSelector.getSelected();
 		mCachedSecondScore = mSecondScoreSelector.getSelected();
 		mCachedThirdScore = mThirdScoreSelector.getSelected();
+		mCachedScoreAmount = mScoreAmountSelector.getSelected();
 		
 		SmartDashboard.putData("Starting Position", mStartingPositionSelector);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
 		SmartDashboard.putData("Pickup Location", mPickupLocationSelector);
 
-		if(desiredMode == DesiredMode.CUSTOM_THREE_CORAL_MODE){
+		if(desiredMode == DesiredMode.CUSTOM_MODE){
 			SmartDashboard.putData("First Score Selector", mFirstScoreSelector);
 			SmartDashboard.putData("Second Score Selector", mSecondScoreSelector);
 			SmartDashboard.putData("Third Score Selector", mThirdScoreSelector);
+			SmartDashboard.putNumber("Score Amount", mCachedScoreAmount);
+
 		}
 		
 }
@@ -153,7 +163,7 @@ public class AutoModeSelector {
 				return Optional.of(new ThreeCoralMode(mCachedStartingPosition, mCachedPickupLocation));
 			// break;
 
-			case CUSTOM_THREE_CORAL_MODE:
+			case CUSTOM_MODE:
 				return Optional.of(new CustomThreeCoralMode(mCachedStartingPosition, mCachedPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore));
 
 		default:
