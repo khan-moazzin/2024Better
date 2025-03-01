@@ -273,7 +273,7 @@ public class Robot extends LoggedRobot {
     mAutoExecuter.setAuto(new TestRoutine()); 
 
     // mAutoExecuter.setAuto(new Characterize(IntakeDeploy.getInstance(),true))
-    // mAutoExecuter.start();
+    mAutoExecuter.start();
     // ControlBoard.getInstance().
     // Elevator.getInstance().applyVoltage(-1.2);
 
@@ -285,7 +285,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void testPeriodic() {
 
-    controls.oneControllerMode();
+    controls.twoControllerMode();
   }
 
   /**
