@@ -159,14 +159,18 @@ public class Robot extends LoggedRobot {
     mEnabledLooper.start();
     Superstructure.getInstance().setGoal(GoalState.PREINTAKE);
     Logger.recordOutput("isComp", Constants.isComp);
-    mDrive.zeroGyro(Util.isRed().get()?0:180);
   }
 
   /**
    * This method is called periodically, regardless of the robot's mode.
    */
+  boolean needsZero = true;
   @Override
   public void robotPeriodic() {
+    if(needsZero&&DriverStation.getAlliance().isPresent()){
+      mDrive.zeroGyro(Util.isRed().get()?0:180);
+      needsZero = false;
+    }
     Logger.recordOutput("Elastic/Match Time", Timer.getMatchTime());
     mEnabledLooper.update();
     Logger.recordOutput("Mechs", mechPoses);
@@ -180,6 +184,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
+    neverEnabled = false;
     Elastic.selectTab("Autonomous");
     mAutoExecuter.start();
     // Superstructure.getInstance().setState(Superstructure.AUTO);
