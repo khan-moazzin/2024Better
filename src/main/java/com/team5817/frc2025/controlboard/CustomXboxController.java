@@ -123,7 +123,6 @@ public class CustomXboxController extends XboxController {
 	 * @return the direction of the POV
 	 */
 	public Rotation2d getPOVDirection() {
-		System.out.println(getPOV());
 		return Rotation2d.fromDegrees(getPOV());
 	}
 

@@ -103,7 +103,7 @@ public class TestRoutine extends AutoBase {
         System.out.println("Manipulator should be INTAKING Coral");
         Elastic.sendNotification(new Notification(NotificationLevel.INFO, "TEST ROUTINE", "Manipulator should be INTAKING Coral"));
         r(new WaitforControllerInput());
-        mEndEffectorRollers.stateRequest(EndEffectorRollers.State.CORAL_OUTTAKE).act();
+        mEndEffectorRollers.stateRequest(EndEffectorRollers.State.l4).act();
         mEndEffectorWrist.stateRequest(EndEffectorWrist.State.ZERO).act();
         System.out.println("Manipulator should be OUTTAKING Coral");
         Elastic.sendNotification(new Notification(NotificationLevel.INFO, "TEST ROUTINE", "Manipulator should be OUTTAKING Coral"));

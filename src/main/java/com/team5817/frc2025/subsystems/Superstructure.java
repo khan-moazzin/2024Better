@@ -96,16 +96,16 @@ public class Superstructure extends Subsystem {
 				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
 				SuperstructureState.Type.IDLE)),	
 		L1(new SuperstructureState(Elevator.State.L1, EndEffectorWrist.State.L1, IntakeDeploy.State.STOW,
-				Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				Climb.State.STOW, EndEffectorRollers.State.l1, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		L2(new SuperstructureState(Elevator.State.L2, EndEffectorWrist.State.L2, IntakeDeploy.State.STOW,
-				Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				Climb.State.STOW, EndEffectorRollers.State.l2, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		L3(new SuperstructureState(Elevator.State.L3, EndEffectorWrist.State.L3, IntakeDeploy.State.STOW,
-				Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				Climb.State.STOW, EndEffectorRollers.State.l3, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		L4(new SuperstructureState(Elevator.State.L4, EndEffectorWrist.State.L4, IntakeDeploy.State.STOW,
-				Climb.State.STOW, EndEffectorRollers.State.CORAL_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				Climb.State.STOW, EndEffectorRollers.State.l4, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
@@ -532,7 +532,6 @@ public class Superstructure extends Subsystem {
 
 			@Override
 			public boolean isFinished() {
-				System.out.println(readyToScore);
 				return readyToScore;
 			}
 		}).addName("Driver Score Wait");
