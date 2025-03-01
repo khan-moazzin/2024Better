@@ -141,14 +141,14 @@ public class AutoModeSelector {
 			SmartDashboard.putData("First Score Selector", mFirstScoreSelector);
 			SmartDashboard.putData("Second Score Selector", mSecondScoreSelector);
 			SmartDashboard.putData("Third Score Selector", mThirdScoreSelector);
-			SmartDashboard.putNumber("Score Amount", mCachedScoreAmount);
+			SmartDashboard.putData("Score Amount", mScoreAmountSelector);
 
 		}
 		
 }
 
 	/**
-	 * Returns the AutoBase instance for the given desired mode.
+	 * Returns the AutoBase instance for theputp given desired mode.
 	 *
 	 * @param mode The desired autonomous mode.
 	 * @return An Optional containing the AutoBase instance if a valid mode is found, otherwise an empty Optional.
