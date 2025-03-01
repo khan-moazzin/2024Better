@@ -51,13 +51,12 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		L3(0, kStrictError),
 		L2(15, kStrictError),
 		L1(0, kStrictError),
-		A1(207, kMediumError),
-		A2(207, kMediumError),
-		NET(207, kMediumError),
+		A1(164, kMediumError),
+		A2(164, kMediumError),
+		NET(164, kMediumError),
 		ZERO(0, kLenientError,true),
 		INTAKING(164, kStrictError),
-		STOW(168
-		, kStrictError);
+		STOW(164, kStrictError);
 
 		double output = 0;
 		double allowable_error = 0;

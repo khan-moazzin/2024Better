@@ -29,6 +29,7 @@ public class CustomThreeCoralMode extends AutoBase {
 	private Superstructure s = Superstructure.getInstance();
 	private Drive d = Drive.getInstance();
 	private TrajectorySet t;
+	private int coral_amount = 0;
 
 	private double enterDistance = 4;
 	private double exitDistance = 1.5;
@@ -130,6 +131,8 @@ public class CustomThreeCoralMode extends AutoBase {
 
 		r(new WaitForSuperstructureAction());
 		r(new WaitAction(coralSpit));
+		if(coral_amount==1)
+				return;
 
 		System.out.println("Scored " + firstScoreName);
 		r(new ParallelAction(List.of(
@@ -159,6 +162,8 @@ public class CustomThreeCoralMode extends AutoBase {
 		r(new WaitAction(coralSpit));
 		System.out.println("Scored " + secondScoreName);
 		d.setUseSpecializedPoseForPath(false);
+		if(coral_amount ==2)
+			return;
 
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),
