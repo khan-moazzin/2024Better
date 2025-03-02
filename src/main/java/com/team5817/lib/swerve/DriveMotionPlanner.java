@@ -61,8 +61,7 @@ public class DriveMotionPlanner {
 		mCurrentTrajectory = trajectory;
 		mSetpoint = trajectory.getCurrentState();
 		mLastSetpoint = null;
-		mCurrentTrajectoryLength =
-				mCurrentTrajectory.getTimeView().last_interpolant();
+		mCurrentTrajectoryLength = mCurrentTrajectory.getTimeView().last_interpolant();
 	}
 
 	public void reset() {

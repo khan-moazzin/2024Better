@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 import java.util.Optional;
 
-import com.team5817.frc2025.autos.Modes.CustomThreeCoralMode;
+import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
 import com.team5817.frc2025.autos.Modes.ThreeCoralMode;
 
@@ -164,7 +164,7 @@ public class AutoModeSelector {
 			// break;
 
 			case CUSTOM_MODE:
-				return Optional.of(new CustomThreeCoralMode(mCachedStartingPosition, mCachedPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore));
+				return Optional.of(new CustomMode(mCachedStartingPosition, mCachedPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore));
 
 		default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);

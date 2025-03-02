@@ -24,7 +24,7 @@ import com.team5817.lib.motion.TrajectorySet;
 /**
  * CustomThreeCoralMode is an autonomous mode for handling three coral scoring actions.
  */
-public class CustomThreeCoralMode extends AutoBase {
+public class CustomMode extends AutoBase {
 
 	private Superstructure s = Superstructure.getInstance();
 	private Drive d = Drive.getInstance();
@@ -48,7 +48,7 @@ public class CustomThreeCoralMode extends AutoBase {
 	 * @param secondScore the second scoring location
 	 * @param thirdScore the third scoring location
 	 */
-	public CustomThreeCoralMode(StartingPosition startingPosition, PickupLocation pickupLocation, ScoringLocation firstScore, ScoringLocation secondScore, ScoringLocation thirdScore) {
+	public CustomMode(StartingPosition startingPosition, PickupLocation pickupLocation, ScoringLocation firstScore, ScoringLocation secondScore, ScoringLocation thirdScore) {
 
  	boolean mirror = startingPosition.mirrored;
 	Trajectory startingTrajectory;
