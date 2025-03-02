@@ -104,8 +104,6 @@ public class VisionDeviceManager extends Subsystem {
 			for (VisionDevice device : mAllCameras) {
 				device.update(Timer.getTimestamp());
 				if (!device.getVisionUpdate().isEmpty()) {
-					if(device.mName == "limelight-right")
-					mHeadingAvg.addNumber(device.getEstimatedHeading());
 					VisionUpdate update = device.getVisionUpdate().get();
 					RobotState.getInstance().addVisionUpdate(update);
 					if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
@@ -223,17 +221,6 @@ public class VisionDeviceManager extends Subsystem {
 	 */
 	public VisionDevice getLeftVision() {
 		return mRightCamera;
-	}
-
-	public void clearHeading(){
-		for (VisionDevice visionDevice : mAllCameras) {
-			visionDevice.getMovingAverage().clear();
-		}
-	}
-	public void preset(Rotation2d rot){
-		for (VisionDevice visionDevice : mAllCameras) {
-			visionDevice.getMovingAverage().addNumber(rot.getDegrees());
-		}
 	}
 
 

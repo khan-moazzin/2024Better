@@ -165,7 +165,7 @@ public class Constants {
 		public static final double kStabilizeSwerveHeadingKf = 2.0;
 
 		// Snap Heading PID Values
-		public static final double kSnapSwerveHeadingKp = 5.0;
+		public static final double kSnapSwerveHeadingKp = 4.0;
 		public static final double kSnapSwerveHeadingKi = 0.0;
 		public static final double kSnapSwerveHeadingKd = 3;
 		public static final double kSnapSwerveHeadingKf = 1.0;

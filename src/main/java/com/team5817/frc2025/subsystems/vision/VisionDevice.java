@@ -2,17 +2,12 @@ package com.team5817.frc2025.subsystems.vision;
 
 import com.team5817.frc2025.Constants.PoseEstimatorConstants;
 import com.team5817.frc2025.RobotState.VisionUpdate;
-import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.subsystems.vision.LimelightHelpers.PoseEstimate;
 import com.team5817.lib.drivers.Pigeon;
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Rotation2d;
-import com.team254.lib.util.MovingAverage;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
-
 import java.util.Optional;
 
 import org.littletonrobotics.junction.AutoLog;
@@ -27,7 +22,6 @@ public class VisionDevice {
 
 	public String mName;
 	private NetworkTable mOutputTable;
-	private MovingAverage mHeadingAverage = new MovingAverage(1000);
 
 	/**
 	 * Constructor for VisionDevice.
@@ -38,7 +32,6 @@ public class VisionDevice {
 		this.mName = name;
 		mOutputTable = NetworkTableInstance.getDefault().getTable(name);
 
-		mHeadingAverage.clear();
 
 	}
 
@@ -60,7 +53,6 @@ public class VisionDevice {
 			mPeriodicIO.tagId = mOutputTable.getEntry("tid").getNumber(-1).intValue();
 
 			mPeriodicIO.mt1Pose = new Pose2d(LimelightHelpers.getBotPose2d_wpiBlue(mName));
-			addHeadingObservation(mPeriodicIO.mt1Pose.getRotation());
 			mPeriodicIO.targetToCamera = LimelightHelpers.getTargetPose3d_CameraSpace(mName);
 			mPeriodicIO.tagCounts = poseEstimate.tagCount;
 			mPeriodicIO.mt2Pose = new Pose2d(poseEstimate.pose);
@@ -76,43 +68,9 @@ public class VisionDevice {
 		}
 		LimelightHelpers.SetRobotOrientation(mName, Pigeon.getInstance().getYaw().getDegrees(), 0, 0, 0, 0, 0);
 		Logger.recordOutput(mName+"/mt1", mPeriodicIO.mt1Pose.wpi());
-		Logger.recordOutput(mName+"/avg heading", getEstimatedHeading());
 	}
 
-	/**
-	 * Checks if the moving average is ready.
-	 *
-	 * @return true if the moving average is ready, false otherwise
-	 */
-	public boolean movingAverageReady() {
-		return mHeadingAverage.getSize() == 100;
-	}
 
-	/**
-	 * Adds a heading observation to the moving average.
-	 *
-	 * @param heading the heading to add
-	 */
-	public void addHeadingObservation(Rotation2d heading) {
-		double degrees = heading.getDegrees();
-		while (degrees < 0) {
-			degrees += 360;
-		}
-		mHeadingAverage.addNumber(degrees);
-	}
-
-	public MovingAverage getMovingAverage(){
-		return mHeadingAverage;
-	}
-
-	/**
-	 * Gets the estimated heading from the moving average.
-	 *
-	 * @return the estimated heading
-	 */
-	public double getEstimatedHeading() {
-		return mHeadingAverage.getAverage();
-	}
 
 	/**
 	 * Gets the latest vision update.

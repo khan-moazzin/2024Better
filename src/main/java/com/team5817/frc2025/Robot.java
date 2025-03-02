@@ -242,8 +242,6 @@ public class Robot extends LoggedRobot {
     if(mAutoExecuter!=null){
       mAutoExecuter.stop();
     }
-    mVision.clearHeading();
-    mVision.preset(mDrive.getHeading());
     mAutoExecuter = new AutoExecuter();
   }
 
@@ -275,10 +273,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void testInit() {
     Elastic.selectTab("Systems Test");
-    mAutoExecuter.setAuto(new TestRoutine()); 
+    // mAutoExecuter.setAuto(new TestRoutine()); 
 
     // mAutoExecuter.setAuto(new Characterize(IntakeDeploy.getInstance(),true))
-    mAutoExecuter.start();
+    // mAutoExecuter.start();
     // ControlBoard.getInstance().
     // Elevator.getInstance().applyVoltage(-1.2);
 
@@ -290,7 +288,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void testPeriodic() {
 
-    controls.twoControllerMode();
+    controls.testMode();
   }
 
   /**

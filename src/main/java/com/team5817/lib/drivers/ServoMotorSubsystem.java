@@ -249,7 +249,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
 		for (int i = 0; i < mFollowers.length; ++i) {
 			mFollowers[i] = TalonFXFactory.createPermanentFollowerTalon(
-					mConstants.kFollowerConstants[i].id, mConstants.kMainConstants.id, true);//TODO "Explain"
+					mConstants.kFollowerConstants[i].id, mConstants.kMainConstants.id, true);//TODO add oppose fix
 
 			TalonFX follower = mFollowers[i];
 			mFollowerConfigs[i] = new TalonFXConfiguration();

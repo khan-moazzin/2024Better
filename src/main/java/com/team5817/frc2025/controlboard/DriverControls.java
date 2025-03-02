@@ -3,6 +3,7 @@ package com.team5817.frc2025.controlboard;
 import org.littletonrobotics.junction.Logger;
 
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
+import com.team254.lib.geometry.Rotation2d;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.subsystems.LEDs;
@@ -187,6 +188,10 @@ public class DriverControls {
 
 	public boolean clearReef(){
 		return mDrive.getPose().getTranslation().translateBy(FieldLayout.getReefPose().inverse().getTranslation()).norm() > 1.4;
+	}
+	public void testMode(){
+		if(driver.getAButton())
+			s.mDrive.snapHeading(driver.getPOVDirection());
 	}
 
 	
