@@ -289,6 +289,13 @@ public class Robot extends LoggedRobot {
   public void testPeriodic() {
 
     controls.testMode();
+    controlBoard.update();
+
+    mDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+        controlBoard.getSwerveTranslation().x(),
+        controlBoard.getSwerveTranslation().y(),
+        controlBoard.getSwerveRotation(),
+        Util.robotToFieldRelative(mDrive.getHeading(), DriverStation.getAlliance().get().equals(Alliance.Red))));
   }
 
   /**
