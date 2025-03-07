@@ -10,6 +10,7 @@ import com.team254.lib.motion.ProfileFollower;
 import com.team254.lib.swerve.ChassisSpeeds;
 import com.team254.lib.util.Units;
 import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.RobotState;
 import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.lib.swerve.SwerveHeadingController;
 
@@ -24,8 +25,8 @@ import org.littletonrobotics.junction.Logger;
  */
 public class AutoAlignMotionPlanner {
 
-    private ProfileFollower mXController = new ProfileFollower(3, 0.5, 0.0, 1.0, 0.0, 0.0);
-    private ProfileFollower mYController = new ProfileFollower(3, 0.5, 0.0, 2.0, 0.0, 0.0);
+    private ProfileFollower mXController = new ProfileFollower(3, 1, 0.0, 1.0, 0.0, 0.0);
+    private ProfileFollower mYController = new ProfileFollower(3, 1, 0.0, 2.0, 0.0, 0.0);
     private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;
@@ -80,11 +81,11 @@ public class AutoAlignMotionPlanner {
     public ChassisSpeeds updateAutoAlign(double timestamp, Pose2d current_pose, Twist2d current_vel) {
         mXController.setGoalAndConstraints(
                 new MotionProfileGoal(mFieldToTargetPoint.getTranslation().x(), 0,
-                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, Math.abs(poseDeadband.getTranslation().x()), 0.05),
+                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ABS_VEL, Math.abs(poseDeadband.getTranslation().x()), 0.1),
                 SwerveConstants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
                 new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 0,
-                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, Math.abs(poseDeadband.getTranslation().y()), 0.05),
+                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ABS_VEL, Math.abs(poseDeadband.getTranslation().y()), 0.1),
                 SwerveConstants.kPositionMotionProfileConstraints);
         mThetaController.setSnapTarget(mFieldToTargetPoint.getRotation());
         double currentRotation = current_pose.getRotation().getRadians();
@@ -94,12 +95,12 @@ public class AutoAlignMotionPlanner {
         } else if (mFieldToTargetPoint.getRotation().getRadians() - currentRotation < -Math.PI) {
             currentRotation -= 2 * Math.PI;
         }
-
+        Translation2d vel = new Translation2d(current_vel.dx,current_vel.dy);
         double xOutput = mXController.update(
-                new MotionState(timestamp, current_pose.getTranslation().x(), 0, 0.0),
+                new MotionState(timestamp, current_pose.getTranslation().x(), vel.x(), 0.0),
                 timestamp + Constants.kLooperDt);
         double yOutput = mYController.update(
-                new MotionState(timestamp, current_pose.getTranslation().y(), 0, 0.0),
+                new MotionState(timestamp, current_pose.getTranslation().y(),vel.y() , 0.0),
                 timestamp + Constants.kLooperDt);
         double thetaOutput = mThetaController.update(current_pose.getRotation(), timestamp);
         ChassisSpeeds setpoint = new ChassisSpeeds();

@@ -176,14 +176,14 @@ public class Constants {
 
 		static {
 			kSwerveKinematicLimits.kMaxDriveVelocity = maxSpeed;
-			kSwerveKinematicLimits.kMaxDriveAcceleration = 80;
+			kSwerveKinematicLimits.kMaxDriveAcceleration = 150;
 			kSwerveKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
 		public static final SwerveKinematicLimits kExtendedKinematicLimits = new SwerveKinematicLimits();
 
 		static {
-			kExtendedKinematicLimits.kMaxDriveVelocity = maxSpeed;
-			kExtendedKinematicLimits.kMaxDriveAcceleration = 3;
+			kExtendedKinematicLimits.kMaxDriveVelocity = 3;
+			kExtendedKinematicLimits.kMaxDriveAcceleration = 4;
 			kExtendedKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
 
@@ -200,7 +200,7 @@ public class Constants {
 		public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
 				maxSpeed,
 				-maxSpeed,
-				80);
+				10);
 
 		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
 				5,
@@ -298,7 +298,7 @@ public class Constants {
 		public static TalonFXConfiguration AzimuthFXConfig(boolean inverse) {
 			TalonFXConfiguration config = new TalonFXConfiguration();
 
-			config.Slot0.kP = .25;
+			config.Slot0.kP = .7;
 			config.Slot0.kI = 0.0;
 			config.Slot0.kD = 0.0004;
 			config.Slot0.kS = 0.0;
