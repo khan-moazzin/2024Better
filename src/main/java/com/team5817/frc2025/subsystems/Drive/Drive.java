@@ -387,6 +387,14 @@ public class Drive extends Subsystem {
 			return true;
 		return mAutoAlignMotionPlanner.getAutoAlignComplete();
 	}
+	/**
+	 * Checks if auto alignment is complete.
+	 *
+	 * @return True if auto alignment is complete, false otherwise.
+	 */
+	public double getAutoAlignError() {
+		return mAutoAlignMotionPlanner.getAutoAlignError();
+	}
 
 	/**
 	 * Overrides the auto alignment completion status.

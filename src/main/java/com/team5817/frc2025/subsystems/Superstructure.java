@@ -4,8 +4,6 @@ import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.TimeDelayedBoolean;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Ports;
-import com.team5817.frc2025.controlboard.ControlBoard;
-import com.team5817.frc2025.controlboard.DriverControls;
 import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
@@ -19,7 +17,6 @@ import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 import com.team5817.lib.Util;
-import com.team5817.lib.Lights.TimedLEDState;
 import com.team5817.lib.drivers.BeamBreak;
 import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.requests.ParallelRequest;
@@ -240,6 +237,8 @@ public class Superstructure extends Subsystem {
 			public void onLoop(double timestamp) {
 				manageRequests();
 				updateLEDs();
+				mElevator.updateBranchDistance(mDrive.getAutoAlignError());
+				mEndEffectorWrist.updateBranchDistance(mDrive.getAutoAlignError());
 			}
 		});
 	}

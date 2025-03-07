@@ -77,6 +77,15 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
         translation_ = new Translation2d(other.translation_);
         rotation_ = new Rotation2d(other.rotation_);
     }
+     /**
+     * Copy constructor for Pose2d.
+     * 
+     * @param other The other Pose2d to copy.
+     */
+    public Pose2d(final Pose3d other) {
+        translation_ = new Translation2d(other.getX(),other.getY());
+        rotation_ = Rotation2d.fromRadians(other.getRotation().getZ());
+    }
 
     /**
      * Constructor for Pose2d from Pose2dWithMotion.

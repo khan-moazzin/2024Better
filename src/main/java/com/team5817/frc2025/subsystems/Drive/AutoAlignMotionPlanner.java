@@ -33,6 +33,7 @@ public class AutoAlignMotionPlanner {
     private Pose2d mFieldToTargetPoint;
     private Pose2d poseDeadband;
     private OptionalDouble mStartTime;
+    private double error = 0;
 
     /**
      * Constructor for AutoAlignMotionPlanner.
@@ -104,8 +105,8 @@ public class AutoAlignMotionPlanner {
         double thetaOutput = mThetaController.update(current_pose.getRotation(), timestamp);
         ChassisSpeeds setpoint = new ChassisSpeeds();
 
-        boolean thetaWithinDeadband = current_pose.getRotation().distance(mFieldToTargetPoint.getRotation()) < 
-        poseDeadband.getRotation().getRadians() && Math.abs(thetaOutput) < 0.02;
+        this.error = current_pose.getRotation().distance(mFieldToTargetPoint.getRotation());
+        boolean thetaWithinDeadband =  this.error < poseDeadband.getRotation().getRadians() && Math.abs(thetaOutput) < 0.02;
         boolean xWithinDeadband = mXController.onTarget();
         boolean yWithinDeadband = mYController.onTarget();
 
@@ -130,5 +131,8 @@ public class AutoAlignMotionPlanner {
      */
     public boolean getAutoAlignComplete() {
         return mAutoAlignComplete;
+    }
+    public double getAutoAlignError(){
+        return this.error;
     }
 }
