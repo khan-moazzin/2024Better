@@ -40,7 +40,7 @@ public class MovingAverage {
     }
 
     public void clear() {
-        numbers.clear();
+    this.numbers = new ArrayList<Double>();
     }
 
 }

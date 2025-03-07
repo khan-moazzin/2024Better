@@ -4,7 +4,11 @@ import com.team254.lib.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Contains basic functions that are used often.
@@ -16,7 +20,8 @@ public class Util {
 	/**
 	 * Prevent this class from being instantiated.
 	 */
-	private Util() {}
+	private Util() {
+	}
 
 	/**
 	 * Limits the given input to the given magnitude.
@@ -115,14 +120,15 @@ public class Util {
 
 	public static double scaledDeadband(double value, double maxValue, double deadband) {
 		double deadbandedValue = deadBand(value, deadband);
-		if (epsilonEquals(deadbandedValue, 0.0)) return 0.0;
+		if (epsilonEquals(deadbandedValue, 0.0))
+			return 0.0;
 		return Math.signum(deadbandedValue) * ((Math.abs(deadbandedValue) - deadband) / (maxValue - deadband));
 	}
 
 	public static boolean shouldReverse(Rotation2d goalAngle, Rotation2d currentAngle) {
 		double angleDifference = Math.abs(goalAngle.distance(currentAngle));
-		double reverseAngleDifference =
-				Math.abs(goalAngle.distance(currentAngle.rotateBy(Rotation2d.fromDegrees(180.0))));
+		double reverseAngleDifference = Math
+				.abs(goalAngle.distance(currentAngle.rotateBy(Rotation2d.fromDegrees(180.0))));
 		return reverseAngleDifference < angleDifference;
 	}
 
@@ -188,5 +194,12 @@ public class Util {
 
 	public static double quaternionTo2dRadians(double w, double x, double y, double z) {
 		return new Rotation3d(new Quaternion(w, x, y, z)).toRotation2d().getRadians();
+	}
+	public static Optional<Boolean> isRed(){
+		try{
+		return Optional.of(DriverStation.getAlliance().get().equals(Alliance.Red));
+		}catch(Exception e){
+			return Optional.empty();
+		}
 	}
 }

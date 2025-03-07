@@ -27,7 +27,7 @@ public class SetpointGenerator {
     }
 
     protected MotionProfile mProfile = null;
-    protected MotionProfileGoal mGoal = null;
+    protected IMotionProfileGoal mGoal = null;
     protected MotionProfileConstraints mConstraints = null;
 
     public SetpointGenerator() {}
@@ -50,7 +50,7 @@ public class SetpointGenerator {
      * @param t           The time to generate a setpoint for.
      * @return The new Setpoint at time t.
      */
-    public synchronized Setpoint getSetpoint(MotionProfileConstraints constraints, MotionProfileGoal goal,
+    public  Setpoint getSetpoint(MotionProfileConstraints constraints, IMotionProfileGoal goal,
                                              MotionState prev_state,
                                              double t) {
         boolean regenerate = mConstraints == null || !mConstraints.equals(constraints) || mGoal == null
@@ -85,13 +85,13 @@ public class SetpointGenerator {
 
         // Invalid or empty profile - just output the same state again.
         if (rv == null) {
-            rv = new Setpoint(prev_state, true);
+            rv = new Setpoint(new MotionState(t, prev_state.pos, prev_state.vel, prev_state.acc), true);
         }
 
         if (rv.final_setpoint) {
             // Ensure the final setpoint matches the goal exactly.
             rv.motion_state = new MotionState(rv.motion_state.t(), mGoal.pos(),
-                    Math.signum(rv.motion_state.vel()) * Math.max(mGoal.max_abs_vel(), Math.abs(rv.motion_state.vel())),
+                    Math.signum(rv.motion_state.vel()) * Math.max(mGoal.max_vel(), Math.abs(rv.motion_state.vel())),
                     0.0);
         }
 
@@ -105,5 +105,9 @@ public class SetpointGenerator {
      */
     public MotionProfile getProfile() {
         return mProfile;
+    }
+
+    public IMotionProfileGoal getGoal() {
+        return mGoal;
     }
 }

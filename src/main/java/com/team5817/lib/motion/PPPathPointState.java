@@ -3,90 +3,127 @@ package com.team5817.lib.motion;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
-import com.team254.lib.util.Util;
 
+/**
+ * Represents the state of a point on a path, including its pose, velocities, and time.
+ */
 public class PPPathPointState {
     protected final Pose2d mPose;
-    protected final Rotation2d mMotionDirection;
-    protected final double mHeading_rate;
-    protected final double mVelocity;
+    protected final double xVel;
+    protected final double yVel;
+    protected final double omegaRadiansPerSecond;
     protected final double mT;
 
-    public PPPathPointState(){
+    /**
+     * Default constructor initializes the state with zero velocities and identity pose.
+     */
+    public PPPathPointState() {
         mPose = Pose2d.identity();
-        mMotionDirection = Rotation2d.identity();
-        mVelocity = 0;
-        mHeading_rate = 0;
+        xVel = 0;
+        yVel = 0;
         mT = 0;
+        omegaRadiansPerSecond = 0;
     }
 
-    public PPPathPointState(Pose2d pose, Rotation2d motion_direction, double velocity, double t, double heading_rate){
-        this.mHeading_rate = heading_rate;
+    /**
+     * Constructs a PPPathPointState with the given pose, velocities, and time.
+     *
+     * @param pose the pose of the point
+     * @param xVel the velocity in the x direction
+     * @param yVel the velocity in the y direction
+     * @param omegathetaradians the angular velocity in radians per second
+     * @param t the time
+     */
+    public PPPathPointState(Pose2d pose, double xVel, double yVel, double omegathetaradians, double t) {
         this.mPose = pose;
-        this.mMotionDirection = motion_direction;
-        this.mVelocity = velocity;
+        this.xVel = xVel;
+        this.yVel = yVel;
+        this.omegaRadiansPerSecond = omegathetaradians;
         this.mT = t;
     }
 
-    public Pose2d getPose(){
+    /**
+     * Returns the pose of the point.
+     *
+     * @return the pose
+     */
+    public Pose2d getPose() {
         return mPose;
-    }   
-
-    public PPPathPointState transformBy(Pose2d transform){
-        return new PPPathPointState(mPose.transformBy(transform), mMotionDirection,mVelocity, mT, mHeading_rate);
     }
 
-    public PPPathPointState mirror(){
-        return new PPPathPointState(mPose.mirror().getPose(), mMotionDirection.mirror(), mVelocity, mT, mHeading_rate);
+    /**
+     * Mirrors the state about the given x coordinate.
+     *
+     * @param x the x coordinate to mirror about
+     * @return the mirrored state
+     */
+    public PPPathPointState mirrorAboutX(double x) {
+        return new PPPathPointState(mPose.mirrorAboutX(x), -xVel, yVel, -omegaRadiansPerSecond, mT);
     }
 
-    public PPPathPointState mirrorAboutX(double x){
-        return new PPPathPointState(mPose.mirrorAboutX(x), mMotionDirection.mirrorAboutX(), mVelocity, mT, mHeading_rate);
+    /**
+     * Mirrors the state about the given y coordinate.
+     *
+     * @param y the y coordinate to mirror about
+     * @return the mirrored state
+     */
+    public PPPathPointState mirrorAboutY(double y) {
+        return new PPPathPointState(mPose.mirrorAboutY(y), xVel, yVel, omegaRadiansPerSecond, mT);
     }
 
-    public PPPathPointState mirrorAboutY(double y){
-        return new PPPathPointState(mPose.mirrorAboutY(y), mMotionDirection.mirrorAboutY(), mVelocity, mT, mHeading_rate);
+    /**
+     * Returns the velocity in the x direction.
+     *
+     * @return the x velocity
+     */
+    public double getXVel() {
+        return xVel;
     }
 
-
-    public double getVelocity(){        
-        return mVelocity;
+    /**
+     * Returns the velocity in the y direction.
+     *
+     * @return the y velocity
+     */
+    public double getYVel() {
+        return yVel;
     }
 
-   
-    public Translation2d getTranslation(){
-        return mPose.getTranslation();    
-    }   
-
-    public PPPathPointState interpolate(final PPPathPointState other, double x) {
-        return new PPPathPointState(
-                getPose().interpolate(other.getPose(), x),
-                mMotionDirection.interpolate(other.mMotionDirection, x),
-                Util.interpolate(getVelocity(), other.getVelocity(), x),
-                Util.interpolate(mT, other.t(), x),
-                Util.interpolate(getHeadingRate(), other.getHeadingRate(), x)
-                );
+    /**
+     * Returns the angular velocity in radians per second.
+     *
+     * @return the angular velocity
+     */
+    public double getThetaVel() {
+        return omegaRadiansPerSecond;
     }
 
-    public double getHeadingRate(){
-        return mHeading_rate;
+    /**
+     * Returns the translation component of the pose.
+     *
+     * @return the translation
+     */
+    public Translation2d getTranslation() {
+        return mPose.getTranslation();
     }
-    public double t(){
+
+    /**
+     * Returns the time associated with this state.
+     *
+     * @return the time
+     */
+    public double t() {
         return mT;
     }
-    public PPPathPointState rotateBy(Rotation2d rotation){
-        return new PPPathPointState(mPose.rotateBy(rotation), Rotation2d.identity(), mVelocity, mT, mHeading_rate); 
-    }
-    
-    public PPPathPointState add(PPPathPointState other){
-        return this.transformBy(other.getPose());
-    }
-    
-    public Rotation2d getCourse(){        
-        return mMotionDirection;
+
+    /**
+     * Rotates the state by the given rotation.
+     *
+     * @param rotation the rotation to apply
+     * @return the rotated state
+     */
+    public PPPathPointState rotateBy(Rotation2d rotation) {
+        return new PPPathPointState(mPose.rotateBy(rotation), xVel, yVel, omegaRadiansPerSecond, mT);
     }
 
-
-
-    
 }

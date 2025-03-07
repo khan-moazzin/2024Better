@@ -6,11 +6,13 @@ package com.team254.lib.swerve;
 
 import com.team254.lib.geometry.Rotation2d;
 
+import edu.wpi.first.util.struct.StructSerializable;
+
 import java.util.Objects;
 
 /** Represents the state of one swerve module. */
 @SuppressWarnings("MemberName")
-public class SwerveModuleState implements Comparable<SwerveModuleState> {
+public class SwerveModuleState implements Comparable<SwerveModuleState>,StructSerializable {
     /** Speed of the wheel of the module. */
     public double speedMetersPerSecond;
 
@@ -19,6 +21,10 @@ public class SwerveModuleState implements Comparable<SwerveModuleState> {
 
     /** Angle of the module. */
     public Rotation2d angle = Rotation2d.fromDegrees(0);
+
+    public edu.wpi.first.math.kinematics.SwerveModuleState wpi(){
+        return new edu.wpi.first.math.kinematics.SwerveModuleState(speedMetersPerSecond,angle.wpi());
+    }
 
     /** Constructs a SwerveModuleState with zeros for speed and angle. */
     public SwerveModuleState() {}
@@ -38,6 +44,10 @@ public class SwerveModuleState implements Comparable<SwerveModuleState> {
         this.speedMetersPerSecond = speedMetersPerSecond;
         this.distanceMeters = distanceMeters;
         this.angle = angle;
+    }
+    public SwerveModuleState(edu.wpi.first.math.kinematics.SwerveModuleState wpi){
+        this.speedMetersPerSecond = wpi.speedMetersPerSecond;
+        this.angle = new Rotation2d(wpi.angle);
     }
 
     @Override
@@ -71,6 +81,7 @@ public class SwerveModuleState implements Comparable<SwerveModuleState> {
         return String.format(
                 "SwerveModuleState(Speed: %.2f m/s, Angle: %s)", speedMetersPerSecond, angle);
     }
+    
 
     /**
      * Minimize the change in heading the desired swerve module state would require by potentially

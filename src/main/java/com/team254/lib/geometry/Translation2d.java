@@ -4,16 +4,12 @@ import com.team254.lib.util.Util;
 
 import edu.wpi.first.util.struct.StructSerializable;
 
-import java.io.Serializable;
 import java.text.DecimalFormat;
-
-import org.littletonrobotics.junction.LogTable;
-import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 /**
  * A translation in a 2d coordinate frame. Translations are simply shifts in an (x, y) plane.
  */
-public class Translation2d implements ITranslation2d<Translation2d>,StructSerializable{
+public class Translation2d implements ITranslation2d<Translation2d>,StructSerializable {
     protected static final Translation2d kIdentity = new Translation2d();
 
     public static Translation2d identity() {
@@ -72,6 +68,9 @@ public class Translation2d implements ITranslation2d<Translation2d>,StructSerial
 
     public double y() {
         return y_;
+    }
+    public edu.wpi.first.math.geometry.Translation2d wpi(){
+        return new edu.wpi.first.math.geometry.Translation2d(x_, y_);
     }
 
     /**
@@ -205,7 +204,5 @@ public class Translation2d implements ITranslation2d<Translation2d>,StructSerial
     public Translation2d getTranslation() {
         return this;
     }
-
     public static final Translation2dStruct struct = new Translation2dStruct();
-
 }

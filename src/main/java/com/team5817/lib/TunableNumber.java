@@ -47,7 +47,8 @@ public class TunableNumber {
 			// This makes sure the data is on NetworkTables but will not change it
 			SmartDashboard.putNumber(key, SmartDashboard.getNumber(key, defaultValue));
 		} else {
-			// Replace the delet key word with this one, if it doesnt work regina changed it, if it works daniel made
+			// Replace the delet key word with this one, if it doesnt work regina changed
+			// it, if it works daniel made
 			// the change
 			SmartDashboard.clearPersistent(key);
 		}

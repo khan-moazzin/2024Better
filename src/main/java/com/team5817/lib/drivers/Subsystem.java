@@ -1,45 +1,91 @@
 package com.team5817.lib.drivers;
 
-import com.team5817.frc2024.loops.ILooper;
+import com.team5817.frc2025.loops.ILooper;
 
 /**
- * The Subsystem abstract class, which serves as a basic framework for all robot subsystems. Each subsystem outputs
- * commands to SmartDashboard, has a stop routine (for after each match), and a routine to zero all sensors, which helps
+ * The Subsystem abstract class, which serves as a basic framework for all robot
+ * subsystems. Each subsystem outputs
+ * commands to SmartDashboard, has a stop routine (for after each match), and a
+ * routine to zero all sensors, which helps
  * with calibration.
  * <p>
- * All Subsystems only have one instance (after all, one robot does not have two drivetrains), and functions get the
- * instance of the drivetrain and act accordingly. Subsystems are also a state machine with a desired state and actual
- * state; the robot code will try to match the two states with actions. Each Subsystem also is responsible for
+ * All Subsystems only have one instance (after all, one robot does not have two
+ * drivetrains), and functions get the
+ * instance of the drivetrain and act accordingly. Subsystems are also a state
+ * machine with a desired state and actual
+ * state; the robot code will try to match the two states with actions. Each
+ * Subsystem also is responsible for
  * instantializing all member components at the start of the match.
  */
 public abstract class Subsystem {
-	public void writeToLog() {}
 
-	// Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
-	public void readPeriodicInputs() {}
+	/**
+	 * Writes data to the log.
+	 */
+	public void writeToLog() {
+	}
 
-	// Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN.
-	public void writePeriodicOutputs() {}
+	/**
+	 * Reads periodic inputs. This is an optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
+	 */
+	public void readPeriodicInputs() {
+	}
 
-	public void stop() {}
+	/**
+	 * Writes periodic outputs. This is an optional design pattern for caching periodic writes to avoid hammering the HAL/CAN.
+	 */
+	public void writePeriodicOutputs() {
+	}
 
-	public void zeroSensors() {}
+	/**
+	 * Stops the subsystem.
+	 */
+	public void stop() {
+	}
 
-	public void outputTelemetry() {}
+	/**
+	 * Zeros all sensors, which helps with calibration.
+	 */
+	public void zeroSensors() {
+	}
 
-	public void registerEnabledLoops(ILooper enabledLooper) {}
+	/**
+	 * Outputs telemetry data to SmartDashboard.
+	 */
+	public void outputTelemetry() {
+	}
 
+	/**
+	 * Registers enabled loops with the subsystem.
+	 * 
+	 * @param enabledLooper the looper to register
+	 */
+	public void registerEnabledLoops(ILooper enabledLooper) {
+	}
+
+	/**
+	 * Checks the system for any issues.
+	 * 
+	 * @return true if the system is healthy, false otherwise
+	 */
 	public boolean checkSystem() {
 		return false;
 	}
 
 	public boolean hasEmergency = false;
 
-	// Optional pattern for checking if attached devices have healthy configurations
+	/**
+	 * Checks if attached devices have healthy configurations. This is an optional pattern.
+	 * 
+	 * @return true if the device configurations are healthy, false otherwise
+	 */
 	public boolean checkDeviceConfiguration() {
 		return true;
 	}
 
-	// Optional pattern for checking if attached devices have healthy configurations
-	public void rewriteDeviceConfiguration() {}
+	/**
+	 * Rewrites the configuration of attached devices. This is an optional pattern.
+	 */
+	public void rewriteDeviceConfiguration() {
+	}
 }

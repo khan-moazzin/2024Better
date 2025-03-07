@@ -15,14 +15,14 @@ public class MovingAverageTwist2d {
         this.maxSize = maxSize;
     }
 
-    public synchronized void add(Twist2d twist) {
+    public  void add(Twist2d twist) {
         twists.add(twist);
         if (twists.size() > maxSize) {
             twists.remove(0);
         }
     }
 
-    public synchronized Twist2d getAverage() {
+    public  Twist2d getAverage() {
         double x = 0.0, y = 0.0, t = 0.0;
 
         for (Twist2d twist : twists) {

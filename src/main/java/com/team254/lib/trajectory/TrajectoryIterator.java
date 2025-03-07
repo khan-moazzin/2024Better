@@ -1,6 +1,7 @@
 package com.team254.lib.trajectory;
 
 
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.team5817.lib.motion.PPPathPointState;
 import com.team5817.lib.motion.PPTimeView;
@@ -11,8 +12,10 @@ public class TrajectoryIterator {
     protected PPTimeView mTimeView;
     protected double progress_ = 0.0;
     protected PPPathPointState currentState_;
+    protected PathPlannerPath mPath;
 
-    public TrajectoryIterator(PPTimeView timeView){
+    public TrajectoryIterator(PPTimeView timeView, PathPlannerPath path){
+        this.mPath = path;
         this.mTimeView = timeView;
         this.currentState_ = timeView.sample(timeView.first_interpolant());
         progress_ = timeView.first_interpolant();
@@ -22,6 +25,10 @@ public class TrajectoryIterator {
    public boolean isDone(){
      return getRemainingProgress() == 0.0;
 
+   }
+
+   public PathPlannerPath getPath(){
+    return mPath;
    }
 
    public double getRemainingProgress(){

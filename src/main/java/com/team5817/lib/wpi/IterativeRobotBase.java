@@ -128,7 +128,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * never indicate that the code is ready, causing the robot to be bypassed in a
 	 * match.
 	 */
-	public void robotInit() {}
+	public void robotInit() {
+	}
 
 	/**
 	 * Code that needs to know the DS state should go here.
@@ -138,7 +139,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * after the DS is
 	 * connected, such as needing the alliance information.
 	 */
-	public void driverStationConnected() {}
+	public void driverStationConnected() {
+	}
 
 	/**
 	 * Robot-wide simulation initialization code should go here.
@@ -150,7 +152,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * exactly one time after
 	 * RobotInit is called only when the robot is in simulation.
 	 */
-	public void simulationInit() {}
+	public void simulationInit() {
+	}
 
 	/**
 	 * Initialization code for disabled mode should go here.
@@ -160,7 +163,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * called each time the
 	 * robot enters disabled mode.
 	 */
-	public void disabledInit() {}
+	public void disabledInit() {
+	}
 
 	/**
 	 * Initialization code for autonomous mode should go here.
@@ -170,7 +174,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * called each time the
 	 * robot enters autonomous mode.
 	 */
-	public void autonomousInit() {}
+	public void autonomousInit() {
+	}
 
 	/**
 	 * Initialization code for teleop mode should go here.
@@ -180,7 +185,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * called each time the
 	 * robot enters teleop mode.
 	 */
-	public void teleopInit() {}
+	public void teleopInit() {
+	}
 
 	/**
 	 * Initialization code for test mode should go here.
@@ -190,7 +196,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * called each time the
 	 * robot enters test mode.
 	 */
-	public void testInit() {}
+	public void testInit() {
+	}
 
 	/* ----------- Overridable periodic code ----------------- */
 
@@ -267,7 +274,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * robot exits
 	 * disabled mode.
 	 */
-	public void disabledExit() {}
+	public void disabledExit() {
+	}
 
 	/**
 	 * Exit code for autonomous mode should go here.
@@ -277,7 +285,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * robot exits
 	 * autonomous mode.
 	 */
-	public void autonomousExit() {}
+	public void autonomousExit() {
+	}
 
 	/**
 	 * Exit code for teleop mode should go here.
@@ -287,7 +296,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * robot exits
 	 * teleop mode.
 	 */
-	public void teleopExit() {}
+	public void teleopExit() {
+	}
 
 	/**
 	 * Exit code for test mode should go here.
@@ -297,7 +307,8 @@ public abstract class IterativeRobotBase extends RobotBase {
 	 * robot exits
 	 * test mode.
 	 */
-	public void testExit() {}
+	public void testExit() {
+	}
 
 	/**
 	 * Enables or disables flushing NetworkTables every loop iteration. By default,
@@ -459,6 +470,7 @@ public abstract class IterativeRobotBase extends RobotBase {
 	}
 
 	private void printLoopOverrunMessage() {
-		// DriverStation.reportWarning("Loop time of " + m_period + "s overrun\n", false);
+		// DriverStation.reportWarning("Loop time of " + m_period + "s overrun\n",
+		// false);
 	}
 }
