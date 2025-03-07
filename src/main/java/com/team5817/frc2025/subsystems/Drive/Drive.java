@@ -76,7 +76,6 @@ public class Drive extends Subsystem {
 	private SwerveSetpointGenerator mSetpointGenerator;
 
 	private boolean odometryReset = false;
-	private boolean useSpecailizedPoseForPath = false;
 
 	private final DriveMotionPlanner mMotionPlanner;
 	private final AutoAlignMotionPlanner mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
@@ -162,18 +161,6 @@ public class Drive extends Subsystem {
 		}
 	}
 
-	/**
-	 * Sets whether to use a specialized pose for path following.
-	 *
-	 * @param use True to use a specialized pose, false otherwise.
-	 */
-	public void setUseSpecializedPoseForPath(boolean use) {
-		if (Robot.isReal()) {
-			useSpecailizedPoseForPath = use;
-			return;
-		}
-		useSpecailizedPoseForPath = false;
-	}
 
 	/**
 	 * Updates drivetrain with latest desired speeds from the joystick, and sets
@@ -415,7 +402,7 @@ public class Drive extends Subsystem {
 	 */
 	public void updatePathFollower() {
 		final double now = Timer.getTimestamp();
-		ChassisSpeeds output = mMotionPlanner.update(now, useSpecailizedPoseForPath ? getSpecializedPose() : getPose());
+		ChassisSpeeds output = mMotionPlanner.update(now, getPose());
 		if (output != null) {
 			mPeriodicIO.des_chassis_speeds = output;
 		}
@@ -688,14 +675,6 @@ public class Drive extends Subsystem {
 		return RobotState.getInstance().getLatestGlobalKalmanPose();
 	}
 
-	/**
-	 * Gets the specialized pose of the robot.
-	 *
-	 * @return The specialized pose of the robot.
-	 */
-	public Pose2d getSpecializedPose() {
-		return RobotState.getInstance().getLatestSpecializedKalmanPose();
-	}
 
 	/**
 	 * Resets the odometry to a specific pose.

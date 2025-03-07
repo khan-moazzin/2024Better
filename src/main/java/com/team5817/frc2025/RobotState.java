@@ -31,12 +31,6 @@ public class RobotState {
     private Pose2d mDisplayVisionPose;
     private boolean mHasBeenEnabled = false;
 
-    // New variables for the specialized Kalman filter and vision update handling
-    private UnscentedKalmanFilter<N2, N2, N2> mSpecializedKalmanFilter;
-    private Optional<VisionUpdate> mLatestSpecializedVisionUpdate;
-    private InterpolatingTreeMap<InterpolatingDouble, Translation2d> specializedVisionPoseComponent;
-    private Optional<Translation2d> initialPoseErrorSpecialized = Optional.empty(); // Separate initial pose error for
-                                                                                    // specialized updates
 
     private static final int kObservationBufferSize = 50;
     private Optional<Translation2d> initialPoseError = Optional.empty();
@@ -78,7 +72,6 @@ public class RobotState {
         poseFromOdom.put(new InterpolatingDouble(start_time), initialPose);
         visionPoseComponent = new InterpolatingTreeMap<>(kObservationBufferSize);
         visionPoseComponent.put(new InterpolatingDouble(start_time), Translation2d.identity());
-        specializedVisionPoseComponent = new InterpolatingTreeMap<>(kObservationBufferSize);
 
         PredictedVelocity = Twist2d.identity();
         MeasuredVelocity = Twist2d.identity();
@@ -88,24 +81,6 @@ public class RobotState {
         mPoseAcceptor = new VisionPoseAcceptor();
         initialPoseError = Optional.empty();
 
-        // Reset specialized Kalman filter and vision update tracker
-        resetSpecializedKalmanFilters();
-    }
-
-    /**
-     * Resets the specialized Kalman filters.
-     */
-    public void resetSpecializedKalmanFilters() {
-        mSpecializedKalmanFilter = new UnscentedKalmanFilter<>(
-                Nat.N2(),
-                Nat.N2(),
-                (x, u) -> VecBuilder.fill(0.0, 0.0),
-                (x, u) -> x,
-                Constants.kStateStdDevs,
-                Constants.kLocalMeasurementStdDevs, .01);
-
-        mLatestSpecializedVisionUpdate = Optional.empty();
-        initialPoseErrorSpecialized = Optional.empty(); // Reset specialized initial pose error
     }
 
     /**
@@ -223,54 +198,6 @@ public class RobotState {
         return filteredMeasuredVelocity.getAverage();
     }
 
-    // New method to add specialized vision update with separate Kalman filter
-    // Method to access the latest specialized vision update
-    /**
-     * Returns the latest specialized vision update.
-     * 
-     * @return the latest specialized vision update
-     */
-    public Optional<VisionUpdate> getLatestSpecializedVisionUpdate() {
-        return mLatestSpecializedVisionUpdate;
-    }
-
-    // Method to access the specialized Kalman filter state
-    /**
-     * Returns the specialized Kalman filter state at a given timestamp.
-     * 
-     * @param timestamp the timestamp
-     * @return the specialized Kalman filter state
-     */
-    public Pose2d getSpecializedKalmanPose(double timestamp) {
-        Pose2d poseFromOdom = getPoseFromOdom(timestamp);
-        Translation2d kalmanPoseOffset = specializedVisionPoseComponent
-                .getInterpolated(new InterpolatingDouble(timestamp));
-        return new Pose2d(kalmanPoseOffset.translateBy(poseFromOdom.getTranslation()), poseFromOdom.getRotation());
-    }
-
-    /**
-     * Returns the latest specialized Kalman filter state.
-     * 
-     * @return the latest specialized Kalman filter state
-     */
-    public Pose2d getLatestSpecializedKalmanPose() {
-        Pose2d poseFromOdom = getLatestPoseFromOdom().getValue();
-        return new Pose2d(specializedVisionPoseComponent.lastEntry().getValue().add(poseFromOdom.getTranslation()),
-                poseFromOdom.getRotation());
-    }
-
-    // Accessor for specialized initial pose error
-    /**
-     * Returns the initial pose error for specialized updates.
-     * 
-     * @return the initial pose error for specialized updates
-     */
-    public Pose2d getInitialPoseErrorSpecialized() {
-        if (initialPoseErrorSpecialized.isEmpty()) {
-            return Pose2d.identity();
-        }
-        return Pose2d.fromTranslation(initialPoseErrorSpecialized.get());
-    }
 
     /**
      * Adds a Vision Update
@@ -326,62 +253,6 @@ public class RobotState {
 
         // Update the latest vision update
         mLatestVisionUpdate = Optional.ofNullable(visionUpdate);
-    }
-
-    /**
-     * Adds a specialized vision update.
-     * 
-     * @param visionUpdate the specialized vision update
-     */
-    public void addSpecializedVisionUpdate(VisionUpdate visionUpdate) {
-        // Use the same logic as addVisionUpdate but with the specialized Kalman filter
-        if (!mLatestSpecializedVisionUpdate.isEmpty() || initialPoseErrorSpecialized.isPresent()){
-            // Get the Timestamp of the Vision Reading
-            double visionTimestamp = mLatestSpecializedVisionUpdate.get().getTimestamp();
-
-            // Get pose from odometry based on vision timestamp
-            Pose2d odomToVehicle = getPoseFromOdom(visionTimestamp);
-            Pose2d visionFieldToVehicle = Pose2d.fromTranslation(visionUpdate.getFieldToVision());
-
-            // Check if the vision update should be accepted
-            if (!mPoseAcceptor.shouldAcceptVision(visionTimestamp, visionFieldToVehicle,
-                    getLatestSpecializedKalmanPose(), MeasuredVelocity, false)) {
-                return;
-            }
-
-            // Calculate the vision odometry error and apply it to the specialized Kalman
-            // filter
-            Translation2d visionOdomError = visionFieldToVehicle.getTranslation()
-                    .translateBy(odomToVehicle.getTranslation().inverse());
-
-            try {
-                // Use the specialized Kalman filter
-                mSpecializedKalmanFilter.correct(VecBuilder.fill(0.0, 0.0),
-                        VecBuilder.fill(visionOdomError.x(), visionOdomError.y()));
-                specializedVisionPoseComponent.put(new InterpolatingDouble(visionTimestamp),
-                        Pose2d.fromTranslation(new Translation2d(mSpecializedKalmanFilter.getXhat(0),
-                                mSpecializedKalmanFilter.getXhat(1))).getTranslation());
-            } catch (Exception e) {
-                DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
-            }
-        } else {
-            // Handle case when there's no recent vision update or initial pose error
-            double visionTimestamp = visionUpdate.timestamp;
-            Pose2d proximatePose = poseFromOdom.getInterpolated(new InterpolatingDouble(visionTimestamp));
-
-            Translation2d fieldToVision = visionUpdate.field_to_vision;
-            Translation2d odomToVehicleTranslation = proximatePose.getTranslation();
-            Translation2d fieldToOdom = fieldToVision.translateBy(odomToVehicleTranslation.inverse());
-
-            specializedVisionPoseComponent.put(new InterpolatingDouble(visionTimestamp), fieldToOdom);
-            initialPoseErrorSpecialized = Optional.of(specializedVisionPoseComponent.lastEntry().getValue());
-
-            mSpecializedKalmanFilter.setXhat(0, fieldToOdom.x());
-            mSpecializedKalmanFilter.setXhat(1, fieldToOdom.y());
-        }
-
-        // Update the latest specialized vision update
-        mLatestSpecializedVisionUpdate = Optional.ofNullable(visionUpdate);
     }
 
     /**

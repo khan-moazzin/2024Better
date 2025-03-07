@@ -150,7 +150,6 @@ public class CustomMode extends AutoBase {
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
 						new WaitToPassDistanceToReef(enterDistance),
-						new LambdaAction(()-> d.setUseSpecializedPoseForPath(false)),
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));
@@ -161,7 +160,6 @@ public class CustomMode extends AutoBase {
 		r(new WaitForSuperstructureAction());
 		r(new WaitAction(coralSpit));
 		System.out.println("Scored " + secondScoreName);
-		d.setUseSpecializedPoseForPath(false);
 		if(coral_amount ==2)
 			return;
 
@@ -180,7 +178,6 @@ public class CustomMode extends AutoBase {
 				new TrajectoryAction(t.next()),
 				new SequentialAction(List.of(
 						new WaitToPassDistanceToReef(enterDistance),
-						new LambdaAction(() -> d.setUseSpecializedPoseForPath(false)),
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));
@@ -189,8 +186,6 @@ public class CustomMode extends AutoBase {
 		s.setReadyToScore(true);
 		r(new WaitAction(coralSpit));
 		System.out.println("Scored " + thirdScoreName);
-
-		d.setUseSpecializedPoseForPath(false);
 
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next()),

@@ -106,15 +106,6 @@ public class VisionDeviceManager extends Subsystem {
 				if (!device.getVisionUpdate().isEmpty()) {
 					VisionUpdate update = device.getVisionUpdate().get();
 					RobotState.getInstance().addVisionUpdate(update);
-					if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
-						if (PoseEstimatorConstants.redTagIDFilters.contains(update.getID())||DriverStation.isDisabled()) {
-							mRobotState.addSpecializedVisionUpdate(update);
-						}
-					} else {
-						if (PoseEstimatorConstants.blueTagIDFilters.contains(update.getID())||DriverStation.isDisabled()) {
-							mRobotState.addSpecializedVisionUpdate(update);
-						}
-					}
 					if (update.getTimestamp() > timeOfLastUpdate)
 						timeOfLastUpdate = update.getTimestamp();
 				}
