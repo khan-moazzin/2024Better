@@ -1,10 +1,7 @@
 package com.team5817.frc2025.subsystems.EndEffector;
 
 import com.team5817.frc2025.Robot;
-import com.team254.lib.util.DelayedBoolean;
-import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Constants.EndEffectorWristConstants;
-import com.team5817.frc2025.Constants.IntakeDeployConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.lib.Util;
@@ -14,11 +11,8 @@ import com.team5817.lib.requests.Request;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
-
-import java.util.function.DoubleBinaryOperator;
-
 import org.littletonrobotics.junction.Logger;
 
 public class EndEffectorWrist extends ServoMotorSubsystem{
@@ -40,6 +34,9 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		return mInstance;
 	}
 	
+	private State mCurrentState = State.ZERO;
+	private boolean atState = false;
+	private double branchDist = 0;
 
 	final static double kStrictError = 1;
 	final static double kMediumError = 2 ;
@@ -47,9 +44,9 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 	public enum State {
 
-		L4(81.2, kStrictError),
-		L3(0, kStrictError),
-		L2(15, kStrictError),
+		L4(81.2, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
+		L3(0, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
+		L2(15, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
 		L1(0, kStrictError),
 		A1(200, kMediumError),
 		A2(200, kMediumError),
@@ -61,16 +58,31 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		double output = 0;
 		double allowable_error = 0;
 		boolean home = false;
+		InterpolatingDoubleTreeMap map;
 
-		State(double output, double allowable_error,boolean home) {
+		State(double output, double allowable_error,InterpolatingDoubleTreeMap map ,boolean home) {
 			this.output = output;
 			this.allowable_error = allowable_error;
+			this.map = map;
 			this.home = home;
 		}
 		State(double output, double allowable_error){
-			this(output,allowable_error,false);
+			this(output,allowable_error,null,false);
+		}
+		State(double output,double allowable_error,boolean home){
+			this(output,allowable_error,null,home);
+		}
+		State(double output, double allowable_error,InterpolatingDoubleTreeMap map){
+			this(output,allowable_error,map,false);
 		}
 		
+		public double getTrackedOutput(double position){
+			if(map == null){
+				return output;
+			}
+			double des = this.output + map.get(position);
+			return Util.limit(des, EndEffectorWristConstants.kWristServoConstants.kMinUnitsLimit, EndEffectorWristConstants.kWristServoConstants.kMaxUnitsLimit);
+		}
 	}
 
 	/**
@@ -82,7 +94,6 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	public EndEffectorWrist(final ServoMotorSubsystemConstants constants) {
 		super(constants);
 
-		conformToState(State.ZERO);
 		enableSoftLimits(false);
 		mMain.setPosition(0);
 		// setSetpointMotionMagic(State.STOW.output);
@@ -106,9 +117,19 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
 					setWantHome(false);
 				}
+
+				
+				setSetpointMotionMagic(mCurrentState.getTrackedOutput(branchDist));
+				atState = Util.epsilonEquals(getPosition(), mCurrentState.getTrackedOutput(branchDist), mCurrentState.allowable_error);
 			}
 
 		});
+	}
+	public void conformToState(State state){
+		mCurrentState = state;
+	}
+	public void updateBranchDistance(double dist){
+		branchDist = dist;
 	}
 
 	@Override
@@ -146,10 +167,6 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	public boolean checkSystem() {
 		return false;
 	}
-	public void conformToState(State state){
-		setSetpointMotionMagic(state.output);
-		mWantsHome = state.home;
-	}
 
 	/**
 	 * Returns a request to set the end effector wrist to the given state.
@@ -161,12 +178,13 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		return new Request() {
 			@Override
 			public void act() {
-				conformToState(_wantedState);
+				mCurrentState = _wantedState;
+				mWantsHome = _wantedState.home;
 			}
 
 			@Override
 			public boolean isFinished() {
-				return Util.epsilonEquals(getPosition(), _wantedState.output, _wantedState.allowable_error);
+				return atState;
 			}
 		};
 	}

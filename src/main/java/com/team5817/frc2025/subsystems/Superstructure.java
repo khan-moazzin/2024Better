@@ -4,8 +4,6 @@ import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.TimeDelayedBoolean;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Ports;
-import com.team5817.frc2025.controlboard.ControlBoard;
-import com.team5817.frc2025.controlboard.DriverControls;
 import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
@@ -19,13 +17,14 @@ import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 import com.team5817.lib.Util;
-import com.team5817.lib.Lights.TimedLEDState;
 import com.team5817.lib.drivers.BeamBreak;
 import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.requests.ParallelRequest;
 import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
 import com.team5817.lib.requests.WaitRequest;
+
+import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -240,6 +239,12 @@ public class Superstructure extends Subsystem {
 			public void onLoop(double timestamp) {
 				manageRequests();
 				updateLEDs();
+				if(DriverStation.isEnabled()){
+				double dist = Math.abs(mDrive.getAutoAlignError().x());
+				mElevator.updateBranchDistance(dist);
+				mEndEffectorWrist.updateBranchDistance(dist);
+				Logger.recordOutput("dist", dist);
+				}
 			}
 		});
 	}
