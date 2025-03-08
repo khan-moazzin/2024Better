@@ -24,6 +24,8 @@ import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
 import com.team5817.lib.requests.WaitRequest;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -237,8 +239,12 @@ public class Superstructure extends Subsystem {
 			public void onLoop(double timestamp) {
 				manageRequests();
 				updateLEDs();
-				mElevator.updateBranchDistance(mDrive.getAutoAlignError());
-				mEndEffectorWrist.updateBranchDistance(mDrive.getAutoAlignError());
+				if(DriverStation.isEnabled()){
+				double dist = Math.abs(mDrive.getAutoAlignError().x());
+				mElevator.updateBranchDistance(dist);
+				mEndEffectorWrist.updateBranchDistance(dist);
+				Logger.recordOutput("dist", dist);
+				}
 			}
 		});
 	}

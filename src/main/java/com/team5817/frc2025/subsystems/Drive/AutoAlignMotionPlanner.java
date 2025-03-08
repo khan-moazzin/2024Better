@@ -24,8 +24,8 @@ import org.littletonrobotics.junction.Logger;
  */
 public class AutoAlignMotionPlanner {
 
-    private ProfileFollower mXController = new ProfileFollower(3, 0.5, 0.0, 1.0, 0.0, 0.0);
-    private ProfileFollower mYController = new ProfileFollower(3, 0.5, 0.0, 2.0, 0.0, 0.0);
+    private ProfileFollower mXController = new ProfileFollower(3, 1, 0.0, 2.0, 0.0, 0);
+    private ProfileFollower mYController = new ProfileFollower(3, 1, 0.0, 2.0, 0.0, 0);
     private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;
@@ -33,7 +33,7 @@ public class AutoAlignMotionPlanner {
     private Pose2d mFieldToTargetPoint;
     private Pose2d poseDeadband;
     private OptionalDouble mStartTime;
-    private double error = 0;
+    private Translation2d error = new Translation2d();
 
     /**
      * Constructor for AutoAlignMotionPlanner.
@@ -105,8 +105,8 @@ public class AutoAlignMotionPlanner {
         double thetaOutput = mThetaController.update(current_pose.getRotation(), timestamp);
         ChassisSpeeds setpoint = new ChassisSpeeds();
 
-        this.error = current_pose.getRotation().distance(mFieldToTargetPoint.getRotation());
-        boolean thetaWithinDeadband =  this.error < poseDeadband.getRotation().getRadians() && Math.abs(thetaOutput) < 0.02;
+        this.error = current_pose.minus(mFieldToTargetPoint).getTranslation();
+        boolean thetaWithinDeadband =  current_pose.getRotation().distance(mFieldToTargetPoint.getRotation()) < poseDeadband.getRotation().getRadians() && Math.abs(thetaOutput) < 0.02;
         boolean xWithinDeadband = mXController.onTarget();
         boolean yWithinDeadband = mYController.onTarget();
 
@@ -116,6 +116,10 @@ public class AutoAlignMotionPlanner {
                 thetaWithinDeadband ? 0.0 : thetaOutput,
                 current_pose.getRotation());
         mAutoAlignComplete = thetaWithinDeadband && xWithinDeadband && yWithinDeadband;
+        Logger.recordOutput("AutoAlign/xDone", xWithinDeadband);
+        Logger.recordOutput("AutoAlign/yDone", yWithinDeadband);
+        Logger.recordOutput("AutoAlign/tDone", thetaWithinDeadband);
+
 
         if (mStartTime.isPresent() && mAutoAlignComplete) {
             System.out.println("Auto align took: " + (Timer.getFPGATimestamp() - mStartTime.getAsDouble()));
@@ -132,7 +136,7 @@ public class AutoAlignMotionPlanner {
     public boolean getAutoAlignComplete() {
         return mAutoAlignComplete;
     }
-    public double getAutoAlignError(){
+    public Translation2d getAutoAlignError(){
         return this.error;
     }
 }

@@ -511,12 +511,12 @@ public class Constants {
 		public static final double kCoralClearHeight = 0.15; // rotations
         public static final InterpolatingDoubleTreeMap kMidOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
-			kMidOffsetMap.put(0.0, 0.0);
-			kMidOffsetMap.put(.1, 0.1);
+			kMidOffsetMap.put(0.0381, 0.0);
+			kMidOffsetMap.put(.1381, 0.1);
 		}public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
-			kHighOffsetMap.put(0.0, 0.0);
-			kHighOffsetMap.put(.1, 0.1);
+			kHighOffsetMap.put(0.0381, 0.0);
+			kHighOffsetMap.put(.1381, 0.05);
 		}
 
 	}
@@ -624,13 +624,13 @@ public class Constants {
 		}
 		public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
-			kHighOffsetMap.put(0.0, 0.0);
-			kHighOffsetMap.put(.1, 10.0);
+			kHighOffsetMap.put(0.0381, 0.0);
+			kHighOffsetMap.put(.1381, -20.0);
 		}
 		public static final InterpolatingDoubleTreeMap kMidOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
-			kMidOffsetMap.put(0.0, 0.0);
-			kMidOffsetMap.put(.1, 5.0);
+			kMidOffsetMap.put(0.0381, 0.0);
+			kMidOffsetMap.put(.1381, -5.0);
 		}
 	}
 

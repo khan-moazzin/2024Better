@@ -147,6 +147,8 @@ public class Drive extends Subsystem {
 		mWheelTracker = new WheelTracker(mModules);
 		mSetpointGenerator = new SwerveSetpointGenerator(SwerveConstants.kKinematics);
 
+		mAutoAlignMotionPlanner.reset();
+		
 	}
 
 	/**
@@ -344,18 +346,20 @@ public class Drive extends Subsystem {
 
 	boolean autoAlignFinishedOverrride = false;
 
+	public void autoAlign(AlignmentType type) {
+		setAlignment(type);
+		alignDrive(findTargetPoint());
+	}
 	/**
 	 * Initiates auto alignment with the specified alignment type.
 	 *
 	 * @param type The alignment type.
 	 */
-	public void autoAlign(AlignmentType type) {
-		setAlignment(type);
+	public Pose2d findTargetPoint() {
+		return AutoAlignPointSelector.chooseTargetPoint(getPose(), mAlignment);
+	}
+	private void alignDrive(Pose2d targetPoint) {
 		autoAlignFinishedOverrride = false;
-		Pose2d targetPoint = AutoAlignPointSelector.chooseTargetPoint(getPose(), mAlignment);
-		if (targetPoint == null) {
-			return;
-		}
 		mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 		mAutoAlignMotionPlanner.setTargetPoint(targetPoint,mAlignment.tolerance);
 		if (mControlState != DriveControlState.AUTOALIGN) {
@@ -392,7 +396,12 @@ public class Drive extends Subsystem {
 	 *
 	 * @return True if auto alignment is complete, false otherwise.
 	 */
-	public double getAutoAlignError() {
+	public Translation2d getAutoAlignError() {
+		mAutoAlignMotionPlanner.setTargetPoint(findTargetPoint(),mAlignment.tolerance);
+		mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp,
+						RobotState.getInstance().getGlobalKalmanPose(mPeriodicIO.timestamp)
+								.withRotation(mPeriodicIO.heading),
+						RobotState.getInstance().getSmoothedVelocity());
 		return mAutoAlignMotionPlanner.getAutoAlignError();
 	}
 

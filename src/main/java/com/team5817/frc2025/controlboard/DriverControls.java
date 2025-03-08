@@ -96,6 +96,7 @@ public class DriverControls {
 			if(driver.rightTrigger.isBeingPressed()){
 				if(autoAlignAllowed&&s.getGoalState().goal.mAlignmentType!=AlignmentType.NONE)
 					mDrive.autoAlign(s.getGoalState().goal.mAlignmentType);
+					
 				else
 					mDrive.autoAlignFinishedOverrride(true);
 			}

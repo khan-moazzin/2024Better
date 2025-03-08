@@ -28,7 +28,7 @@ public class AlignmentPoint {
      * Enum representing the types of alignments that can be allowed at an alignment point.
      */
     public enum AlignmentType{
-        CORAL_SCORE(new Pose2d(0.05, 0.051, 1)),
+        CORAL_SCORE(new Pose2d(0.0, 0.0, 1)),
         ALGAE_CLEAN,
         ALGAE_SCORE,
         HUMAN,

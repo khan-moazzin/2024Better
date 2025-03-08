@@ -440,7 +440,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 					break;
 				case MOTION_MAGIC:
 				case POSITION_PID:
-					mServoInputs.position_rots += mServoInputs.error_rotations*dt/0.25;// bad guess at motion for sim
+					mServoInputs.position_rots += mServoInputs.error_rotations*dt/0.05;// bad guess at motion for sim
 					break;
 				case VOLTAGE:
 					mServoInputs.position_rots += demand / dt/1000;
