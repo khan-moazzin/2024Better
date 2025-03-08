@@ -165,9 +165,9 @@ public class Constants {
 		public static final double kStabilizeSwerveHeadingKf = 2.0;
 
 		// Snap Heading PID Values
-		public static final double kSnapSwerveHeadingKp = 8.0;
+		public static final double kSnapSwerveHeadingKp = 5.0;
 		public static final double kSnapSwerveHeadingKi = 0.0;
-		public static final double kSnapSwerveHeadingKd = 0.6;
+		public static final double kSnapSwerveHeadingKd = 0.8;
 		public static final double kSnapSwerveHeadingKf = 1.0;
 
 		public static final double kTrajectoryDeadband = .03;
@@ -198,9 +198,9 @@ public class Constants {
 		public static final double kAutoAlignAllowableDistance = 2.0; // Meters
 
 		public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
-				maxSpeed,
-				-maxSpeed,
-				10);
+				1,
+				-1,
+				2);
 
 		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
 				5,
@@ -299,7 +299,7 @@ public class Constants {
 			TalonFXConfiguration config = new TalonFXConfiguration();
 
 			config.Slot0.kP = .7;
-			config.Slot0.kI = 0.0;
+			config.Slot0.kI = 2;
 			config.Slot0.kD = 0.0004;
 			config.Slot0.kS = 0.0;
 			config.Slot0.kV = 0.0;
@@ -477,7 +477,7 @@ public class Constants {
 			kElevatorServoConstants.kMinUnitsLimit = 0.0;
 
 			kElevatorServoConstants.kKp = 8.0;
-			kElevatorServoConstants.kKi = 0.0;
+			kElevatorServoConstants.kKi = 0.5;
 			kElevatorServoConstants.kKd = 0.15;
 			kElevatorServoConstants.kKa = 0.0;
 			kElevatorServoConstants.kKs = 1.05983;
@@ -584,8 +584,8 @@ public class Constants {
 			kWristServoConstants.kMaxUnitsLimit = 200;
 			kWristServoConstants.kMinUnitsLimit = 0.0;
 
-			kWristServoConstants.kKp = 50;
-			kWristServoConstants.kKi = 0.0;
+			kWristServoConstants.kKp = 20;
+			kWristServoConstants.kKi = 13;
 			kWristServoConstants.kKd = .5;
 			kWristServoConstants.kKa = 0.0;
 			kWristServoConstants.kKs = 0.2;

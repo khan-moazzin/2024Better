@@ -356,7 +356,7 @@ public class Drive extends Subsystem {
 		if (targetPoint == null) {
 			return;
 		}
-		mKinematicLimits = SwerveConstants.kExtendedKinematicLimits;
+		mKinematicLimits = SwerveConstants.kSwerveKinematicLimits;
 		mAutoAlignMotionPlanner.setTargetPoint(targetPoint,mAlignment.tolerance);
 		if (mControlState != DriveControlState.AUTOALIGN) {
 			mAutoAlignMotionPlanner.reset();

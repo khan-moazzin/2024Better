@@ -40,7 +40,8 @@ public class Indexer extends Subsystem {
 	public enum State {
 		IDLE(0.0,0),
 		INDEXING(1,5.0),
-		EXHAUST(-6.0,-6.0);
+		EXHAUST(-6.0,-6.0),
+		IDLE_EXAUST(-2,-2);
 
 		public double side_voltage;
 		public double bottom_voltage;

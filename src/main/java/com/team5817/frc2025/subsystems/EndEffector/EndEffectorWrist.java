@@ -54,7 +54,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		A1(200, kMediumError),
 		A2(200, kMediumError),
 		NET(164, kMediumError),
-		ZERO(0, kLenientError,true),
+		ZERO(0, kLenientError),
 		INTAKING(164, kStrictError),
 		STOW(164, kStrictError);
 

@@ -54,7 +54,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		boolean home = false;
 		boolean disable = false;
 
-		/**
+		/**p
 		 * Constructs a new State.
 		 *
 		 * @param output The output value for the state.

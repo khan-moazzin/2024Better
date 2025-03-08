@@ -25,8 +25,8 @@ import org.littletonrobotics.junction.Logger;
  */
 public class AutoAlignMotionPlanner {
 
-    private ProfileFollower mXController = new ProfileFollower(3, 1, 0.0, 1.0, 0.0, 0.0);
-    private ProfileFollower mYController = new ProfileFollower(3, 1, 0.0, 2.0, 0.0, 0.0);
+    private ProfileFollower mXController = new ProfileFollower(2, 9, 0.0, 0.0, 0.0, 0.0);
+    private ProfileFollower mYController = new ProfileFollower(2, 9, 0.0, 0.0, 0.0, 0.0);
     private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;
@@ -80,12 +80,12 @@ public class AutoAlignMotionPlanner {
      */
     public ChassisSpeeds updateAutoAlign(double timestamp, Pose2d current_pose, Twist2d current_vel) {
         mXController.setGoalAndConstraints(
-                new MotionProfileGoal(mFieldToTargetPoint.getTranslation().x(), 0,
-                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ABS_VEL, Math.abs(poseDeadband.getTranslation().x()), 0.1),
+                new MotionProfileGoal(mFieldToTargetPoint.getTranslation().x(), 2,
+                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, Math.abs(poseDeadband.getTranslation().x()), 0.1),
                 SwerveConstants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
-                new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 0,
-                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ABS_VEL, Math.abs(poseDeadband.getTranslation().y()), 0.1),
+                new MotionProfileGoal(mFieldToTargetPoint.getTranslation().y(), 2,
+                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, Math.abs(poseDeadband.getTranslation().y()), 0.1),
                 SwerveConstants.kPositionMotionProfileConstraints);
         mThetaController.setSnapTarget(mFieldToTargetPoint.getRotation());
         double currentRotation = current_pose.getRotation().getRadians();

@@ -64,8 +64,6 @@ public class ThreeCoralMode extends AutoBase {
 				l.TFHTo7B,
 				l.T7BToFH
 				);
-		// if()j
-
 	}
 
 	// spotless:off
