@@ -28,6 +28,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
@@ -508,7 +509,15 @@ public class Constants {
 
 		public static double kHomingZone = 0.1; // degrees
 		public static final double kCoralClearHeight = 0.15; // rotations
-
+        public static final InterpolatingDoubleTreeMap kMidOffsetMap = new InterpolatingDoubleTreeMap();
+		static {
+			kMidOffsetMap.put(0.0381, 0.0);
+			kMidOffsetMap.put(.1381, 0.1);
+		}public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();
+		static {
+			kHighOffsetMap.put(0.0381, 0.0);
+			kHighOffsetMap.put(.1381, 0.05);
+		}
 
 	}
 
@@ -612,6 +621,16 @@ public class Constants {
 			kWristServoConstants.kHomingTimeout = 2;
 			kWristServoConstants.kHomingOutput = -5;
 			kWristServoConstants.kHomingVelocityWindow = 1;
+		}
+		public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();
+		static {
+			kHighOffsetMap.put(0.0381, 0.0);
+			kHighOffsetMap.put(.1381, -20.0);
+		}
+		public static final InterpolatingDoubleTreeMap kMidOffsetMap = new InterpolatingDoubleTreeMap();
+		static {
+			kMidOffsetMap.put(0.0381, 0.0);
+			kMidOffsetMap.put(.1381, -5.0);
 		}
 	}
 
