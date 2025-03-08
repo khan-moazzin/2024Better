@@ -360,7 +360,9 @@ public class Drive extends Subsystem {
 	}
 	private void alignDrive(Pose2d targetPoint) {
 		autoAlignFinishedOverrride = false;
+
 		mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
+
 		mAutoAlignMotionPlanner.setTargetPoint(targetPoint,mAlignment.tolerance);
 		if (mControlState != DriveControlState.AUTOALIGN) {
 			mAutoAlignMotionPlanner.reset();
