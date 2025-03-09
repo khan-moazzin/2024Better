@@ -37,6 +37,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	private State mCurrentState = State.ZERO;
 	private boolean atState = false;
 	private double branchDist = 0;
+	private double offset = 0;
 
 	final static double kStrictError = 1;
 	final static double kMediumError = 2 ;
@@ -81,7 +82,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 				return output;
 			}
 			double des = this.output + map.get(position);
-			return Util.limit(des, EndEffectorWristConstants.kWristServoConstants.kMinUnitsLimit, EndEffectorWristConstants.kWristServoConstants.kMaxUnitsLimit);
+			return des;
 		}
 	}
 
@@ -118,9 +119,6 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 					setWantHome(false);
 				}
 
-				
-				setSetpointMotionMagic(mCurrentState.getTrackedOutput(branchDist));
-				atState = Util.epsilonEquals(getPosition(), mCurrentState.getTrackedOutput(branchDist), mCurrentState.allowable_error);
 			}
 
 		});
@@ -130,6 +128,12 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	}
 	public void updateBranchDistance(double dist){
 		branchDist = dist;
+	}
+	public void setManualOffset(double offset){
+		this.offset = offset;
+	}
+	public void changeManualOffset(Double deltaOffset){
+		this.offset+=deltaOffset;
 	}
 
 	@Override
@@ -141,8 +145,10 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 	@Override
 	public void writePeriodicOutputs() {
-		
-
+		double trackedOutput = mCurrentState.getTrackedOutput(branchDist)+offset;
+		trackedOutput = Util.limit(trackedOutput, mConstants.kMinUnitsLimit,mConstants.kMaxUnitsLimit);
+		setSetpointMotionMagic(trackedOutput);
+		atState = Util.epsilonEquals(getPosition(),trackedOutput, mCurrentState.allowable_error);
 		super.writePeriodicOutputs();
 	}
 
@@ -155,7 +161,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		Robot.desMechPoses[5] = Robot.desMechPoses[4]
 				.transformBy(new Transform3d(new Translation3d(.221, 0, .278), new Rotation3d(Units.degreesToRadians(0),
 						Units.degreesToRadians(180+14.252+demand), Units.degreesToRadians(0))));
-
+		Logger.recordOutput("EndEffectorWrist/Offset", this.offset);
 		super.outputTelemetry();
 	}
 

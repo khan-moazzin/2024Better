@@ -37,6 +37,7 @@ public class Elevator extends ServoMotorSubsystem {
 	private State currentState = State.ZERO;
 	private boolean atState = false;
 	private double branchDist = 0;
+	private double offset = 0;
 	
 
 	final static double kStrictError = .05;
@@ -86,7 +87,7 @@ public class Elevator extends ServoMotorSubsystem {
 				return output;
 			}
 			double des = this.output + map.get(position);
-			return Util.limit(des, ElevatorConstants.kElevatorServoConstants.kMinUnitsLimit, ElevatorConstants.kElevatorServoConstants.kMaxUnitsLimit);
+			return des;
 		}
 	}
 
@@ -120,15 +121,18 @@ public class Elevator extends ServoMotorSubsystem {
 				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
 					setWantHome(false);
 				}
-
-				double trackedOutput = currentState.getTrackedOutput(branchDist);
-				atState = Util.epsilonEquals(getPosition(),trackedOutput , currentState.allowable_error);
-				setSetpointMotionMagic(trackedOutput);
+				
 			}
 		});
 	}
 	public void updateBranchDistance(double dist){
 		this.branchDist = dist;
+	}
+	public void setManualOffset(double offset){
+		this.offset = offset;
+	}
+	public void changeManualOffset(double deltaOffset){
+		this.offset+=deltaOffset;
 	}
 	@Override
 	public boolean atHomingLocation() {
@@ -156,7 +160,10 @@ public class Elevator extends ServoMotorSubsystem {
 				mHoming = false;
 			}
 		}
-
+		double trackedOutput = currentState.getTrackedOutput(branchDist)+offset;
+		trackedOutput = Util.limit(trackedOutput, ElevatorConstants.kElevatorServoConstants.kMinUnitsLimit, ElevatorConstants.kElevatorServoConstants.kMaxUnitsLimit);
+		atState = Util.epsilonEquals(getPosition(),trackedOutput , currentState.allowable_error);
+		setSetpointMotionMagic(trackedOutput);
 		super.writePeriodicOutputs();
 	}
 
@@ -175,7 +182,7 @@ public class Elevator extends ServoMotorSubsystem {
 		Robot.desMechPoses[2] = desired.div(3);
 		Robot.desMechPoses[3] = desired.div(3).times(2);
 		Robot.desMechPoses[4] = desired;
-
+		Logger.recordOutput("Elevator/Offset", this.offset);
 		super.outputTelemetry();
 	}
 

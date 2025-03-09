@@ -1,5 +1,7 @@
 package com.team5817.frc2025.controlboard;
 
+import java.util.function.DoubleBinaryOperator;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
@@ -66,7 +68,7 @@ public class DriverControls {
 	CustomXboxController codriver = mControlBoard.operator;
 	/* TWO CONTROLLERS */
 	GoalState preparedGoal = GoalState.L4;
-	Timer practiceTimer = new Timer();
+	double lastTime = 0;
 
 	boolean wantStow = false;
 	/**
@@ -159,6 +161,8 @@ public class DriverControls {
 			s.setGoal(GoalState.PREINTAKE);
 		if(codriver.getRightTriggerAxis()==1)
 			s.setGoal(GoalState.CLEAR);
+		if(codriver.getLeftBumperButtonPressed())
+			s.toggleAllowPoseComp();
 
 		if(codriver.yButton.isBeingPressed())
 			preparedGoal = GoalState.L4;
@@ -173,8 +177,17 @@ public class DriverControls {
 		if(codriver.POV180.isBeingPressed())
 			preparedGoal = GoalState.PROCESS;
 		
+		if(codriver.getBackButtonPressed()){
+			codriverManual = !codriverManual;
+		}
 		if(codriverManual){
-			//TODO
+			double dt = Timer.getTimestamp()-lastTime;
+			s.mElevator.changeManualOffset(codriver.getLeftY()*dt/0.1);//0.1 m/s
+			s.mEndEffectorWrist.changeManualOffset(-codriver.getRightY()*dt*2);//2 deg/s
+			if(codriver.getLeftBumperButtonPressed())
+				s.mElevator.setManualOffset(0);
+			if(codriver.getRightBumperButtonPressed())
+				s.mEndEffectorWrist.setManualOffset(0);
 		}
 
 		
@@ -184,7 +197,7 @@ public class DriverControls {
 		Logger.recordOutput("Elastic/Auto Align Allowed", autoAlignAllowed);
 		Logger.recordOutput("Elastic/Climb Allowed", climbAllowed);
 		Logger.recordOutput("Elastic/PreparedGoal", preparedGoal);
-
+		lastTime = Timer.getTimestamp();
 	}
 
 	public boolean clearReef(){

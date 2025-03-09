@@ -24,6 +24,7 @@ import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
 import com.team5817.lib.requests.WaitRequest;
 
+import edu.wpi.first.networktables.BooleanArrayEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class Superstructure extends Subsystem {
 	private boolean hasNewRequest = false;
 	private boolean allRequestsComplete = false;
 	private boolean readyToScore = true;
+	private boolean driverAllowsPoseComp = true;
 
 	// Subsystems
 
@@ -240,10 +242,10 @@ public class Superstructure extends Subsystem {
 				manageRequests();
 				updateLEDs();
 				if(DriverStation.isEnabled()){
-				double dist = Math.abs(mDrive.getAutoAlignError().x());
-				mElevator.updateBranchDistance(dist);
-				mEndEffectorWrist.updateBranchDistance(dist);
-				Logger.recordOutput("dist", dist);
+					double dist = driverAllowsPoseComp?Math.abs(mDrive.getAutoAlignError().x()):0;
+					mElevator.updateBranchDistance(dist);
+					mEndEffectorWrist.updateBranchDistance(dist);
+					Logger.recordOutput("dist", dist);
 				}
 			}
 		});
@@ -282,14 +284,6 @@ public class Superstructure extends Subsystem {
 		return false;
 	}
 
-	@Override
-	public void readPeriodicInputs() {
-	}
-	@Override
-	public void writePeriodicOutputs() {
-		updateLEDs();
-	}
-
 	/**
 	 * Gets the current goal state.
 	 * 
@@ -303,6 +297,7 @@ public class Superstructure extends Subsystem {
 	public void outputTelemetry() {
 		if (activeRequest != null)
 			Logger.recordOutput("State", activeRequest.getName());
+		Logger.recordOutput("Elastic/AllowedPoseComp", driverAllowsPoseComp);
 	}
 
 	/* Superstructure functions */
@@ -546,6 +541,9 @@ public class Superstructure extends Subsystem {
 
 	public void setReadyToScore(boolean newReady){
 		readyToScore = newReady;
+	}
+	public void toggleAllowPoseComp(){
+		driverAllowsPoseComp = !driverAllowsPoseComp;
 	}
 
 	/**
