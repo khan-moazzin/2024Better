@@ -376,10 +376,10 @@ public class Drive extends Subsystem {
 	 *
 	 * @param trajectory The trajectory to follow.
 	 */
-	public void setTrajectory(Trajectory trajectory) {
+	public void setTrajectory(Trajectory trajectory, double timeout) {
 		mOverrideTrajectory = false;
 		mMotionPlanner.reset();
-		mMotionPlanner.setTrajectory(trajectory.get());
+		mMotionPlanner.setTrajectory(trajectory.get(),timeout);
 		mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 		setControlState(DriveControlState.PATH_FOLLOWING);
 	}

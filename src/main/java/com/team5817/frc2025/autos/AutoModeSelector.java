@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
-import com.team5817.frc2025.autos.Modes.ThreeCoralMode;
 
 /**
  * This class is responsible for selecting the autonomous mode for the robot.
@@ -157,11 +156,6 @@ public class AutoModeSelector {
 		switch (mode) {
 			case DO_NOTHING:
 				return Optional.of(new DoNothingMode());
-
-
-			case THREE_CORAL_MODE:
-				return Optional.of(new ThreeCoralMode(mCachedStartingPosition, mCachedPickupLocation));
-			// break;
 
 			case CUSTOM_MODE:
 				return Optional.of(new CustomMode(mCachedStartingPosition, mCachedPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore));

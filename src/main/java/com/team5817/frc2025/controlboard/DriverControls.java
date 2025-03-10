@@ -115,7 +115,8 @@ public class DriverControls {
 				s.setGoal(GoalState.GROUND_ALGAE_INTAKE);
 
 			if(driver.getBackButton()){
-				EndEffectorWrist.getInstance().conformToState(EndEffectorWrist.State.ZERO);
+				s.mEndEffectorWrist.conformToState(EndEffectorWrist.State.ZERO);
+				s.mIntakeDeploy.conformToState(IntakeDeploy.State.ZERO);
 			}
 
 			

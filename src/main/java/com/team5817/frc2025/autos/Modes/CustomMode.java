@@ -120,7 +120,7 @@ public class CustomMode extends AutoBase {
 		}
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
-				new TrajectoryAction(t.next()),
+				new TrajectoryAction(t.next(),1),
 				new SequentialAction(List.of(
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);

@@ -16,6 +16,9 @@ import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.lib.motion.PPPathPointState;
 
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.Timer;
+
 
 public class DriveMotionPlanner {
 	// Pure Pursuit Constants
@@ -51,17 +54,20 @@ public class DriveMotionPlanner {
 	double mStartTime = Double.POSITIVE_INFINITY;
 	ChassisSpeeds mOutput = new ChassisSpeeds();
 	boolean mPathIsFinished = false;
+	double startTime = 0;
+	double timeout = Double.POSITIVE_INFINITY;
 
 	// PID controllers for path following
 	double mDt = 0.0;
 
 	public DriveMotionPlanner() {}
 
-	public void setTrajectory(final TrajectoryIterator trajectory) {
+	public void setTrajectory(final TrajectoryIterator trajectory, double timeout) {
 		mCurrentTrajectory = trajectory;
 		mSetpoint = trajectory.getCurrentState();
 		mLastSetpoint = null;
 		mCurrentTrajectoryLength = mCurrentTrajectory.getTimeView().last_interpolant();
+		this.timeout = timeout;
 	}
 
 	public void reset() {
@@ -70,6 +76,7 @@ public class DriveMotionPlanner {
 		mLastSetpoint = null;
 		mLastTime = Double.POSITIVE_INFINITY;
 		mPathIsFinished = false;
+		startTime = Timer.getTimestamp();
 	}
 
 	public ChassisSpeeds updatePIDChassis(ChassisSpeeds chassisSpeeds) {
@@ -111,7 +118,8 @@ public class DriveMotionPlanner {
 				);
 		mOutput = updatePIDChassis(chassis_speeds);
 
-		mPathIsFinished = distance(current_state, mCurrentTrajectoryLength) < SwerveConstants.kTrajectoryDeadband;
+		mPathIsFinished = distance(current_state, mCurrentTrajectoryLength) < SwerveConstants.kTrajectoryDeadband||
+			startTime+timeout>Timer.getTimestamp();
 		mOutput = ChassisSpeeds.fromFieldRelativeSpeeds(mOutput, current_state.getRotation());
 
 		return mOutput;

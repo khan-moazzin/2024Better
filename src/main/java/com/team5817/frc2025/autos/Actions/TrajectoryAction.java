@@ -1,5 +1,7 @@
 package com.team5817.frc2025.autos.Actions;
 
+import java.util.function.DoubleBinaryOperator;
+
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.motion.Trajectory;
 
@@ -10,6 +12,7 @@ public class TrajectoryAction implements Action{
 
 	private Drive mDrive = null;
 	private Trajectory mTrajectory;
+	private double extraTimeout;
 
 	/**
 	 * Constructs a TrajectoryAction with the specified trajectory.
@@ -17,7 +20,13 @@ public class TrajectoryAction implements Action{
 	 * @param path The trajectory to follow.
 	 */
 	public TrajectoryAction(Trajectory path){
-		this(path, false);
+		this(path, false , Double.MAX_VALUE);
+	}
+	public TrajectoryAction(Trajectory path, boolean resetPos){
+		this(path,resetPos, Double.MAX_VALUE);
+	}
+	public TrajectoryAction(Trajectory path, double extraTimeout){
+		this(path,false,extraTimeout);
 	}
 
 	/**
@@ -26,9 +35,10 @@ public class TrajectoryAction implements Action{
 	 * @param path The trajectory to follow.
 	 * @param resetPos Whether to reset the robot's position.
 	 */
-	public TrajectoryAction(Trajectory path, boolean resetPos){
+	public TrajectoryAction(Trajectory path, boolean resetPos,double extraTimeout){
 		this.mTrajectory = path;
 		this.mDrive = Drive.getInstance();
+		this.extraTimeout = extraTimeout;
 	}
 
 	/**
@@ -36,7 +46,7 @@ public class TrajectoryAction implements Action{
 	 */
 	@Override
 	public void start(){
-		mDrive.setTrajectory(mTrajectory);
+		mDrive.setTrajectory(mTrajectory,extraTimeout+mTrajectory.get().trajectory().getTotalTimeSeconds());
 	}
 
 	/**
