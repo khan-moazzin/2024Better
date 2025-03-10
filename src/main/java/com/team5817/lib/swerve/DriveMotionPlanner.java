@@ -119,7 +119,7 @@ public class DriveMotionPlanner {
 		mOutput = updatePIDChassis(chassis_speeds);
 
 		mPathIsFinished = distance(current_state, mCurrentTrajectoryLength) < SwerveConstants.kTrajectoryDeadband||
-			startTime+timeout>Timer.getTimestamp();
+			Timer.getTimestamp()-startTime>timeout;
 		mOutput = ChassisSpeeds.fromFieldRelativeSpeeds(mOutput, current_state.getRotation());
 
 		return mOutput;
