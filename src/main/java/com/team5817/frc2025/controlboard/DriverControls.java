@@ -116,7 +116,18 @@ public class DriverControls {
 			if(codriver.getRightBumperButtonPressed())
 				swap = !swap;
 			if(codriver.getLeftBumperButtonPressed()){
-				s.setGoal(GoalState.A2PINCH);
+				switch(s.getGoalState()){
+					case A1:
+						s.setGoal(GoalState.A1PINCH);
+						break;
+					case A2:
+						s.setGoal(GoalState.A2PINCH);
+						break;
+					default:
+						break;
+
+
+				}
 			}
 			if(driver.bButton.isBeingPressed())
 				s.setGoal(GoalState.HUMAN_CORAL_INTAKE);
@@ -179,8 +190,8 @@ public class DriverControls {
 			s.setGoal(GoalState.PREINTAKE);
 		if(codriver.getRightTriggerAxis()==1)
 			s.setGoal(GoalState.CLEAR);
-		// if(codriver.getLeftBumperButtonPressed())
-		// 	s.toggleAllowPoseComp();TODO	
+		if(codriver.getStartButtonPressed())
+			s.toggleAllowPoseComp();
 
 		if(codriver.yButton.isBeingPressed())
 			preparedGoal = GoalState.L4;

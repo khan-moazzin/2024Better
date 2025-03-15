@@ -111,10 +111,10 @@ public class Superstructure extends Subsystem {
 				Climb.State.STOW, EndEffectorRollers.State.l4, IntakeRollers.State.IDLE, Indexer.State.IDLE_EXAUST,
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
-				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.NET)),
 		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
-				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.NET, AlignmentType.NONE)),
 		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
@@ -462,12 +462,14 @@ public class Superstructure extends Subsystem {
 									// indexing to get in end effector
 						// mLEDs.stateRequest(TimedLEDState.INTAKING),
 						mElevator.stateRequest(goal.mElevatorState),
-						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
-						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
+						mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLD),
 						mIndexer.stateRequest(goal.mIndexerState),
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
+						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
 						// mClimb.stateRequest(goal.mClimbState),
-						mIntakeRollers.stateRequest(goal.mIntakeRollersState))
+						mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
+						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState)
+						
 		).addName("Idle");
 	}
 
