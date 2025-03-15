@@ -24,7 +24,6 @@ import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
 import com.team5817.lib.requests.WaitRequest;
 
-import edu.wpi.first.networktables.BooleanArrayEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public class Superstructure extends Subsystem {
 	public Drive mDrive;
 	private double mDistanceToTarget = 0.0;
 	private double mAngularErrToTarget = 0.0;
-	private GoalState mGoal;
+	private GoalState mGoal= GoalState.STOW;
 
 	public Elevator mElevator;
 	public EndEffectorWrist mEndEffectorWrist;
@@ -85,6 +84,9 @@ public class Superstructure extends Subsystem {
 
 	public enum GoalState {
 		STOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
+				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				SuperstructureState.Type.IDLE)),
+		AlGAESTOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.PINCH, IntakeDeploy.State.DISABLE,
 				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.IDLE)),
 		PREINTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
@@ -110,15 +112,21 @@ public class Superstructure extends Subsystem {
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
 		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
-				SuperstructureState.Type.SCORING)),
+				SuperstructureState.Type.NET)),
 		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
-				SuperstructureState.Type.SCORING, AlignmentType.ALGAE_SCORE)),
+				SuperstructureState.Type.NET, AlignmentType.NONE)),
 		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
 				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
 		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
+		A2PINCH(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.PINCH, IntakeDeploy.State.STOW,
+				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
+		A1PINCH(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.PINCH, IntakeDeploy.State.STOW,
+				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
 				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
 		GROUND_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING,
 				IntakeDeploy.State.DEPLOY, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE,
@@ -414,6 +422,9 @@ public class Superstructure extends Subsystem {
 				case CLEAN:
 					r = CleanRequest(goal.goal);
 					break;
+				case NET:
+					r= netRequest(goal.goal);
+					break;
 			}
 			request(r);
 		}
@@ -518,6 +529,34 @@ public class Superstructure extends Subsystem {
 				// mLEDs.stateRequest(TimedLEDState.IDLE)
 		).addName("Score");
 	}
+/**
+	 * Creates a request for scoring based on the goal state.
+	 * 
+	 * @param goal The goal state.
+	 * @return A request for scoring.
+	 */
+	private Request netRequest(SuperstructureState goal) {
+		if (!(goal.mType == SuperstructureState.Type.SCORING)) {
+			System.out.println("Wrong Goal Type");
+		}
+		return new SequentialRequest(
+				new ParallelRequest(
+						// mLEDs.stateRequest(TimedLEDState.PREPARING),
+						mElevator.stateRequest(goal.mElevatorState),
+						mIndexer.stateRequest(goal.mIndexerState),
+						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
+						// mClimb.stateRequest(goal.mClimbState),
+						mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
+				// autoAlignWa.Homeit(),
+				// mLEDs.stateRequest(TimedLEDState.PREPARED),
+				ReadyToScoreRequest(),
+				new ParallelRequest(
+				mEndEffectorWrist.stateRequest(EndEffectorWrist.State.NET),
+				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState))
+				// breakWait(mEndEffectorBeam, false)
+				// mLEDs.stateRequest(TimedLEDState.IDLE)
+		).addName("Score");
+	}
 
 
 	/**
@@ -552,8 +591,11 @@ public class Superstructure extends Subsystem {
 	 * 
 	 * @return The goal state for algae cleaning.
 	 */
-	public GoalState AlgaeSmartCleanRequest() {
-		return isAlgaeHigh() ? GoalState.A2 : GoalState.A1;
+	public GoalState AlgaeSmartCleanRequest(boolean swap) {
+		boolean thing = isAlgaeHigh();
+		if (swap)
+			thing = !thing;
+		return  thing ? GoalState.A2 : GoalState.A1;
 	}
 
 	/**

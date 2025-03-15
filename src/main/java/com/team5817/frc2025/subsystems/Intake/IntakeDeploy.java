@@ -185,6 +185,8 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public boolean isFinished() {
+				Logger.recordOutput(mConstants.kName+"/AtState",  Util.epsilonEquals(getPosition(), _wantedState.output, _wantedState.allowable_error));
+				
 				return Util.epsilonEquals(getPosition(), _wantedState.output, _wantedState.allowable_error);
 			}
 		};

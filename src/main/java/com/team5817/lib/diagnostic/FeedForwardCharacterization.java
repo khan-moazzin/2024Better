@@ -25,7 +25,7 @@ import com.team5817.lib.drivers.ServoMotorSubsystem;
  */
 public class FeedForwardCharacterization implements Action{
   private static final double startDelaySecs = 2.0;
-  private static final double rampRateVoltsPerSec = 0.05;
+  private static final double rampRateVoltsPerSec = 0.1;
 
   private final boolean forwards;
   private boolean done = false;
@@ -70,10 +70,10 @@ public class FeedForwardCharacterization implements Action{
         mSubsystem.applyVoltage(0);
         System.out.println("Nothing");
    } else {
-      double voltage = (timer.get() - startDelaySecs) * rampRateVoltsPerSec * (forwards ? 1 : -1);
-      done = voltage >= 12;
+      double voltage = ((timer.get() - startDelaySecs) * rampRateVoltsPerSec) * (forwards ? 1 : -1);
+      done = voltage >= 1.4;
       Logger.recordOutput("Characterization/Voltage", voltage);
-        mSubsystem.applyVoltage(voltage);
+        mSubsystem.applyVoltage(voltage+1.01);
       dataPrimary.add(mSubsystem.getVelocity(), voltage);
     }
   }

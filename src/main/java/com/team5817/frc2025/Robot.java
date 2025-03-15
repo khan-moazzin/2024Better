@@ -157,7 +157,6 @@ public class Robot extends LoggedRobot {
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
     mEnabledLooper.start();
-    Superstructure.getInstance().setGoal(GoalState.PREINTAKE);
     Logger.recordOutput("isComp", Constants.isComp);
   }
 
@@ -275,8 +274,8 @@ public class Robot extends LoggedRobot {
     Elastic.selectTab("Systems Test");
     // mAutoExecuter.setAuto(new TestRoutine()); 
 
-    // mAutoExecuter.setAuto(new Characterize(IntakeDeploy.getInstance(),true))
-    // mAutoExecuter.start();
+    mAutoExecuter.setAuto(new Characterize(Elevator.getInstance(),true));
+    mAutoExecuter.start();
     // ControlBoard.getInstance().
     // Elevator.getInstance().applyVoltage(-1.2);
 
@@ -287,15 +286,16 @@ public class Robot extends LoggedRobot {
    */      
   @Override
   public void testPeriodic() {
+    Elevator.getInstance().writePeriodicOutputs();
+    Elevator.getInstance().outputTelemetry();
+    // controls.testMode();
+    // controlBoard.update();
 
-    controls.testMode();
-    controlBoard.update();
-
-    mDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-        controlBoard.getSwerveTranslation().x(),
-        controlBoard.getSwerveTranslation().y(),
-        controlBoard.getSwerveRotation(),
-        Util.robotToFieldRelative(mDrive.getHeading(), DriverStation.getAlliance().get().equals(Alliance.Red))));
+    // mDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+    //     controlBoard.getSwerveTranslation().x(),
+    //     controlBoard.getSwerveTranslation().y(),
+    //     controlBoard.getSwerveRotation(),
+    //     Util.robotToFieldRelative(mDrive.getHeading(), DriverStation.getAlliance().get().equals(Alliance.Red))));
   }
 
   /**

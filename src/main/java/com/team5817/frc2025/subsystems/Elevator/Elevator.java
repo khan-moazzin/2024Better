@@ -48,14 +48,14 @@ public class Elevator extends ServoMotorSubsystem {
 	 * Enum representing the different states of the elevator.
 	 */
 	public enum State {
-		L4(1.8, kStrictError, ElevatorConstants.kHighOffsetMap),
-		L3(.886, kStrictError, ElevatorConstants.kMidOffsetMap),
-		L2(0.533, kStrictError, ElevatorConstants.kMidOffsetMap),
-		L1(0.429, kStrictError),
+		L4(1.86, kStrictError, ElevatorConstants.kHighOffsetMap),
+		L3(.951, kStrictError, ElevatorConstants.kMidOffsetMap),
+		L2(0.563, kStrictError, ElevatorConstants.kMidOffsetMap),
+		L1(0.219, kStrictError),
 		A1(0.59, kMediumError),
 		A2(1, kMediumError),
-		NET(2, kMediumError),
-		ZERO(0.009, kLenientError),
+		NET(2.035, kMediumError),
+		ZERO(0, kLenientError),
 		PROCESS(0.0, kLenientError),
 		CLEAR(1.9,kStrictError),
 		STOW(0.0, kStrictError);
@@ -100,7 +100,6 @@ public class Elevator extends ServoMotorSubsystem {
 		super(constants);
 		mMain.setPosition(homeAwareUnitsToRotations(0.0));
 		enableSoftLimits(false);
-		setSetpointMotionMagic(State.ZERO.output);
 	}
 
 	/**
@@ -116,12 +115,6 @@ public class Elevator extends ServoMotorSubsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				if (getSetpoint() == mConstants.kHomePosition && atHomingLocation() && mWantsHome && !mHoming) {
-					setWantHome(true);
-				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
-					setWantHome(false);
-				}
-				
 			}
 		});
 	}
@@ -149,21 +142,11 @@ public class Elevator extends ServoMotorSubsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
-		if (mHoming) {
-			setOpenLoop(mConstants.kHomingOutput / mConstants.kMaxForwardOutput);
-			if (mHomingDelay.update(
-					Timer.getFPGATimestamp(),
-					Math.abs(getVelocity()) < mConstants.kHomingVelocityWindow)) {
-				zeroSensors();
-				mHasBeenZeroed = true;
-				setSetpointMotionMagic(mConstants.kHomePosition);
-				mHoming = false;
-			}
-		}
 		double trackedOutput = currentState.getTrackedOutput(branchDist)+offset;
 		trackedOutput = Util.limit(trackedOutput, ElevatorConstants.kElevatorServoConstants.kMinUnitsLimit, ElevatorConstants.kElevatorServoConstants.kMaxUnitsLimit);
 		atState = Util.epsilonEquals(getPosition(),trackedOutput , currentState.allowable_error);
-		setSetpointMotionMagic(trackedOutput);
+		if (mControlState == ControlState.MOTION_MAGIC)
+			setSetpointMotionMagic(trackedOutput);
 		super.writePeriodicOutputs();
 	}
 
@@ -183,6 +166,7 @@ public class Elevator extends ServoMotorSubsystem {
 		Robot.desMechPoses[3] = desired.div(3).times(2);
 		Robot.desMechPoses[4] = desired;
 		Logger.recordOutput("Elevator/Offset", this.offset);
+		Logger.recordOutput(mConstants.kName+"/AtState", atState);
 		super.outputTelemetry();
 	}
 
@@ -224,6 +208,9 @@ public class Elevator extends ServoMotorSubsystem {
 		return new Request() {
 			@Override
 			public void act() {
+				if (mControlState != ControlState.MOTION_MAGIC) {
+					mControlState = ControlState.MOTION_MAGIC;
+				}
 				currentState = _wantedState;
 				mWantsHome = _wantedState.home;
 			}

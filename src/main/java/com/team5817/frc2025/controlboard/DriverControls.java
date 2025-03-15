@@ -5,6 +5,7 @@ import java.util.function.DoubleBinaryOperator;
 import org.littletonrobotics.junction.Logger;
 
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
+import com.pathplanner.lib.path.GoalEndState;
 import com.team254.lib.geometry.Rotation2d;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.field.FieldLayout;
@@ -60,7 +61,7 @@ public class DriverControls {
 		
 			
 	}
-
+	boolean swap = false;
 	boolean climbAllowed = false;
 	boolean autoAlignAllowed = true;
 	boolean codriverManual = false;
@@ -71,6 +72,7 @@ public class DriverControls {
 	double lastTime = 0;
 
 	boolean wantStow = false;
+	boolean wantStowAlgae = false;
 	/**
 	 * Handles the input for the two controller mode.
 	 * This mode is used when both driver and co-driver controllers are available.
@@ -79,6 +81,10 @@ public class DriverControls {
 
 		if(driver.getStartButton())
 			mDrive.zeroGyro(Util.isRed().get()?0:180);
+		if(driver.getBackButton())
+			mDrive.zeroGyro(Util.isRed().get()?180:0);
+
+
 		
 		if(!climbAllowed){
 			// if(driver.\)sswaaaaaa
@@ -104,17 +110,21 @@ public class DriverControls {
 			}
 
 
-			if(driver.aButton.isBeingPressed()){
-				s.setGoal(s.AlgaeSmartCleanRequest());
+			if(driver.getAButtonPressed()){
+				s.setGoal(s.AlgaeSmartCleanRequest(swap));
 			}
-				// s.AlgaeSmartCleanRequest();
+			if(codriver.getRightBumperButtonPressed())
+				swap = !swap;
+			if(codriver.getLeftBumperButtonPressed()){
+				s.setGoal(GoalState.A2PINCH);
+			}
 			if(driver.bButton.isBeingPressed())
 				s.setGoal(GoalState.HUMAN_CORAL_INTAKE);
 			
 			if(driver.xButton.isBeingPressed())
 				s.setGoal(GoalState.GROUND_ALGAE_INTAKE);
 
-			if(driver.getBackButton()){
+			if(driver.getLeftStickButtonPressed()){
 				s.mEndEffectorWrist.conformToState(EndEffectorWrist.State.ZERO);
 				s.mIntakeDeploy.conformToState(IntakeDeploy.State.ZERO);
 			}
@@ -128,8 +138,15 @@ public class DriverControls {
 				mDrive.setControlState(DriveControlState.OPEN_LOOP);
 			}
 
-
-			if(driver.releasedAny(driver.leftTrigger,driver.aButton,driver.xButton) ){
+			if(driver.releasedAny(driver.aButton)){
+				wantStowAlgae = true;
+			}
+			if(driver.getAButton())
+				wantStowAlgae =false;
+			if(wantStowAlgae&&s.getGoalState().equals(GoalState.A2PINCH)||s.getGoalState().equals(GoalState.A1PINCH)){
+				s.setGoal(GoalState.AlGAESTOW);
+			wantStowAlgae = false;}
+			if(driver.releasedAny(driver.leftTrigger,driver.xButton) ){
 				wantStow = true;
 			}
 			if(wantStow&&clearReef()){
@@ -162,8 +179,8 @@ public class DriverControls {
 			s.setGoal(GoalState.PREINTAKE);
 		if(codriver.getRightTriggerAxis()==1)
 			s.setGoal(GoalState.CLEAR);
-		if(codriver.getLeftBumperButtonPressed())
-			s.toggleAllowPoseComp();
+		// if(codriver.getLeftBumperButtonPressed())
+		// 	s.toggleAllowPoseComp();TODO	
 
 		if(codriver.yButton.isBeingPressed())
 			preparedGoal = GoalState.L4;
@@ -182,13 +199,16 @@ public class DriverControls {
 			codriverManual = !codriverManual;
 		}
 		if(codriverManual){
+			if(lastTime==0)
+				lastTime = Timer.getFPGATimestamp();
 			double dt = Timer.getTimestamp()-lastTime;
-			s.mElevator.changeManualOffset(codriver.getLeftY()*dt/0.1);//0.1 m/s
-			s.mEndEffectorWrist.changeManualOffset(-codriver.getRightY()*dt*2);//2 deg/s
+			s.mElevator.changeManualOffset(codriver.getLeftY()*dt*0.0254);
+			s.mEndEffectorWrist.changeManualOffset(-codriver.getRightY()*dt*.5);
 			if(codriver.getLeftBumperButtonPressed())
 				s.mElevator.setManualOffset(0);
 			if(codriver.getRightBumperButtonPressed())
 				s.mEndEffectorWrist.setManualOffset(0);
+		lastTime = Timer.getTimestamp();
 		}
 
 		
@@ -198,7 +218,6 @@ public class DriverControls {
 		Logger.recordOutput("Elastic/Auto Align Allowed", autoAlignAllowed);
 		Logger.recordOutput("Elastic/Climb Allowed", climbAllowed);
 		Logger.recordOutput("Elastic/PreparedGoal", preparedGoal);
-		lastTime = Timer.getTimestamp();
 	}
 
 	public boolean clearReef(){

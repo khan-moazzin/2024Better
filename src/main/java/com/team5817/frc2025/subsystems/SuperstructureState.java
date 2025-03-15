@@ -31,7 +31,8 @@ public class SuperstructureState {
 		SCORING,
 		CLEAN,
 		INTAKING,
-		IDLE
+		IDLE,
+		NET
 	};
 	
 	/**

@@ -391,12 +391,12 @@ public class Constants {
 			kDeployServoConstants.kMaxUnitsLimit = 100000;
 			kDeployServoConstants.kMinUnitsLimit = -100000;
 
-			kDeployServoConstants.kKp = 2.8125	;
+			kDeployServoConstants.kKp = 3.8125	;
 			kDeployServoConstants.kKi = 0.0;   
 			kDeployServoConstants.kKd = 0;
 			kDeployServoConstants.kKa = 0;
 			kDeployServoConstants.kKs = 0;
-			kDeployServoConstants.kKv = 0;
+			kDeployServoConstants.kKv = .5;
 			kDeployServoConstants.kKg = 0.265625;
 
  
@@ -412,7 +412,7 @@ public class Constants {
 			kDeployServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
 
 			kDeployServoConstants.kEnableStatorCurrentLimit = true;
-			kDeployServoConstants.kStatorCurrentLimit = 120; // amps
+			kDeployServoConstants.kStatorCurrentLimit = 80; // amps
 
 			kDeployServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
@@ -473,19 +473,19 @@ public class Constants {
 			kElevatorServoConstants.kHomePosition = 0; // degrees
 			kElevatorServoConstants.kRotationsPerUnitDistance = 72.82/1.4*3/4;
 
-			kElevatorServoConstants.kMaxUnitsLimit = 2;
+			kElevatorServoConstants.kMaxUnitsLimit = 2.035;
 			kElevatorServoConstants.kMinUnitsLimit = 0.0;
 
-			kElevatorServoConstants.kKp = 8.0*3/4;
-			kElevatorServoConstants.kKi = 0.5*3/4;
-			kElevatorServoConstants.kKd = 0.15*3/4;
-			kElevatorServoConstants.kKa = 0.0*3/4;
-			kElevatorServoConstants.kKs = 1.05983*3/4;
-			kElevatorServoConstants.kKv = 7.52928*3/4;
-			kElevatorServoConstants.kKg = 0.0*3/4;
+			kElevatorServoConstants.kKp = 15;
+			kElevatorServoConstants.kKi = 0.0;
+			kElevatorServoConstants.kKd = 0.2;
+			kElevatorServoConstants.kKa = 0.0;
+			kElevatorServoConstants.kKs = 0.0;
+			kElevatorServoConstants.kKv = .1;
+			kElevatorServoConstants.kKg = 7;
 
-			kElevatorServoConstants.kCruiseVelocity = 80000.0; // degrees / s
-			kElevatorServoConstants.kAcceleration = 10000.0; // degrees / s^2
+			kElevatorServoConstants.kCruiseVelocity = 9999.0/kElevatorServoConstants.kRotationsPerUnitDistance; // degrees / s
+			kElevatorServoConstants.kAcceleration = 300/kElevatorServoConstants.kRotationsPerUnitDistance; // degrees / s^2
 
 			kElevatorServoConstants.kMaxForwardOutput = 12.0;
 			kElevatorServoConstants.kMaxReverseOutput = -12.0;
@@ -587,17 +587,17 @@ public class Constants {
 			kWristServoConstants.kMainConstants.counterClockwisePositive = false;
 
 			kWristServoConstants.kHomePosition = 0; // degrees
-			kWristServoConstants.kRotationsPerUnitDistance = (1/360.0) * 2;
+			kWristServoConstants.kRotationsPerUnitDistance = (1/360.0) * 10;
 
 			kWristServoConstants.kMaxUnitsLimit = 200;
 			kWristServoConstants.kMinUnitsLimit = 0.0;
 
-			kWristServoConstants.kKp = 20;
-			kWristServoConstants.kKi = 13;
-			kWristServoConstants.kKd = .5;
+			kWristServoConstants.kKp = 15;
+			kWristServoConstants.kKi = 2.6;
+			kWristServoConstants.kKd = .1;
 			kWristServoConstants.kKa = 0.0;
-			kWristServoConstants.kKs = 0.2;
-			kWristServoConstants.kKv = .5;
+			kWristServoConstants.kKs = 0.04;
+			kWristServoConstants.kKv = .1;
 
 
 			kWristServoConstants.kCruiseVelocity = 80000; // degrees / s

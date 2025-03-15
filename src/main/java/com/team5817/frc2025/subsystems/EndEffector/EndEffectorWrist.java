@@ -13,6 +13,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
+
+import java.util.concurrent.ConcurrentHashMap.KeySetView;
+
 import org.littletonrobotics.junction.Logger;
 
 public class EndEffectorWrist extends ServoMotorSubsystem{
@@ -45,16 +48,17 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 	public enum State {
 
-		L4(81.2, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
-		L3(0, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
-		L2(15, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
+		L4(91.2, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
+		L3(24, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
+		L2(31.4, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
 		L1(0, kStrictError),
-		A1(200, kMediumError),
-		A2(200, kMediumError),
-		NET(164, kMediumError),
+		A1(180.342, kMediumError),
+		A2(180.342, kMediumError),
+		NET(175.342, kMediumError),
 		ZERO(0, kLenientError),
-		INTAKING(164, kStrictError),
-		STOW(164, kStrictError);
+		INTAKING(175.342, kStrictError),
+		PINCH(131, 70),
+		STOW(175.342, kStrictError);
 
 		double output = 0;
 		double allowable_error = 0;
@@ -162,6 +166,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 				.transformBy(new Transform3d(new Translation3d(.221, 0, .278), new Rotation3d(Units.degreesToRadians(0),
 						Units.degreesToRadians(180+14.252+demand), Units.degreesToRadians(0))));
 		Logger.recordOutput("EndEffectorWrist/Offset", this.offset);
+		Logger.recordOutput(mConstants.kName+"/AtState", atState);
 		super.outputTelemetry();
 	}
 
