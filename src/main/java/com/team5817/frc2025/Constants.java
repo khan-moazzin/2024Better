@@ -379,7 +379,6 @@ public class Constants {
 		static {
 
 			kDeployServoConstants.kName = "Deploy";
-			
 			kDeployServoConstants.simIO = isComp? false:true;
 
 			kDeployServoConstants.kMainConstants.id = Ports.INTAKE_PIVOT;
@@ -387,22 +386,22 @@ public class Constants {
 			
 
 			kDeployServoConstants.kHomePosition = 0; // degrees
-			kDeployServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0)*13/3;
+			kDeployServoConstants.kRotationsPerUnitDistance = (1.0 / 360.0)*20;
 
 			kDeployServoConstants.kMaxUnitsLimit = 100000;
 			kDeployServoConstants.kMinUnitsLimit = -100000;
 
-			kDeployServoConstants.kKp = 18;
+			kDeployServoConstants.kKp = 2.8125	;
 			kDeployServoConstants.kKi = 0.0;   
 			kDeployServoConstants.kKd = 0;
 			kDeployServoConstants.kKa = 0;
 			kDeployServoConstants.kKs = 0;
 			kDeployServoConstants.kKv = 0;
-			kDeployServoConstants.kKg = 1.7;
+			kDeployServoConstants.kKg = 0.265625;
 
  
-			kDeployServoConstants.kCruiseVelocity = 8*360*3/13; 
-			kDeployServoConstants.kAcceleration = 7*360*3/13; 
+			kDeployServoConstants.kCruiseVelocity = 8*360*1/20; 
+			kDeployServoConstants.kAcceleration = 7*360*1/20; 
 
 			kDeployServoConstants.kMaxForwardOutput = 12.0;
 			kDeployServoConstants.kMaxReverseOutput = -12.0;
@@ -417,7 +416,7 @@ public class Constants {
 
 			kDeployServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
-			kDeployEncoderConstants.rotor_to_sensor_ratio = 13/3;
+			kDeployEncoderConstants.rotor_to_sensor_ratio = 20;
 			kDeployEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
 
 			kDeployServoConstants.kHomingOutput = -2;
@@ -472,18 +471,18 @@ public class Constants {
 			kElevatorServoConstants.kFollowerConstants = new TalonFXConstants[]{followerConstants};
 
 			kElevatorServoConstants.kHomePosition = 0; // degrees
-			kElevatorServoConstants.kRotationsPerUnitDistance = 72.82/1.4;
+			kElevatorServoConstants.kRotationsPerUnitDistance = 72.82/1.4*3/4;
 
 			kElevatorServoConstants.kMaxUnitsLimit = 2;
 			kElevatorServoConstants.kMinUnitsLimit = 0.0;
 
-			kElevatorServoConstants.kKp = 8.0;
-			kElevatorServoConstants.kKi = 0.5;
-			kElevatorServoConstants.kKd = 0.15;
-			kElevatorServoConstants.kKa = 0.0;
-			kElevatorServoConstants.kKs = 1.05983;
-			kElevatorServoConstants.kKv = 7.52928;
-			kElevatorServoConstants.kKg = 0.0;
+			kElevatorServoConstants.kKp = 8.0*3/4;
+			kElevatorServoConstants.kKi = 0.5*3/4;
+			kElevatorServoConstants.kKd = 0.15*3/4;
+			kElevatorServoConstants.kKa = 0.0*3/4;
+			kElevatorServoConstants.kKs = 1.05983*3/4;
+			kElevatorServoConstants.kKv = 7.52928*3/4;
+			kElevatorServoConstants.kKg = 0.0*3/4;
 
 			kElevatorServoConstants.kCruiseVelocity = 80000.0; // degrees / s
 			kElevatorServoConstants.kAcceleration = 10000.0; // degrees / s^2
