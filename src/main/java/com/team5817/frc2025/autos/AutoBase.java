@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 public abstract class AutoBase {
 
     protected SwerveDriveSimulation mSim;
-    private double startTime;
+    protected double startTime;
     boolean mActive = false;
 
     /**

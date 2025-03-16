@@ -30,10 +30,12 @@ public class TrajectorySet {
      * @param trajectories The trajectories to add to the set.
      */
     public TrajectorySet(Boolean mirrored, Trajectory... trajectories) {
+       int count = 0; 
         this.mirrored = mirrored;
         for (Trajectory t : trajectories) {
+            count++;
             if(t == null){
-                System.out.println("Trajectory is null");
+                System.out.println("Trajectory"+count+" is null");
                 continue;
             }
             t.setMirrored(mirrored);

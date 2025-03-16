@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "STo_8A"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "_8AToFH"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FHTo_7A"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "_7AToFH"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FHTo_7B"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

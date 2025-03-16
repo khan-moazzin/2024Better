@@ -236,7 +236,6 @@ public class Superstructure extends Subsystem {
 	public void addRequestToQueue(Request req) {
 		queuedRequests.add(req);
 	}
-
 	@Override
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {

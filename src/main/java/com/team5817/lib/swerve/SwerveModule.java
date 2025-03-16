@@ -175,7 +175,7 @@ public class SwerveModule extends Subsystem {
 				.withFeedForward(0).withSlot(0).withOverrideBrakeDurNeutral(false).withLimitForwardMotion(false)
 				.withLimitReverseMotion(false));
 		if (mOutputs.driveType == DriveType.OPENLOOP)
-			mDriveMotor.setControl(new VoltageOut(mOutputs.driveDemand));
+			mDriveMotor.setControl(new VoltageOut(mOutputs.driveDemand).withEnableFOC(true));
 		else if (mOutputs.driveType == DriveType.VELOCITY)
 			mDriveMotor.setControl(new VelocityVoltage(mOutputs.driveVelocity).withFeedForward(0).withEnableFOC(true)
 					.withOverrideBrakeDurNeutral(false));

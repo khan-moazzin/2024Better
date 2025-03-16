@@ -138,7 +138,7 @@ public class Constants {
 		/* Swerve Profiling Values */
 		public static final double maxSpeed = 5; // meters per second
 		public static final double maxAcceleration = 6; // meters per second
-		public static final double maxAngularVelocity = 11.5;
+		public static final double maxAngularVelocity = 6;
 		public static final double maxAngularAcceleration = maxAcceleration /
 				Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
 
@@ -498,7 +498,7 @@ public class Constants {
 			kElevatorServoConstants.kEnableStatorCurrentLimit = true;
 			kElevatorServoConstants.kStatorCurrentLimit = 80; // amps
 
-			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Coast;
+			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
 			
 			kElevatorServoConstants.kHomingTimeout = 0.2;
 			kElevatorServoConstants.kHomingOutput = -1;

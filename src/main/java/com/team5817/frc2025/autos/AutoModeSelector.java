@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 import java.util.Optional;
 
+import com.team5817.frc2025.autos.Modes.CustomGroundMode;
 import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
 
@@ -24,29 +25,40 @@ public class AutoModeSelector {
 	}
 
 	public enum PickupLocation{
-		FAR,
-		CLOSE,
+		FAR("FH"),
+		GROUND("G"),
+		CLOSE("CH"),
+		PRESTAGED1("P1"),
+		PRESTAGED2("P2"),
+		PRESTAGED3("P3");
+		public String name = "";
+		PickupLocation(String name){
+			this.name = name;
+		}
 	}
 
 	public enum DesiredMode {
 		DO_NOTHING,
-		THREE_CORAL_MODE,
 		CUSTOM_MODE,
+		CUSTOM_GROUND_MODE
 	}
 	public enum StartingPosition {
 
-		PROCCESSOR_SIDE(DesiredMode.CUSTOM_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING),
-		CENTER_PROCESS(DesiredMode.CUSTOM_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING),
-		CENTER_BLANK(true, DesiredMode.CUSTOM_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING),
-		BLANK_SIDE(true, DesiredMode.CUSTOM_MODE, DesiredMode.THREE_CORAL_MODE, DesiredMode.DO_NOTHING);
+		PROCCESSOR_SIDE("S",DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING),
+		CENTER_PROCESS("C",DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING),
+		CENTER_BLANK("C",true, DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING),
+		BLANK_SIDE("S",true, DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING);
 
 		public List<DesiredMode> modes;
 		public Boolean mirrored = false;
-		private StartingPosition(DesiredMode... modes) {
+		public String name = "";
+		private StartingPosition(String name, DesiredMode... modes) {
+			this.name = name;
 			this.modes = List.of(modes);
 			this.mirrored = false;
 		} 
-		private StartingPosition(Boolean mirrored, DesiredMode... modes) {
+		private StartingPosition(String name, Boolean mirrored, DesiredMode... modes) {
+			this.name = name;
 			this.modes = List.of(modes);
 			this.mirrored = mirrored;
 		}
@@ -54,7 +66,9 @@ public class AutoModeSelector {
 
 	private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
 	private StartingPosition mCachedStartingPosition = StartingPosition.PROCCESSOR_SIDE;
-	private PickupLocation mCachedPickupLocation = PickupLocation.FAR;
+	private PickupLocation mCachedFirstPickupLocation = PickupLocation.FAR;
+	private PickupLocation mCachedSecondPickupLocation = PickupLocation.FAR;
+	private PickupLocation mCachedThirdPickupLocation = PickupLocation.FAR;
 	private ScoringLocation mCachedFirstScore = ScoringLocation._3A;
 	private ScoringLocation mCachedSecondScore = ScoringLocation._7A;
 	private ScoringLocation mCachedThirdScore = ScoringLocation._7B;
@@ -65,7 +79,9 @@ public class AutoModeSelector {
 
 	private static SendableChooser<DesiredMode> mModeChooser = new SendableChooser<>();
 	private static SendableChooser<StartingPosition> mStartingPositionSelector = new SendableChooser<>();
-	private static SendableChooser<PickupLocation> mPickupLocationSelector = new SendableChooser<>();
+	private static SendableChooser<PickupLocation> mFirstPickupLocationSelector = new SendableChooser<>();
+	private static SendableChooser<PickupLocation> mSecondPickupLocationSelector = new SendableChooser<>();
+	private static SendableChooser<PickupLocation> mThirdPickupLocationSelector = new SendableChooser<>();
 
 	private static SendableChooser<ScoringLocation> mFirstScoreSelector = new SendableChooser<>();
 	private static SendableChooser<ScoringLocation> mSecondScoreSelector = new SendableChooser<>();
@@ -83,8 +99,29 @@ public class AutoModeSelector {
 		mStartingPositionSelector.addOption("Center Blank Side", StartingPosition.CENTER_BLANK);
 		mStartingPositionSelector.addOption("Blank Side", StartingPosition.BLANK_SIDE);
 
-		mPickupLocationSelector.setDefaultOption("Far", PickupLocation.FAR);
-		mPickupLocationSelector.addOption("Close", PickupLocation.CLOSE);
+		mFirstPickupLocationSelector.setDefaultOption("Far", PickupLocation.FAR);
+		mFirstPickupLocationSelector.addOption("Close", PickupLocation.CLOSE);
+		mFirstPickupLocationSelector.addOption("Prestaged 1", PickupLocation.PRESTAGED1);
+		mFirstPickupLocationSelector.addOption("Prestaged 2", PickupLocation.PRESTAGED2);
+		mFirstPickupLocationSelector.addOption("Prestaged 3", PickupLocation.PRESTAGED3);
+		mFirstPickupLocationSelector.addOption("Attempt Ground", PickupLocation.GROUND);
+		
+		mSecondPickupLocationSelector.setDefaultOption("Far", PickupLocation.FAR);
+		mSecondPickupLocationSelector.addOption("Close", PickupLocation.CLOSE);
+		mSecondPickupLocationSelector.addOption("Prestaged 1", PickupLocation.PRESTAGED1);
+		mSecondPickupLocationSelector.addOption("Prestaged 2", PickupLocation.PRESTAGED2);
+		mSecondPickupLocationSelector.addOption("Prestaged 3", PickupLocation.PRESTAGED3);
+		mSecondPickupLocationSelector.addOption("Attempt Ground", PickupLocation.GROUND);
+
+		mThirdPickupLocationSelector.setDefaultOption("Far", PickupLocation.FAR);
+		mThirdPickupLocationSelector.addOption("Close", PickupLocation.CLOSE);
+		mThirdPickupLocationSelector.addOption("Prestaged 1", PickupLocation.PRESTAGED1);
+		mThirdPickupLocationSelector.addOption("Prestaged 2", PickupLocation.PRESTAGED2);
+		mThirdPickupLocationSelector.addOption("Prestaged 3", PickupLocation.PRESTAGED3);
+		mThirdPickupLocationSelector.addOption("Attempt Ground", PickupLocation.GROUND);
+
+
+		
 
 		mFirstScoreSelector.setDefaultOption("3A", ScoringLocation._3A);
 		mFirstScoreSelector.addOption("8A", ScoringLocation._8A);
@@ -126,7 +163,9 @@ public class AutoModeSelector {
 		}
 		mAutoMode = getAutoModeForParams(desiredMode);
 
-		mCachedPickupLocation = mPickupLocationSelector.getSelected();
+		mCachedFirstPickupLocation = mFirstPickupLocationSelector.getSelected();
+		mCachedSecondPickupLocation = mSecondPickupLocationSelector.getSelected();
+		mCachedThirdPickupLocation = mThirdPickupLocationSelector.getSelected();
 		mCachedFirstScore = mFirstScoreSelector.getSelected();
 		mCachedSecondScore = mSecondScoreSelector.getSelected();
 		mCachedThirdScore = mThirdScoreSelector.getSelected();
@@ -134,14 +173,23 @@ public class AutoModeSelector {
 		
 		SmartDashboard.putData("Starting Position", mStartingPositionSelector);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
-		SmartDashboard.putData("Pickup Location", mPickupLocationSelector);
 
 		if(desiredMode == DesiredMode.CUSTOM_MODE){
 			SmartDashboard.putData("First Score Selector", mFirstScoreSelector);
 			SmartDashboard.putData("Second Score Selector", mSecondScoreSelector);
 			SmartDashboard.putData("Third Score Selector", mThirdScoreSelector);
 			SmartDashboard.putData("Score Amount", mScoreAmountSelector);
+			SmartDashboard.putData("Pickup Location", mFirstPickupLocationSelector);
 
+		}else if(desiredMode == DesiredMode.CUSTOM_GROUND_MODE){
+			SmartDashboard.putData("First Score Selector", mFirstScoreSelector);
+			SmartDashboard.putData("Second Score Selector", mSecondScoreSelector);
+			SmartDashboard.putData("Third Score Selector", mThirdScoreSelector);
+			SmartDashboard.putData("Score Amount", mScoreAmountSelector);
+
+			SmartDashboard.putData("First Pickup Selector", mFirstPickupLocationSelector);
+			SmartDashboard.putData("Second Pickup Selector", mSecondPickupLocationSelector);
+			SmartDashboard.putData("Third Pickup Selector", mThirdPickupLocationSelector);
 		}
 		
 }
@@ -158,8 +206,9 @@ public class AutoModeSelector {
 				return Optional.of(new DoNothingMode());
 
 			case CUSTOM_MODE:
-				return Optional.of(new CustomMode(mCachedStartingPosition, mCachedPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore));
-
+				return Optional.of(new CustomMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
+			case CUSTOM_GROUND_MODE:
+				return Optional.of(new CustomGroundMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedSecondPickupLocation, mCachedThirdPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
 		default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
 				break;
@@ -177,6 +226,7 @@ public class AutoModeSelector {
 	public static SendableChooser<DesiredMode> getModeChooser() {
 		return mModeChooser;
 	}
+
 
 	/**
 	 * Returns the cached desired autonomous mode.

@@ -28,13 +28,18 @@
       "linkedName": "CH"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8071570576540755,
+      "rotationDegrees": 55.886
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 9.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,10 +47,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 55.88552705465877
+    "rotation": 55.886
   },
   "reversed": false,
-  "folder": null,
+  "folder": "8BTo",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 121.16514684334126

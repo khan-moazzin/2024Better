@@ -28,13 +28,18 @@
       "linkedName": "8A"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8261421319796953,
+      "rotationDegrees": 121.16500000000002
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 9.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,10 +47,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 121.16514684334126
+    "rotation": 121.16500000000002
   },
   "reversed": false,
-  "folder": null,
+  "folder": "STo",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

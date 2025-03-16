@@ -26,6 +26,7 @@ import com.team5817.BuildConstants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.AutoExecuter;
 import com.team5817.frc2025.autos.AutoModeSelector;
+import com.team5817.frc2025.autos.TrajectoryLibrary;
 import com.team5817.frc2025.autos.Modes.Characterize;
 import com.team5817.frc2025.autos.Modes.TestRoutine;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
@@ -50,6 +51,7 @@ import com.team5817.lib.diagnostic.FeedForwardCharacterization;
 import com.team5817.lib.diagnostic.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 
+import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -134,6 +136,7 @@ public class Robot extends LoggedRobot {
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
                     // be added.
     // s = Superstructure.getInstance();
+    l.init();
 
     mDrive = Drive.getInstance();
     mSubsystemManager = SubsystemManager.getInstance();
