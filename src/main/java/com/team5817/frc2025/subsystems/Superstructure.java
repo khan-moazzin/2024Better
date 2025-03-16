@@ -537,7 +537,7 @@ public class Superstructure extends Subsystem {
 	 * @return A request for scoring.
 	 */
 	private Request netRequest(SuperstructureState goal) {
-		if (!(goal.mType == SuperstructureState.Type.SCORING)) {
+		if (!(goal.mType == SuperstructureState.Type.NET)) {
 			System.out.println("Wrong Goal Type");
 		}
 		return new SequentialRequest(

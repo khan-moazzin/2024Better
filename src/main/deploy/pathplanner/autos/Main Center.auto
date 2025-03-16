@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CTo_3A"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3ATo3O"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3OTo3C"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

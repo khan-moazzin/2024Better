@@ -44,14 +44,14 @@ public class EndEffectorRollers extends Subsystem {
 	private double roller_demand = 0;
 	public enum State {
 		IDLE(0.0),
-		HOLD(2.0),
-		CORAL_INTAKE(4.0),
-		l4(-6.0),
-		l3(-8.0),
-		l2(-8.0),
-		l1(-3),
-		ALGAE_INTAKE(12.0),
-		ALGAE_OUTTAKE(-6.0);
+		HOLD(-2.0),
+		CORAL_INTAKE(-4.0),
+		l4(6.0),
+		l3(8.0),
+		l2(8.0),
+		l1(3),
+		ALGAE_INTAKE(-12.0),
+		ALGAE_OUTTAKE(6.0);
 
 		public double roller_voltage;
 

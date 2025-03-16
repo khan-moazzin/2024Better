@@ -54,7 +54,7 @@ public class Elevator extends ServoMotorSubsystem {
 		L1(0.219, kStrictError),
 		A1(0.59, kMediumError),
 		A2(1, kMediumError),
-		NET(2.035, kMediumError),
+		NET(2.035, kStrictError),
 		ZERO(0, kLenientError),
 		PROCESS(0.0, kLenientError),
 		CLEAR(1.9,kStrictError),

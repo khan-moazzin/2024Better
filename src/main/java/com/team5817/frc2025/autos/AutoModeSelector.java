@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 import java.util.Optional;
 
+import com.team5817.frc2025.autos.Modes.Center11;
 import com.team5817.frc2025.autos.Modes.CustomGroundMode;
 import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
@@ -40,13 +41,14 @@ public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
 		CUSTOM_MODE,
-		CUSTOM_GROUND_MODE
+		CUSTOM_GROUND_MODE,
+		CENTER_MAIN
 	}
 	public enum StartingPosition {
 
 		PROCCESSOR_SIDE("S",DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING),
-		CENTER_PROCESS("C",DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING),
-		CENTER_BLANK("C",true, DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING),
+		CENTER_PROCESS("C",DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
+		CENTER_BLANK("C",true, DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
 		BLANK_SIDE("S",true, DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING);
 
 		public List<DesiredMode> modes;
@@ -209,6 +211,8 @@ public class AutoModeSelector {
 				return Optional.of(new CustomMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
 			case CUSTOM_GROUND_MODE:
 				return Optional.of(new CustomGroundMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedSecondPickupLocation, mCachedThirdPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
+			case CENTER_MAIN:
+				return Optional.of(new Center11(mCachedStartingPosition));
 		default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
 				break;

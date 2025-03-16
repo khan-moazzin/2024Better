@@ -21,7 +21,6 @@ public class DoNothingMode extends AutoBase{
 	@Override
 	public void routine() {
         System.out.println("Did Nothing");
-        System.out.println("Finished auto!");
 	}
 	// spotless:on
    
