@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.team254.lib.drivers.TalonUtil;
+import com.team254.lib.util.TimeDelayedBoolean;
 import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.Constants.IntakeRollerConstants;
 import com.team5817.frc2025.loops.ILooper;
@@ -121,13 +122,14 @@ public class IntakeRollers extends Subsystem {
 	}
 	public Request waitForStuckRequest(){
 		return new Request() {
+			TimeDelayedBoolean timeout = new TimeDelayedBoolean();
 
 			@Override
 			public void act() {
 			}
 			@Override
 			public boolean isFinished() {
-				return mIntakeRollerInputs.roller_stator_current>40;
+				return timeout.update(mIntakeRollerInputs.roller_stator_current>70, 1);
 			}
 			
 		};

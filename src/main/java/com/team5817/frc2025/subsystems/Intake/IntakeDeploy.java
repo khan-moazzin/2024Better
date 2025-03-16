@@ -42,7 +42,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 */
 	public enum State {
 		DEPLOY(-141, kStrictError), 
-		CLEAR(-120, kLenientError), 
+		CLEAR(-57, kLenientError), 
 		STOW(1, kMediumError),
 		ALGAE(64., kMediumError),
 		HUMAN(80-141., kStrictError),
