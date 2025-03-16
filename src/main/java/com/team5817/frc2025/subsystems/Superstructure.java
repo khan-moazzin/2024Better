@@ -424,6 +424,9 @@ public class Superstructure extends Subsystem {
 				case NET:
 					r= netRequest(goal.goal);
 					break;
+				case SMARTCORALINTAKE:
+					r = smartCoralIntakeRequest(goal.goal);
+					break;
 			}
 			request(r);
 		}
@@ -498,6 +501,26 @@ public class Superstructure extends Subsystem {
 			new WaitRequest(0.3)
 		// breakWait(mIndexerBeam, true)
 		).addName("Intaking");
+	}
+	private Request smartCoralIntakeRequest(SuperstructureState goal){
+		if (!(goal.mType == SuperstructureState.Type.SMARTCORALINTAKE)) {
+			System.out.println("Wrong Goal Type");
+			return new ParallelRequest();
+		}
+		return new SequentialRequest(
+				new ParallelRequest(// TODO might need to add indexing as part of this, bring intake up but keep
+									// indexing to get in end effector
+						// mLEDs.stateRequest(TimedLEDState.INTAKING),
+						mElevator.stateRequest(goal.mElevatorState),
+						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
+						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
+						mIndexer.stateRequest(goal.mIndexerState),
+						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
+						// mClimb.stateRequest(goal.mClimbState),
+						mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
+						mIntakeRollers.waitForStuckRequest(),
+						mIntakeDeploy.stateRequest(IntakeDeploy.State.CLEAR)
+		).addName("Smart Intaking");
 	}
 
 	/**
