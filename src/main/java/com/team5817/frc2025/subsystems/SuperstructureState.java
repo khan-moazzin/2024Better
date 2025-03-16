@@ -32,7 +32,8 @@ public class SuperstructureState {
 		CLEAN,
 		INTAKING,
 		IDLE,
-		NET
+		NET,
+		SMARTCORALINTAKE
 	};
 	
 	/**
