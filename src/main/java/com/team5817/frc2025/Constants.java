@@ -624,7 +624,7 @@ public class Constants {
 		public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
 			kHighOffsetMap.put(0.0381, 0.0);
-			kHighOffsetMap.put(.1381, -20.0);
+			kHighOffsetMap.put(.1381, -5.0);
 		}
 		public static final InterpolatingDoubleTreeMap kMidOffsetMap = new InterpolatingDoubleTreeMap();
 		static {

@@ -36,13 +36,13 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	final static double kStrictError = 20;
 	final static double kMediumError = 50;
 	final static double kLenientError = 80;
-
+	private State mState = State.ZERO;
 	/**
 	 * Represents the different states of the intake deployment.
 	 */
 	public enum State {
 		DEPLOY(-126, kStrictError), 
-		CLEAR(0.0, kLenientError), 
+		CLEAR(-57, kLenientError), 
 		STOW(1, kMediumError),
 		ALGAE(64., kMediumError),
 		HUMAN(80-141., kStrictError),
@@ -101,11 +101,6 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public void onLoop(double timestamp) {
-				if (getSetpoint() == mConstants.kHomePosition  && mWantsHome && !mHoming) {
-					setWantHome(true);
-				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
-					setWantHome(false);
-				}
 			}
 		});
 	}
@@ -124,6 +119,10 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 */
 	@Override
 	public void writePeriodicOutputs() {
+		if(!mState.disable&&mControlState == ControlState.MOTION_MAGIC)
+			setSetpointMotionMagic(mState.output);
+		else
+			setOpenLoop(0);
 		super.writePeriodicOutputs();
 	}
 
@@ -158,11 +157,8 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	public boolean checkSystem() {
 		return false;
 	}
-	public void conformToState(State _wantedState){
-		if(!_wantedState.disable)
-			setSetpointMotionMagic(_wantedState.output);
-		else
-			setOpenLoop(0);
+	public void conformToState(State state){
+		mState = state;
 	}
 
 	/**
@@ -180,6 +176,9 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		return new Request() {
 			@Override
 			public void act() {
+				if (mControlState != ControlState.MOTION_MAGIC) {
+					mControlState = ControlState.MOTION_MAGIC;
+				}
 				conformToState(_wantedState);
 			}
 
