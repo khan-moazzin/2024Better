@@ -34,7 +34,7 @@ public class CustomGroundMode extends AutoBase {
 	private TrajectorySet t;
 	private int coral_amount = 0;
 
-	private double enterDistance = 2;
+	private double enterDistance = 3;
 	private double exitDistance = 1.5;
 	private double coralSpit = .25;
 	private double intakeWait = 0;
@@ -132,7 +132,7 @@ public class CustomGroundMode extends AutoBase {
 						}))))));
 		r(new WaitAction(intakeWait));
 		System.out.println("Collected 1st coral"+" at "+ (Timer.getTimestamp()-startTime));
-
+		s.setGoal(GoalState.STOW);
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next(),scoreTimeout),
@@ -162,6 +162,8 @@ public class CustomGroundMode extends AutoBase {
 
 		r(new WaitAction(intakeWait));
 		System.out.println("Collected 2nd coral"+" at "+ (Timer.getTimestamp()-startTime));
+		s.setGoal(GoalState.STOW);
+
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next(),scoreTimeout),

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.633125,
-        "y": 2.2212500000000004
+        "x": 1.581887755102041,
+        "y": 3.304942602040816
       },
       "isLocked": false,
       "linkedName": "P2"
@@ -36,7 +36,7 @@
     "maxVelocity": 9.0,
     "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 360.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

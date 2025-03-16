@@ -39,8 +39,8 @@ public class IntakeRollers extends Subsystem {
 	public enum State {
 		IDLE(0.0),
 		INTAKING_CORAL(-8.0),
-		INTAKING_ALGAE(-8.0),
-		SHOOTING_ALGAE(8),
+		INTAKING_ALGAE(8.0),
+		SHOOTING_ALGAE(-8),
 		EXHAUST(6.0);
 
 		public double roller_voltage;
