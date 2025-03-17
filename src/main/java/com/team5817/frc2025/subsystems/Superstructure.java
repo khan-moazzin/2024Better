@@ -130,7 +130,7 @@ public class Superstructure extends Subsystem {
 				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
 		GROUND_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING,
 				IntakeDeploy.State.DEPLOY, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE,
-				IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
+				IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.SMARTCORALINTAKE)),
 		GROUND_ALGAE_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW,
 				IntakeDeploy.State.ALGAE, Climb.State.STOW, EndEffectorRollers.State.IDLE,
 				IntakeRollers.State.INTAKING_ALGAE, Indexer.State.IDLE, SuperstructureState.Type.INTAKING)),

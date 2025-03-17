@@ -129,7 +129,7 @@ public class IntakeRollers extends Subsystem {
 			}
 			@Override
 			public boolean isFinished() {
-				return timeout.update(mIntakeRollerInputs.roller_stator_current>70, 1);
+				return timeout.update(mIntakeRollerInputs.roller_stator_current>70, 0.05);
 			}
 			
 		};
