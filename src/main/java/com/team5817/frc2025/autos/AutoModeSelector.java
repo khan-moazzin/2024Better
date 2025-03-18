@@ -10,6 +10,7 @@ import com.team5817.frc2025.autos.Modes.Center11;
 import com.team5817.frc2025.autos.Modes.CustomGroundMode;
 import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
+import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 
 /**
  * This class is responsible for selecting the autonomous mode for the robot.
@@ -27,14 +28,20 @@ public class AutoModeSelector {
 
 	public enum PickupLocation{
 		FAR("FH"),
-		GROUND("G"),
+		GROUND("G",GoalState.GROUND_CORAL_INTAKE),
 		CLOSE("CH"),
-		PRESTAGED1("P1"),
-		PRESTAGED2("P2"),
-		PRESTAGED3("P3");
+		PRESTAGED1("P1",GoalState.GROUND_CORAL_INTAKE),
+		PRESTAGED2("P2",GoalState.GROUND_CORAL_INTAKE),
+		PRESTAGED3("P3",GoalState.GROUND_CORAL_INTAKE);
 		public String name = "";
-		PickupLocation(String name){
+		public GoalState state = GoalState.HUMAN_CORAL_INTAKE;
+
+		PickupLocation(String name,GoalState ground){
 			this.name = name;
+			this.state = ground;
+		}
+		PickupLocation(String name){
+			this(name,GoalState.HUMAN_CORAL_INTAKE);
 		}
 	}
 

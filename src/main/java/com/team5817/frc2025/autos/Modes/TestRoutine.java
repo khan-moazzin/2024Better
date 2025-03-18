@@ -78,7 +78,7 @@ public class TestRoutine extends AutoBase {
         r(new WaitforControllerInput());
         r(new WaitAction(1));
 
-        mIntakeDeploy.stateRequest(IntakeDeploy.State.DEPLOY).act();
+        mIntakeDeploy.stateRequest(IntakeDeploy.State.GROUND).act();
         System.out.println("Intake DEPLOYING");
         Elastic.sendNotification(new Notification(NotificationLevel.INFO, "TEST ROUTINE", "Intake DEPLOYING"));
         r(new WaitforControllerInput());
@@ -111,7 +111,7 @@ public class TestRoutine extends AutoBase {
         mEndEffectorRollers.stateRequest(EndEffectorRollers.State.IDLE).act();
         r(new WaitAction(1));
 
-        mIntakeDeploy.stateRequest(IntakeDeploy.State.DEPLOY).act();
+        mIntakeDeploy.stateRequest(IntakeDeploy.State.GROUND).act();
         mIntakeRollers.setState(IntakeRollers.State.INTAKING_CORAL);
         System.out.println("Intake should Be INTAKING");
         Elastic.sendNotification(new Notification(NotificationLevel.INFO, "TEST ROUTINE", "Intake should be INTAKING"));

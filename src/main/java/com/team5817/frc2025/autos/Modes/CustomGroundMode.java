@@ -46,9 +46,9 @@ public class CustomGroundMode extends AutoBase {
 	private String secondScoreName;
 	private String thirdScoreName;
 
-	private GoalState firstPickupState;
-	private GoalState secondPickupState;
-	private GoalState thirdPickupState;
+	private PickupLocation firstPickup;
+	private PickupLocation secondPickup;
+	private PickupLocation thirdPickup;
 
 	/**
 	 * Constructs a CustomThreeCoralMode with the specified starting position, pickup location, and scoring locations.
@@ -76,15 +76,16 @@ public class CustomGroundMode extends AutoBase {
 	
 	startingTrajectory = l.trajectories.get(startingPosition.name + "To" + firstScoreName);
 	firstPickupTrajectory = l.trajectories.get(firstScoreName + "To" + firstPickup.name);
-	firstPickupState = firstPickup.name.startsWith("P")?GoalState.GROUND_CORAL_INTAKE:GoalState.HUMAN_CORAL_INTAKE;
 
 	secondScoreTrajectory = l.trajectories.get(firstPickup.name + "To" + secondScoreName);
 	secondPickupTrajectory = l.trajectories.get(secondScoreName + "To" + secondPickup.name);
-	secondPickupState = secondPickup.name.startsWith("P")?GoalState.GROUND_CORAL_INTAKE:GoalState.HUMAN_CORAL_INTAKE;
 
 	thirdScoreTrajectory = l.trajectories.get(secondPickup.name + "To" + thirdScoreName);
 	thirdPickupTrajectory = l.trajectories.get(thirdScoreName + "To" + thirdPickup.name);
-	thirdPickupState = thirdPickup.name.startsWith("P")?GoalState.GROUND_CORAL_INTAKE:GoalState.HUMAN_CORAL_INTAKE;
+
+	this.firstPickup = firstPickup;
+	this.secondPickup = secondPickup;
+	this.thirdPickup = thirdPickup;
 
 	 
 	t = new TrajectorySet(
@@ -128,8 +129,9 @@ public class CustomGroundMode extends AutoBase {
 				new SequentialAction(List.of(
 						new WaitToPassDistanceToReef(exitDistance),
 						new LambdaAction(() -> {
-							s.setGoal(firstPickupState);
+							s.setGoal(firstPickup.state);
 						}))))));
+		
 		r(new WaitAction(intakeWait));
 		System.out.println("Collected 1st coral"+" at "+ (Timer.getTimestamp()-startTime));
 		s.setGoal(GoalState.STOW);
@@ -157,7 +159,7 @@ public class CustomGroundMode extends AutoBase {
 				new SequentialAction(List.of(
 						new WaitToPassDistanceToReef(exitDistance),
 						new LambdaAction(() -> {
-							s.setGoal(secondPickupState);
+							s.setGoal(secondPickup.state);
 						}))))));
 
 		r(new WaitAction(intakeWait));
@@ -185,7 +187,7 @@ public class CustomGroundMode extends AutoBase {
 				new SequentialAction(List.of(
 						new WaitToPassDistanceToReef(exitDistance),
 						new LambdaAction(() -> {
-							s.setGoal(thirdPickupState);
+							s.setGoal(thirdPickup.state);
 						}))))));
 					}
 }

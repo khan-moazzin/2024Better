@@ -41,7 +41,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 * Represents the different states of the intake deployment.
 	 */
 	public enum State {
-		DEPLOY(-126, kStrictError), 
+		GROUND(-126, kStrictError), 
 		CLEAR(-88, kLenientError), 
 		STOW(1, kMediumError),
 		ALGAE(64., kMediumError),
@@ -84,7 +84,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	public IntakeDeploy(final ServoMotorSubsystemConstants constants, final AbsoluteEncoderConstants encoder_constants) {
 		super(constants, encoder_constants);
 		enableSoftLimits(false);
-		setSetpointMotionMagic(State.DEPLOY.output);
+		setSetpointMotionMagic(State.GROUND.output);
 	}
 
 

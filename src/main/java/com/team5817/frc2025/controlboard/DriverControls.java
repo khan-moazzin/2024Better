@@ -54,7 +54,7 @@ public class DriverControls {
 
 
 		if(driver.getAButton())
-			IntakeDeploy.getInstance().stateRequest(IntakeDeploy.State.DEPLOY).act();
+			IntakeDeploy.getInstance().stateRequest(IntakeDeploy.State.GROUND).act();
 		if(driver.getBButton())
 			IntakeDeploy.getInstance().stateRequest(IntakeDeploy.State.STOW).act();
 		

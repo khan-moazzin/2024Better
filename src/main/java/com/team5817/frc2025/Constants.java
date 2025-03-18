@@ -77,7 +77,7 @@ public class Constants {
 			{ 0.0, 0.0, 0.0 }
 	};
 
-	public static final double kBumberSideLength = Units.inchesToMeters(36.125-3);
+	public static final double kBumberSideLength = Units.inchesToMeters(36.125-3)+0.3048;
 
 
     public static final double kDefaultDistanceToReef = 3;
@@ -177,7 +177,7 @@ public class Constants {
 
 		static {
 			kSwerveKinematicLimits.kMaxDriveVelocity = maxSpeed;
-			kSwerveKinematicLimits.kMaxDriveAcceleration = 150;
+			kSwerveKinematicLimits.kMaxDriveAcceleration = 200;
 			kSwerveKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
 		public static final SwerveKinematicLimits kExtendedKinematicLimits = new SwerveKinematicLimits();
@@ -400,8 +400,8 @@ public class Constants {
 			kDeployServoConstants.kKg = 0.265625;
 
  
-			kDeployServoConstants.kCruiseVelocity = 8*360*1/20; 
-			kDeployServoConstants.kAcceleration = 7*360*1/20; 
+			kDeployServoConstants.kCruiseVelocity = 16*360*1/20; 
+			kDeployServoConstants.kAcceleration = 16*360*1/20; 
 
 			kDeployServoConstants.kMaxForwardOutput = 12.0;
 			kDeployServoConstants.kMaxReverseOutput = -12.0;
@@ -623,13 +623,13 @@ public class Constants {
 		}
 		public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
-			kHighOffsetMap.put(0.0381, 0.0);
-			kHighOffsetMap.put(.1381, -5.0);
+			kHighOffsetMap.put(0.0, 0.0);
+			kHighOffsetMap.put(.1, -5.0);
 		}
 		public static final InterpolatingDoubleTreeMap kMidOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
-			kMidOffsetMap.put(0.0381, 0.0);
-			kMidOffsetMap.put(.1381, -5.0);
+			kMidOffsetMap.put(0.0, 0.0);
+			kMidOffsetMap.put(.1, -5.0);
 		}
 	}
 
