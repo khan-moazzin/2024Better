@@ -4,6 +4,7 @@ import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.EndEffectorWristConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
+import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 import com.team5817.lib.requests.Request;
@@ -158,13 +159,13 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 	@Override
 	public void outputTelemetry() {
-		Robot.mechPoses[5] = Robot.mechPoses[4]
-				.transformBy(new Transform3d(new Translation3d(.221, 0, .278), new Rotation3d(Units.degreesToRadians(0),
-						Units.degreesToRadians(180+14.252+mServoInputs.position_units), Units.degreesToRadians(0))));
+		Robot.mechPoses[4] = Robot.mechPoses[3]
+				.transformBy(new Transform3d(new Translation3d(.22, 0, .2922), new Rotation3d(Units.degreesToRadians(0),
+						Units.degreesToRadians(mServoInputs.position_units), Units.degreesToRadians(0))));
 
-		Robot.desMechPoses[5] = Robot.desMechPoses[4]
-				.transformBy(new Transform3d(new Translation3d(.221, 0, .278), new Rotation3d(Units.degreesToRadians(0),
-						Units.degreesToRadians(180+14.252+demand), Units.degreesToRadians(0))));
+		Robot.desMechPoses[4] = Robot.desMechPoses[3]
+				.transformBy(new Transform3d(new Translation3d(.22, 0, .2922), new Rotation3d(Units.degreesToRadians(0),
+						Units.degreesToRadians(demand), Units.degreesToRadians(0))));
 		Logger.recordOutput("EndEffectorWrist/Offset", this.offset);
 		Logger.recordOutput(mConstants.kName+"/AtState", atState);
 		super.outputTelemetry();

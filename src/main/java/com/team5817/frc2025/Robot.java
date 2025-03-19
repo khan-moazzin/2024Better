@@ -56,6 +56,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -125,7 +126,7 @@ public class Robot extends LoggedRobot {
                                                                                               // log
         setUseTiming(false);
       } else {
-        mDriveSim = new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, Rotation2d.identity()).wpi());
+        mDriveSim = new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(13, 3, Rotation2d.identity()).wpi());
         Drive.registerDriveSimulation(mDriveSim);
         SimulatedArena.getInstance().addDriveTrainSimulation(mDriveSim);
         Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables

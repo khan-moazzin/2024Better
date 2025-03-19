@@ -807,8 +807,8 @@ public class Drive extends Subsystem {
 		Logger.recordOutput("Drive/Predicted Velocity", mPeriodicIO.predicted_velocity.wpi());
 		Logger.recordOutput("Drive/Heading", mPeriodicIO.heading);
 		Logger.recordOutput("Drive/Target Heading", mHeadingController.getTargetHeading());
-		Logger.recordOutput("RobotState/Filtered Pose", new Pose3d(RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getX(),RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getY(),0.025, new Rotation3d(0,0,RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getRotation().getRadians())));
-		Logger.recordOutput("RobotState/Odom Pose", new Pose3d(RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getX(),RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getY(),0.025, new Rotation3d(0,0,RobotState.getInstance().getLatestPoseFromOdom().getValue().wpi().getRotation().getRadians())));
+		Logger.recordOutput("RobotState/Filtered Pose", new Pose3d(RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getX(),RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getY(),0.0, new Rotation3d(0,0,RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getRotation().getRadians())));
+		Logger.recordOutput("RobotState/Odom Pose", new Pose3d(RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getX(),RobotState.getInstance().getLatestGlobalKalmanPose().wpi().getY(),0.0, new Rotation3d(0,0,RobotState.getInstance().getLatestPoseFromOdom().getValue().wpi().getRotation().getRadians())));
 		// Logger.recordOutput("RobotState/Specialized Pose", RobotState.getInstance().getLatestSpecializedKalmanPose().wpi());
 
 		Logger.recordOutput("Drive/Control State Changed", mControlStateHasChanged);

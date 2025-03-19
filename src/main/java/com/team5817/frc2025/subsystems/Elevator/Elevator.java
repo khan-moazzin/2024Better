@@ -155,16 +155,16 @@ public class Elevator extends ServoMotorSubsystem {
 		Pose3d current = new Pose3d(Math.cos(Units.degreesToRadians(84)) * mServoInputs.position_units, 0,
 				Math.sin(Units.degreesToRadians(84)) * mServoInputs.position_units, new Rotation3d());
 
-		Robot.mechPoses[2] = current.div(3);
-		Robot.mechPoses[3] = current.div(3).times(2);
-		Robot.mechPoses[4] = current;
+		Robot.mechPoses[1] = current.div(3);
+		Robot.mechPoses[2] = current.div(3).times(2);
+		Robot.mechPoses[3] = current;
 
 		Pose3d desired = new Pose3d(Math.cos(Units.degreesToRadians(84)) * demand, 0,
 				Math.sin(Units.degreesToRadians(84)) * demand, new Rotation3d());
 
-		Robot.desMechPoses[2] = desired.div(3);
-		Robot.desMechPoses[3] = desired.div(3).times(2);
-		Robot.desMechPoses[4] = desired;
+		Robot.desMechPoses[1] = desired.div(3);
+		Robot.desMechPoses[2] = desired.div(3).times(2);
+		Robot.desMechPoses[3] = desired;
 		Logger.recordOutput("Elevator/Offset", this.offset);
 		Logger.recordOutput(mConstants.kName+"/AtState", atState);
 		super.outputTelemetry();

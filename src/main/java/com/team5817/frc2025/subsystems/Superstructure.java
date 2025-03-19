@@ -1,14 +1,19 @@
 package com.team5817.frc2025.subsystems;
 
+import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.TimeDelayedBoolean;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Ports;
+import com.team5817.frc2025.Robot;
+import com.team5817.frc2025.field.FieldConstants;
 import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
+import com.team5817.frc2025.field.FieldConstants.ReefLevel;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Climb.Climb;
+import com.team5817.frc2025.subsystems.Drive.AutoAlignPointSelector;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
@@ -23,11 +28,19 @@ import com.team5817.lib.requests.ParallelRequest;
 import com.team5817.lib.requests.Request;
 import com.team5817.lib.requests.SequentialRequest;
 import com.team5817.lib.requests.WaitRequest;
+import com.team5817.lib.util.AllianceFlipUtil;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -100,16 +113,16 @@ public class Superstructure extends Subsystem {
 				SuperstructureState.Type.IDLE)),	
 		L1(new SuperstructureState(Elevator.State.L1, EndEffectorWrist.State.L1, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.l1, IntakeRollers.State.IDLE, Indexer.State.IDLE_EXAUST,
-				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
+				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L1)),
 		L2(new SuperstructureState(Elevator.State.L2, EndEffectorWrist.State.L2, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.l2, IntakeRollers.State.IDLE, Indexer.State.IDLE_EXAUST,
-				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
+				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L2)),
 		L3(new SuperstructureState(Elevator.State.L3, EndEffectorWrist.State.L3, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.l3, IntakeRollers.State.IDLE, Indexer.State.IDLE_EXAUST,
-				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
+				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L3)),
 		L4(new SuperstructureState(Elevator.State.L4, EndEffectorWrist.State.L4, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.l4, IntakeRollers.State.IDLE, Indexer.State.IDLE_EXAUST,
-				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE)),
+				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L4)),
 		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.NET)),
@@ -254,10 +267,40 @@ public class Superstructure extends Subsystem {
 					mEndEffectorWrist.updateBranchDistance(dist);
 					Logger.recordOutput("dist", dist);
 				}
+				updateGamePieceVisualization();
 			}
 		});
 	}
-
+	Set<Pose3d> visualizedCoralPoses = new HashSet<>();
+	public void updateGamePieceVisualization(){
+		if(mEndEffectorRollers.hasPiece())
+			if(mEndEffectorRollers.hasPiece())
+			Logger.recordOutput("endCoral", Drive.getInstance().getPose().Pose3d().transformBy(new Transform3d(Robot.mechPoses[4].getTranslation(), Robot.mechPoses[4].getRotation())).transformBy(new Transform3d(new Translation3d(0.0254,.0,0.085), new Rotation3d(0,Units.degreesToRadians(5),0))));
+			else
+				Logger.recordOutput("endCoral", new Pose3d());
+			Logger.recordOutput("Coral", visualizedCoralPoses.toArray(Pose3d[]::new));
+	}
+	public Request visualizeScoreRequest(){
+		return new Request() {
+			@Override
+			public void act() {
+				int closestIndex = 0;
+				double dist = Double.MAX_VALUE;
+				for(int i = 0; i<FieldConstants.Reef.branchPositions2d.size();i++){
+					double newDist = new Pose2d(AllianceFlipUtil.apply((FieldConstants.Reef.branchPositions2d.get(i).get(ReefLevel.L4)))).distance(mDrive.getPose());
+					if(newDist<dist){
+						dist = newDist;
+						closestIndex = i;
+					}
+				}
+				visualizedCoralPoses.add(AllianceFlipUtil.apply(FieldConstants.Reef.branchPositions.get(closestIndex).get(mGoal.goal.level)));
+			}
+			@Override
+			public boolean isFinished() {
+				return true;
+			}
+		};
+	}
 	public void manageRequests(){
 		try {
 			if (hasNewRequest && activeRequest != null) {
@@ -425,7 +468,7 @@ public class Superstructure extends Subsystem {
 					r= netRequest(goal.goal);
 					break;
 				case SMARTCORALINTAKE:
-					r = smartCoralIntakeRequest(goal.goal);
+					r = SmartCoralIntakeRequest(goal.goal);
 					break;
 			}
 			request(r);
@@ -502,7 +545,7 @@ public class Superstructure extends Subsystem {
 		// breakWait(mIndexerBeam, true)
 		).addName("Intaking");
 	}
-	private Request smartCoralIntakeRequest(SuperstructureState goal){
+	private Request SmartCoralIntakeRequest(SuperstructureState goal){
 		if (!(goal.mType == SuperstructureState.Type.SMARTCORALINTAKE)) {
 			System.out.println("Wrong Goal Type");
 			return new ParallelRequest();
@@ -548,7 +591,8 @@ public class Superstructure extends Subsystem {
 				// autoAlignWa.Homeit(),
 				// mLEDs.stateRequest(TimedLEDState.PREPARED),
 				ReadyToScoreRequest(),
-				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState)
+				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
+				visualizeScoreRequest()
 				// breakWait(mEndEffectorBeam, false)
 				// mLEDs.stateRequest(TimedLEDState.IDLE)
 		).addName("Score");

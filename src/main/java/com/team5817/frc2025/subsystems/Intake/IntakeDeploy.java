@@ -131,11 +131,11 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 */
 	@Override
 	public void outputTelemetry() {
-		Robot.mechPoses[0] = new Pose3d(new Translation3d(-.325, 0, .261), new Rotation3d(Units.degreesToRadians(0),
-			Units.degreesToRadians(mServoInputs.position_units-14.3+141), Units.degreesToRadians(0)));
+		Robot.mechPoses[0] = new Pose3d(new Translation3d(-.314, 0, .272), new Rotation3d(Units.degreesToRadians(0),
+			Units.degreesToRadians(mServoInputs.position_units), Units.degreesToRadians(0)));
 
-		Robot.desMechPoses[0] = new Pose3d(new Translation3d(-.325, 0, .261), new Rotation3d(Units.degreesToRadians(0),
-				Units.degreesToRadians(demand-14.3+141), Units.degreesToRadians(0)));
+		Robot.desMechPoses[0] = new Pose3d(new Translation3d(-.314, 0, .272), new Rotation3d(Units.degreesToRadians(0),
+				Units.degreesToRadians(demand), Units.degreesToRadians(0)));
 
 		
 		super.outputTelemetry();
