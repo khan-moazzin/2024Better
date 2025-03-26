@@ -811,7 +811,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	 */
 	@Override
 	public void zeroSensors() {
-		Phoenix6Util.checkErrorAndRetry(() -> mMain.setPosition(0, mConstants.kCANTimeout));
+		mMain.setPosition(0, mConstants.kCANTimeout);
 		mHasBeenZeroed = true;
 	}
 

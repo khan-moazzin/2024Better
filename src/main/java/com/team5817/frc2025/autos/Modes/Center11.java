@@ -59,6 +59,7 @@ public class Center11 extends AutoBase {
 	Trajectory backup;
 	Trajectory deAlgaefy;
 	Trajectory net;
+	Trajectory out;
 
 
 
@@ -66,13 +67,16 @@ public class Center11 extends AutoBase {
 	backup = l.trajectories.get("3ATo3O");
 	deAlgaefy = l.trajectories.get("3OTo3C");
 	net = l.trajectories.get("3CToN");
+	out = l.trajectories.get("NToO");
 	 
 	t = new TrajectorySet(
 			mirror,
 			coral,
 			backup,
 			deAlgaefy,
-			net
+			net,
+			out
+
 			);
 	}
 
@@ -100,33 +104,36 @@ public class Center11 extends AutoBase {
 		System.out.println("Scored 3A at "+ (Timer.getTimestamp()-startTime));
 
         r(new ParallelAction(List.of(
-            new TrajectoryAction(t.next()),
+            new TrajectoryAction(t.next(),0.4),
+			new SequentialAction(new WaitToPassDistanceToReef(exitDistance),
             new LambdaAction(()->{
                 s.setGoal(GoalState.A1);
             }
-            ))));
+            )))));
         s.setReadyToScore(false);
         r(new WaitForSuperstructureAction());
         System.out.println("Dealgaefing at "+ (Timer.getTimestamp()-startTime));
-        r(new TrajectoryAction(t.next()));
+        r(new TrajectoryAction(t.next(),.5));
         System.out.println("Waiting for entry at "+ (Timer.getTimestamp()-startTime));
         r(new WaitAction(1));//intake wait
-        s.setGoal(GoalState.A1PINCH);
+        s.setGoal(GoalState.A1);
         System.out.println("Dealgaefied at "+ (Timer.getTimestamp()-startTime));
         r(new ParallelAction(List.of(
             new TrajectoryAction(t.next()),
             new SequentialAction(List.of(
                 new WaitToPassDistanceToReef(exitDistance),
                 new LambdaAction(()->{
-                    s.setGoal(GoalState.AlGAESTOW);
+                    s.setGoal(GoalState.STOW);
                     System.out.println("Stowed at "+ (Timer.getTimestamp()-startTime));
                 }
         ))))));
         System.out.println("Raising at "+ (Timer.getTimestamp()-startTime));
         s.setGoal(GoalState.NET);
-        r(new WaitAction(2));
+        r(new WaitAction(1));
         System.out.println("Scoring at "+ (Timer.getTimestamp()-startTime));
         s.setReadyToScore(true);
         r(new WaitForSuperstructureAction());
+		r(new WaitAction(1));
+		r(new TrajectoryAction(t.next()));
 	}
 }

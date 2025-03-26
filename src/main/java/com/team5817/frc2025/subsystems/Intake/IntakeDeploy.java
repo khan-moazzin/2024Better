@@ -41,11 +41,11 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 * Represents the different states of the intake deployment.
 	 */
 	public enum State {
-		GROUND(-126, kStrictError), 
+		GROUND(-141, kStrictError), 
 		CLEAR(-88, kLenientError), 
-		STOW(1, kMediumError),
-		ALGAE(64., kMediumError),
-		HUMAN(80-141., kStrictError),
+		STOW(0, kMediumError),
+		ALGAE(-78, kMediumError),
+		HUMAN(-141, kStrictError),
 		ZERO(0, kStrictError,true),
 		DISABLE(true);
 
@@ -137,7 +137,8 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 		Robot.desMechPoses[0] = new Pose3d(new Translation3d(-.314, 0, .272), new Rotation3d(Units.degreesToRadians(0),
 				Units.degreesToRadians(demand), Units.degreesToRadians(0)));
 
-		
+		Logger.recordOutput(mConstants.kName+"/AtState",  stateRequest(mState).isFinished());
+
 		super.outputTelemetry();
 	}
 
@@ -184,8 +185,8 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 
 			@Override
 			public boolean isFinished() {
-				Logger.recordOutput(mConstants.kName+"/AtState",  Util.epsilonEquals(getPosition(), _wantedState.output, _wantedState.allowable_error));
-				
+				if(mState.disable)
+					return true;
 				return Util.epsilonEquals(getPosition(), _wantedState.output, _wantedState.allowable_error);
 			}
 		};

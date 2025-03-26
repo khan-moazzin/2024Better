@@ -207,6 +207,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     neverEnabled = false;
+		mDrive.setControlState(Drive.DriveControlState.OPEN_LOOP);
 
     Elastic.selectTab("Teleoperated");
     mDrive.resetModulesToAbsolute();

@@ -2,7 +2,6 @@ package com.team5817.frc2025.autos.Modes;
 
 import java.util.List;
 
-import com.pathplanner.lib.path.GoalEndState;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.Actions.LambdaAction;
@@ -36,10 +35,10 @@ public class CustomGroundMode extends AutoBase {
 
 	private double enterDistance = 3;
 	private double exitDistance = 1.5;
-	private double coralSpit = .25;
+	private double coralSpit = .1;
 	private double intakeWait = 0;
 	private double alignWait = 1;
-	private double intakeTimeout = 0;
+	private double intakeTimeout = .5;
 	private double scoreTimeout = 1;
 
 	private String firstScoreName;
@@ -115,7 +114,7 @@ public class CustomGroundMode extends AutoBase {
 							s.setGoal(GoalState.L4);
 						}))))));
 		r(new WaitAction(alignWait));
-		System.out.println("Starting Score " + firstScoreName+" at "+ (Timer.getTimestamp()-startTime));
+		System.out.println("Auto: Starting Score " + firstScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(true);
 
 		r(new WaitForSuperstructureAction());
@@ -123,7 +122,7 @@ public class CustomGroundMode extends AutoBase {
 		if(coral_amount==1)
 				return;
 
-		System.out.println("Scored " + firstScoreName+" at "+ (Timer.getTimestamp()-startTime));
+		System.out.println("Auto: Scored " + firstScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next(),intakeTimeout),
 				new SequentialAction(List.of(
@@ -133,8 +132,7 @@ public class CustomGroundMode extends AutoBase {
 						}))))));
 		
 		r(new WaitAction(intakeWait));
-		System.out.println("Collected 1st coral"+" at "+ (Timer.getTimestamp()-startTime));
-		s.setGoal(GoalState.STOW);
+		System.out.println("Auto: Collected 1st coral"+" at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next(),scoreTimeout),
@@ -145,12 +143,12 @@ public class CustomGroundMode extends AutoBase {
 						}))))));
 		r(new WaitAction(alignWait));
 
-		System.out.println("Starting Score " + secondScoreName+" at "+ (Timer.getTimestamp()-startTime));
+		System.out.println("Auto: Starting Score " + secondScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(true);
-
+	
 		r(new WaitForSuperstructureAction());
 		r(new WaitAction(coralSpit));
-		System.out.println("Scored " + secondScoreName+" at "+ (Timer.getTimestamp()-startTime));
+		System.out.println("Auto: Scored " + secondScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		if(coral_amount ==2)
 			return;
 
@@ -163,8 +161,7 @@ public class CustomGroundMode extends AutoBase {
 						}))))));
 
 		r(new WaitAction(intakeWait));
-		System.out.println("Collected 2nd coral"+" at "+ (Timer.getTimestamp()-startTime));
-		s.setGoal(GoalState.STOW);
+		System.out.println("Auto: Collected 2nd coral"+" at "+ (Timer.getTimestamp()-startTime));
 
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
@@ -176,11 +173,11 @@ public class CustomGroundMode extends AutoBase {
 						}))))));
 		r(new WaitAction(alignWait));
 
-		System.out.println("Starting Score " + thirdScoreName+" at "+ (Timer.getTimestamp()-startTime));
+		System.out.println("Auto: Starting Score " + thirdScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(true);
 		r(new WaitForSuperstructureAction());
 		r(new WaitAction(coralSpit));
-		System.out.println("Scored " + thirdScoreName+" at "+ (Timer.getTimestamp()-startTime));
+		System.out.println("Auto: Scored " + thirdScoreName+" at "+ (Timer.getTimestamp()-startTime));
 
 		r(new ParallelAction(List.of(
 				new TrajectoryAction(t.next(),intakeTimeout),

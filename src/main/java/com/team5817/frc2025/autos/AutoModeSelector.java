@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.team5817.frc2025.autos.Modes.Center11;
 import com.team5817.frc2025.autos.Modes.CustomGroundMode;
 import com.team5817.frc2025.autos.Modes.CustomMode;
@@ -34,7 +36,7 @@ public class AutoModeSelector {
 		PRESTAGED2("P2",GoalState.GROUND_CORAL_INTAKE),
 		PRESTAGED3("P3",GoalState.GROUND_CORAL_INTAKE);
 		public String name = "";
-		public GoalState state = GoalState.HUMAN_CORAL_INTAKE;
+		public GoalState state = GoalState.PREINTAKE;
 
 		PickupLocation(String name,GoalState ground){
 			this.name = name;

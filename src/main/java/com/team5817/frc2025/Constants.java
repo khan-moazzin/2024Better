@@ -62,7 +62,7 @@ public class Constants {
 	public static final double kJoystickThreshold = 0.2;
 	public static final int kButtonGamepadPort = 1;
 
-	public static final double stickDeadband = 0.06;
+	public static final double stickDeadband = 0.1;
 
 	public static final double specializedVisionTimeout = 5;
 
@@ -77,7 +77,7 @@ public class Constants {
 			{ 0.0, 0.0, 0.0 }
 	};
 
-	public static final double kBumberSideLength = Units.inchesToMeters(36.125-3)+0.3048;
+	public static final double kBumberSideLength = Units.inchesToMeters(36.125-3);
 
 
     public static final double kDefaultDistanceToReef = 3;
@@ -138,7 +138,7 @@ public class Constants {
 		/* Swerve Profiling Values */
 		public static final double maxSpeed = 5; // meters per second
 		public static final double maxAcceleration = 6; // meters per second
-		public static final double maxAngularVelocity = 6;
+		public static final double maxAngularVelocity = 30;
 		public static final double maxAngularAcceleration = maxAcceleration /
 				Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
 
@@ -166,7 +166,7 @@ public class Constants {
 		public static final double kStabilizeSwerveHeadingKf = 2.0;
 
 		// Snap Heading PID Values
-		public static final double kSnapSwerveHeadingKp = 5.0;
+		public static final double kSnapSwerveHeadingKp = 2.0;
 		public static final double kSnapSwerveHeadingKi = 0.0;
 		public static final double kSnapSwerveHeadingKd = 0.8;
 		public static final double kSnapSwerveHeadingKf = 1.0;
@@ -199,9 +199,9 @@ public class Constants {
 		public static final double kAutoAlignAllowableDistance = 2.0; // Meters
 
 		public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
-				1,
-				-1,
-				2);
+				4,
+				-4,
+				5);
 
 		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
 				5,
@@ -400,8 +400,8 @@ public class Constants {
 			kDeployServoConstants.kKg = 0.265625;
 
  
-			kDeployServoConstants.kCruiseVelocity = 16*360*1/20; 
-			kDeployServoConstants.kAcceleration = 16*360*1/20; 
+			kDeployServoConstants.kCruiseVelocity = 32*360*1/20; 
+			kDeployServoConstants.kAcceleration = 32*360*1/20; 
 
 			kDeployServoConstants.kMaxForwardOutput = 12.0;
 			kDeployServoConstants.kMaxReverseOutput = -12.0;
@@ -510,12 +510,13 @@ public class Constants {
 		public static final double kCoralClearHeight = 0.15; // rotations
         public static final InterpolatingDoubleTreeMap kMidOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
-			kMidOffsetMap.put(0.0381, 0.0);
-			kMidOffsetMap.put(.1381, 0.15);
+			kMidOffsetMap.put(-.11, -0.015
+			);
+			kMidOffsetMap.put(0.0, 0.0);
 		}public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
-			kHighOffsetMap.put(0.0381, 0.0);
-			kHighOffsetMap.put(.1381, 0.05);
+			kHighOffsetMap.put(-.11, -0.0);
+			kHighOffsetMap.put(0.0, 0.0);
 		}
 
 	}
@@ -593,15 +594,15 @@ public class Constants {
 			kWristServoConstants.kMinUnitsLimit = 0.0;
 
 			kWristServoConstants.kKp = 15;
-			kWristServoConstants.kKi = 2.6;
+			kWristServoConstants.kKi = 5;
 			kWristServoConstants.kKd = .1;
 			kWristServoConstants.kKa = 0.0;
 			kWristServoConstants.kKs = 0.04;
 			kWristServoConstants.kKv = .1;
 
 
-			kWristServoConstants.kCruiseVelocity = 80000; // degrees / s
-			kWristServoConstants.kAcceleration = 20000.0; // degrees / s^2
+			kWristServoConstants.kCruiseVelocity = 160000; // degrees / s
+			kWristServoConstants.kAcceleration = 9000.0; // degrees / s^2
 
 			kWristServoConstants.kMaxForwardOutput = 12.0;
 			kWristServoConstants.kMaxReverseOutput = -12.0;
@@ -613,7 +614,7 @@ public class Constants {
 			kWristServoConstants.kSupplyCurrentTimeout = 0.01; // seconds
 
 			kWristServoConstants.kEnableStatorCurrentLimit = true;
-			kWristServoConstants.kStatorCurrentLimit = 80; // amps
+			kWristServoConstants.kStatorCurrentLimit = 30; // amps
 
 			kWristServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
@@ -623,13 +624,13 @@ public class Constants {
 		}
 		public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
+			kHighOffsetMap.put(-.11, 27.0);
 			kHighOffsetMap.put(0.0, 0.0);
-			kHighOffsetMap.put(.1, -5.0);
 		}
 		public static final InterpolatingDoubleTreeMap kMidOffsetMap = new InterpolatingDoubleTreeMap();
 		static {
+			kMidOffsetMap.put(-.11, 0.0);
 			kMidOffsetMap.put(0.0, 0.0);
-			kMidOffsetMap.put(.1, -5.0);
 		}
 	}
 

@@ -1,15 +1,10 @@
 package com.team5817.frc2025.controlboard;
 
-import java.util.function.DoubleBinaryOperator;
-
 import org.littletonrobotics.junction.Logger;
 
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
-import com.pathplanner.lib.path.GoalEndState;
-import com.team254.lib.geometry.Rotation2d;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.field.FieldLayout;
-import com.team5817.frc2025.subsystems.LEDs;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.lib.Util;
@@ -69,10 +64,10 @@ public class DriverControls {
 	CustomXboxController codriver = mControlBoard.operator;
 	/* TWO CONTROLLERS */
 	GoalState preparedGoal = GoalState.L4;
+	GoalState preparedAlgae = GoalState.A1;
 	double lastTime = 0;
 
 	boolean wantStow = false;
-	boolean wantStowAlgae = false;
 	/**
 	 * Handles the input for the two controller mode.
 	 * This mode is used when both driver and co-driver controllers are available.
@@ -93,10 +88,7 @@ public class DriverControls {
 			}
 			if(driver.leftTrigger.isBeingPressed()){
 				s.setGoal(preparedGoal);
-				if(preparedGoal == GoalState.L4){
-					s.mDrive.setDriverKinematicLimits(Constants.SwerveConstants.kExtendedKinematicLimits);
-				}else
-					s.mDrive.setDriverKinematicLimits(Constants.SwerveConstants.kSwerveKinematicLimits);
+				s.mDrive.setDriverKinematicLimits(Constants.SwerveConstants.kSwerveKinematicLimits);
 
 			}else
 				s.mDrive.setDriverKinematicLimits(Constants.SwerveConstants.kSwerveKinematicLimits);
@@ -111,60 +103,35 @@ public class DriverControls {
 
 
 			if(driver.getAButtonPressed()){
-				s.setGoal(s.AlgaeSmartCleanRequest(swap));
+				s.setGoal(preparedAlgae);
 			}
 			if(codriver.getRightBumperButtonPressed())
 				swap = !swap;
-			if(codriver.getLeftBumperButtonPressed()){
-				switch(s.getGoalState()){
-					case A1:
-						s.setGoal(GoalState.A1PINCH);
-						break;
-					case A2:
-						s.setGoal(GoalState.A2PINCH);
-						break;
-					default:
-						break;
-
-
-				}
-			}
 			if(driver.bButton.isBeingPressed())
 				s.setGoal(GoalState.HUMAN_CORAL_INTAKE);
 			
-			if(driver.xButton.isBeingPressed())
-				s.setGoal(GoalState.GROUND_ALGAE_INTAKE);
+			// if(driver.xButton.isBeingPressed())
+			// 	s.setGoal(GoalState.GROUND_ALGAE_INTAKE);
 
-			if(driver.getLeftStickButtonPressed()){
+			if(driver.getXButtonPressed()){
 				s.mEndEffectorWrist.conformToState(EndEffectorWrist.State.ZERO);
 				s.mIntakeDeploy.conformToState(IntakeDeploy.State.ZERO);
+				s.mElevator.stateRequest(Elevator.State.ZERO).act();
 			}
 
 			
-			if(driver.releasedAny(driver.leftBumper,driver.bButton)){
-				if(s.mEndEffectorRollers.hasPiece())
-					s.setGoal(GoalState.STOW);
-				else
-					s.setGoal(GoalState.PREINTAKE);
+			if(driver.releasedAny(driver.leftBumper,driver.bButton,driver.aButton)){
+				
+				s.setGoal(GoalState.STOW);
 				mDrive.setControlState(DriveControlState.OPEN_LOOP);
 			}
 
-			if(driver.releasedAny(driver.aButton)){
-				wantStowAlgae = true;
-			}
-			if(driver.getAButton())
-				wantStowAlgae =false;
-			if(wantStowAlgae&&s.getGoalState().equals(GoalState.A2PINCH)||s.getGoalState().equals(GoalState.A1PINCH)){
-				s.setGoal(GoalState.AlGAESTOW);
-			wantStowAlgae = false;}
-			if(driver.releasedAny(driver.leftTrigger,driver.xButton) ){
+			if(driver.releasedAny(driver.leftTrigger) ){
 				wantStow = true;
 			}
 			if(wantStow&&clearReef()){
-				if(s.mEndEffectorRollers.hasPiece())
-					s.setGoal(GoalState.STOW);
-				else
-					s.setGoal(GoalState.PREINTAKE);
+				s.setGoal(GoalState.STOW);
+				
 				mDrive.setControlState(DriveControlState.OPEN_LOOP);
 				wantStow = false;
 			}
@@ -174,9 +141,9 @@ public class DriverControls {
 			
 			if(driver.leftTrigger.isBeingPressed())
 				s.setReadyToScore(driver.rightBumper.isBeingPressed());
-			else if(driver.xButton.isBeingPressed()&&driver.rightBumper.isBeingPressed()){
-				s.setGoal(GoalState.GROUND_ALGAE_SHOOT);
-			}else if(driver.rightBumper.isBeingPressed())
+			// else if(driver.xButton.isBeingPressed()&&driver.rightBumper.isBeingPressed()){
+			// 	s.setGoal(GoalState.GROUND_ALGAE_SHOOT);
+			else if(driver.rightBumper.isBeingPressed())
 				s.setGoal(GoalState.EXHAUST);
 		}else {
 			if (driver.aButton.wasActivated())
@@ -193,18 +160,24 @@ public class DriverControls {
 		if(codriver.getStartButtonPressed())
 			s.toggleAllowPoseComp();
 
-		if(codriver.yButton.isBeingPressed())
+		if(codriver.yButton.isBeingPressed()){
 			preparedGoal = GoalState.L4;
+			preparedAlgae = GoalState.A2;
+		}
 		if(codriver.bButton.isBeingPressed())
 			preparedGoal = GoalState.L3;
-		if(codriver.aButton.isBeingPressed())
+		if(codriver.aButton.isBeingPressed()){
+			preparedAlgae = GoalState.A1;
 			preparedGoal = GoalState.L2;
+		}
 		if(codriver.xButton.isBeingPressed())
 			preparedGoal = GoalState.L1;
-		if(codriver.POV0.isBeingPressed())
+		if(codriver.POV0.isBeingPressed()){
 			preparedGoal = GoalState.NET;
-		if(codriver.POV180.isBeingPressed())
+		}
+		if(codriver.POV180.isBeingPressed()){
 			preparedGoal = GoalState.PROCESS;
+		}
 		
 		if(codriver.getBackButtonPressed()){
 			codriverManual = !codriverManual;
@@ -214,15 +187,20 @@ public class DriverControls {
 				lastTime = Timer.getFPGATimestamp();
 			double dt = Timer.getTimestamp()-lastTime;
 			s.mElevator.changeManualOffset(codriver.getLeftY()*dt*0.0254);
-			s.mEndEffectorWrist.changeManualOffset(-codriver.getRightY()*dt*.5);
+			s.mEndEffectorWrist.changeManualOffset(-codriver.getRightY()*dt*50);
 			if(codriver.getLeftBumperButtonPressed())
 				s.mElevator.setManualOffset(0);
 			if(codriver.getRightBumperButtonPressed())
 				s.mEndEffectorWrist.setManualOffset(0);
 		lastTime = Timer.getTimestamp();
 		}
+		if(codriver.POV90.hasBeenPressed)
+			s.mElevator.zeroSensors();
+		if(codriver.POV270.hasBeenPressed)
+			s.mEndEffectorWrist.zeroSensors();
 
-		
+		if(s.mEndEffectorRollers.gotPiece())
+			driver.rumble(6, .5);
 		
 
 		Logger.recordOutput("Elastic/Codriver Manual", codriverManual);

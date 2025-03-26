@@ -43,43 +43,35 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	private double branchDist = 0;
 	private double offset = 0;
 
-	final static double kStrictError = 1;
+	final static double kStrictError = 1.5;
 	final static double kMediumError = 2 ;
-	final static double kLenientError = 5;
+	final static double kLenientError = 2.5;
 
 	public enum State {
 
-		L4(91.2, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
-		L3(24, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
-		L2(31.4, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
+		L4(65, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
+		L3(24.346, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
+		L2(24.346, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
 		L1(0, kStrictError),
 		A1(180.342, kMediumError),
 		A2(180.342, kMediumError),
 		NET(175.342, kMediumError),
-		ZERO(0, kLenientError),
-		INTAKING(175.342, kStrictError),
+		ZERO(0, kMediumError),
+		INTAKING(173.18, kStrictError),
 		PINCH(131, 70),
-		STOW(175.342, kStrictError);
+		STOW(173.18, kStrictError);
 
 		double output = 0;
 		double allowable_error = 0;
-		boolean home = false;
 		InterpolatingDoubleTreeMap map;
 
-		State(double output, double allowable_error,InterpolatingDoubleTreeMap map ,boolean home) {
+		State(double output, double allowable_error,InterpolatingDoubleTreeMap map) {
 			this.output = output;
 			this.allowable_error = allowable_error;
 			this.map = map;
-			this.home = home;
 		}
 		State(double output, double allowable_error){
-			this(output,allowable_error,null,false);
-		}
-		State(double output,double allowable_error,boolean home){
-			this(output,allowable_error,null,home);
-		}
-		State(double output, double allowable_error,InterpolatingDoubleTreeMap map){
-			this(output,allowable_error,map,false);
+			this(output,allowable_error,null);
 		}
 		
 		public double getTrackedOutput(double position){
@@ -191,7 +183,6 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 			@Override
 			public void act() {
 				mCurrentState = _wantedState;
-				mWantsHome = _wantedState.home;
 			}
 
 			@Override

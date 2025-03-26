@@ -44,11 +44,11 @@ public class EndEffectorRollers extends Subsystem {
 	private double roller_demand = 0;
 	public enum State {
 		IDLE(0.0),
-		HOLD(-2.0),
+		HOLD(-3.0),
 		CORAL_INTAKE(-4.0),
-		l4(6.0),
-		l3(8.0),
-		l2(8.0),
+		l4(12.0),
+		l3(12.0),
+		l2(12.0),
 		l1(3),
 		ALGAE_INTAKE(-12.0),
 		ALGAE_OUTTAKE(6.0);
@@ -111,8 +111,12 @@ public class EndEffectorRollers extends Subsystem {
 
 	TimeDelayedBoolean mHasPieceManager = new TimeDelayedBoolean();
 	boolean hasPiece = false;
+	boolean gotPiece = false;
 	public boolean hasPiece(){
 		return hasPiece;
+	}
+	public boolean gotPiece(){
+		return gotPiece;
 	}
 
 	/**
@@ -171,15 +175,18 @@ public class EndEffectorRollers extends Subsystem {
 
 
 
-
+	boolean lastHas;
 	@Override
 	public void readPeriodicInputs() {
 		mEndEffectorRollerInputs.roller_output_voltage = mRoller.getMotorVoltage().getValue().in(Volts);
 		mEndEffectorRollerInputs.roller_stator_current = mRoller.getStatorCurrent().getValue().in(Amps);
 		mEndEffectorRollerInputs.roller_velocity = mRoller.getVelocity().getValue().in(RotationsPerSecond);
 
+		
 		hasPiece = mHasPieceManager.update(mEndEffectorRollerInputs.roller_stator_current>60, 0.1);
-
+		gotPiece = hasPiece!=lastHas&&hasPiece;
+		lastHas = hasPiece;
+		
 		Logger.processInputs("EndEffectorRollers", mEndEffectorRollerInputs);
 	}
 

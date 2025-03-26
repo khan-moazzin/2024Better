@@ -25,8 +25,8 @@ import org.littletonrobotics.junction.Logger;
  */
 public class AutoAlignMotionPlanner {
 
-    private ProfileFollower mXController = new ProfileFollower(2, 9, 0.0, 0.0, 0.0, 0.0);
-    private ProfileFollower mYController = new ProfileFollower(2, 9, 0.0, 0.0, 0.0, 0.0);
+    private ProfileFollower mXController = new ProfileFollower(1.7, 1, 0.0, 0.0, 0.0, 0.0);
+    private ProfileFollower mYController = new ProfileFollower(1.7, 1, 0.0, 0.0, 0.0, 0.0);
     private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;

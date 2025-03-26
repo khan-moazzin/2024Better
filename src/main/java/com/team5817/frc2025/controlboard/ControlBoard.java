@@ -97,7 +97,7 @@ public class ControlBoard {
 		if (Math.abs(rotAxis) < kSwerveDeadband) {
 			return 0.0;
 		} else {
-			return Drive.getInstance().getKinematicLimits().kMaxSteeringVelocity
+			return 8
 					* (rotAxis - (Math.signum(rotAxis) * kSwerveDeadband))
 					/ (1 - kSwerveDeadband);
 		}
