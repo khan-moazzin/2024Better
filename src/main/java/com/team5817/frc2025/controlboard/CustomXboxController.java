@@ -203,6 +203,7 @@ public class CustomXboxController extends XboxController {
 		boolean longPressActivated = false;
 		boolean hasBeenPressed = false;
 		boolean longReleased = false;
+		boolean doublePressed = false;
 		private double buttonStartTime = 0;
 		private double longPressDuration = 0.3;
 

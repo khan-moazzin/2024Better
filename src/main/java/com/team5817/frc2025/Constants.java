@@ -81,7 +81,15 @@ public class Constants {
 
 
     public static final double kDefaultDistanceToReef = 3;
-
+	public static final class AutoConstants{
+		public static final double enterDistance = 3;
+		public static final double exitDistance = 1.5;
+		public static final double coralSpit = .1;
+		public static final double intakeWait = 0;
+		public static final double alignWait = 1;
+		public static final double intakeTimeout = .5;
+		public static final double scoreTimeout = 1;
+	}
 	/**
 	 * Constants related to the Swerve drive system.
 	 */
@@ -501,7 +509,7 @@ public class Constants {
 			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
 			
 			kElevatorServoConstants.kHomingTimeout = 0.2;
-			kElevatorServoConstants.kHomingOutput = -1;
+			kElevatorServoConstants.kHomingOutput = -3;
 			kElevatorServoConstants.kHomingVelocityWindow = 0.1;
 
 		}
@@ -618,8 +626,8 @@ public class Constants {
 
 			kWristServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
-			kWristServoConstants.kHomingTimeout = 2;
-			kWristServoConstants.kHomingOutput = -5;
+			kWristServoConstants.kHomingTimeout = .2;
+			kWristServoConstants.kHomingOutput = -3;
 			kWristServoConstants.kHomingVelocityWindow = 1;
 		}
 		public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();

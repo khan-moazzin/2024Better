@@ -129,7 +129,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	protected final TalonFX[] mFollowers;
 
 	protected static boolean mHoming = false;
-	protected static boolean mWantsHome = false;
 	protected final DelayedBoolean mHomingDelay;
 
 	protected double demand = 0;
@@ -286,13 +285,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		});
 	}
 
-	public void setWantHome(boolean wantHome){
-		mHoming = wantHome;
-
-		if (mHoming) {
-			mWantsHome = false;
-		}
-	}
 
 	/**
 	 * Enables or disables the soft limits.
@@ -786,6 +778,13 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		} else {
 			return Math.max(predicted_units, demand);
 		}
+	}
+	public void setWantHome(boolean home){
+		mHoming = home;
+	}
+
+	public void home(){
+		mHoming = true;
 	}
 
 	/**

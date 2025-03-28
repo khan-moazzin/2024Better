@@ -3,6 +3,7 @@ package com.team5817.frc2025.autos.Modes;
 import java.util.List;
 
 import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.Constants.AutoConstants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.Actions.LambdaAction;
 import com.team5817.frc2025.autos.Actions.ParallelAction;
@@ -32,16 +33,6 @@ public class Center11 extends AutoBase {
 	private Superstructure s = Superstructure.getInstance();
 	private Drive d = Drive.getInstance();
 	private TrajectorySet t;
-
-	private double enterDistance = 4;
-	private double exitDistance = 1.5;
-	private double coralSpit = .5;
-	private double intakeWait = 0;
-	private double alignWait = 1;
-	private double intakeTimeout = 0;
-	private double scoreTimeout = 1;
-
-
 
 	/**
 	 * Constructs a CustomThreeCoralMode with the specified starting position, pickup location, and scoring locations.
@@ -90,22 +81,22 @@ public class Center11 extends AutoBase {
 		}
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
-				new TrajectoryAction(t.next(),scoreTimeout),
+				new TrajectoryAction(t.next(),AutoConstants.scoreTimeout),
 					new LambdaAction(() -> {
 						s.setGoal(GoalState.L4);
 					}))));
-		r(new WaitAction(alignWait));
+		r(new WaitAction(AutoConstants.alignWait));
 		System.out.println("Starting Score of 3A at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(true);
 
 		r(new WaitForSuperstructureAction());
-		r(new WaitAction(coralSpit));
+		r(new WaitAction(AutoConstants.coralSpit));
 
 		System.out.println("Scored 3A at "+ (Timer.getTimestamp()-startTime));
 
         r(new ParallelAction(List.of(
             new TrajectoryAction(t.next(),0.4),
-			new SequentialAction(new WaitToPassDistanceToReef(exitDistance),
+			new SequentialAction(new WaitToPassDistanceToReef(AutoConstants.exitDistance),
             new LambdaAction(()->{
                 s.setGoal(GoalState.A1);
             }
@@ -121,7 +112,7 @@ public class Center11 extends AutoBase {
         r(new ParallelAction(List.of(
             new TrajectoryAction(t.next()),
             new SequentialAction(List.of(
-                new WaitToPassDistanceToReef(exitDistance),
+                new WaitToPassDistanceToReef(AutoConstants.exitDistance),
                 new LambdaAction(()->{
                     s.setGoal(GoalState.STOW);
                     System.out.println("Stowed at "+ (Timer.getTimestamp()-startTime));

@@ -153,23 +153,25 @@ public class DriverControls {
 			}
 
 
-		if(codriver.getLeftTriggerAxis()==1)
-			s.setGoal(GoalState.PREINTAKE);
 		if(codriver.getRightTriggerAxis()==1)
+			s.setGoal(GoalState.PREINTAKE);
+		if(codriver.getLeftTriggerAxis()==1)
 			s.setGoal(GoalState.CLEAR);
 		if(codriver.getStartButtonPressed())
 			s.toggleAllowPoseComp();
-
-		if(codriver.yButton.isBeingPressed()){
+		if(s.getGoalState()==GoalState.CLEAR&&codriver.getLeftTriggerAxis()!=1)
+			s.setGoal(GoalState.STOW);
+		if(codriver.yButton.shortReleased())
 			preparedGoal = GoalState.L4;
+		if(codriver.yButton.longPressed())
 			preparedAlgae = GoalState.A2;
-		}
 		if(codriver.bButton.isBeingPressed())
 			preparedGoal = GoalState.L3;
-		if(codriver.aButton.isBeingPressed()){
-			preparedAlgae = GoalState.A1;
+		if(codriver.aButton.shortReleased())
 			preparedGoal = GoalState.L2;
-		}
+		
+		if(codriver.aButton.longPressed())
+			preparedAlgae = GoalState.A1;
 		if(codriver.xButton.isBeingPressed())
 			preparedGoal = GoalState.L1;
 		if(codriver.POV0.isBeingPressed()){
@@ -186,7 +188,7 @@ public class DriverControls {
 			if(lastTime==0)
 				lastTime = Timer.getFPGATimestamp();
 			double dt = Timer.getTimestamp()-lastTime;
-			s.mElevator.changeManualOffset(codriver.getLeftY()*dt*0.0254);
+			s.mElevator.changeManualOffset(-codriver.getLeftY()*dt*0.0254);
 			s.mEndEffectorWrist.changeManualOffset(-codriver.getRightY()*dt*50);
 			if(codriver.getLeftBumperButtonPressed())
 				s.mElevator.setManualOffset(0);
@@ -194,10 +196,10 @@ public class DriverControls {
 				s.mEndEffectorWrist.setManualOffset(0);
 		lastTime = Timer.getTimestamp();
 		}
-		if(codriver.POV90.hasBeenPressed)
-			s.mElevator.zeroSensors();
 		if(codriver.POV270.hasBeenPressed)
-			s.mEndEffectorWrist.zeroSensors();
+			s.mElevator.home();
+		if(codriver.POV90.hasBeenPressed)
+			s.mEndEffectorWrist.home();
 
 		if(s.mEndEffectorRollers.gotPiece())
 			driver.rumble(6, .5);

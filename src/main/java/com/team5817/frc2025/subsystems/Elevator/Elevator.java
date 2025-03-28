@@ -62,23 +62,16 @@ public class Elevator extends ServoMotorSubsystem {
 
 		double output = 0;
 		double allowable_error = 20;
-		boolean home = false;
 		InterpolatingDoubleTreeMap map;
 
+		
 		State(double output, double allowable_error) {
-			this(output, allowable_error, null,false);
-		}
-		State(double output, double allowable_error, boolean home) {
-			this(output, allowable_error, null,home);
+			this(output, allowable_error, null);
 		}
 		State(double output, double allowable_error, InterpolatingDoubleTreeMap map) {
-			this(output, allowable_error, map,false);
-		}
-		State(double output, double allowable_error, InterpolatingDoubleTreeMap map, boolean home) {
 			this.output = output;
 			this.allowable_error = allowable_error;
 			this.map = map;
-			this.home = home;
 		}
 
 
@@ -126,11 +119,6 @@ public class Elevator extends ServoMotorSubsystem {
 	}
 	public void changeManualOffset(double deltaOffset){
 		this.offset+=deltaOffset;
-	}
-	@Override
-	public boolean atHomingLocation() {
-		return true;
-		// return Util.epsilonEquals(mServoInputs.position_units, mConstants.kHomePosition,ElevatorConstants.kHomingZone);
 	}
 
 
@@ -212,7 +200,6 @@ public class Elevator extends ServoMotorSubsystem {
 					mControlState = ControlState.MOTION_MAGIC;
 				}
 				currentState = _wantedState;
-				mWantsHome = _wantedState.home;
 			}
 
 			@Override

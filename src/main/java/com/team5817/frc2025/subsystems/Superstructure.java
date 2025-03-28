@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -482,6 +483,7 @@ public class Superstructure extends Subsystem {
 	 */
 	private Request CleanRequest(SuperstructureState goal) {
 		return new SequentialRequest(
+				BooleanWaitRequest(mEndEffectorRollers::hasPiece, false),
 				new ParallelRequest(
 						mElevator.stateRequest(goal.mElevatorState),
 						mIndexer.stateRequest(goal.mIndexerState),
@@ -532,16 +534,18 @@ public class Superstructure extends Subsystem {
 			return new ParallelRequest();
 		}
 		return new SequentialRequest(
-				new ParallelRequest(// TODO might need to add indexing as part of this, bring intake up but keep
+			mIndexer.stateRequest(Indexer.State.IDLE),
+			new ParallelRequest(// TODO might need to add indexing as part of this, bring intake up but keep
 									// indexing to get in end effector
 						// mLEDs.stateRequest(TimedLEDState.INTAKING),
 						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
 						mElevator.stateRequest(goal.mElevatorState),
 						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
-						mIndexer.stateRequest(goal.mIndexerState),
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 						// mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
+			mIndexer.stateRequest(goal.mIndexerState),
+
 			new WaitRequest(0.3)
 		// breakWait(mIndexerBeam, true)
 		).addName("Intaking");
@@ -590,6 +594,7 @@ public class Superstructure extends Subsystem {
 			System.out.println("Wrong Goal Type");
 		}
 		return new SequentialRequest(
+			BooleanWaitRequest(mEndEffectorRollers::hasPiece, true),
 				new ParallelRequest(
 						// mLEDs.stateRequest(TimedLEDState.PREPARING),
 						mElevator.stateRequest(goal.mElevatorState),
@@ -646,6 +651,17 @@ public class Superstructure extends Subsystem {
 		if (swap)
 			thing = !thing;
 		return  thing ? GoalState.A2 : GoalState.A1;
+	}
+	public Request BooleanWaitRequest(BooleanSupplier booleanSupplier,boolean target){
+		return new Request() {
+			@Override
+			public void act() {
+			}
+			@Override
+			public boolean isFinished() {
+				return target?booleanSupplier.getAsBoolean():!booleanSupplier.getAsBoolean();
+			}
+		};
 	}
 
 	/**

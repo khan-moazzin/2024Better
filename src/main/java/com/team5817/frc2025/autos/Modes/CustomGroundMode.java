@@ -3,6 +3,7 @@ package com.team5817.frc2025.autos.Modes;
 import java.util.List;
 
 import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.Constants.AutoConstants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.Actions.LambdaAction;
 import com.team5817.frc2025.autos.Actions.ParallelAction;
@@ -33,13 +34,7 @@ public class CustomGroundMode extends AutoBase {
 	private TrajectorySet t;
 	private int coral_amount = 0;
 
-	private double enterDistance = 3;
-	private double exitDistance = 1.5;
-	private double coralSpit = .1;
-	private double intakeWait = 0;
-	private double alignWait = 1;
-	private double intakeTimeout = .5;
-	private double scoreTimeout = 1;
+	
 
 	private String firstScoreName;
 	private String secondScoreName;
@@ -108,81 +103,81 @@ public class CustomGroundMode extends AutoBase {
 		}
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
-				new TrajectoryAction(t.next(),scoreTimeout),
+				new TrajectoryAction(t.next(),AutoConstants.scoreTimeout),
 				new SequentialAction(List.of(
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));
-		r(new WaitAction(alignWait));
+		r(new WaitAction(AutoConstants.alignWait));
 		System.out.println("Auto: Starting Score " + firstScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(true);
 
 		r(new WaitForSuperstructureAction());
-		r(new WaitAction(coralSpit));
+		r(new WaitAction(AutoConstants.coralSpit));
 		if(coral_amount==1)
 				return;
 
 		System.out.println("Auto: Scored " + firstScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		r(new ParallelAction(List.of(
-				new TrajectoryAction(t.next(),intakeTimeout),
+				new TrajectoryAction(t.next(),AutoConstants.intakeTimeout),
 				new SequentialAction(List.of(
-						new WaitToPassDistanceToReef(exitDistance),
+						new WaitToPassDistanceToReef(AutoConstants.exitDistance),
 						new LambdaAction(() -> {
 							s.setGoal(firstPickup.state);
 						}))))));
 		
-		r(new WaitAction(intakeWait));
+		r(new WaitAction(AutoConstants.intakeWait));
 		System.out.println("Auto: Collected 1st coral"+" at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
-				new TrajectoryAction(t.next(),scoreTimeout),
+				new TrajectoryAction(t.next(),AutoConstants.scoreTimeout),
 				new SequentialAction(List.of(
-						new WaitToPassDistanceToReef(enterDistance),
+						new WaitToPassDistanceToReef(AutoConstants.enterDistance),
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));
-		r(new WaitAction(alignWait));
+		r(new WaitAction(AutoConstants.alignWait));
 
 		System.out.println("Auto: Starting Score " + secondScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(true);
 	
 		r(new WaitForSuperstructureAction());
-		r(new WaitAction(coralSpit));
+		r(new WaitAction(AutoConstants.coralSpit));
 		System.out.println("Auto: Scored " + secondScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		if(coral_amount ==2)
 			return;
 
 		r(new ParallelAction(List.of(
-				new TrajectoryAction(t.next(),intakeTimeout),
+				new TrajectoryAction(t.next(),AutoConstants.intakeTimeout),
 				new SequentialAction(List.of(
-						new WaitToPassDistanceToReef(exitDistance),
+						new WaitToPassDistanceToReef(AutoConstants.exitDistance),
 						new LambdaAction(() -> {
 							s.setGoal(secondPickup.state);
 						}))))));
 
-		r(new WaitAction(intakeWait));
+		r(new WaitAction(AutoConstants.intakeWait));
 		System.out.println("Auto: Collected 2nd coral"+" at "+ (Timer.getTimestamp()-startTime));
 
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
-				new TrajectoryAction(t.next(),scoreTimeout),
+				new TrajectoryAction(t.next(),AutoConstants.scoreTimeout),
 				new SequentialAction(List.of(
-						new WaitToPassDistanceToReef(enterDistance),
+						new WaitToPassDistanceToReef(AutoConstants.enterDistance),
 						new LambdaAction(() -> {
 							s.setGoal(GoalState.L4);
 						}))))));
-		r(new WaitAction(alignWait));
+		r(new WaitAction(AutoConstants.alignWait));
 
 		System.out.println("Auto: Starting Score " + thirdScoreName+" at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(true);
 		r(new WaitForSuperstructureAction());
-		r(new WaitAction(coralSpit));
+		r(new WaitAction(AutoConstants.coralSpit));
 		System.out.println("Auto: Scored " + thirdScoreName+" at "+ (Timer.getTimestamp()-startTime));
 
 		r(new ParallelAction(List.of(
-				new TrajectoryAction(t.next(),intakeTimeout),
+				new TrajectoryAction(t.next(),AutoConstants.intakeTimeout),
 				new SequentialAction(List.of(
-						new WaitToPassDistanceToReef(exitDistance),
+						new WaitToPassDistanceToReef(AutoConstants.exitDistance),
 						new LambdaAction(() -> {
 							s.setGoal(thirdPickup.state);
 						}))))));

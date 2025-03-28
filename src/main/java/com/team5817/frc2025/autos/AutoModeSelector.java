@@ -6,11 +6,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.team5817.frc2025.autos.Modes.Center11;
 import com.team5817.frc2025.autos.Modes.CustomGroundMode;
-import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 
@@ -50,15 +47,14 @@ public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
 		CUSTOM_MODE,
-		CUSTOM_GROUND_MODE,
 		CENTER_MAIN
 	}
 	public enum StartingPosition {
 
-		PROCCESSOR_SIDE("S",DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING),
-		CENTER_PROCESS("C",DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
-		CENTER_BLANK("C",true, DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
-		BLANK_SIDE("S",true, DesiredMode.CUSTOM_MODE, DesiredMode.CUSTOM_GROUND_MODE, DesiredMode.DO_NOTHING);
+		PROCCESSOR_SIDE("S", DesiredMode.CUSTOM_MODE, DesiredMode.DO_NOTHING),
+		CENTER_PROCESS("C", DesiredMode.CUSTOM_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
+		CENTER_BLANK("C",true, DesiredMode.CUSTOM_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
+		BLANK_SIDE("S",true, DesiredMode.CUSTOM_MODE, DesiredMode.DO_NOTHING);
 
 		public List<DesiredMode> modes;
 		public Boolean mirrored = false;
@@ -190,13 +186,6 @@ public class AutoModeSelector {
 			SmartDashboard.putData("Second Score Selector", mSecondScoreSelector);
 			SmartDashboard.putData("Third Score Selector", mThirdScoreSelector);
 			SmartDashboard.putData("Score Amount", mScoreAmountSelector);
-			SmartDashboard.putData("Pickup Location", mFirstPickupLocationSelector);
-
-		}else if(desiredMode == DesiredMode.CUSTOM_GROUND_MODE){
-			SmartDashboard.putData("First Score Selector", mFirstScoreSelector);
-			SmartDashboard.putData("Second Score Selector", mSecondScoreSelector);
-			SmartDashboard.putData("Third Score Selector", mThirdScoreSelector);
-			SmartDashboard.putData("Score Amount", mScoreAmountSelector);
 
 			SmartDashboard.putData("First Pickup Selector", mFirstPickupLocationSelector);
 			SmartDashboard.putData("Second Pickup Selector", mSecondPickupLocationSelector);
@@ -217,8 +206,6 @@ public class AutoModeSelector {
 				return Optional.of(new DoNothingMode());
 
 			case CUSTOM_MODE:
-				return Optional.of(new CustomMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
-			case CUSTOM_GROUND_MODE:
 				return Optional.of(new CustomGroundMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedSecondPickupLocation, mCachedThirdPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
 			case CENTER_MAIN:
 				return Optional.of(new Center11(mCachedStartingPosition));

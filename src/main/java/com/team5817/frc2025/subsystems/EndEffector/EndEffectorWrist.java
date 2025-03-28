@@ -4,7 +4,6 @@ import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.EndEffectorWristConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
-import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 import com.team5817.lib.requests.Request;
@@ -14,8 +13,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
-
-import java.util.concurrent.ConcurrentHashMap.KeySetView;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -109,14 +106,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 			}
 
 			@Override
-			public void onLoop(double timestamp) {
-				if (getSetpoint() == mConstants.kHomePosition  && mWantsHome && !mHoming) {
-					setWantHome(true);
-				} else if (mControlState != ControlState.OPEN_LOOP && mHoming) {
-					setWantHome(false);
-				}
-
-			}
+			public void onLoop(double timestamp) {}
 
 		});
 	}
