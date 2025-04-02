@@ -35,7 +35,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		return mInstance;
 	}
 	
-	private State mCurrentState = State.ZERO;
+	private State mState = State.ZERO;
 	private boolean atState = false;
 	private double branchDist = 0;
 	private double offset = 0;
@@ -46,17 +46,17 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 	public enum State {
 
-		L4(65, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
-		L3(24.346, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
-		L2(24.346, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
-		L1(0, kStrictError),
-		A1(180.342, kMediumError),
-		A2(180.342, kMediumError),
-		NET(175.342, kMediumError),
-		ZERO(0, kMediumError),
-		INTAKING(173.18, kStrictError),
-		PINCH(131, 70),
-		STOW(173.18, kStrictError);
+		L4(71.89453125-89, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
+		L3(-45, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
+		L2(-47, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
+		L1(0-89, kStrictError),
+		A1(180.342-89, kMediumError),
+		A2(180.342-89, kMediumError),
+		NET(175.342-89, kMediumError),
+		ZERO(0-89, kMediumError),
+		INTAKING(88.17 ,kStrictError),
+		PINCH(131-89, 70),
+		STOW(88.17 ,kStrictError);
 
 		double output = 0;
 		double allowable_error = 0;
@@ -111,7 +111,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		});
 	}
 	public void conformToState(State state){
-		mCurrentState = state;
+		mState = state;
 	}
 	public void updateBranchDistance(double dist){
 		branchDist = dist;
@@ -132,10 +132,12 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 	@Override
 	public void writePeriodicOutputs() {
-		double trackedOutput = mCurrentState.getTrackedOutput(branchDist)+offset;
+		double trackedOutput = mState.getTrackedOutput(branchDist);
+		if(mState==State.L1||mState==State.L2||mState==State.L3||mState==State.L4)
+			trackedOutput+=offset;
 		trackedOutput = Util.limit(trackedOutput, mConstants.kMinUnitsLimit,mConstants.kMaxUnitsLimit);
 		setSetpointMotionMagic(trackedOutput);
-		atState = Util.epsilonEquals(getPosition(),trackedOutput, mCurrentState.allowable_error);
+		atState = Util.epsilonEquals(getPosition(),trackedOutput, mState.allowable_error);
 		super.writePeriodicOutputs();
 	}
 
@@ -150,6 +152,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 						Units.degreesToRadians(demand), Units.degreesToRadians(0))));
 		Logger.recordOutput("EndEffectorWrist/Offset", this.offset);
 		Logger.recordOutput(mConstants.kName+"/AtState", atState);
+		Logger.recordOutput(mConstants.kName+"/State",	mState);
 		super.outputTelemetry();
 	}
 
@@ -172,7 +175,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		return new Request() {
 			@Override
 			public void act() {
-				mCurrentState = _wantedState;
+				mState = _wantedState;
 			}
 
 			@Override

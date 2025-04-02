@@ -3,11 +3,12 @@ package com.team5817.frc2025.autos;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.net.SocketAddress;
 import java.util.List;
 import java.util.Optional;
 
 import com.team5817.frc2025.autos.Modes.Center11;
-import com.team5817.frc2025.autos.Modes.CustomGroundMode;
+import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 
@@ -33,7 +34,7 @@ public class AutoModeSelector {
 		PRESTAGED2("P2",GoalState.GROUND_CORAL_INTAKE),
 		PRESTAGED3("P3",GoalState.GROUND_CORAL_INTAKE);
 		public String name = "";
-		public GoalState state = GoalState.PREINTAKE;
+		public GoalState state = GoalState.ZERO;
 
 		PickupLocation(String name,GoalState ground){
 			this.name = name;
@@ -47,14 +48,15 @@ public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
 		CUSTOM_MODE,
-		CENTER_MAIN
+		CENTER_MAIN,
+		SIDE_MAIN
 	}
 	public enum StartingPosition {
 
-		PROCCESSOR_SIDE("S", DesiredMode.CUSTOM_MODE, DesiredMode.DO_NOTHING),
+		PROCCESSOR_SIDE("S", DesiredMode.CUSTOM_MODE,DesiredMode.SIDE_MAIN, DesiredMode.DO_NOTHING),
 		CENTER_PROCESS("C", DesiredMode.CUSTOM_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
 		CENTER_BLANK("C",true, DesiredMode.CUSTOM_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
-		BLANK_SIDE("S",true, DesiredMode.CUSTOM_MODE, DesiredMode.DO_NOTHING);
+		BLANK_SIDE("S",true, DesiredMode.CUSTOM_MODE,DesiredMode.SIDE_MAIN, DesiredMode.DO_NOTHING);
 
 		public List<DesiredMode> modes;
 		public Boolean mirrored = false;
@@ -206,9 +208,11 @@ public class AutoModeSelector {
 				return Optional.of(new DoNothingMode());
 
 			case CUSTOM_MODE:
-				return Optional.of(new CustomGroundMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedSecondPickupLocation, mCachedThirdPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
+				return Optional.of(new CustomMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedSecondPickupLocation, mCachedThirdPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
 			case CENTER_MAIN:
 				return Optional.of(new Center11(mCachedStartingPosition));
+			case SIDE_MAIN:
+				return Optional.of(new CustomMode(mCachedStartingPosition, PickupLocation.GROUND, PickupLocation.GROUND, PickupLocation.FAR, ScoringLocation._8A, ScoringLocation._7A, ScoringLocation._7B,3));
 		default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
 				break;

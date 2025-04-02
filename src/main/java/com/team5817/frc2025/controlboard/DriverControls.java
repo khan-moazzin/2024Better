@@ -1,5 +1,7 @@
 package com.team5817.frc2025.controlboard;
 
+import java.lang.Thread.State;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
@@ -11,8 +13,11 @@ import com.team5817.lib.Util;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
+import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
+import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
+import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -64,7 +69,6 @@ public class DriverControls {
 	CustomXboxController codriver = mControlBoard.operator;
 	/* TWO CONTROLLERS */
 	GoalState preparedGoal = GoalState.L4;
-	GoalState preparedAlgae = GoalState.A1;
 	double lastTime = 0;
 
 	boolean wantStow = false;
@@ -102,31 +106,34 @@ public class DriverControls {
 			}
 
 
-			if(driver.getAButtonPressed()){
-				s.setGoal(preparedAlgae);
+			if(driver.getAButton()){
+				s.setGoal(GoalState.A2);
+			}
+			if(driver.getXButton()){
+				s.setGoal(GoalState.A1);
 			}
 			if(codriver.getRightBumperButtonPressed())
 				swap = !swap;
 			if(driver.bButton.isBeingPressed())
-				s.setGoal(GoalState.HUMAN_CORAL_INTAKE);
-			
+				s.mEndEffectorRollers.setState(EndEffectorRollers.State.CORAL_INTAKE);
+			if(driver.yButton.isBeingPressed()){
+				s.mIntakeRollers.setState(IntakeRollers.State.INTAKING_CORAL);
+				s.mIndexer.setState(Indexer.State.IDLE);
+				s.mIntakeDeploy.conformToState(IntakeDeploy.State.GROUND);
+			}
 			// if(driver.xButton.isBeingPressed())
 			// 	s.setGoal(GoalState.GROUND_ALGAE_INTAKE);
 
-			if(driver.getXButtonPressed()){
-				s.mEndEffectorWrist.conformToState(EndEffectorWrist.State.ZERO);
-				s.mIntakeDeploy.conformToState(IntakeDeploy.State.ZERO);
-				s.mElevator.stateRequest(Elevator.State.ZERO).act();
-			}
-
 			
-			if(driver.releasedAny(driver.leftBumper,driver.bButton,driver.aButton)){
+			if(driver.releasedAny(driver.leftBumper,driver.bButton,driver.yButton)||(driver.getLeftTriggerAxis()!=1&&driver.rightBumper.wasReleased())){
 				
 				s.setGoal(GoalState.STOW);
 				mDrive.setControlState(DriveControlState.OPEN_LOOP);
 			}
+			if(driver.releasedAny(driver.aButton,driver.xButton))
+				s.setGoal(GoalState.ASTOW);
 
-			if(driver.releasedAny(driver.leftTrigger) ){
+			if(driver.releasedAny(driver.leftTrigger)&&!(driver.getAButton()||driver.getXButton())){
 				wantStow = true;
 			}
 			if(wantStow&&clearReef()){
@@ -154,24 +161,21 @@ public class DriverControls {
 
 
 		if(codriver.getRightTriggerAxis()==1)
-			s.setGoal(GoalState.PREINTAKE);
+			s.mIntakeDeploy.conformToState(IntakeDeploy.State.STOW);
 		if(codriver.getLeftTriggerAxis()==1)
 			s.setGoal(GoalState.CLEAR);
 		if(codriver.getStartButtonPressed())
 			s.toggleAllowPoseComp();
 		if(s.getGoalState()==GoalState.CLEAR&&codriver.getLeftTriggerAxis()!=1)
 			s.setGoal(GoalState.STOW);
-		if(codriver.yButton.shortReleased())
+		if(codriver.yButton.isBeingPressed())
 			preparedGoal = GoalState.L4;
-		if(codriver.yButton.longPressed())
-			preparedAlgae = GoalState.A2;
 		if(codriver.bButton.isBeingPressed())
 			preparedGoal = GoalState.L3;
-		if(codriver.aButton.shortReleased())
+		if(codriver.aButton.isBeingPressed())
 			preparedGoal = GoalState.L2;
 		
-		if(codriver.aButton.longPressed())
-			preparedAlgae = GoalState.A1;
+		
 		if(codriver.xButton.isBeingPressed())
 			preparedGoal = GoalState.L1;
 		if(codriver.POV0.isBeingPressed()){
@@ -196,9 +200,9 @@ public class DriverControls {
 				s.mEndEffectorWrist.setManualOffset(0);
 		lastTime = Timer.getTimestamp();
 		}
-		if(codriver.POV270.hasBeenPressed)
+		if(codriver.POV270.wasReleased())
 			s.mElevator.home();
-		if(codriver.POV90.hasBeenPressed)
+		if(codriver.POV90.wasReleased())
 			s.mEndEffectorWrist.home();
 
 		if(s.mEndEffectorRollers.gotPiece())

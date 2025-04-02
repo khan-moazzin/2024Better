@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.29546875,
-        "y": 2.9768749999999993
+        "x": 2.141517857142857,
+        "y": 1.454432397959183
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.572050382653061,
-        "y": 1.9181792091836731
+        "x": 2.1011690553923112,
+        "y": 1.9777015829375642
       },
       "isLocked": false,
-      "linkedName": "8B"
+      "linkedName": "G"
     },
     {
       "anchor": {
-        "x": 1.664,
-        "y": 2.1632971938775505
+        "x": 3.7171875,
+        "y": 2.9890624999999993
       },
       "prevControl": {
-        "x": 0.6639999999999997,
-        "y": 2.1632971938775505
+        "x": 2.1515377296678544,
+        "y": 1.018788973234716
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "P1"
+      "linkedName": "7A"
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
-    "maxAcceleration": 2.3,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 1.2,
     "maxAngularVelocity": 180.0,
     "maxAngularAcceleration": 180.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 60.21042621640209
   },
   "reversed": false,
-  "folder": "8BTo",
+  "folder": "GTo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 121.16514684334126
+    "rotation": 5.974323286480683
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

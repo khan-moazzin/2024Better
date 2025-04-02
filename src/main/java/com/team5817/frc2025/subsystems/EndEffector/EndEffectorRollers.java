@@ -44,14 +44,15 @@ public class EndEffectorRollers extends Subsystem {
 	private double roller_demand = 0;
 	public enum State {
 		IDLE(0.0),
-		HOLD(-3.0),
+		HOLD(-2.0),
+		HOLDCORAL(-1.5),
 		CORAL_INTAKE(-4.0),
 		l4(12.0),
 		l3(12.0),
 		l2(12.0),
-		l1(3),
-		ALGAE_INTAKE(-12.0),
-		ALGAE_OUTTAKE(6.0);
+		l1(2.4),
+		ALGAE_INTAKE(-9.0),
+		ALGAE_OUTTAKE(1.0);
 
 		public double roller_voltage;
 
@@ -112,9 +113,6 @@ public class EndEffectorRollers extends Subsystem {
 	TimeDelayedBoolean mHasPieceManager = new TimeDelayedBoolean();
 	boolean hasPiece = false;
 	boolean gotPiece = false;
-	public boolean hasPiece(){
-		return hasPiece;
-	}
 	public boolean gotPiece(){
 		return gotPiece;
 	}
@@ -182,8 +180,8 @@ public class EndEffectorRollers extends Subsystem {
 		mEndEffectorRollerInputs.roller_stator_current = mRoller.getStatorCurrent().getValue().in(Amps);
 		mEndEffectorRollerInputs.roller_velocity = mRoller.getVelocity().getValue().in(RotationsPerSecond);
 
-		
-		hasPiece = mHasPieceManager.update(mEndEffectorRollerInputs.roller_stator_current>60, 0.1);
+		boolean hasIntaked = mHasPieceManager.update(mEndEffectorRollerInputs.roller_stator_current>60, 0.1);
+		hasPiece = hasIntaked;
 		gotPiece = hasPiece!=lastHas&&hasPiece;
 		lastHas = hasPiece;
 		
@@ -208,19 +206,5 @@ public class EndEffectorRollers extends Subsystem {
 	@Override
 	public void outputTelemetry() {
 		Logger.recordOutput("EndEffectorRollers/hasPiece", hasPiece);
-	}
-
-    public Request hasAlgaeRequest() {
-		return new Request() {
-
-			@Override
-			public void act() {
-			}
-			@Override
-			public boolean isFinished() {
-				return true;//TODO: add
-			}
-			
-		};
 	}
 }

@@ -128,8 +128,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	protected final TalonFX mMain;
 	protected final TalonFX[] mFollowers;
 
-	protected static boolean mHoming = false;
-	protected final DelayedBoolean mHomingDelay;
+	protected boolean mHoming = false;
+	protected DelayedBoolean mHomingDelay;
 
 	protected double demand = 0;
 
@@ -355,6 +355,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		public double position_rots = 0; // motor rotations
 		public double position_units;
 		public double velocity_rps;
+		public double velocity_unitspS;
 		public double prev_vel_rps;
 		public double output_percent;
 		public double output_voltage;
@@ -372,6 +373,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			builder.addDoubleProperty("PositionRots", () -> position_rots, null);
 			builder.addDoubleProperty("PositionUnits", () -> position_units, null);
 			builder.addDoubleProperty("VelocityRpS", () -> velocity_rps, null);
+			builder.addDoubleProperty("VelocityUnitspS", () -> velocity_unitspS, null);
 			builder.addDoubleProperty("OutputVoltage", () -> output_voltage, null);
 			builder.addDoubleProperty("StatorCurrent", () -> main_stator_current, null);
 			builder.addDoubleProperty("SupplyCurrent", () -> main_supply_current, null);
@@ -451,6 +453,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			mServoInputs.position_rots = mMainPositionSignal.asSupplier().get().in(Rotations);
 		}
 		mServoInputs.position_units = rotationsToHomedUnits(mServoInputs.position_rots);
+		mServoInputs.velocity_unitspS = rotationsToHomedUnits(mServoInputs.velocity_rps);
 		mServoInputs.active_trajectory_position = mMainClosedLoopReferenceSignal.asSupplier().get();
 
 		final double newVelocity = mMainClosedLoopReferenceSlopeSignal.asSupplier().get();
@@ -480,17 +483,20 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	@Override
 	public void writePeriodicOutputs() {
 		if (mHoming) {
-			setOpenLoop(mConstants.kHomingOutput / mConstants.kMaxForwardOutput);
+			setOpenLoop(mConstants.kHomingOutput);
 			if (mHomingDelay.update(
 					Timer.getFPGATimestamp(),
 					Math.abs(getVelocity()) < mConstants.kHomingVelocityWindow)) {
-				zeroSensors();
+				Logger.recordOutput("test", true);
+				forceZero();
 				mHasBeenZeroed = true;
+				mHomingDelay = new DelayedBoolean(Timer.getFPGATimestamp(), mConstants.kHomingTimeout);
 				setSetpointMotionMagic(mConstants.kHomePosition);
 				mHoming = false;
 			}
-			return;
 		}
+		if(mConstants.simIO)
+			return;
 		if (mControlState == ControlState.MOTION_MAGIC) {
 			mMain.setControl(new MotionMagicVoltage(demand).withSlot(kMotionMagicSlot));
 		} else if (mControlState == ControlState.POSITION_PID) {
@@ -784,7 +790,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	}
 
 	public void home(){
-		mHoming = true;
+		setWantHome(true);
 	}
 
 	/**
@@ -810,7 +816,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 	 */
 	@Override
 	public void zeroSensors() {
-		mMain.setPosition(0, mConstants.kCANTimeout);
+		mMain.setPosition(0,mConstants.kCANTimeout);
 		mHasBeenZeroed = true;
 	}
 

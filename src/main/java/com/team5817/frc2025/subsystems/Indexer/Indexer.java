@@ -39,7 +39,7 @@ public class Indexer extends Subsystem {
 
 	public enum State {
 		IDLE(0.0,0),
-		INDEXING(1.5,8.0),
+		INDEXING(2.5,8.0),
 		EXHAUST(-6.0,-6.0),
 		IDLE_EXAUST(-2,-2);
 

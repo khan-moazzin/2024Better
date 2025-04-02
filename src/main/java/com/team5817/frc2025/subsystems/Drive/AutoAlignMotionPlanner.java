@@ -25,8 +25,8 @@ import org.littletonrobotics.junction.Logger;
  */
 public class AutoAlignMotionPlanner {
 
-    private ProfileFollower mXController = new ProfileFollower(1.7, 1, 0.0, 0.0, 0.0, 0.0);
-    private ProfileFollower mYController = new ProfileFollower(1.7, 1, 0.0, 0.0, 0.0, 0.0);
+    private ProfileFollower mYController = new ProfileFollower(4, 10, 0.0, 0.0, 0.0, 0.0);
+    private ProfileFollower mXController = new ProfileFollower(4, 10, 0.0, 0.0, 0.0, 0.0);
     private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;
@@ -110,7 +110,12 @@ public class AutoAlignMotionPlanner {
         boolean thetaWithinDeadband =  current_pose.getRotation().distance(mFieldToTargetPoint.getRotation()) < poseDeadband.getRotation().getRadians() && Math.abs(thetaOutput) < 0.02;
         boolean xWithinDeadband = mXController.onTarget();
         boolean yWithinDeadband = mYController.onTarget();
-
+        if(mAutoAlignComplete)
+        setpoint = ChassisSpeeds.fromFieldRelativeSpeeds(
+             0.0,
+             0.0,
+             0.0,
+            current_pose.getRotation());
         setpoint = ChassisSpeeds.fromFieldRelativeSpeeds(
                 xWithinDeadband ? 0.0 : xOutput,
                 yWithinDeadband ? 0.0 : yOutput,

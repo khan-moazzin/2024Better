@@ -206,6 +206,8 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void teleopInit() {
+    EndEffectorWrist.getInstance().setManualOffset(0);
+    Elevator.getInstance().setManualOffset(0);
     neverEnabled = false;
 		mDrive.setControlState(Drive.DriveControlState.OPEN_LOOP);
 

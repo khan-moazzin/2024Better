@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.Timer;
 /**
  * CustomThreeCoralMode is an autonomous mode for handling three coral scoring actions.
  */
-public class CustomGroundMode extends AutoBase {
+public class CustomMode extends AutoBase {
 
 	private Superstructure s = Superstructure.getInstance();
 	private Drive d = Drive.getInstance();
@@ -53,7 +53,7 @@ public class CustomGroundMode extends AutoBase {
 	 * @param secondScore the second scoring location
 	 * @param thirdScore the third scoring location
 	 */
-	public CustomGroundMode(StartingPosition startingPosition, PickupLocation firstPickup, PickupLocation secondPickup, PickupLocation thirdPickup, ScoringLocation firstScore, ScoringLocation secondScore, ScoringLocation thirdScore, int scoreAmount) {
+	public CustomMode(StartingPosition startingPosition, PickupLocation firstPickup, PickupLocation secondPickup, PickupLocation thirdPickup, ScoringLocation firstScore, ScoringLocation secondScore, ScoringLocation thirdScore, int scoreAmount) {
 
  	boolean mirror = startingPosition.mirrored;
 	Trajectory startingTrajectory;
@@ -98,6 +98,8 @@ public class CustomGroundMode extends AutoBase {
 	 */
 	@Override
 	public void routine() {
+		s.mEndEffectorWrist.setManualOffset(4);
+		s.mElevator.setManualOffset(0.04);
 		if (Constants.mode == Constants.Mode.SIM) {
 			mSim.setSimulationWorldPose(t.initalPose().wpi());
 		}

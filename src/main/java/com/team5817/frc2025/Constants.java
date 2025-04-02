@@ -8,6 +8,7 @@ import java.util.List;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -82,13 +83,13 @@ public class Constants {
 
     public static final double kDefaultDistanceToReef = 3;
 	public static final class AutoConstants{
-		public static final double enterDistance = 3;
+		public static final double enterDistance = 3.2;
 		public static final double exitDistance = 1.5;
 		public static final double coralSpit = .1;
 		public static final double intakeWait = 0;
-		public static final double alignWait = 1;
-		public static final double intakeTimeout = .5;
-		public static final double scoreTimeout = 1;
+		public static final double alignWait = 0.5;
+		public static final double intakeTimeout = 0;
+		public static final double scoreTimeout = .2;
 	}
 	/**
 	 * Constants related to the Swerve drive system.
@@ -174,7 +175,7 @@ public class Constants {
 		public static final double kStabilizeSwerveHeadingKf = 2.0;
 
 		// Snap Heading PID Values
-		public static final double kSnapSwerveHeadingKp = 2.0;
+		public static final double kSnapSwerveHeadingKp = 3.0;
 		public static final double kSnapSwerveHeadingKi = 0.0;
 		public static final double kSnapSwerveHeadingKd = 0.8;
 		public static final double kSnapSwerveHeadingKf = 1.0;
@@ -207,9 +208,9 @@ public class Constants {
 		public static final double kAutoAlignAllowableDistance = 2.0; // Meters
 
 		public static final MotionProfileConstraints kPositionMotionProfileConstraints = new MotionProfileConstraints(
-				4,
-				-4,
-				5);
+				6,
+				-6,
+				1);
 
 		public static final MotionProfileConstraints kHeadingMotionProfileConstraints = new MotionProfileConstraints(
 				5,
@@ -427,7 +428,7 @@ public class Constants {
 			kDeployEncoderConstants.rotor_to_sensor_ratio = 20;
 			kDeployEncoderConstants.remote_encoder_port = Ports.INTAKE_CANCODER;
 
-			kDeployServoConstants.kHomingOutput = -2;
+			kDeployServoConstants.kHomingOutput = -.3;
 			kDeployServoConstants.kHomingTimeout = 0.2;
 			kDeployServoConstants.kHomingVelocityWindow = 5;
 		}
@@ -508,8 +509,8 @@ public class Constants {
 
 			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
 			
-			kElevatorServoConstants.kHomingTimeout = 0.2;
-			kElevatorServoConstants.kHomingOutput = -3;
+			kElevatorServoConstants.kHomingTimeout = 0.5;
+			kElevatorServoConstants.kHomingOutput = -.25;
 			kElevatorServoConstants.kHomingVelocityWindow = 0.1;
 
 		}
@@ -588,25 +589,27 @@ public class Constants {
 		public static final AbsoluteEncoderConstants kWristEncoderConstants = new AbsoluteEncoderConstants();
 
 		static {
-			kWristServoConstants.kName = "Wrist";
+			kWristServoConstants.kName = "EndEffectorWrist";
 
 			kWristServoConstants.simIO = isComp? false:true;
 
 			kWristServoConstants.kMainConstants.id = Ports.ENDEFFECTOR_WRIST;
 			kWristServoConstants.kMainConstants.counterClockwisePositive = false;
 
-			kWristServoConstants.kHomePosition = 0; // degrees
+			kWristServoConstants.kHomePosition = -89; // degrees
 			kWristServoConstants.kRotationsPerUnitDistance = (1/360.0) * 10;
 
-			kWristServoConstants.kMaxUnitsLimit = 200;
-			kWristServoConstants.kMinUnitsLimit = 0.0;
+			kWristServoConstants.kMaxUnitsLimit = 200-89;
+			kWristServoConstants.kMinUnitsLimit = -89;
 
-			kWristServoConstants.kKp = 15;
-			kWristServoConstants.kKi = 5;
-			kWristServoConstants.kKd = .1;
+			kWristServoConstants.kKp = 100;
+			kWristServoConstants.kKi = 0;
+			kWristServoConstants.kKd = 0.1;
 			kWristServoConstants.kKa = 0.0;
 			kWristServoConstants.kKs = 0.04;
-			kWristServoConstants.kKv = .1;
+			kWristServoConstants.kKv = 0;
+			kWristServoConstants.kKg = 3;
+			kWristServoConstants.kGravityType = GravityTypeValue.Arm_Cosine;
 
 
 			kWristServoConstants.kCruiseVelocity = 160000; // degrees / s
@@ -626,8 +629,8 @@ public class Constants {
 
 			kWristServoConstants.kNeutralMode = NeutralModeValue.Brake;
 
-			kWristServoConstants.kHomingTimeout = .2;
-			kWristServoConstants.kHomingOutput = -3;
+			kWristServoConstants.kHomingTimeout = .5;
+			kWristServoConstants.kHomingOutput = -.25;
 			kWristServoConstants.kHomingVelocityWindow = 1;
 		}
 		public static final InterpolatingDoubleTreeMap kHighOffsetMap = new InterpolatingDoubleTreeMap();
@@ -650,15 +653,15 @@ public class Constants {
 			TalonFXConfiguration config = new TalonFXConfiguration();
 
 			config.CurrentLimits.SupplyCurrentLimitEnable = true;
-			config.CurrentLimits.SupplyCurrentLimit = 40.0;
+			config.CurrentLimits.SupplyCurrentLimit = 30.0;
 
 			config.CurrentLimits.StatorCurrentLimitEnable = true;
-			config.CurrentLimits.StatorCurrentLimit = 80.0;
+			config.CurrentLimits.StatorCurrentLimit = 100.0;
 
 			config.Voltage.PeakForwardVoltage = 12.0;
 			config.Voltage.PeakReverseVoltage = -12.0;
 
-			config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+			config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 			return config;
 		}
 	}

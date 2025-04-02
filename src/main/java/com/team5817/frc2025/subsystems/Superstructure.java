@@ -101,7 +101,10 @@ public class Superstructure extends Subsystem {
 		STOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
 				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.IDLE)),
-		PREINTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.STOW,
+		ASTOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
+				Climb.State.STOW, EndEffectorRollers.State.HOLD, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				SuperstructureState.Type.IDLE)),
+		ZERO(new SuperstructureState(Elevator.State.ZERO, EndEffectorWrist.State.ZERO, IntakeDeploy.State.ZERO,
 				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.IDLE)),
 		CLEAR(new SuperstructureState(Elevator.State.CLEAR, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
@@ -127,28 +130,17 @@ public class Superstructure extends Subsystem {
 				SuperstructureState.Type.NET)),
 		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
 				Climb.State.STOW, EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
-				SuperstructureState.Type.NET, AlignmentType.NONE)),
+				SuperstructureState.Type.SCORING, AlignmentType.NONE)),
 		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.DISABLE,
-				Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
 		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, IntakeDeploy.State.DISABLE,
-				Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
+				Climb.State.STOW, EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
 				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
-		A2PINCH(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.PINCH, IntakeDeploy.State.DISABLE,
-				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
-				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
-		A1PINCH(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.PINCH, IntakeDeploy.State.DISABLE,
-				Climb.State.STOW, EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.EXHAUST,
-				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
+		
 		GROUND_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING,
 				IntakeDeploy.State.GROUND, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE,
 				IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
-		GROUND_ALGAE_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW,
-				IntakeDeploy.State.ALGAE, Climb.State.STOW, EndEffectorRollers.State.IDLE,
-				IntakeRollers.State.INTAKING_ALGAE, Indexer.State.IDLE, SuperstructureState.Type.INTAKING)),
-		GROUND_ALGAE_SHOOT(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW,
-				IntakeDeploy.State.ALGAE, Climb.State.STOW, EndEffectorRollers.State.IDLE,
-				IntakeRollers.State.SHOOTING_ALGAE, Indexer.State.IDLE, SuperstructureState.Type.INTAKING)),
 		HUMAN_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING,
 				IntakeDeploy.State.HUMAN, Climb.State.STOW, EndEffectorRollers.State.CORAL_INTAKE,
 				IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
@@ -275,12 +267,7 @@ public class Superstructure extends Subsystem {
 	}
 	Set<Pose3d> visualizedCoralPoses = new HashSet<>();
 	public void updateGamePieceVisualization(){
-		if(mEndEffectorRollers.hasPiece())
-			if(mEndEffectorRollers.hasPiece())
-			Logger.recordOutput("endCoral", Drive.getInstance().getPose().Pose3d().transformBy(new Transform3d(Robot.mechPoses[4].getTranslation(), Robot.mechPoses[4].getRotation())).transformBy(new Transform3d(new Translation3d(0.0254,.0,0.085), new Rotation3d(0,Units.degreesToRadians(5),0))));
-			else
-				Logger.recordOutput("endCoral", new Pose3d());
-			Logger.recordOutput("Coral", visualizedCoralPoses.toArray(Pose3d[]::new));
+		Logger.recordOutput("Coral", visualizedCoralPoses.toArray(Pose3d[]::new));
 	}
 	public Request visualizeScoreRequest(){
 		return new Request() {
@@ -483,7 +470,6 @@ public class Superstructure extends Subsystem {
 	 */
 	private Request CleanRequest(SuperstructureState goal) {
 		return new SequentialRequest(
-				BooleanWaitRequest(mEndEffectorRollers::hasPiece, false),
 				new ParallelRequest(
 						mElevator.stateRequest(goal.mElevatorState),
 						mIndexer.stateRequest(goal.mIndexerState),
@@ -491,11 +477,9 @@ public class Superstructure extends Subsystem {
 						// mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState),
 						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
-						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState)),
-					mEndEffectorRollers.hasAlgaeRequest()
+						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))
 				).addName("Clean");
 	}
-
 
 	private Request IdleRequest(SuperstructureState goal) {
 		if (!(goal.mType == SuperstructureState.Type.IDLE)) {
@@ -544,9 +528,7 @@ public class Superstructure extends Subsystem {
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 						// mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
-			mIndexer.stateRequest(goal.mIndexerState),
-
-			new WaitRequest(0.3)
+			mIndexer.stateRequest(goal.mIndexerState)
 		// breakWait(mIndexerBeam, true)
 		).addName("Intaking");
 	}
@@ -569,11 +551,10 @@ public class Superstructure extends Subsystem {
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 						// mClimb.stateRequest(goal.mClimbState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState),
-						mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLD),
+						mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLDCORAL),
 						new SequentialRequest(
 								mElevator.waitForExtensionRequest(Constants.ElevatorConstants.kCoralClearHeight),
-								mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
-								mEndEffectorRollers.stateRequest(State.IDLE))),
+								mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))),
 				// autoAlignWa.Homeit(),
 				// mLEDs.stateRequest(TimedLEDState.PREPARED),
 				ReadyToScoreRequest(),
@@ -594,7 +575,6 @@ public class Superstructure extends Subsystem {
 			System.out.println("Wrong Goal Type");
 		}
 		return new SequentialRequest(
-			BooleanWaitRequest(mEndEffectorRollers::hasPiece, true),
 				new ParallelRequest(
 						// mLEDs.stateRequest(TimedLEDState.PREPARING),
 						mElevator.stateRequest(goal.mElevatorState),

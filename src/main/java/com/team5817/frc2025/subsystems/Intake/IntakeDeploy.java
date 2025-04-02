@@ -42,7 +42,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 */
 	public enum State {
 		GROUND(-141, kStrictError), 
-		CLEAR(-88, kLenientError), 
+		CLEAR(0, kLenientError), 
 		STOW(0, kMediumError),
 		ALGAE(-78, kMediumError),
 		HUMAN(-141, kStrictError),
@@ -119,7 +119,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	 */
 	@Override
 	public void writePeriodicOutputs() {
-		if(!mState.disable&&mControlState == ControlState.MOTION_MAGIC)
+		if(!mState.disable)
 			setSetpointMotionMagic(mState.output);
 		else
 			setOpenLoop(0);
@@ -138,6 +138,7 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 				Units.degreesToRadians(demand), Units.degreesToRadians(0)));
 
 		Logger.recordOutput(mConstants.kName+"/AtState",  stateRequest(mState).isFinished());
+		Logger.recordOutput(mConstants.kName+"/State",	mState);
 
 		super.outputTelemetry();
 	}

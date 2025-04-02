@@ -34,7 +34,7 @@ public class Elevator extends ServoMotorSubsystem {
 		return mInstance;
 	}
 
-	private State currentState = State.ZERO;
+	private State mState = State.ZERO;
 	private boolean atState = false;
 	private double branchDist = 0;
 	private double offset = 0;
@@ -48,16 +48,16 @@ public class Elevator extends ServoMotorSubsystem {
 	 * Enum representing the different states of the elevator.
 	 */
 	public enum State {
-		L4(1.85, kStrictError, ElevatorConstants.kHighOffsetMap),
-		L3(1.06-.106+.088, kStrictError, ElevatorConstants.kMidOffsetMap),
-		L2(0.705-.068, kStrictError, ElevatorConstants.kMidOffsetMap),
+		L4(1.8635330123363545, kStrictError, ElevatorConstants.kHighOffsetMap),
+		L3(1.0740864317266319, kStrictError, ElevatorConstants.kMidOffsetMap),
+		L2(.68, kStrictError, ElevatorConstants.kMidOffsetMap),
 		L1(0.219, kStrictError),
 		A1(0.59, kMediumError),
 		A2(1, kMediumError),
 		NET(2.035, kStrictError),
 		ZERO(0, kLenientError),
 		PROCESS(0.0, kLenientError),
-		CLEAR(1.9,kStrictError),
+		CLEAR(.35,kStrictError),
 		STOW(0.0, kStrictError);
 
 		double output = 0;
@@ -130,9 +130,11 @@ public class Elevator extends ServoMotorSubsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
-		double trackedOutput = currentState.getTrackedOutput(branchDist)+offset;
+		double trackedOutput = mState.getTrackedOutput(branchDist);
+		if(mState==State.L1||mState==State.L2||mState==State.L3||mState==State.L4)
+			trackedOutput+=offset;
 		trackedOutput = Util.limit(trackedOutput, ElevatorConstants.kElevatorServoConstants.kMinUnitsLimit, ElevatorConstants.kElevatorServoConstants.kMaxUnitsLimit);
-		atState = Util.epsilonEquals(getPosition(),trackedOutput , currentState.allowable_error);
+		atState = Util.epsilonEquals(getPosition(),trackedOutput , mState.allowable_error);
 		if (mControlState == ControlState.MOTION_MAGIC)
 			setSetpointMotionMagic(trackedOutput);
 		super.writePeriodicOutputs();
@@ -155,6 +157,7 @@ public class Elevator extends ServoMotorSubsystem {
 		Robot.desMechPoses[3] = desired;
 		Logger.recordOutput("Elevator/Offset", this.offset);
 		Logger.recordOutput(mConstants.kName+"/AtState", atState);
+		Logger.recordOutput(mConstants.kName+"/State",	mState);
 		super.outputTelemetry();
 	}
 
@@ -199,7 +202,7 @@ public class Elevator extends ServoMotorSubsystem {
 				if (mControlState != ControlState.MOTION_MAGIC) {
 					mControlState = ControlState.MOTION_MAGIC;
 				}
-				currentState = _wantedState;
+				mState = _wantedState;
 			}
 
 			@Override

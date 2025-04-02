@@ -28,7 +28,7 @@ public class AlignmentPoint {
      * Enum representing the types of alignments that can be allowed at an alignment point.
      */
     public enum AlignmentType{
-        CORAL_SCORE(new Pose2d(0.0, 0.0, 1)),
+        CORAL_SCORE,
         ALGAE_CLEAN,
         ALGAE_SCORE,
         HUMAN,
@@ -38,7 +38,7 @@ public class AlignmentPoint {
             this.tolerance = tolerance;
         }
         private AlignmentType(){
-            this.tolerance = new Pose2d(.01, 0.1, 1);
+            this.tolerance = new Pose2d(.05, 0.05, 3);
         }
     }
 

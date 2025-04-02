@@ -69,6 +69,8 @@ public class SuperstructureState {
 		this.mIndexerState = indexer_state;
 		this.mType = type;
 		this.mAlignmentType = AlignmentType.NONE;
+	
+	//create into enum
 	}
 
 	/**
