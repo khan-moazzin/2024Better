@@ -202,8 +202,7 @@ public class Drive extends Subsystem {
 			} else {
 				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp,
 						RobotState.getInstance().getGlobalKalmanPose(mPeriodicIO.timestamp)
-								.withRotation(mPeriodicIO.heading),
-						RobotState.getInstance().getSmoothedVelocity());
+								.withRotation(mPeriodicIO.heading));
 				if (speed != null) {
 					mPeriodicIO.des_chassis_speeds = speed;
 				}
@@ -403,8 +402,7 @@ public class Drive extends Subsystem {
 		mAutoAlignMotionPlanner.setTargetPoint(findTargetPoint(),mAlignment.tolerance);
 		mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp,
 						RobotState.getInstance().getGlobalKalmanPose(mPeriodicIO.timestamp)
-								.withRotation(mPeriodicIO.heading),
-						RobotState.getInstance().getSmoothedVelocity());
+								.withRotation(mPeriodicIO.heading));
 		return mAutoAlignMotionPlanner.getAutoAlignError();
 	}
 
