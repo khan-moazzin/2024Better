@@ -193,7 +193,7 @@ public class Constants {
 
 		static {
 			kExtendedKinematicLimits.kMaxDriveVelocity = 3;
-			kExtendedKinematicLimits.kMaxDriveAcceleration = 4;
+			kExtendedKinematicLimits.kMaxDriveAcceleration = 5;
 			kExtendedKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 		}
 

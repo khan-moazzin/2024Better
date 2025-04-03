@@ -38,7 +38,7 @@ public class AlignmentPoint {
             this.tolerance = tolerance;
         }
         private AlignmentType(){
-            this.tolerance = new Pose2d(.05, 0.05, 3);
+            this.tolerance = new Pose2d(.04, 0.03, 3);
         }
     }
 

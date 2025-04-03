@@ -43,10 +43,10 @@ public class IntakeDeploy extends ServoMotorSubsystemWithCancoder {
 	public enum State {
 		GROUND(-141, kStrictError), 
 		CLEAR(0, kLenientError), 
-		STOW(0, kMediumError),
+		STOW(-141, kMediumError),
 		ALGAE(-78, kMediumError),
 		HUMAN(-141, kStrictError),
-		ZERO(0, kStrictError,true),
+		ZERO(-141, kStrictError,true),
 		DISABLE(true);
 
 		double output = 0;
