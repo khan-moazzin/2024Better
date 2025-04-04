@@ -29,6 +29,8 @@ public class AlignmentPoint {
      */
     public enum AlignmentType{
         CORAL_SCORE,
+        CORAL_SCORE_LEFT,
+        CORAL_SCORE_RIGHT,
         ALGAE_CLEAN,
         ALGAE_SCORE,
         HUMAN,

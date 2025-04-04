@@ -543,7 +543,7 @@ public class Superstructure extends Subsystem {
 		if (!(goal.mType == SuperstructureState.Type.SCORING)) {
 			System.out.println("Wrong Goal Type");
 		}
-		return new SequentialRequest(
+		return new ParallelRequest(
 				new ParallelRequest(
 						// mLEDs.stateRequest(TimedLEDState.PREPARING),
 						mElevator.stateRequest(goal.mElevatorState),
@@ -555,11 +555,11 @@ public class Superstructure extends Subsystem {
 						new SequentialRequest(
 								mElevator.waitForExtensionRequest(Constants.ElevatorConstants.kCoralClearHeight),
 								mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))),
-				// autoAlignWa.Homeit(),
-				// mLEDs.stateRequest(TimedLEDState.PREPARED),
+				new SequentialRequest(
 				ReadyToScoreRequest(),
 				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
 				visualizeScoreRequest()
+				)
 				// breakWait(mEndEffectorBeam, false)
 				// mLEDs.stateRequest(TimedLEDState.IDLE)
 		).addName("Score");

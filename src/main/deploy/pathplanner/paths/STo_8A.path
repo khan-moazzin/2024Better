@@ -28,7 +28,12 @@
       "linkedName": "8A"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6472081218274112,
+      "rotationDegrees": 121.16500000000002
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],

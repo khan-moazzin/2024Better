@@ -97,15 +97,18 @@ public class DriverControls {
 			}else
 				s.mDrive.setDriverKinematicLimits(Constants.SwerveConstants.kSwerveKinematicLimits);
 
-			if(driver.rightTrigger.isBeingPressed()){
+			if(driver.rightTrigger.isBeingPressed()&&!driver.POV270.isBeingPressed()&&!driver.POV90.isBeingPressed()){
 				if(autoAlignAllowed&&s.getGoalState().goal.mAlignmentType!=AlignmentType.NONE)
 					mDrive.autoAlign(s.getGoalState().goal.mAlignmentType);
 					
 				else
 					mDrive.autoAlignFinishedOverrride(true);
 			}
-
-
+			if(driver.POV270.isBeingPressed())
+				mDrive.autoAlign(AlignmentType.CORAL_SCORE_LEFT);
+			if(driver.POV90.isBeingPressed())
+				mDrive.autoAlign(AlignmentType.CORAL_SCORE_RIGHT);
+			
 			if(driver.getAButton()){
 				s.setGoal(GoalState.A2);
 			}
