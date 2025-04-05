@@ -17,8 +17,8 @@ import org.littletonrobotics.junction.Logger;
  */
 public class AutoAlignMotionPlanner {
 
-    private PIDController mXController = new PIDController(4, 0, 0);
-    private PIDController mYController = new PIDController(4, 0, 0);
+    private PIDController mXController = new PIDController(4, 0, 0.1);
+    private PIDController mYController = new PIDController(4, 0, 0.1);
     private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;
