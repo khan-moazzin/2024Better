@@ -52,7 +52,7 @@ public class EndEffectorRollers extends Subsystem {
 		l2(8.0),
 		l1(1.2),
 		ALGAE_INTAKE(-9.0),
-		ALGAE_OUTTAKE(3);
+		ALGAE_OUTTAKE(1.25);
 
 		public double roller_voltage;
 
