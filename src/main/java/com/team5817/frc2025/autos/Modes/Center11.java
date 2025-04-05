@@ -2,6 +2,7 @@ package com.team5817.frc2025.autos.Modes;
 
 import java.util.List;
 
+import com.team254.lib.swerve.ChassisSpeeds;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Constants.AutoConstants;
 import com.team5817.frc2025.autos.AutoBase;
@@ -11,14 +12,12 @@ import com.team5817.frc2025.autos.Actions.SequentialAction;
 import com.team5817.frc2025.autos.Actions.TrajectoryAction;
 import com.team5817.frc2025.autos.Actions.WaitAction;
 import com.team5817.frc2025.autos.Actions.WaitToPassDistanceToReef;
-import com.team5817.frc2025.autos.Actions.WaitforControllerInput;
-import com.team5817.frc2025.autos.AutoModeSelector.PickupLocation;
-import com.team5817.frc2025.autos.AutoModeSelector.ScoringLocation;
 import com.team5817.frc2025.autos.AutoModeSelector.StartingPosition;
 import com.team5817.frc2025.autos.Actions.WaitForSuperstructureAction;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Drive.Drive;
+import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.lib.motion.Trajectory;
 import com.team5817.lib.motion.TrajectorySet;
@@ -114,16 +113,17 @@ public class Center11 extends AutoBase {
             new SequentialAction(List.of(
                 new WaitToPassDistanceToReef(AutoConstants.exitDistance),
                 new LambdaAction(()->{
-                    s.setGoal(GoalState.STOW);
+                    s.setGoal(GoalState.ASTOW);
                     System.out.println("Stowed at "+ (Timer.getTimestamp()-startTime));
                 }
         ))))));
         System.out.println("Raising at "+ (Timer.getTimestamp()-startTime));
         s.setGoal(GoalState.NET);
-        r(new WaitAction(1));
-        System.out.println("Scoring at "+ (Timer.getTimestamp()-startTime));
+		r(new WaitAction(1.5));
+		System.out.println("Scoring at "+ (Timer.getTimestamp()-startTime));
         s.setReadyToScore(true);
-        r(new WaitForSuperstructureAction());
+		r(new WaitAction(1));
+		s.setGoal(GoalState.STOW);
 		r(new WaitAction(1));
 		r(new TrajectoryAction(t.next()));
 	}

@@ -98,7 +98,6 @@ public class CustomMode extends AutoBase {
 	 */
 	@Override
 	public void routine() {
-		s.mEndEffectorWrist.setManualOffset(3);
 		s.mElevator.setManualOffset(0.04);
 		if (Constants.mode == Constants.Mode.SIM) {
 			mSim.setSimulationWorldPose(t.initalPose().wpi());

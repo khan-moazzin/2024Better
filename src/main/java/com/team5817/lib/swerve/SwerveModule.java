@@ -228,7 +228,7 @@ public class SwerveModule extends Subsystem {
 
 	public edu.wpi.first.math.kinematics.SwerveModuleState getWpiState() {
 		return new edu.wpi.first.math.kinematics.SwerveModuleState( getCurrentVelocity(),
-				edu.wpi.first.math.geometry.Rotation2d.fromRotations(mInputs.rotationPosition));
+				edu.wpi.first.math.geometry.Rotation2d.fromDegrees(mInputs.rotationPosition));
 	}
 
 	public SwerveModulePosition getPosition() {

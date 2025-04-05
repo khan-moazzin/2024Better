@@ -48,7 +48,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 
 		L4(71.89453125-89, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
 		L3(-31.185546874999993, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
-		L2(-25.534765625, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
+		L2(-38.884765625-.03, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
 		L1(0-89, kStrictError),
 		A1(180.342-89, kMediumError),
 		A2(180.342-89, kMediumError),

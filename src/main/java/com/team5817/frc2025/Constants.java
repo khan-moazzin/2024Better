@@ -50,7 +50,7 @@ public class Constants {
 		REAL
 	}
 
-	public static Mode mode = Mode.SIM;//Sim or Replay, Real is auto set for real robot
+	public static Mode mode = Mode.REPLAY;//Sim or Replay, Real is auto set for real robot
 	
 
 	// Disables extra smart dashboard outputs that slow down the robot
@@ -87,7 +87,7 @@ public class Constants {
 		public static final double exitDistance = 1.5;
 		public static final double coralSpit = .1;
 		public static final double intakeWait = 0;
-		public static final double alignWait = 0.5;
+		public static final double alignWait = 0.2;
 		public static final double intakeTimeout = 0;
 		public static final double scoreTimeout = .2;
 	}

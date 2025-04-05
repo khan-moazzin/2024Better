@@ -7,6 +7,8 @@ import java.net.SocketAddress;
 import java.util.List;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.team5817.frc2025.autos.Modes.Center11;
 import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
@@ -182,6 +184,7 @@ public class AutoModeSelector {
 		
 		SmartDashboard.putData("Starting Position", mStartingPositionSelector);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
+		Logger.recordOutput("Selected Auto", desiredMode);
 
 		if(desiredMode == DesiredMode.CUSTOM_MODE){
 			SmartDashboard.putData("First Score Selector", mFirstScoreSelector);
@@ -206,7 +209,6 @@ public class AutoModeSelector {
 		switch (mode) {
 			case DO_NOTHING:
 				return Optional.of(new DoNothingMode());
-
 			case CUSTOM_MODE:
 				return Optional.of(new CustomMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedSecondPickupLocation, mCachedThirdPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
 			case CENTER_MAIN:
