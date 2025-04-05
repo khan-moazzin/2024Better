@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * The WheelTracker class is responsible for tracking the position and velocity of the robot
@@ -82,7 +83,7 @@ public class WheelTracker extends Subsystem {
 
 	@Override
 	public void readPeriodicInputs() {
-
+		Logger.processInputs("Wheel Tracker", inputs);
 	}
 
 	private class OdometryThread extends Thread {

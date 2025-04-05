@@ -38,6 +38,8 @@ import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Elastic;
 import com.team5817.lib.Util;
+
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -291,6 +293,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void simulationInit() {
+    if(Constants.mode == Constants.Mode.SIM)
     SimulatedArena.getInstance().resetFieldForAuto();
   }
 
@@ -299,12 +302,13 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void simulationPeriodic() {
+    if(Constants.mode == Constants.Mode.SIM){
     SimulatedArena.getInstance().simulationPeriodic();
     Logger.recordOutput("FieldSimulation/RobotPosition", mDriveSim.getSimulatedDriveTrainPose());
     Logger.recordOutput(
         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-
+}
   }
 }
