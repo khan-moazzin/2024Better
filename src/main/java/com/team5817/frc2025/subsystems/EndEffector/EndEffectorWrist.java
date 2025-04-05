@@ -47,7 +47,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	public enum State {
 
 		L4(71.89453125-89, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
-		L3(-31.185546874999993, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
+		L3(-40.185546874999993, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
 		L2(-40, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
 		L1(0-89, kStrictError),
 		A1(180.342-89, kMediumError),
