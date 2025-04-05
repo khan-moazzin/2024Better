@@ -50,7 +50,7 @@ public class Constants {
 		REAL
 	}
 
-	public static Mode mode = Mode.SIM;//Sim or Replay, Real is auto set for real robot
+	public static Mode mode = Mode.REPLAY;//Sim or Replay, Real is auto set for real robot
 	
 
 	// Disables extra smart dashboard outputs that slow down the robot
@@ -70,7 +70,7 @@ public class Constants {
 	// Timeout constants
 	public static final double kLongCANTimeoutS = 0.1;
 	public static final double kCANTimeoutS = .01;
-	public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.08, 1), Math.pow(0.08, 1));
+	public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.04, 1), Math.pow(0.04, 1));
 	public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.003, 1), Math.pow(0.003, 1));
 	public static final double[][] fundamentalMatrix = {
 			{ 0.0, 0.0, 0.0 },
