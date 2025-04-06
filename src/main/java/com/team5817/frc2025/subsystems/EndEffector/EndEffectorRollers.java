@@ -48,7 +48,7 @@ public class EndEffectorRollers extends Subsystem {
 		HOLDCORAL(-1.5),
 		CORAL_INTAKE(-4.0),
 		l4(12.0),
-		l3(12.0),
+		l3(2.0),
 		l2(2.0),
 		l1(1.2),
 		ALGAE_INTAKE(-9.0),
