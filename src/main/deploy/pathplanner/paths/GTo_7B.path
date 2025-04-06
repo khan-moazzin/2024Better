@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.141517857142857,
-        "y": 1.454432397959183
+        "x": 1.87078125,
+        "y": 1.14265625
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1023582066393773,
-        "y": 1.832073087139126
+        "x": 1.8316215994965204,
+        "y": 1.5202969391799428
       },
       "isLocked": false,
       "linkedName": "G"
@@ -48,7 +48,7 @@
   "folder": "GTo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 5.974323286480683
+    "rotation": -13.495733280795804
   },
   "useDefaultConstraints": false
 }
