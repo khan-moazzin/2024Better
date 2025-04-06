@@ -50,7 +50,7 @@ public class Constants {
 		REAL
 	}
 
-	public static Mode mode = Mode.REPLAY;//Sim or Replay, Real is auto set for real robot
+	public static Mode mode = Mode.SIM;//Sim or Replay, Real is auto set for real robot
 	
 
 	// Disables extra smart dashboard outputs that slow down the robot
