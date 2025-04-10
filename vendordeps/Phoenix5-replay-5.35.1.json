@@ -64,7 +64,7 @@
                 "linuxarm64",
                 "osxuniversal"
             ],
-            "simMode": "hwsim"
+            "simMode": "hw"
         },
         {
             "groupId": "com.ctre.phoenix.sim",

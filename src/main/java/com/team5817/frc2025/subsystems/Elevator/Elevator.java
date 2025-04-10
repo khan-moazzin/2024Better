@@ -49,8 +49,8 @@ public class Elevator extends ServoMotorSubsystem {
 	 */
 	public enum State {
 		L4(1.8635330123363545, kStrictError, ElevatorConstants.kHighOffsetMap),
-		L3(1.211806509200769-.02, kStrictError, ElevatorConstants.kMidOffsetMap),
-		L2(0.8356578435411517-.03, kStrictError, ElevatorConstants.kMidOffsetMap),
+		L3(1.211806509200769-.08, kStrictError, ElevatorConstants.kMidOffsetMap),
+		L2(.754804-.025, kStrictError, ElevatorConstants.kMidOffsetMap),
 		L1(0.219, kStrictError),
 		A1(0.59, kMediumError),
 		A2(1, kMediumError),

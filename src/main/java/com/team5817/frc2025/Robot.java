@@ -4,10 +4,6 @@
 
 package com.team5817.frc2025;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Optional;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -26,16 +22,12 @@ import com.team5817.BuildConstants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.AutoExecuter;
 import com.team5817.frc2025.autos.AutoModeSelector;
-import com.team5817.frc2025.autos.TrajectoryLibrary;
 import com.team5817.frc2025.autos.Modes.Characterize;
-import com.team5817.frc2025.autos.Modes.TestRoutine;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.controlboard.ControlBoard;
 import com.team5817.frc2025.controlboard.DriverControls;
 import com.team5817.frc2025.loops.Looper;
-import com.team5817.frc2025.subsystems.LEDs;
 import com.team5817.frc2025.subsystems.Superstructure;
-import com.team5817.frc2025.subsystems.Climb.Climb;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
@@ -43,20 +35,12 @@ import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
-import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Elastic;
 import com.team5817.lib.Util;
-import com.team5817.lib.diagnostic.FeedForwardCharacterization;
-import com.team5817.lib.diagnostic.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import com.team5817.lib.drivers.ServoMotorSubsystem;
 
-import choreo.trajectory.Trajectory;
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -64,7 +48,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The main robot class that extends LoggedRobot and contains the robot's lifecycle methods.
@@ -114,7 +97,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
 
     if (Constants.mode == Constants.Mode.REAL) {
-      // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
@@ -310,6 +293,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void simulationInit() {
+    if(Constants.mode == Constants.Mode.SIM)
     SimulatedArena.getInstance().resetFieldForAuto();
   }
 
@@ -318,12 +302,13 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void simulationPeriodic() {
+    if(Constants.mode == Constants.Mode.SIM){
     SimulatedArena.getInstance().simulationPeriodic();
     Logger.recordOutput("FieldSimulation/RobotPosition", mDriveSim.getSimulatedDriveTrainPose());
     Logger.recordOutput(
         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-
+}
   }
 }
