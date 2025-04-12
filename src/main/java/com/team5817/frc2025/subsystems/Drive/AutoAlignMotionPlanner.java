@@ -17,8 +17,8 @@ import org.littletonrobotics.junction.Logger;
  */
 public class AutoAlignMotionPlanner {
 
-    private PIDController mXController = new PIDController(4, 0, 10);
-    private PIDController mYController = new PIDController(4, 0, 10);
+    private PIDController mXController = new PIDController(4, 0, 0);
+    private PIDController mYController = new PIDController(4, 0, 0);
     private SwerveHeadingController mThetaController;
 
     boolean mAutoAlignComplete = false;
@@ -55,7 +55,7 @@ public class AutoAlignMotionPlanner {
         mFieldToTargetPoint = targetPoint;
         mXController.reset();
         mYController.reset();
-        this.poseDeadband = Pose2d.fromTranslation(poseDeadband.getTranslation().rotateBy(targetPoint.getRotation())).withRotation(poseDeadband.getRotation());
+        this.poseDeadband = Pose2d.fromTranslation(poseDeadband.getTranslation()).withRotation(poseDeadband.getRotation());
         Logger.recordOutput("Align Point",new edu.wpi.first.math.geometry.Pose2d(mFieldToTargetPoint.getTranslation().wpi(),mFieldToTargetPoint.getRotation().wpi()));
     }
 
@@ -83,7 +83,8 @@ public class AutoAlignMotionPlanner {
         double yOutput = mYController.calculate(current_pose.getTranslation().y());
         double thetaOutput = mThetaController.update(current_pose.getRotation(), timestamp);
         ChassisSpeeds setpoint = new ChassisSpeeds();
-
+        xOutput = Math.copySign(Math.min(Math.abs(xOutput), 1.3), xOutput);
+        yOutput = Math.copySign(Math.min(Math.abs(yOutput), 1.3), yOutput);
         this.error = current_pose.minus(mFieldToTargetPoint).getTranslation();
         boolean thetaWithinDeadband = current_pose.getRotation().distance(mFieldToTargetPoint.getRotation()) < poseDeadband.getRotation().getRadians() && Math.abs(thetaOutput) < 0.02;
         boolean xWithinDeadband = Math.abs(mXController.getSetpoint() - current_pose.getTranslation().x())< poseDeadband.getTranslation().x();

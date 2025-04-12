@@ -49,8 +49,8 @@ public class Elevator extends ServoMotorSubsystem {
 	 */
 	public enum State {
 		L4(1.8635330123363545, kStrictError, ElevatorConstants.kHighOffsetMap),
-		L3(1.211806509200769-.08, kStrictError, ElevatorConstants.kMidOffsetMap),
-		L2(.754804-.025, kStrictError, ElevatorConstants.kMidOffsetMap),
+		L3(1.211806509200769-.06, kStrictError, ElevatorConstants.kMidOffsetMap),
+		L2(.754804+.035, kStrictError, ElevatorConstants.kMidOffsetMap),
 		L1(0.219, kStrictError),
 		A1(0.59, kMediumError),
 		A2(1, kMediumError),
@@ -159,6 +159,9 @@ public class Elevator extends ServoMotorSubsystem {
 		Logger.recordOutput(mConstants.kName+"/AtState", atState);
 		Logger.recordOutput(mConstants.kName+"/State",	mState);
 		super.outputTelemetry();
+	}
+	public boolean getAtState(){
+		return atState;
 	}
 
 	@Override

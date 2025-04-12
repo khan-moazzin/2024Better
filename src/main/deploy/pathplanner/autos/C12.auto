@@ -7,43 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "STo_8A"
+            "pathName": "CTo_3A"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "_8AToP1"
+            "pathName": "3ATo3O"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P1To_7A"
+            "pathName": "3OTo3C"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "_7AToP2"
+            "pathName": "3CToN"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P2To_6B"
+            "pathName": "NTo4C"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "_6BToP3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "P3To_6A"
+            "pathName": "4CToN"
           }
         }
       ]

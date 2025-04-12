@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 import com.team5817.frc2025.autos.Modes.Center11;
+import com.team5817.frc2025.autos.Modes.Center12;
 import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
@@ -50,14 +51,15 @@ public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
 		CUSTOM_MODE,
-		CENTER_MAIN,
+		ONE_NET,
+		TWO_NET,
 		SIDE_MAIN
 	}
 	public enum StartingPosition {
 
 		PROCCESSOR_SIDE("S", DesiredMode.CUSTOM_MODE,DesiredMode.SIDE_MAIN, DesiredMode.DO_NOTHING),
-		CENTER_PROCESS("C", DesiredMode.CUSTOM_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
-		CENTER_BLANK("C",true, DesiredMode.CUSTOM_MODE,DesiredMode.CENTER_MAIN, DesiredMode.DO_NOTHING),
+		CENTER_PROCESS("C", DesiredMode.CUSTOM_MODE,DesiredMode.ONE_NET,DesiredMode.TWO_NET, DesiredMode.DO_NOTHING),
+		CENTER_BLANK("C",true, DesiredMode.CUSTOM_MODE, DesiredMode.DO_NOTHING),
 		BLANK_SIDE("S",true, DesiredMode.CUSTOM_MODE,DesiredMode.SIDE_MAIN, DesiredMode.DO_NOTHING);
 
 		public List<DesiredMode> modes;
@@ -211,8 +213,10 @@ public class AutoModeSelector {
 				return Optional.of(new DoNothingMode());
 			case CUSTOM_MODE:
 				return Optional.of(new CustomMode(mCachedStartingPosition, mCachedFirstPickupLocation, mCachedSecondPickupLocation, mCachedThirdPickupLocation, mCachedFirstScore, mCachedSecondScore, mCachedThirdScore,mCachedScoreAmount));
-			case CENTER_MAIN:
+			case ONE_NET:
 				return Optional.of(new Center11(mCachedStartingPosition));
+			case TWO_NET:
+				return Optional.of(new Center12(mCachedStartingPosition));
 			case SIDE_MAIN:
 				return Optional.of(new CustomMode(mCachedStartingPosition, PickupLocation.GROUND, PickupLocation.GROUND, PickupLocation.FAR, ScoringLocation._8A, ScoringLocation._7A, ScoringLocation._7B,3));
 		default:

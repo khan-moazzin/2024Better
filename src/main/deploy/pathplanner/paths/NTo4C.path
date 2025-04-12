@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.2,
-        "y": 4.006
+        "x": 7.03,
+        "y": 5.92
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.950957782356348,
-        "y": 4.027862612632801
+        "x": 6.364859693877552,
+        "y": 6.506026785714286
       },
       "isLocked": false,
-      "linkedName": "3O"
+      "linkedName": "N"
     },
     {
       "anchor": {
-        "x": 5.7977678571428575,
-        "y": 4.006345663265305
+        "x": 5.148596938775511,
+        "y": 5.170376275510204
       },
       "prevControl": {
-        "x": 6.055101480899735,
-        "y": 3.990092239265843
+        "x": 5.612746963494038,
+        "y": 6.071487507810407
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "3C"
+      "linkedName": "4C"
     }
   ],
   "rotationTargets": [],
@@ -33,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
+    "maxVelocity": 10.0,
     "maxAcceleration": 1.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 360.0,
+    "maxAngularVelocity": 180.0,
+    "maxAngularAcceleration": 180.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 180.0
+    "velocity": 0,
+    "rotation": -119.79
   },
   "reversed": false,
-  "folder": "Extras",
+  "folder": "NTF",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": false
 }
