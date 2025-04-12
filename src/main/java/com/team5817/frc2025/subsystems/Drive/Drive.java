@@ -9,6 +9,7 @@ import com.team5817.frc2025.Constants.SwerveConstants.Mod1;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod2;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod3;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
+import com.team5817.frc2025.field.AlignmentPoint;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
@@ -146,8 +147,9 @@ public class Drive extends Subsystem {
 		mPigeon.setYaw(0.0);
 		mWheelTracker = new WheelTracker(mModules);
 		mSetpointGenerator = new SwerveSetpointGenerator(SwerveConstants.kKinematics);
-
+		findTargetPoint();
 		mAutoAlignMotionPlanner.reset();
+		
 		
 	}
 
@@ -748,6 +750,10 @@ public class Drive extends Subsystem {
 	 */
 	public SwerveKinematicLimits getKinematicLimits() {
 		return mKinematicLimits;
+	}
+	public static AlignmentPoint getAlignment()
+	{
+		return AutoAlignPointSelector.a;
 	}
 
 	public static class SwerveInputs {

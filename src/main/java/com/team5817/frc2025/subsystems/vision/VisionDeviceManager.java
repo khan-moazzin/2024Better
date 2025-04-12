@@ -4,8 +4,11 @@ import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.RobotState;
 import com.team5817.frc2025.Constants.PoseEstimatorConstants;
 import com.team5817.frc2025.RobotState.VisionUpdate;
+import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
+import com.team5817.frc2025.subsystems.Drive.Drive;
+import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
 import com.team5817.lib.drivers.Subsystem;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
@@ -20,6 +23,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
+
+import javax.lang.model.util.ElementScanner14;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -100,19 +105,38 @@ public class VisionDeviceManager extends Subsystem {
 			RobotState.getInstance().addVisionUpdate(new VisionUpdate(1, Timer.getTimestamp(), 1.0,
 					RobotState.getInstance().getPoseFromOdom(Timer.getTimestamp()).getTranslation()));
 		} else {
+			if(Drive.getInstance().getControlState() != DriveControlState.AUTOALIGN){
+				for (VisionDevice device : mAllCameras) 
+					updateDevice(device);
+				Logger.recordOutput("2", "REG");
+				return;
+			}
 
-			for (VisionDevice device : mAllCameras) {
-				device.update(Timer.getTimestamp());
+			if(Drive.getAlignment().getAllowedAllignments().contains(AlignmentType.CORAL_SCORE_LEFT)){
+				updateDevice(mRightCamera);
+				Logger.recordOutput("2", "Score Left");
+
+			}else if(Drive.getAlignment().getAllowedAllignments().contains(AlignmentType.CORAL_SCORE_RIGHT)){
+				updateDevice(mLeftCamera);
+				Logger.recordOutput("2", "Score Right");
+
+			}else{
+				for (VisionDevice device : mAllCameras) 
+					updateDevice(device);
+					Logger.recordOutput("2", "AREG");
+				
+			}
+		}
+	}
+	public void updateDevice(VisionDevice device){
+		device.update(Timer.getTimestamp());
 				if (!device.getVisionUpdate().isEmpty()) {
 					VisionUpdate update = device.getVisionUpdate().get();
 					RobotState.getInstance().addVisionUpdate(update);
 					if (update.getTimestamp() > timeOfLastUpdate)
 						timeOfLastUpdate = update.getTimestamp();
 				}
-			}
-		}
 	}
-
 	/**
 	 * Writes periodic outputs.
 	 */

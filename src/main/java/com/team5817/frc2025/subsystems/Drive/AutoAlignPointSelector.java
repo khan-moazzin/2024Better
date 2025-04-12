@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
+import org.opencv.core.Point;
 
 import com.team254.lib.geometry.Pose2d;
 import com.team5817.frc2025.field.AlignmentPoint;
@@ -17,7 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class AutoAlignPointSelector {
-
+    public static AlignmentPoint a;
     /**
      * Gets the set of AprilTags based on the current alliance color.
      * 
@@ -66,7 +67,7 @@ public class AutoAlignPointSelector {
      * @param to The list of target positions.
      * @return The Pose2d that is closest to the starting position.
      */
-    private static Pose2d minimizeDistance(Pose2d from, List<Pose2d> to) {
+    private static Pose2d minimizeDistance(Pose2d from, List<Pose2d> to, List<AlignmentPoint> points) {
         if (to.size() == 0) {
             return null;
         }
@@ -77,6 +78,8 @@ public class AutoAlignPointSelector {
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestPose = to.get(i);
+                a = points.get(i);
+                Logger.recordOutput("Alignment Point", a.getAllowedAllignments().toString());
             }
         }
         return (closestPose);
@@ -91,12 +94,15 @@ public class AutoAlignPointSelector {
      * @return The nearest alignment point as a Pose2d.
      */
     private static Pose2d getNearestAlignment(AprilTag tag, Pose2d point, AlignmentType desiredAlignment) {
-        List<Pose2d> points = new ArrayList<>();
+        List<Pose2d> poses = new ArrayList<>();
+        List<AlignmentPoint> points = new ArrayList<>();
         for (AlignmentPoint a : tag.getAllAlignmentPoints()) {
-            if (a.getAllowedAllignments().contains(desiredAlignment))
-                points.add(tag.getFieldToTag().transformBy(Pose2d.fromTranslation(a.getTranslation())));
+            if (a.getAllowedAllignments().contains(desiredAlignment)){
+                poses.add(tag.getFieldToTag().transformBy(Pose2d.fromTranslation(a.getTranslation())));
+                points.add(a);
+            }
         }
-        return minimizeDistance(point, points);
+        return minimizeDistance(point, poses,points);
     }
 
     /**
