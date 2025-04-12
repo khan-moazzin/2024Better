@@ -182,7 +182,7 @@ public class DriverControls {
 		if(codriver.xButton.isBeingPressed())
 			preparedGoal = GoalState.L1;
 		if(codriver.POV0.isBeingPressed()){
-			preparedGoal = GoalState.SUPER_NET;
+			preparedGoal = GoalState.NET;
 		}
 		if(codriver.POV180.isBeingPressed()){
 			preparedGoal = GoalState.PROCESS;
