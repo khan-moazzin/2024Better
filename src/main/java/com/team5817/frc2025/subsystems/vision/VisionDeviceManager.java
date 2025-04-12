@@ -104,29 +104,12 @@ public class VisionDeviceManager extends Subsystem {
 		if ( Constants.mode == Constants.Mode.SIM) {
 			RobotState.getInstance().addVisionUpdate(new VisionUpdate(1, Timer.getTimestamp(), 1.0,
 					RobotState.getInstance().getPoseFromOdom(Timer.getTimestamp()).getTranslation()));
-		} else {
-			if(Drive.getInstance().getControlState() != DriveControlState.AUTOALIGN){
-				for (VisionDevice device : mAllCameras) 
-					updateDevice(device);
-				Logger.recordOutput("2", "REG");
-				return;
-			}
-
-			if(Drive.getAlignment().getAllowedAllignments().contains(AlignmentType.CORAL_SCORE_LEFT)){
-				updateDevice(mRightCamera);
-				Logger.recordOutput("2", "Score Left");
-
-			}else if(Drive.getAlignment().getAllowedAllignments().contains(AlignmentType.CORAL_SCORE_RIGHT)){
-				updateDevice(mLeftCamera);
-				Logger.recordOutput("2", "Score Right");
-
-			}else{
-				for (VisionDevice device : mAllCameras) 
-					updateDevice(device);
-					Logger.recordOutput("2", "AREG");
-				
-			}
-		}
+			return;
+		} 
+		for (VisionDevice device : mAllCameras) 
+			updateDevice(device);	
+			
+		
 	}
 	public void updateDevice(VisionDevice device){
 		device.update(Timer.getTimestamp());

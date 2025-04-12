@@ -84,11 +84,11 @@ public class Center12 extends AutoBase {
 		}
 		s.setReadyToScore(false);
 		r(new ParallelAction(List.of(
-				new TrajectoryAction(t.next(),1),
+				new TrajectoryAction(t.next(),2),
 					new LambdaAction(() -> {
 						s.setGoal(GoalState.L4);
 					}))));
-		r(new WaitAction(.3));
+		r(new WaitAction(.5));
 		System.out.println("Auto:Starting Score of 3A at "+ (Timer.getTimestamp()-startTime));
 		s.setReadyToScore(true);
 
@@ -129,6 +129,8 @@ public class Center12 extends AutoBase {
 		// r(new WaitForBooleanAction(Elevator.getInstance()::getAtState));
 		r(new WaitAction(0.2));
         s.setReadyToScore(true);
-		r(new WaitAction(.2));
+		r(new WaitAction(.3));
+		s.setGoal(GoalState.STOW);
+
 	}
 }
