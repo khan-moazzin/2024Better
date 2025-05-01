@@ -2,7 +2,6 @@ package com.team5817.frc2025.autos.Modes;
 
 import java.util.List;
 
-import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Constants.AutoConstants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.Actions.LambdaAction;
@@ -17,8 +16,8 @@ import com.team5817.frc2025.autos.AutoModeSelector.StartingPosition;
 import com.team5817.frc2025.autos.Actions.WaitForSuperstructureAction;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.subsystems.Superstructure;
-import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
+import com.team5817.lib.RobotMode;
 import com.team5817.lib.motion.Trajectory;
 import com.team5817.lib.motion.TrajectorySet;
 
@@ -30,7 +29,6 @@ import edu.wpi.first.wpilibj.Timer;
 public class CustomMode extends AutoBase {
 
 	private Superstructure s = Superstructure.getInstance();
-	private Drive d = Drive.getInstance();
 	private TrajectorySet t;
 	private int coral_amount = 0;
 
@@ -99,7 +97,7 @@ public class CustomMode extends AutoBase {
 	@Override
 	public void routine() {
 		s.mElevator.setManualOffset(0.04);
-		if (Constants.mode == Constants.Mode.SIM) {
+		if (RobotMode.mode == RobotMode.Mode.SIM) {
 			mSim.setSimulationWorldPose(t.initalPose().wpi());
 		}
 		s.setReadyToScore(false);

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Request {
-	String name = "DefaultName";
+	final static String defaultName = "DefaultName";
+	String name = defaultName;
 	public abstract void act();
 
 	public boolean isFinished() {

@@ -2,29 +2,15 @@ package com.team5817.frc2025.subsystems.vision;
 
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.RobotState;
-import com.team5817.frc2025.Constants.PoseEstimatorConstants;
 import com.team5817.frc2025.RobotState.VisionUpdate;
-import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
-import com.team5817.frc2025.subsystems.Drive.Drive;
-import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
+import com.team5817.lib.RobotMode;
 import com.team5817.lib.drivers.Subsystem;
-import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Translation3d;
-import com.team254.lib.util.MovingAverage;
-
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
-
-import javax.lang.model.util.ElementScanner14;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -53,14 +39,9 @@ public class VisionDeviceManager extends Subsystem {
 	private VisionDevice mLeftCamera;
 	private VisionDevice mUpCamera;
 
-	private RobotState mRobotState;
-
 	private List<VisionDevice> mAllCameras;
 
 	private static double timestampOffset = 0.1;
-
-	private MovingAverage mHeadingAvg = new MovingAverage(100);
-	private double mMovingAvgRead = 0.0;
 
 	private static boolean disable_vision = false;
 	double timeOfLastUpdate = Double.MIN_VALUE;
@@ -74,7 +55,6 @@ public class VisionDeviceManager extends Subsystem {
 		mUpCamera = new VisionDevice("limelight-up");
 
 		mAllCameras = List.of(mRightCamera, mLeftCamera, mUpCamera);
-		mRobotState = RobotState.getInstance();
 	}
 
 	/**
@@ -101,7 +81,7 @@ public class VisionDeviceManager extends Subsystem {
 	 */
 	@Override
 	public void readPeriodicInputs() {
-		if ( Constants.mode == Constants.Mode.SIM) {
+		if (RobotMode.mode == RobotMode.Mode.SIM) {
 			RobotState.getInstance().addVisionUpdate(new VisionUpdate(1, Timer.getTimestamp(), 1.0,
 					RobotState.getInstance().getPoseFromOdom(Timer.getTimestamp()).getTranslation()));
 			return;
@@ -187,33 +167,6 @@ public class VisionDeviceManager extends Subsystem {
 	}
 
 	/**
-	 * Applies a translational filter to the vision data.
-	 * @param domTargetToCamera the pose of the dominant target to the camera.
-	 * @param subDevice the pose of the subordinate device. HI MIKEY HI MIKEY HI MKIEY HI HUBERT HI HUBERT
-	 * @return true if the error is within the threshold, false otherwise.
-	 */
-	public boolean translationalFilter(Pose3d domTargetToCamera, Pose3d subDevice) {
-		Transform3d expectedDelta = PoseEstimatorConstants.kDomVisionDevice.kRobotToCamera
-				.plus(PoseEstimatorConstants.kSubVisionDevice.kRobotToCamera.inverse());
-		Transform3d delta;
-		delta = new Transform3d(domTargetToCamera, subDevice);
-		Transform3d error = delta.plus(expectedDelta.inverse());
-		return (error.getTranslation().getNorm() > 0.1 || error.getRotation().getAngle() > 0.5);// TODO Find threshold
-																								// (meters and radians)
-
-	}
-
-
-
-	/**
-	 * Returns the moving average object.
-	 * @return the moving average object.
-	 */
-	public MovingAverage getMovingAverage() {
-		return mHeadingAvg;
-	}
-
-	/**
 	 * Returns the left vision device.
 	 * @return the left vision device.
 	 */
@@ -252,14 +205,6 @@ public class VisionDeviceManager extends Subsystem {
 	 */
 	public static void setDisableVision(boolean disable) {
 		disable_vision = disable;
-	}
-
-	/**
-	 * Checks if the system is fully connected.
-	 * @return true if fully connected, false otherwise.
-	 */
-	public boolean fullyConnected() {
-		return false;//TODO
 	}
 
 	/**

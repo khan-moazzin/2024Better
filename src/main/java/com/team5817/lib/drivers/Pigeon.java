@@ -14,6 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import com.team254.lib.geometry.Rotation2d;
 import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Ports;
+import com.team5817.lib.RobotMode;
 
 /**
  * The Pigeon class is responsible for interfacing with the Pigeon2 gyro sensor.
@@ -66,7 +67,7 @@ public class Pigeon {
 	 * @return The current yaw angle as a Rotation2d object.
 	 */
 	public Rotation2d getYaw() {
-		if ( Constants.mode == Constants.Mode.SIM) {
+		if ( RobotMode.mode == RobotMode.Mode.SIM) {
 			return Rotation2d.fromDegrees(driveSim.getSimulatedDriveTrainPose().getRotation().getDegrees());
 		}
 		Rotation2d angle = getUnadjustedYaw().rotateBy(yawAdjustmentAngle.inverse());
@@ -91,7 +92,7 @@ public class Pigeon {
 	 * @return The current pitch angle as a Rotation2d object.
 	 */
 	public Rotation2d getPitch() {
-		if ( Constants.mode == Constants.Mode.SIM) {
+		if ( RobotMode.mode == RobotMode.Mode.SIM) {
 			return Rotation2d.identity();
 		}
 		return getUnadjustedPitch().rotateBy(pitchAdjustmentAngle.inverse()).inverse();

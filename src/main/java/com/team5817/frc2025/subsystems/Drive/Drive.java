@@ -1,20 +1,19 @@
 package com.team5817.frc2025.subsystems.Drive;
 
 import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.RobotState;
 import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod0;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod1;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod2;
 import com.team5817.frc2025.Constants.SwerveConstants.Mod3;
-import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.field.AlignmentPoint;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Cancoders;
 import com.team5817.frc2025.subsystems.WheelTracker;
+import com.team5817.lib.RobotMode;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.Pigeon;
 import com.team5817.lib.drivers.Subsystem;
@@ -82,9 +81,6 @@ public class Drive extends Subsystem {
 	private final AutoAlignMotionPlanner mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
 	private final SwerveHeadingController mHeadingController;
 
-	private Translation2d enableFieldToOdom = null;
-
-	private boolean mOverrideTrajectory = false;
 	private boolean mControlStateHasChanged = false;
 	private boolean mOverrideHeading = false;
 
@@ -378,7 +374,6 @@ public class Drive extends Subsystem {
 	 * @param trajectory The trajectory to follow.
 	 */
 	public void setTrajectory(Trajectory trajectory, double timeout) {
-		mOverrideTrajectory = false;
 		mMotionPlanner.reset();
 		mMotionPlanner.setTrajectory(trajectory.get(),timeout);
 		mKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
@@ -485,7 +480,7 @@ public class Drive extends Subsystem {
 	@Override
 	public void readPeriodicInputs() {
 		SwerveModuleState[] module_states = new SwerveModuleState[4];
-		if (Constants.mode == Constants.Mode.SIM) {
+		if (RobotMode.mode == RobotMode.Mode.SIM) {
 			for (int i = 0; i < mModules.length; i++) {
 				module_states[i] = new SwerveModuleState(driveSimulation.getModules()[i].getCurrentState());
 			}
@@ -511,14 +506,6 @@ public class Drive extends Subsystem {
 
 	}
 
-	/**
-	 * Overrides the current trajectory.
-	 *
-	 * @param value True to override the trajectory, false otherwise.
-	 */
-	public void overrideTrajectory(boolean value) {
-		mOverrideTrajectory = value;
-	}
 
 	/**
 	 * Updates the wanted setpoint, including whether heading should
@@ -583,7 +570,6 @@ public class Drive extends Subsystem {
 	 */
 	public void zeroGyro(double reset_deg) {
 		mPigeon.setYaw(reset_deg);
-		enableFieldToOdom = null;
 	}
 
 	/**
@@ -610,7 +596,7 @@ public class Drive extends Subsystem {
 				mModules[i].setVelocity(mPeriodicIO.des_module_states[i]);
 			}
 		}
-		if (Constants.mode == Constants.Mode.SIM) {
+		if (RobotMode.mode == RobotMode.Mode.SIM) {
 			driveSimulation.setRobotSpeeds(ChassisSpeeds
 					.fromFieldRelativeSpeeds(mPeriodicIO.setpoint.mChassisSpeeds, mPeriodicIO.heading.inverse()).wpi());
 		} else {

@@ -3,7 +3,6 @@ package com.team5817.frc2025.autos;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.net.SocketAddress;
 import java.util.List;
 import java.util.Optional;
 

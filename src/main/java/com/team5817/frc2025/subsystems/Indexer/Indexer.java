@@ -20,7 +20,6 @@ import com.team5817.lib.requests.Request;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Indexer extends Subsystem {
 	private static Indexer mInstance;

@@ -38,8 +38,8 @@ import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Elastic;
 import com.team5817.lib.Util;
+import com.team5817.lib.RobotMode;
 
-import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -64,7 +64,6 @@ public class Robot extends LoggedRobot {
   }
   SubsystemManager mSubsystemManager;
   // Superstructure s;
-  private VisionDeviceManager mVision = VisionDeviceManager.getInstance();
   private AutoExecuter mAutoExecuter;
   private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
   DriverControls controls;
@@ -81,7 +80,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     if(Robot.isReal())
-      Constants.mode = Constants.Mode.REAL;
+      RobotMode.mode = RobotMode.Mode.REAL;
     DriverStation.silenceJoystickConnectionWarning(true);
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, "limelight-right.local", port);
@@ -96,12 +95,12 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
 
-    if (Constants.mode == Constants.Mode.REAL) {
+    if (RobotMode.mode == RobotMode.Mode.REAL) {
       Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
-      if (Constants.mode == Constants.Mode.REPLAY) {
+      if (RobotMode.mode == RobotMode.Mode.REPLAY) {
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
         Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
@@ -119,7 +118,6 @@ public class Robot extends LoggedRobot {
 
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
                     // be added.
-    // s = Superstructure.getInstance();
     l.init();
 
     mDrive = Drive.getInstance();
@@ -133,13 +131,11 @@ public class Robot extends LoggedRobot {
         Superstructure.getInstance(),
         VisionDeviceManager.getInstance(),
         IntakeDeploy.getInstance(),
-        // Climb.getInstance(),
         Elevator.getInstance(),
         EndEffectorRollers.getInstance(),
         EndEffectorWrist.getInstance(),
         Indexer.getInstance(),
         IntakeRollers.getInstance()
-        // LEDs.getInstance()
         );
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -246,7 +242,7 @@ public class Robot extends LoggedRobot {
     mAutoModeSelector.updateModeCreator();
     Optional<AutoBase> autoMode = mAutoModeSelector.getAutoMode();
     if (autoMode.isPresent() && (autoMode.get() != mAutoExecuter.getAuto())) {
-      if (Constants.mode == Constants.Mode.SIM) 
+      if (RobotMode.mode == RobotMode.Mode.SIM) 
         autoMode.get().registerDriveSimulation(mDriveSim);
       mAutoExecuter.setAuto(autoMode.get());
       
@@ -293,7 +289,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void simulationInit() {
-    if(Constants.mode == Constants.Mode.SIM)
+    if(RobotMode.mode == RobotMode.Mode.SIM)
     SimulatedArena.getInstance().resetFieldForAuto();
   }
 
@@ -302,7 +298,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void simulationPeriodic() {
-    if(Constants.mode == Constants.Mode.SIM){
+    if(RobotMode.mode == RobotMode.Mode.SIM){
     SimulatedArena.getInstance().simulationPeriodic();
     Logger.recordOutput("FieldSimulation/RobotPosition", mDriveSim.getSimulatedDriveTrainPose());
     Logger.recordOutput(

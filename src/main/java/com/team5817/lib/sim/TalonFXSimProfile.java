@@ -76,7 +76,7 @@ class TalonFXSimProfile extends SimProfile {
 
 		double supplyCurrent = Math.abs(outPerc) * 30 * random(0.95, 1.05);
 		double statorCurrent = outPerc == 0 ? 0 : supplyCurrent / Math.abs(outPerc);
-
+		
 		_falcon.getSimState().setSupplyVoltage(12 - outPerc * outPerc * 3 / 4 * random(0.95, 1.05));
 	}
 }

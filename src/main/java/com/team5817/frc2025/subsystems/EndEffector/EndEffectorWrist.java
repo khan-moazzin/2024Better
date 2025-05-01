@@ -113,7 +113,7 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	public void conformToState(State state){
 		mState = state;
 	}
-	public void updateBranchDistance(double dist){
+	public void updateOnBranchDistance(double dist){
 		branchDist = dist;
 	}
 	public void setManualOffset(double offset){

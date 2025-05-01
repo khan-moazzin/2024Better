@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
-import org.opencv.core.Point;
-
 import com.team254.lib.geometry.Pose2d;
 import com.team5817.frc2025.field.AlignmentPoint;
 import com.team5817.frc2025.field.AprilTag;

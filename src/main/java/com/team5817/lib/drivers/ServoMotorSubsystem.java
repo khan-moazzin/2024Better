@@ -20,10 +20,9 @@ import com.team254.lib.motion.MotionState;
 import com.team254.lib.util.DelayedBoolean;
 import com.team254.lib.util.ReflectingCSVWriter;
 import com.team254.lib.util.Util;
-import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Constants.Mode;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
+import com.team5817.lib.RobotMode;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -111,7 +110,9 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		public boolean kEnableStatorCurrentLimit = false;
 
 		public double kMaxForwardOutput = 12.0; // Volts
-		public double kMaxReverseOutput = -12.0; // Volts
+		public double kMaxReverseOutput = -12.0; // Voltsa
+
+		public boolean kFollowerOpposeMasterDirection = false;
 
 		public double kMaxUnitsLimit = Double.POSITIVE_INFINITY;
 		public double kMinUnitsLimit = Double.NEGATIVE_INFINITY;
@@ -248,7 +249,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
 		for (int i = 0; i < mFollowers.length; ++i) {
 			mFollowers[i] = TalonFXFactory.createPermanentFollowerTalon(
-					mConstants.kFollowerConstants[i].id, mConstants.kMainConstants.id, true);//TODO add oppose fix
+					mConstants.kFollowerConstants[i].id, mConstants.kMainConstants.id, mConstants.kFollowerOpposeMasterDirection);
 
 			TalonFX follower = mFollowers[i];
 			mFollowerConfigs[i] = new TalonFXConfiguration();
@@ -261,7 +262,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			followerConfig.MotorOutput.NeutralMode = mConstants.kNeutralMode;
 			followerConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
 			followerConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
-			follower.setControl(new Follower(mConstants.kMainConstants.id.getDeviceNumber(), true));
+			follower.setControl(new Follower(mConstants.kMainConstants.id.getDeviceNumber(), mConstants.kFollowerOpposeMasterDirection));
 
 			TalonUtil.applyAndCheckConfiguration(follower, followerConfig);
 		}
@@ -426,7 +427,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		mServoInputs.output_percent = mMainOutputPercentageSignal.asSupplier().get();
 		mServoInputs.velocity_rps = mMainVelocitySignal.asSupplier().get().in(RotationsPerSecond);
 		mServoInputs.rotor_position = rotationsToUnits(mMain.getPosition().getValue().in(Rotations));
-		if (Constants.mode == Mode.SIM || mConstants.simIO) {
+		if (RobotMode.mode == RobotMode.Mode.SIM || mConstants.simIO) {
 			mServoInputs.error_rotations = (demand - mServoInputs.position_rots);
 			switch (mControlState) {
 				case OPEN_LOOP:

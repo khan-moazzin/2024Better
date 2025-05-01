@@ -45,7 +45,11 @@ public class SequentialRequest extends Request {
 	@Override
 	public Request addName(String name) {
 		super.addName(name);
-		requests.forEach(r -> r.addName(name));
+		for(Request r: requests) {
+			if(r.name!=Request.defaultName) {
+				r.addName(name);
+			}
+		}
 		return this;
 	}
 

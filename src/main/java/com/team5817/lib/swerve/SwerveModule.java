@@ -17,16 +17,15 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Robot;
 import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.lib.Conversions;
+import com.team5817.lib.RobotMode;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.Subsystem;
 import com.team254.lib.drivers.Phoenix6Util;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.swerve.SwerveModuleState;
 
-import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint.MinMax;
 import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveModule extends Subsystem {
@@ -103,7 +102,7 @@ public class SwerveModule extends Subsystem {
 	}
 
 	public void refreshSignals() {
-		if (Constants.mode == Constants.Mode.SIM) {
+		if (RobotMode.mode == RobotMode.Mode.SIM) {
 			mInputs.driveVelocity = mOutputs.driveVelocity;
 			mInputs.drivePosition = 0;
 			mInputs.rotationPosition = mOutputs.rotTarget;

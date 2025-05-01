@@ -1,7 +1,5 @@
 package com.team5817.frc2025.controlboard;
 
-import java.lang.Thread.State;
-
 import org.littletonrobotics.junction.Logger;
 
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
@@ -12,14 +10,10 @@ import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.lib.Util;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
-import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
-import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
-
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The DriverControls class handles the input from the driver and co-driver controllers
@@ -61,10 +55,6 @@ public class DriverControls {
 		
 			
 	}
-	boolean swap = false;
-	boolean climbAllowed = false;
-	boolean autoAlignAllowed = true;
-	boolean codriverManual = false;
 	CustomXboxController driver = mControlBoard.driver;
 	CustomXboxController codriver = mControlBoard.operator;
 	/* TWO CONTROLLERS */
@@ -85,7 +75,6 @@ public class DriverControls {
 
 
 		
-		if(!climbAllowed){
 			// if(driver.\)sswaaaaaa
 			if(driver.leftBumper.isBeingPressed()){
 				s.setGoal(GoalState.GROUND_CORAL_INTAKE);
@@ -98,9 +87,8 @@ public class DriverControls {
 				s.mDrive.setDriverKinematicLimits(Constants.SwerveConstants.kSwerveKinematicLimits);
 
 			if(driver.rightTrigger.isBeingPressed()&&!driver.POV270.isBeingPressed()&&!driver.POV90.isBeingPressed()){
-				if(autoAlignAllowed&&s.getGoalState().goal.mAlignmentType!=AlignmentType.NONE)
+				if(s.getGoalState().goal.mAlignmentType!=AlignmentType.NONE)
 					mDrive.autoAlign(s.getGoalState().goal.mAlignmentType);
-					
 				else
 					mDrive.autoAlignFinishedOverrride(true);
 			}
@@ -115,8 +103,6 @@ public class DriverControls {
 			if(driver.getXButton()){
 				s.setGoal(GoalState.A1);
 			}
-			if(codriver.getRightBumperButtonPressed())
-				swap = !swap;
 			if(driver.bButton.isBeingPressed())
 				s.mEndEffectorRollers.setState(EndEffectorRollers.State.CORAL_INTAKE);
 			if(driver.yButton.isBeingPressed()){
@@ -151,16 +137,9 @@ public class DriverControls {
 			
 			if(driver.leftTrigger.isBeingPressed())
 				s.setReadyToScore(driver.rightBumper.isBeingPressed());
-			// else if(driver.xButton.isBeingPressed()&&driver.rightBumper.isBeingPressed()){
-			// 	s.setGoal(GoalState.GROUND_ALGAE_SHOOT);
 			else if(driver.rightBumper.isBeingPressed())
 				s.setGoal(GoalState.EXHAUST);
-		}else {
-			if (driver.aButton.wasActivated())
-				s.setGoal(GoalState.CLIMB_PREPARE);
-			if(driver.aButton.wasReleased())
-				s.setGoal(GoalState.CLIMB_PULL);	
-			}
+		
 
 
 		if(codriver.getRightTriggerAxis()==1)
@@ -188,21 +167,6 @@ public class DriverControls {
 			preparedGoal = GoalState.PROCESS;
 		}
 		
-		if(codriver.getBackButtonPressed()){
-			codriverManual = !codriverManual;
-		}
-		if(codriverManual){
-			if(lastTime==0)
-				lastTime = Timer.getFPGATimestamp();
-			double dt = Timer.getTimestamp()-lastTime;
-			s.mElevator.changeManualOffset(-codriver.getLeftY()*dt*0.0254);
-			s.mEndEffectorWrist.changeManualOffset(-codriver.getRightY()*dt*50);
-			if(codriver.getLeftBumperButtonPressed())
-				s.mElevator.setManualOffset(0);
-			if(codriver.getRightBumperButtonPressed())
-				s.mEndEffectorWrist.setManualOffset(0);
-		lastTime = Timer.getTimestamp();
-		}
 		if(codriver.POV270.wasReleased())
 			s.mElevator.home();
 		if(codriver.POV90.wasReleased())
@@ -212,9 +176,6 @@ public class DriverControls {
 			driver.rumble(6, .5);
 		
 
-		Logger.recordOutput("Elastic/Codriver Manual", codriverManual);
-		Logger.recordOutput("Elastic/Auto Align Allowed", autoAlignAllowed);
-		Logger.recordOutput("Elastic/Climb Allowed", climbAllowed);
 		Logger.recordOutput("Elastic/PreparedGoal", preparedGoal);
 	}
 

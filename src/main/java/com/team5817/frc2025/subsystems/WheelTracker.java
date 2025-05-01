@@ -2,8 +2,8 @@ package com.team5817.frc2025.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Constants.Mode;
 import com.team5817.frc2025.subsystems.Drive.Drive;
+import com.team5817.lib.RobotMode;
 import com.team5817.lib.drivers.Pigeon;
 import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.swerve.SwerveModule;
@@ -171,7 +171,7 @@ public class WheelTracker extends Subsystem {
 			last_velocity_sample = new_pose;
 		}
 		inputs.pose = new_pose;
-		if (Constants.mode == Mode.SIM) {
+		if (RobotMode.mode == RobotMode.Mode.SIM) {
 			inputs.pose = new Pose2d(Drive.driveSimulation.getSimulatedDriveTrainPose());
 			inputs.velocity = new ChassisSpeeds(
 					Drive.driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative()).getTranslation();

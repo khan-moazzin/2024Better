@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -18,7 +17,6 @@ import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants
 import com.team5817.lib.drivers.ServoMotorSubsystem.TalonFXConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
 import com.team5817.lib.swerve.SwerveModule.SwerveModuleConstants;
-import com.team254.lib.drivers.CanDeviceId;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.motion.MotionProfileConstraints;
 import com.team254.lib.swerve.SwerveDriveKinematics;
@@ -27,8 +25,6 @@ import com.team254.lib.swerve.SwerveKinematicLimits;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -40,18 +36,6 @@ import edu.wpi.first.math.util.Units;
  * declared globally (i.e. public static). Do not put anything functional in this class.
  */
 public class Constants {
-
-	/**
-	 * Enum representing the different modes the robot can operate in.
-	 */
-	public enum Mode {
-		SIM,
-		REPLAY,
-		REAL
-	}
-
-	public static Mode mode = Mode.SIM;//Sim or Replay, Real is auto set for real robot
-	
 
 	// Disables extra smart dashboard outputs that slow down the robot
 	public static final boolean disableExtraTelemetry = false;
@@ -359,18 +343,9 @@ public class Constants {
 		static {
 			redTagIDFilters = List.of(6,7,8,9,10,11);
 			blueTagIDFilters = List.of(17,18,19,20,21,22);
-
-		
+			
 			kDomVisionDevice.kTableName = "limelight-Dom";
-			kDomVisionDevice.kRobotToCamera = new Transform3d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325),
-					Units.inchesToMeters(0),
-					new Rotation3d(0, 0, 0));
-
 			kSubVisionDevice.kTableName = "limelight-Sub";
-			kSubVisionDevice.kRobotToCamera = new Transform3d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325),
-					Units.inchesToMeters(0),
-					new Rotation3d(0, 0, 0));// TODO set these to correct values
-
 		}
 
 	}
@@ -506,6 +481,8 @@ public class Constants {
 
 			kElevatorServoConstants.kEnableStatorCurrentLimit = true;
 			kElevatorServoConstants.kStatorCurrentLimit = 80; // amps
+
+			kElevatorServoConstants.kFollowerOpposeMasterDirection = true;
 
 			kElevatorServoConstants.kNeutralMode = NeutralModeValue.Brake;
 			

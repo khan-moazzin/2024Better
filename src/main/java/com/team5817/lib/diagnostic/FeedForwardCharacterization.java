@@ -1,6 +1,5 @@
 package com.team5817.lib.diagnostic;
 
-import edu.wpi.first.wpilibj.DriverStation;
 
 // Copyright (c) 2023 FRC 6328
 // http://github.com/Mechanical-Advantage

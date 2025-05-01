@@ -12,8 +12,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
-
 import org.littletonrobotics.junction.Logger;
 
 /**
@@ -111,7 +109,7 @@ public class Elevator extends ServoMotorSubsystem {
 			}
 		});
 	}
-	public void updateBranchDistance(double dist){
+	public void updateOnBranchDistance(double dist){
 		this.branchDist = dist;
 	}
 	public void setManualOffset(double offset){

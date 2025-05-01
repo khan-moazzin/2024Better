@@ -6,7 +6,6 @@ import com.team5817.frc2025.loops.Looper;
 import com.team5817.lib.drivers.Subsystem;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
