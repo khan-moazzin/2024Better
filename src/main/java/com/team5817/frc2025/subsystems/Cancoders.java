@@ -23,6 +23,7 @@ public class Cancoders {
 	private final CanTsObserver mBackLeftObserver;
 	private final CanTsObserver mBackRightObserver;
 
+	@SuppressWarnings("unused")
 	private static final double kBootUpErrorAllowanceTime = 10.0;
 
 	/**

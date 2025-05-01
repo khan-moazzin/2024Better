@@ -20,6 +20,7 @@ public class SubsystemManager implements ILooper {
     private List<Loop> mLoops = new ArrayList<>();
     private double read_dt = 0.0;
     private double on_loop_dt = 0.0;
+    @SuppressWarnings("unused")
     private double write_dt = 0.0;
 
     private SubsystemManager() {

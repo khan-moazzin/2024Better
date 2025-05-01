@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class TalonFXChecker extends MotorChecker<TalonFX> {
     private static class ControlRequest {
+        @SuppressWarnings("unused")
         public StatusSignal<ControlModeValue> mMode;
         public double mSetValue;
     }

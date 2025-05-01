@@ -105,6 +105,7 @@ public class SwerveSetpointGenerator {
         return findRoot(func, x_0, y_0, f_0 - offset, x_1, y_1, f_1 - offset, max_iterations);
     }
 
+    @SuppressWarnings("unused")
     protected double findDriveMaxS(double x_0, double y_0, double x_1, double y_1, double max_vel_step) {
         // Our drive velocity between s=0 and s=1 is quadratic in s:
         // v^2 = ((x_1 - x_0) * s + x_0)^2 + ((y_1 - y_0) * s + y_0)^2

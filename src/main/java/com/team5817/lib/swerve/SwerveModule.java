@@ -160,6 +160,7 @@ public class SwerveModule extends Subsystem {
 		return flip;
 	}
 
+	@SuppressWarnings("unused")
 	private double target_angle;
 
 	private void setSteeringAngleRaw(double angleDegrees) {

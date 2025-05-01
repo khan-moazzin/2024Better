@@ -21,6 +21,7 @@ public class BaseTalonChecker extends MotorChecker<BaseTalon> {
         return checker.checkMotorsImpl(subsystem, motorsToCheck, checkerConfig);
     }
 
+    @SuppressWarnings("unused")
     @Override
     protected void storeConfiguration() {
         // record previous configuration for all talons
