@@ -12,7 +12,7 @@ import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.swerve.ChassisSpeeds;
 import com.team254.lib.trajectory.TrajectoryIterator;
-import com.team5817.frc2025.Constants.SwerveConstants;
+import com.team5817.frc2025.subsystems.Drive.SwerveConstants;
 import com.team5817.lib.motion.PPPathPointState;
 
 import edu.wpi.first.wpilibj.Timer;

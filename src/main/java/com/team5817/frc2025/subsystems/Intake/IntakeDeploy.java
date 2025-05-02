@@ -1,9 +1,9 @@
 package com.team5817.frc2025.subsystems.Intake;
 
 import com.team5817.frc2025.Robot;
-import com.team5817.frc2025.Constants.IntakeDeployConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
+import com.team5817.frc2025.subsystems.Intake.IntakeConstants.IntakeDeployConstants;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder;
 import com.team5817.lib.requests.Request;

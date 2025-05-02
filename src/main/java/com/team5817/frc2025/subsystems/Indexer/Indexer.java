@@ -12,9 +12,9 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.team254.lib.drivers.TalonUtil;
 import com.team5817.frc2025.Ports;
-import com.team5817.frc2025.Constants.IntakeRollerConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
+import com.team5817.frc2025.subsystems.Intake.IntakeConstants.IntakeRollerConstants;
 import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.requests.Request;
 

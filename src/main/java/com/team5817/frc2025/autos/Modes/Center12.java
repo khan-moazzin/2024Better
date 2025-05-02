@@ -2,8 +2,8 @@ package com.team5817.frc2025.autos.Modes;
 
 import java.util.List;
 
-import com.team5817.frc2025.Constants.AutoConstants;
 import com.team5817.frc2025.autos.AutoBase;
+import com.team5817.frc2025.autos.AutoConstants;
 import com.team5817.frc2025.autos.Actions.LambdaAction;
 import com.team5817.frc2025.autos.Actions.ParallelAction;
 import com.team5817.frc2025.autos.Actions.SequentialAction;

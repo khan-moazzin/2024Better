@@ -1,18 +1,17 @@
 package com.team5817.frc2025.subsystems.Drive;
 
-import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.RobotConstants;
 import com.team5817.frc2025.RobotState;
-import com.team5817.frc2025.Constants.SwerveConstants;
-import com.team5817.frc2025.Constants.SwerveConstants.Mod0;
-import com.team5817.frc2025.Constants.SwerveConstants.Mod1;
-import com.team5817.frc2025.Constants.SwerveConstants.Mod2;
-import com.team5817.frc2025.Constants.SwerveConstants.Mod3;
 import com.team5817.frc2025.field.AlignmentPoint;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Cancoders;
 import com.team5817.frc2025.subsystems.WheelTracker;
+import com.team5817.frc2025.subsystems.Drive.SwerveConstants.Mod0;
+import com.team5817.frc2025.subsystems.Drive.SwerveConstants.Mod1;
+import com.team5817.frc2025.subsystems.Drive.SwerveConstants.Mod2;
+import com.team5817.frc2025.subsystems.Drive.SwerveConstants.Mod3;
 import com.team5817.lib.RobotMode;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.Pigeon;
@@ -493,7 +492,7 @@ public class Drive extends Subsystem {
 		mPeriodicIO.pitch = mPigeon.getPitch();
 		mPeriodicIO.heading = mPigeon.getYaw();
 		mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-		Twist2d twist_vel = Constants.SwerveConstants.kKinematics
+		Twist2d twist_vel = com.team5817.frc2025.subsystems.Drive.SwerveConstants.kKinematics
 				.toChassisSpeeds(module_states)
 				.toTwist2d();
 		Translation2d translation_vel = new Translation2d(twist_vel.dx, twist_vel.dy);
@@ -517,12 +516,12 @@ public class Drive extends Subsystem {
 			return;
 
 		Pose2d robot_pose_vel = new Pose2d(
-				mPeriodicIO.des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt * 4.0,
-				mPeriodicIO.des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt * 4.0,
+				mPeriodicIO.des_chassis_speeds.vxMetersPerSecond * RobotConstants.kLooperDt * 4.0,
+				mPeriodicIO.des_chassis_speeds.vyMetersPerSecond * RobotConstants.kLooperDt * 4.0,
 				Rotation2d.fromRadians(
-						mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond * Constants.kLooperDt * 4.0));
+						mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond * RobotConstants.kLooperDt * 4.0));
 
-		Twist2d twist_vel = Pose2d.log(robot_pose_vel).scaled(1.0 / (4.0 * Constants.kLooperDt));
+		Twist2d twist_vel = Pose2d.log(robot_pose_vel).scaled(1.0 / (4.0 * RobotConstants.kLooperDt));
 
 		ChassisSpeeds wanted_speeds;
 		if (mOverrideHeading) {
@@ -533,12 +532,12 @@ public class Drive extends Subsystem {
 		} else {
 			wanted_speeds = new ChassisSpeeds(twist_vel.dx, twist_vel.dy, twist_vel.dtheta);
 		}
-		wanted_speeds = ChassisSpeeds.discretize(wanted_speeds, Constants.kLooperDt);
+		wanted_speeds = ChassisSpeeds.discretize(wanted_speeds, RobotConstants.kLooperDt);
 
 		mPeriodicIO.setpoint = mSetpointGenerator.generateSetpoint(mKinematicLimits, mPeriodicIO.setpoint,
-				wanted_speeds, Constants.kLooperDt);
+				wanted_speeds, RobotConstants.kLooperDt);
 		var uncapped_setpoint = mSetpointGenerator.generateSetpoint(mUncappedKinematicLimits, mPeriodicIO.setpoint,
-				wanted_speeds, Constants.kLooperDt);
+				wanted_speeds, RobotConstants.kLooperDt);
 		mPeriodicIO.predicted_velocity = wanted_speeds.toTwist2d();
 		// Pose2d.log(Pose2d.exp(wanted_speeds.toTwist2d()).rotateBy(getHeading()));
 

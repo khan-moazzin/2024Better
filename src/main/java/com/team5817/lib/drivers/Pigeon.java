@@ -12,7 +12,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 import com.team254.lib.geometry.Rotation2d;
-import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.Ports;
 import com.team5817.lib.RobotMode;
 
@@ -40,7 +39,7 @@ public class Pigeon {
 	private final Pigeon2 mGyro;
 
 	// Configs
-	private boolean inverted = Constants.SwerveConstants.invertGyro;
+	private boolean inverted = com.team5817.frc2025.subsystems.Drive.SwerveConstants.invertGyro;
 	private Rotation2d yawAdjustmentAngle = new Rotation2d();
 	private Rotation2d rollAdjustmentAngle = new Rotation2d();
 	private Rotation2d pitchAdjustmentAngle = new Rotation2d();

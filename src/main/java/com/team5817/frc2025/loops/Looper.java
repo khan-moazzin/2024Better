@@ -1,9 +1,10 @@
 package com.team5817.frc2025.loops;
 
-import com.team5817.frc2025.Constants;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.team5817.frc2025.RobotConstants;
 
 /**
  * This code runs all of the robot's loops. Loop objects are stored in a List object. They are started when the robot
@@ -46,7 +47,7 @@ public class Looper implements ILooper {
 	 * Constructs a Looper with the default loop time from Constants.
 	 */
 	public Looper() {
-		this(Constants.kLooperDt);
+		this(RobotConstants.kLooperDt);
 	}
 
 	/**

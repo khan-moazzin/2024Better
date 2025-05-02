@@ -1,9 +1,9 @@
 package com.team5817.frc2025.subsystems.EndEffector;
 
 import com.team5817.frc2025.Robot;
-import com.team5817.frc2025.Constants.EndEffectorWristConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
+import com.team5817.frc2025.subsystems.EndEffector.EndEffectorConstants.EndEffectorWristConstants;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.ServoMotorSubsystem;
 import com.team5817.lib.requests.Request;

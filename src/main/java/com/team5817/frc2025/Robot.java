@@ -140,7 +140,7 @@ public class Robot extends LoggedRobot {
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
     mEnabledLooper.start();
-    Logger.recordOutput("isComp", Constants.isComp);
+    Logger.recordOutput("isComp", RobotConstants.isComp);
   }
 
   /**

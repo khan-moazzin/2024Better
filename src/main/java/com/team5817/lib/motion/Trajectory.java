@@ -3,8 +3,8 @@ package com.team5817.lib.motion;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.team254.lib.trajectory.TrajectoryIterator;
-import com.team5817.frc2025.Constants.SwerveConstants;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
+import com.team5817.frc2025.subsystems.Drive.SwerveConstants;
 import com.team5817.lib.Util;
 
 /**

@@ -1,6 +1,6 @@
 package com.team5817.frc2025.subsystems.vision;
 
-import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.RobotConstants;
 import com.team5817.frc2025.RobotState;
 import com.team5817.frc2025.RobotState.VisionUpdate;
 import com.team5817.frc2025.loops.ILooper;
@@ -154,7 +154,7 @@ public class VisionDeviceManager extends Subsystem {
 			Translation3d x1 = toHomogeneous(pointsCam1.get(i));
 			Translation3d x2 = toHomogeneous(pointsCam2.get(i));
 			// Compute Fx1 = F * x1
-			Translation3d Fx1 = multiplyMatrixVector(Constants.fundamentalMatrix, x1);
+			Translation3d Fx1 = multiplyMatrixVector(RobotConstants.fundamentalMatrix, x1);
 			// Compute x2 • (Fx1)
 			double result = x2.dot(Fx1);
 			// Check if result is close to zero

@@ -3,7 +3,7 @@ package com.team5817.frc2025.field;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
-import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.RobotConstants;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -42,15 +42,15 @@ public class FieldLayout {
 		}
 	}
      
-        private static final AlignmentPoint kReefToCenterAlign = new AlignmentPoint(new Translation2d(-Constants.kBumberSideLength/2, 0.0),AlignmentType.ALGAE_CLEAN);
-        private static final AlignmentPoint kReefToRightAlign = new AlignmentPoint(new Translation2d(-(Constants.kBumberSideLength+0.3358)/2, -0.1643),AlignmentType.CORAL_SCORE,AlignmentType.CORAL_SCORE_RIGHT);
-        private static final AlignmentPoint kReefToLeftAlign = new AlignmentPoint(new Translation2d(-(Constants.kBumberSideLength+0.3358)/2, 0.1643),AlignmentType.CORAL_SCORE,AlignmentType.CORAL_SCORE_LEFT);
+        private static final AlignmentPoint kReefToCenterAlign = new AlignmentPoint(new Translation2d(-RobotConstants.kBumberSideLength/2, 0.0),AlignmentType.ALGAE_CLEAN);
+        private static final AlignmentPoint kReefToRightAlign = new AlignmentPoint(new Translation2d(-(RobotConstants.kBumberSideLength+0.3358)/2, -0.1643),AlignmentType.CORAL_SCORE,AlignmentType.CORAL_SCORE_RIGHT);
+        private static final AlignmentPoint kReefToLeftAlign = new AlignmentPoint(new Translation2d(-(RobotConstants.kBumberSideLength+0.3358)/2, 0.1643),AlignmentType.CORAL_SCORE,AlignmentType.CORAL_SCORE_LEFT);
 
-        private static final AlignmentPoint kHumanToCenterAlign = new AlignmentPoint(new Translation2d(Constants.kBumberSideLength/2, 0.0),AlignmentType.HUMAN);
-        private static final AlignmentPoint kHumanToRightAlign = new AlignmentPoint(new Translation2d(Constants.kBumberSideLength/2, -0.55),AlignmentType.HUMAN);
-        private static final AlignmentPoint kHumanToLeftAlign = new AlignmentPoint(new Translation2d(Constants.kBumberSideLength/2, 0.55),AlignmentType.HUMAN);
+        private static final AlignmentPoint kHumanToCenterAlign = new AlignmentPoint(new Translation2d(RobotConstants.kBumberSideLength/2, 0.0),AlignmentType.HUMAN);
+        private static final AlignmentPoint kHumanToRightAlign = new AlignmentPoint(new Translation2d(RobotConstants.kBumberSideLength/2, -0.55),AlignmentType.HUMAN);
+        private static final AlignmentPoint kHumanToLeftAlign = new AlignmentPoint(new Translation2d(RobotConstants.kBumberSideLength/2, 0.55),AlignmentType.HUMAN);
 
-        private static final AlignmentPoint kProcessorToCenterAlign = new AlignmentPoint(new Translation2d(-Constants.kBumberSideLength/2, 0.0),AlignmentType.ALGAE_SCORE);
+        private static final AlignmentPoint kProcessorToCenterAlign = new AlignmentPoint(new Translation2d(-RobotConstants.kBumberSideLength/2, 0.0),AlignmentType.ALGAE_SCORE);
     public static class Red {
 
         public static final HashMap<Integer, AprilTag> kAprilTagMap = new HashMap<>();

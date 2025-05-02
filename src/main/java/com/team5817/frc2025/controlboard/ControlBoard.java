@@ -2,14 +2,14 @@ package com.team5817.frc2025.controlboard;
 
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
-import com.team5817.frc2025.Constants;
+import com.team5817.frc2025.RobotConstants;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.Util;
 
 import edu.wpi.first.wpilibj.XboxController.Axis;
 
 public class ControlBoard {
-	private final double kSwerveDeadband = Constants.stickDeadband;
+	private final double kSwerveDeadband = RobotConstants.stickDeadband;
 
 	private static ControlBoard mInstance = null;
 
@@ -31,7 +31,7 @@ public class ControlBoard {
 
 	private ControlBoard() {
 		driver = new CustomXboxController(0);
-		operator = new CustomXboxController(Constants.kButtonGamepadPort);
+		operator = new CustomXboxController(RobotConstants.kButtonGamepadPort);
 	}
 
 	/**
@@ -67,8 +67,8 @@ public class ControlBoard {
 		double expoStrafeAxis = strafeAxis;
 
 
-		expoForwardAxis = Constants.SwerveConstants.invertYAxis ? expoForwardAxis : -expoForwardAxis;
-		expoStrafeAxis = Constants.SwerveConstants.invertXAxis ? expoStrafeAxis : -expoStrafeAxis;
+		expoForwardAxis = com.team5817.frc2025.subsystems.Drive.SwerveConstants.invertYAxis ? expoForwardAxis : -expoForwardAxis;
+		expoStrafeAxis = com.team5817.frc2025.subsystems.Drive.SwerveConstants.invertXAxis ? expoStrafeAxis : -expoStrafeAxis;
 		
 		Translation2d tAxes = new Translation2d(expoForwardAxis, expoStrafeAxis).scale(scalar);
 
@@ -92,7 +92,7 @@ public class ControlBoard {
 	 */
 	public double getSwerveRotation() {
 		double rotAxis = driver.getRightX() * 0.80;
-		rotAxis = Constants.SwerveConstants.invertRAxis ? rotAxis : -rotAxis;
+		rotAxis = com.team5817.frc2025.subsystems.Drive.SwerveConstants.invertRAxis ? rotAxis : -rotAxis;
 
 		if (Math.abs(rotAxis) < kSwerveDeadband) {
 			return 0.0;

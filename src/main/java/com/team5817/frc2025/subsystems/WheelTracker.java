@@ -1,7 +1,6 @@
 package com.team5817.frc2025.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.RobotMode;
 import com.team5817.lib.drivers.Pigeon;
@@ -54,8 +53,8 @@ public class WheelTracker extends Subsystem {
 		for (int i = 0; i < wheels.length; i++) {
 			WheelProperties w = new WheelProperties();
 			Translation2d robotToWheel = new Translation2d(
-					Constants.SwerveConstants.swerveModuleLocations[i].x(),
-					Constants.SwerveConstants.swerveModuleLocations[i].y());
+					com.team5817.frc2025.subsystems.Drive.SwerveConstants.swerveModuleLocations[i].x(),
+					com.team5817.frc2025.subsystems.Drive.SwerveConstants.swerveModuleLocations[i].y());
 			w.startingPosition = robotToWheel;
 			wheels[i] = w;
 		}

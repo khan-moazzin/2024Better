@@ -99,8 +99,8 @@ public class RobotState {
                 Nat.N2(),
                 (x, u) -> VecBuilder.fill(0.0, 0.0),
                 (x, u) -> x,
-                Constants.kStateStdDevs,
-                Constants.kLocalMeasurementStdDevs, .01);
+                RobotConstants.kStateStdDevs,
+                RobotConstants.kLocalMeasurementStdDevs, .01);
 
     }
 

@@ -3,7 +3,6 @@ package com.team5817.frc2025.controlboard;
 import org.littletonrobotics.junction.Logger;
 
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
-import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.field.FieldLayout;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
@@ -81,10 +80,10 @@ public class DriverControls {
 			}
 			if(driver.leftTrigger.isBeingPressed()){
 				s.setGoal(preparedGoal);
-				s.mDrive.setDriverKinematicLimits(Constants.SwerveConstants.kSwerveKinematicLimits);
+				s.mDrive.setDriverKinematicLimits(com.team5817.frc2025.subsystems.Drive.SwerveConstants.kSwerveKinematicLimits);
 
 			}else
-				s.mDrive.setDriverKinematicLimits(Constants.SwerveConstants.kSwerveKinematicLimits);
+				s.mDrive.setDriverKinematicLimits(com.team5817.frc2025.subsystems.Drive.SwerveConstants.kSwerveKinematicLimits);
 
 			if(driver.rightTrigger.isBeingPressed()&&!driver.POV270.isBeingPressed()&&!driver.POV90.isBeingPressed()){
 				if(s.getGoalState().goal.mAlignmentType!=AlignmentType.NONE)

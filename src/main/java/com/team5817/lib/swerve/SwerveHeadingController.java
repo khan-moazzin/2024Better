@@ -2,7 +2,7 @@ package com.team5817.lib.swerve;
 
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.util.SynchronousPIDF;
-import com.team5817.frc2025.Constants.SwerveConstants;
+import com.team5817.frc2025.subsystems.Drive.SwerveConstants;
 import com.team5817.lib.RobotMode;
 
 import edu.wpi.first.wpilibj.Timer;

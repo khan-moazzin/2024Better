@@ -16,8 +16,8 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.team5817.frc2025.Constants;
-import com.team5817.frc2025.Constants.SwerveConstants;
+import com.team5817.frc2025.RobotConstants;
+import com.team5817.frc2025.subsystems.Drive.SwerveConstants;
 import com.team5817.lib.Conversions;
 import com.team5817.lib.RobotMode;
 import com.team5817.lib.Util;
@@ -78,12 +78,12 @@ public class SwerveModule extends Subsystem {
 		// Angle motor config
 		mAngleMotor = new TalonFX(moduleConstants.angleMotorID, "canivore1");
 		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.getConfigurator()
-				.apply(SwerveConstants.AzimuthFXConfig(SwerveConstants.angleMotorInvert), Constants.kLongCANTimeoutS));
+				.apply(SwerveConstants.AzimuthFXConfig(SwerveConstants.angleMotorInvert), RobotConstants.kLongCANTimeoutS));
 
 		// Drive motor config
 		mDriveMotor = new TalonFX(moduleConstants.driveMotorID, "canivore1");
 		Phoenix6Util.checkErrorAndRetry(() -> mDriveMotor.getConfigurator()
-				.apply(SwerveConstants.DriveFXConfig(SwerveConstants.driveMotorInvert), Constants.kLongCANTimeoutS));
+				.apply(SwerveConstants.DriveFXConfig(SwerveConstants.driveMotorInvert), RobotConstants.kLongCANTimeoutS));
 		mDriveMotor.setPosition(0.0);
 
 		resetToAbsolute();
@@ -130,8 +130,8 @@ public class SwerveModule extends Subsystem {
 		mOutputs.driveVelocity = desiredState.speedMetersPerSecond * flip;
 		mOutputs.driveVelocity = Conversions.MPSToRPS(
 				mOutputs.driveVelocity,
-				Constants.SwerveConstants.wheelCircumference,
-				Constants.SwerveConstants.driveGearRatio);
+				com.team5817.frc2025.subsystems.Drive.SwerveConstants.wheelCircumference,
+				com.team5817.frc2025.subsystems.Drive.SwerveConstants.driveGearRatio);
 
 		if (Math.abs(mOutputs.driveVelocity) < 0.002) {
 			mOutputs.driveType = DriveType.NUETRAL;
@@ -183,11 +183,11 @@ public class SwerveModule extends Subsystem {
 	}
 
 	public void resetToAbsolute() {
-		angleEncoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutS);
+		angleEncoder.getAbsolutePosition().waitForUpdate(RobotConstants.kLongCANTimeoutS);
 		double angle = Util.placeInAppropriate0To360Scope(
 				getCurrentUnboundedDegrees(), getCanCoder().getDegrees() - kAngleOffset);
 		double absolutePosition = Conversions.degreesToRotation(angle, SwerveConstants.angleGearRatio);
-		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.setPosition(absolutePosition, Constants.kLongCANTimeoutS));
+		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.setPosition(absolutePosition, RobotConstants.kLongCANTimeoutS));
 	}
 
 	public void setDriveNeutralBrake(boolean wantBrake) {
@@ -249,15 +249,15 @@ public class SwerveModule extends Subsystem {
 	public double getCurrentVelocity() {
 		return Conversions.RPSToMPS(
 				mInputs.driveVelocity,
-				Constants.SwerveConstants.wheelCircumference,
-				Constants.SwerveConstants.driveGearRatio);
+				com.team5817.frc2025.subsystems.Drive.SwerveConstants.wheelCircumference,
+				com.team5817.frc2025.subsystems.Drive.SwerveConstants.driveGearRatio);
 	}
 
 	public double getDriveDistanceMeters() {
 		return Conversions.rotationsToMeters(
 				mInputs.drivePosition,
-				Constants.SwerveConstants.wheelCircumference,
-				Constants.SwerveConstants.driveGearRatio);
+				com.team5817.frc2025.subsystems.Drive.SwerveConstants.wheelCircumference,
+				com.team5817.frc2025.subsystems.Drive.SwerveConstants.driveGearRatio);
 	}
 
 	public double getCurrentUnboundedDegrees() {

@@ -1,7 +1,6 @@
 package com.team5817.frc2025.subsystems.Elevator;
 
 import com.team5817.frc2025.Robot;
-import com.team5817.frc2025.Constants.ElevatorConstants;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.lib.Util;

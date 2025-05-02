@@ -1,12 +1,12 @@
 package com.team5817.frc2025.subsystems;
 
-import com.team5817.frc2025.Constants;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.field.FieldConstants.ReefLevel;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
+import com.team5817.frc2025.subsystems.Elevator.ElevatorConstants;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2025.subsystems.Indexer.Indexer;
@@ -389,7 +389,7 @@ public class Superstructure extends Subsystem {
 				mIntakeRollers.stateRequest(goal.mIntakeRollersState),
 				mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLDCORAL),
 				new SequentialRequest(
-					mElevator.waitForExtensionRequest(Constants.ElevatorConstants.kCoralClearHeight),
+					mElevator.waitForExtensionRequest(ElevatorConstants.kCoralClearHeight),
 					mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))),
 			new SequentialRequest(
 			ReadyToScoreRequest(),

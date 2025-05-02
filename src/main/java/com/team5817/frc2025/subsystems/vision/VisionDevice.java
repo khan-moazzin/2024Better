@@ -1,6 +1,5 @@
 package com.team5817.frc2025.subsystems.vision;
 
-import com.team5817.frc2025.Constants.PoseEstimatorConstants;
 import com.team5817.frc2025.RobotState.VisionUpdate;
 import com.team5817.frc2025.subsystems.vision.LimelightHelpers.PoseEstimate;
 import com.team5817.lib.drivers.Pigeon;
@@ -60,7 +59,6 @@ public class VisionDevice {
 			VisionUpdate visionUpdate = new VisionUpdate(mPeriodicIO.tagId, realTime, mPeriodicIO.ta,
 					mPeriodicIO.mt2Pose.getTranslation());
 					Logger.recordOutput(mName+"/ID", mPeriodicIO.tagId);
-					Logger.recordOutput(mName+"/Specialized", PoseEstimatorConstants.redTagIDFilters.contains( mPeriodicIO.tagId));
 			this.visionUpdate = Optional.of(visionUpdate);
 
 		} else {
