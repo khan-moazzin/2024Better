@@ -54,7 +54,6 @@ public class IntakeRollers extends Subsystem {
 
 	private State mState = State.IDLE;
 	private IntakeRollerInputsAutoLogged mIntakeRollerInputs = new IntakeRollerInputsAutoLogged();
-	private IntakeRollerOutputsAutoLogged mIntakeRollerOutputs = new IntakeRollerOutputsAutoLogged();
 
 	/**
 	 * Private constructor for the IntakeRollers subsystem.
@@ -77,7 +76,7 @@ public class IntakeRollers extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				mIntakeRollerOutputs.roller_demand = mState.roller_voltage;
+				roller_demand = mState.roller_voltage;
 			}
 		});
 	}
@@ -115,7 +114,7 @@ public class IntakeRollers extends Subsystem {
 
 			@Override
 			public boolean isFinished() {
-				return mIntakeRollerOutputs.roller_demand == _wantedState.roller_voltage;
+				return roller_demand == _wantedState.roller_voltage;
 			}
 		};
 	}
@@ -149,16 +148,8 @@ public class IntakeRollers extends Subsystem {
 		}
 	}
 
-	@AutoLog
-	public static class IntakeRollerOutputs implements Sendable {
-		// OUTPUTS
-		public double roller_demand;
+	public double roller_demand;
 
-		@Override
-		public void initSendable(SendableBuilder builder) {
-			builder.addDoubleProperty("Demand", () -> roller_demand, null);
-		}
-	}
 
 	@Override
 	public void readPeriodicInputs() {
@@ -171,12 +162,12 @@ public class IntakeRollers extends Subsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
-		mRoller.setControl(new VoltageOut(mIntakeRollerOutputs.roller_demand));
+		mRoller.setControl(new VoltageOut(roller_demand));
 	}
 
 	@Override
 	public void stop() {
-		mIntakeRollerOutputs.roller_demand = 0.0;
+		roller_demand = 0.0;
 	}
 
 	@Override
