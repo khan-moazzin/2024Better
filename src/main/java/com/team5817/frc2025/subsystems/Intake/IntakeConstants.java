@@ -4,6 +4,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.RobotConstants;
+import com.team5817.lib.drivers.RollerSubsystem;
+import com.team5817.lib.drivers.RollerSubsystem.RollerSubsystemConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
 
@@ -13,21 +15,14 @@ public class IntakeConstants {
 	 * Constants related to the Intake Roller subsystem.
 	 */
 	public static final class IntakeRollerConstants {
-		public static TalonFXConfiguration RollerFXConfig() {
-			TalonFXConfiguration config = new TalonFXConfiguration();
+		public static final RollerSubsystemConstants kRollerConstants = new RollerSubsystemConstants();
 
-			config.CurrentLimits.SupplyCurrentLimitEnable = true;
-			config.CurrentLimits.SupplyCurrentLimit = 40.0;
-
-			config.CurrentLimits.StatorCurrentLimitEnable = true;
-			config.CurrentLimits.StatorCurrentLimit = 80.0;
-
-			config.Voltage.PeakForwardVoltage = 12.0;
-			config.Voltage.PeakReverseVoltage = -12.0;
-
-			config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-			return config;
-		}
+        static{
+            kRollerConstants.kName = "Intake Roller";
+            kRollerConstants.simIO = RobotConstants.isComp? false:true;
+            kRollerConstants.kMainConstants.id = Ports.INTAKE_ROLLER;
+            kRollerConstants.kMainConstants.counterClockwisePositive = false;  
+        }
 	}
 
 	/**

@@ -50,7 +50,7 @@ public abstract class RollerSubsystem extends Subsystem {
 	}
 
 	// Recommend initializing in a static block!
-	public static class ServoMotorSubsystemConstants {
+	public static class RollerSubsystemConstants {
 		public String kName = "ERROR_ASSIGN_A_NAME";
 
 		public double kLooperDt = 0.01;
@@ -92,7 +92,7 @@ public abstract class RollerSubsystem extends Subsystem {
 		public double simSpeedMultiplyer = 1.0;
 	}
 
-	protected final ServoMotorSubsystemConstants mConstants;
+	protected final RollerSubsystemConstants mConstants;
 	protected final TalonFX mMain;
 	protected final TalonFX[] mFollowers;
 
@@ -116,7 +116,7 @@ public abstract class RollerSubsystem extends Subsystem {
 	 *
 	 * @param constants The constants for the subsystem.
 	 */
-	protected RollerSubsystem(final ServoMotorSubsystemConstants constants) {
+	protected RollerSubsystem(final RollerSubsystemConstants constants) {
 		mConstants = constants;
 		mMain = TalonFXFactory.createDefaultTalon(mConstants.kMainConstants.id, false);
 		mFollowers = new TalonFX[mConstants.kFollowerConstants.length];
@@ -461,6 +461,18 @@ public abstract class RollerSubsystem extends Subsystem {
 			mControlState = ControlState.OPEN_LOOP;
 		}
 		demand = percentage;
+	}
+	
+	/**
+	 * Sets the open loop control.
+	 *
+	 * @param voltage The voltage output.
+	 */
+	public void setVoltage(double voltage) {
+		if (mControlState != ControlState.VOLTAGE) {
+			mControlState = ControlState.VOLTAGE;
+		}
+		demand = voltage;
 	}
 
 	/**

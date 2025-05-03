@@ -1,27 +1,17 @@
 package com.team5817.frc2025.subsystems.Intake;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.team254.lib.drivers.TalonUtil;
-import com.team254.lib.util.TimeDelayedBoolean;
-import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Intake.IntakeConstants.IntakeRollerConstants;
-import com.team5817.lib.drivers.Subsystem;
+import com.team5817.lib.drivers.RollerSubsystem;
 import com.team5817.lib.requests.Request;
 
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
-public class IntakeRollers extends Subsystem {
+public class IntakeRollers extends RollerSubsystem {
+	
 	private static IntakeRollers mInstance;
 
 	/**
@@ -50,17 +40,14 @@ public class IntakeRollers extends Subsystem {
 		}
 	}
 
-	private final TalonFX mRoller;
 
-	private State mState = State.IDLE;
-	private IntakeRollerInputsAutoLogged mIntakeRollerInputs = new IntakeRollerInputsAutoLogged();
+	@Getter @Setter@Accessors(prefix = "m") private State mState = State.IDLE;
 
 	/**
 	 * Private constructor for the IntakeRollers subsystem.
 	 */
 	private IntakeRollers() {
-		mRoller = new TalonFX(Ports.INTAKE_ROLLER.getDeviceNumber(), Ports.INTAKE_ROLLER.getBus());
-		TalonUtil.applyAndCheckConfiguration(mRoller, IntakeRollerConstants.RollerFXConfig());
+		super(IntakeRollerConstants.kRollerConstants);
 	}
 
 	/**
@@ -76,27 +63,9 @@ public class IntakeRollers extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				roller_demand = mState.roller_voltage;
+				setVoltage(mState.roller_voltage);
 			}
 		});
-	}
-
-	/**
-	 * Gets the current state of the intake rollers.
-	 *
-	 * @return The current state.
-	 */
-	public State getState() {
-		return mState;
-	}
-
-	/**
-	 * Sets the state of the intake rollers.
-	 *
-	 * @param state The state to set.
-	 */
-	public void setState(State state) {
-		mState = state;
 	}
 
 	/**
@@ -114,69 +83,8 @@ public class IntakeRollers extends Subsystem {
 
 			@Override
 			public boolean isFinished() {
-				return roller_demand == _wantedState.roller_voltage;
+				return true;
 			}
 		};
-	}
-	public Request waitForStuckRequest(){
-		return new Request() {
-			TimeDelayedBoolean timeout = new TimeDelayedBoolean();
-
-			@Override
-			public void act() {
-			}
-			@Override
-			public boolean isFinished() {
-				return timeout.update(mIntakeRollerInputs.roller_stator_current>75, 1);
-			}
-			
-		};
-	}
-
-	@AutoLog
-	public static class IntakeRollerInputs implements Sendable {
-		// INPUTS
-		public double roller_output_voltage;
-		public double roller_stator_current;
-		public double roller_velocity;
-
-		@Override
-		public void initSendable(SendableBuilder builder) {
-			builder.addDoubleProperty("OutputVoltage", () -> roller_output_voltage, null);
-			builder.addDoubleProperty("StatorCurrent", () -> roller_stator_current, null);
-			builder.addDoubleProperty("VelocityRpS", () -> roller_velocity, null);
-		}
-	}
-
-	public double roller_demand;
-
-
-	@Override
-	public void readPeriodicInputs() {
-		mIntakeRollerInputs.roller_output_voltage = mRoller.getMotorVoltage().getValue().in(Volts);
-		mIntakeRollerInputs.roller_stator_current = mRoller.getStatorCurrent().getValue().in(Amps);
-		mIntakeRollerInputs.roller_velocity = mRoller.getVelocity().getValue().in(RotationsPerSecond);
-
-		Logger.processInputs("IntakeRollers", mIntakeRollerInputs);
-	}
-
-	@Override
-	public void writePeriodicOutputs() {
-		mRoller.setControl(new VoltageOut(roller_demand));
-	}
-
-	@Override
-	public void stop() {
-		roller_demand = 0.0;
-	}
-
-	@Override
-	public boolean checkSystem() {
-		return false;
-	}
-
-	@Override
-	public void outputTelemetry() {
-
 	}
 }
