@@ -31,7 +31,7 @@ public class IntakeRollers extends RollerSubsystem {
 		INTAKING(-10.0,2.5,8),
 		HALF_INTAKING(-10.0,0,0),
 		EXHAUST(6,-6,-6),
-		IDLE_EXAUST(2,-2,-2);
+		IDLE_EXAUST(0,-2,-2);
 
 		public double intakeVoltage;
 		public double indexerBottomVoltage;
