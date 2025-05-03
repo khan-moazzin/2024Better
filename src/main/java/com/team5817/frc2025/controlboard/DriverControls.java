@@ -10,7 +10,6 @@ import com.team5817.lib.Util;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
-import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 
@@ -105,8 +104,7 @@ public class DriverControls {
 			if(driver.bButton.isBeingPressed())
 				s.mEndEffectorRollers.setState(EndEffectorRollers.State.CORAL_INTAKE);
 			if(driver.yButton.isBeingPressed()){
-				s.mIntakeRollers.setState(IntakeRollers.State.INTAKING_CORAL);
-				s.mIndexer.setState(Indexer.State.IDLE);
+				s.mIntakeRollers.setState(IntakeRollers.State.HALF_INTAKING);
 				s.mIntakeDeploy.conformToState(IntakeDeploy.State.GROUND);
 			}
 			// if(driver.xButton.isBeingPressed())

@@ -9,7 +9,6 @@ import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.Elevator.ElevatorConstants;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
-import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 import com.team5817.lib.drivers.Subsystem;
@@ -59,7 +58,6 @@ public class Superstructure extends Subsystem {
 	public IntakeDeploy mIntakeDeploy;
 	public EndEffectorRollers mEndEffectorRollers;
 	public IntakeRollers mIntakeRollers;
-	public Indexer mIndexer;
 
 	public enum GameObject {
 		CORAL,
@@ -68,53 +66,53 @@ public class Superstructure extends Subsystem {
 
 	public enum GoalState {
 		STOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, 
 				SuperstructureState.Type.IDLE)),
 		ASTOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.HOLD, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				EndEffectorRollers.State.HOLD, IntakeRollers.State.IDLE, 
 				SuperstructureState.Type.IDLE)),
 		ZERO(new SuperstructureState(Elevator.State.ZERO, EndEffectorWrist.State.ZERO, IntakeDeploy.State.ZERO,
-				EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, 
 				SuperstructureState.Type.IDLE)),
 		CLEAR(new SuperstructureState(Elevator.State.CLEAR, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				EndEffectorRollers.State.IDLE, IntakeRollers.State.IDLE, 
 				SuperstructureState.Type.IDLE)),
 		EXHAUST(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.IDLE, IntakeRollers.State.EXHAUST, Indexer.State.EXHAUST,
+				EndEffectorRollers.State.IDLE, IntakeRollers.State.EXHAUST, 
 				SuperstructureState.Type.IDLE)),	
 		L1(new SuperstructureState(Elevator.State.L1, EndEffectorWrist.State.L1, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.l1, IntakeRollers.State.IDLE, Indexer.State.IDLE_EXAUST,
+				EndEffectorRollers.State.l1, IntakeRollers.State.IDLE_EXAUST, 
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L1)),
 		L2(new SuperstructureState(Elevator.State.L2, EndEffectorWrist.State.L2, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.l2, IntakeRollers.State.IDLE, Indexer.State.IDLE_EXAUST,
+				EndEffectorRollers.State.l2, IntakeRollers.State.IDLE_EXAUST, 
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L2)),
 		L3(new SuperstructureState(Elevator.State.L3, EndEffectorWrist.State.L3, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.l3, IntakeRollers.State.IDLE, Indexer.State.IDLE_EXAUST,
+				EndEffectorRollers.State.l3, IntakeRollers.State.IDLE_EXAUST, 
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L3)),
 		L4(new SuperstructureState(Elevator.State.L4, EndEffectorWrist.State.L4, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.l4, IntakeRollers.State.IDLE, Indexer.State.IDLE_EXAUST,
+				EndEffectorRollers.State.l4, IntakeRollers.State.IDLE_EXAUST, 
 				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L4)),
 		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, 
 				SuperstructureState.Type.NET)),
 		SUPER_NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.ALGAE_SHOOT, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				EndEffectorRollers.State.ALGAE_SHOOT, IntakeRollers.State.IDLE, 
 				SuperstructureState.Type.NET)),
 		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				EndEffectorRollers.State.ALGAE_OUTTAKE, IntakeRollers.State.IDLE, 
 				SuperstructureState.Type.SCORING, AlignmentType.NONE)),
 		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, 
 				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
 		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, IntakeDeploy.State.DISABLE,
-				EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, Indexer.State.IDLE,
+				EndEffectorRollers.State.ALGAE_INTAKE, IntakeRollers.State.IDLE, 
 				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
 		GROUND_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING,
 				IntakeDeploy.State.GROUND, EndEffectorRollers.State.CORAL_INTAKE,
-				IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING)),
+				IntakeRollers.State.INTAKING,  SuperstructureState.Type.INTAKING)),
 		HUMAN_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING,
 				IntakeDeploy.State.HUMAN, EndEffectorRollers.State.CORAL_INTAKE,
-				IntakeRollers.State.INTAKING_CORAL, Indexer.State.INDEXING, SuperstructureState.Type.INTAKING));
+				IntakeRollers.State.INTAKING,  SuperstructureState.Type.INTAKING));
 
 		public SuperstructureState goal;
 
@@ -133,7 +131,6 @@ public class Superstructure extends Subsystem {
 		mIntakeDeploy = IntakeDeploy.getInstance();
 		mEndEffectorRollers = EndEffectorRollers.getInstance();
 		mIntakeRollers = IntakeRollers.getInstance();
-		mIndexer = Indexer.getInstance();
 	}
 
 	/**
@@ -319,7 +316,6 @@ public class Superstructure extends Subsystem {
 		return new SequentialRequest(
 				new ParallelRequest(
 						mElevator.stateRequest(goal.mElevatorState),
-						mIndexer.stateRequest(goal.mIndexerState),
 						mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 						mIntakeRollers.stateRequest(goal.mIntakeRollersState),
 						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
@@ -339,7 +335,6 @@ public class Superstructure extends Subsystem {
 					new WaitRequest(0.1),
 					mElevator.stateRequest(goal.mElevatorState)),
 				mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLD),
-				mIndexer.stateRequest(goal.mIndexerState),
 				mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 				mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
 				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState)
@@ -360,14 +355,13 @@ public class Superstructure extends Subsystem {
 			return new ParallelRequest();
 		}
 		return new SequentialRequest(
-			mIndexer.stateRequest(Indexer.State.IDLE),
+			mIntakeRollers.stateRequest(IntakeRollers.State.HALF_INTAKING),//idle indexer
 			new ParallelRequest(
 				mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
 				mElevator.stateRequest(goal.mElevatorState),
 				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
-				mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
-				mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
-			mIndexer.stateRequest(goal.mIndexerState)
+				mIntakeDeploy.stateRequest(goal.mIntakeDeployState)),
+			mIntakeRollers.stateRequest(goal.mIntakeRollersState)
 		).addName("Intaking");
 	}
 
@@ -384,7 +378,6 @@ public class Superstructure extends Subsystem {
 		return new ParallelRequest(
 			new ParallelRequest(
 				mElevator.stateRequest(goal.mElevatorState),
-				mIndexer.stateRequest(goal.mIndexerState),
 				mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 				mIntakeRollers.stateRequest(goal.mIntakeRollersState),
 				mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLDCORAL),
@@ -410,7 +403,6 @@ public class Superstructure extends Subsystem {
 		return new SequentialRequest(
 			new ParallelRequest(
 				mElevator.stateRequest(goal.mElevatorState),
-				mIndexer.stateRequest(goal.mIndexerState),
 				mIntakeDeploy.stateRequest(goal.mIntakeDeployState),
 				mIntakeRollers.stateRequest(goal.mIntakeRollersState)),
 			ReadyToScoreRequest(),

@@ -32,7 +32,6 @@ import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
-import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
@@ -134,7 +133,6 @@ public class Robot extends LoggedRobot {
         Elevator.getInstance(),
         EndEffectorRollers.getInstance(),
         EndEffectorWrist.getInstance(),
-        Indexer.getInstance(),
         IntakeRollers.getInstance()
         );
 

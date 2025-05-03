@@ -5,7 +5,6 @@ import com.team5817.frc2025.field.FieldConstants.ReefLevel;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
-import com.team5817.frc2025.subsystems.Indexer.Indexer;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 
@@ -19,7 +18,6 @@ public class SuperstructureState {
 	public final IntakeDeploy.State mIntakeDeployState;
 	public final EndEffectorRollers.State mEndEffectorRollersState;
 	public final IntakeRollers.State mIntakeRollersState;
-	public final Indexer.State mIndexerState;
 	public final Type mType;
 	public final AlignmentType mAlignmentType;
 	
@@ -53,7 +51,6 @@ public class SuperstructureState {
 			IntakeDeploy.State intake_state,
 			EndEffectorRollers.State endEffector_state,
 			IntakeRollers.State intake_roller_state,
-			Indexer.State indexer_state,
 			Type type) {
 	
 		this.mElevatorState = elevator_state;
@@ -61,7 +58,6 @@ public class SuperstructureState {
 		this.mIntakeDeployState = intake_state;
 		this.mEndEffectorRollersState = endEffector_state;
 		this.mIntakeRollersState = intake_roller_state;
-		this.mIndexerState = indexer_state;
 		this.mType = type;
 		this.mAlignmentType = AlignmentType.NONE;
 	
@@ -87,7 +83,6 @@ public class SuperstructureState {
 			IntakeDeploy.State intake_state,
 			EndEffectorRollers.State endEffector_state,
 			IntakeRollers.State intake_roller_state,
-			Indexer.State indexer_state,
 			Type type, AlignmentType alignmentTypes) {
 	
 		this.mElevatorState = elevator_state;
@@ -95,7 +90,6 @@ public class SuperstructureState {
 		this.mIntakeDeployState = intake_state;
 		this.mEndEffectorRollersState = endEffector_state;
 		this.mIntakeRollersState = intake_roller_state;
-		this.mIndexerState = indexer_state;
 		this.mType = type;
 		this.mAlignmentType = alignmentTypes;
 }
@@ -118,7 +112,6 @@ public class SuperstructureState {
 			IntakeDeploy.State intake_state,
 			EndEffectorRollers.State endEffector_state,
 			IntakeRollers.State intake_roller_state,
-			Indexer.State indexer_state,
 			Type type, AlignmentType alignmentTypes,ReefLevel level) {
 	
 		this.mElevatorState = elevator_state;
@@ -126,7 +119,6 @@ public class SuperstructureState {
 		this.mIntakeDeployState = intake_state;
 		this.mEndEffectorRollersState = endEffector_state;
 		this.mIntakeRollersState = intake_roller_state;
-		this.mIndexerState = indexer_state;
 		this.mType = type;
 		this.mAlignmentType = alignmentTypes;
 		this.level = level;

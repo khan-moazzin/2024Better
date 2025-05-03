@@ -113,6 +113,9 @@ dependencies {
     annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
 
     implementation "gov.nist.math:jama:1.0.3"
+
+    implementation 'org.projectlombok:lombok:1.18.30' // Or latest version
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
     
 }
 
