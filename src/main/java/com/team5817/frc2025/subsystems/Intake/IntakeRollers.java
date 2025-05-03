@@ -11,7 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 public class IntakeRollers extends RollerSubsystem {
-	
+
 	private static IntakeRollers mInstance;
 
 	/**
@@ -27,16 +27,20 @@ public class IntakeRollers extends RollerSubsystem {
 	}
 
 	public enum State {
-		IDLE(0.0),
-		INTAKING_CORAL(-10.0),
-		INTAKING_ALGAE(8.0),
-		SHOOTING_ALGAE(-8),
-		EXHAUST(6.0);
+		IDLE(0,0,0),
+		INTAKING(-10.0,2.5,8),
+		HALF_INTAKING(-10.0,0,0),
+		EXHAUST(6,-6,-6),
+		IDLE_EXAUST(2,-2,-2);
 
-		public double roller_voltage;
+		public double intakeVoltage;
+		public double indexerBottomVoltage;
+		public double indexerSidesVoltage;
 
-		State(double roller_voltage) {
-			this.roller_voltage = roller_voltage;
+		State(double intakeVoltage, double indexerBottomVoltage, double indexerSidesVoltage) {
+			this.intakeVoltage = intakeVoltage;
+			this.indexerBottomVoltage = indexerBottomVoltage;
+			this.indexerSidesVoltage = indexerSidesVoltage;
 		}
 	}
 
@@ -63,7 +67,9 @@ public class IntakeRollers extends RollerSubsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				setVoltage(mState.roller_voltage);
+				getRoller("Intake").setVoltage(mState.intakeVoltage);
+				getRoller("IndexerBottom").setVoltage(mState.indexerBottomVoltage);
+				getRoller("IndexerSides").setVoltage(mState.indexerSidesVoltage);
 			}
 		});
 	}

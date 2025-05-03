@@ -4,8 +4,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.RobotConstants;
-import com.team5817.lib.drivers.RollerSubsystem;
-import com.team5817.lib.drivers.RollerSubsystem.RollerSubsystemConstants;
+import com.team5817.lib.drivers.RollerSubsystemBasic;
+import com.team5817.lib.drivers.RollerSubsystemBasic.RollerSubsystemConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
 
