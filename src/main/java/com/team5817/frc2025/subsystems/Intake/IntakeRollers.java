@@ -2,7 +2,7 @@ package com.team5817.frc2025.subsystems.Intake;
 
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
-import com.team5817.frc2025.subsystems.Intake.IntakeConstants.IntakeRollerConstants;
+import com.team5817.frc2025.subsystems.Intake.IntakeConstants.RollerConstants;
 import com.team5817.lib.drivers.RollerSubsystem;
 import com.team5817.lib.requests.Request;
 
@@ -28,9 +28,9 @@ public class IntakeRollers extends RollerSubsystem {
 
 	public enum State {
 		IDLE(0,0,0),
-		INTAKING(-10.0,2.5,8),
-		HALF_INTAKING(-10.0,0,0),
-		EXHAUST(6,-6,-6),
+		INTAKING(10.0,2.5,8),
+		HALF_INTAKING(10.0,0,0),
+		EXHAUST(-6,-6,-6),
 		IDLE_EXAUST(0,-2,-2);
 
 		public double intakeVoltage;
@@ -45,13 +45,13 @@ public class IntakeRollers extends RollerSubsystem {
 	}
 
 
-	@Getter @Setter@Accessors(prefix = "m") private State mState = State.IDLE;
+	@Getter @Setter @Accessors(prefix = "m") private State mState = State.IDLE;
 
 	/**
 	 * Private constructor for the IntakeRollers subsystem.
 	 */
 	private IntakeRollers() {
-		super(IntakeRollerConstants.kRollerConstants);
+		super(RollerConstants.kIntakeConstants);
 	}
 
 	/**
@@ -67,9 +67,9 @@ public class IntakeRollers extends RollerSubsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				getRoller("Intake").setVoltage(mState.intakeVoltage);
-				getRoller("IndexerBottom").setVoltage(mState.indexerBottomVoltage);
-				getRoller("IndexerSides").setVoltage(mState.indexerSidesVoltage);
+				getRoller("Intake Rollers").setVoltage(mState.intakeVoltage);
+				getRoller("Indexer Bottom Rollers").setVoltage(mState.indexerBottomVoltage);
+				getRoller("Indexer Side Rollers").setVoltage(mState.indexerSidesVoltage);
 			}
 		});
 	}

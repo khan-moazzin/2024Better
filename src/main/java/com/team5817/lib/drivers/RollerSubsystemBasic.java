@@ -75,8 +75,6 @@ public abstract class RollerSubsystemBasic extends Subsystem {
 		public double kRampRate = 0.0; // s
 
 		public int kSupplyCurrentLimit = 60; // amps
-		public int kSupplyCurrentThreshold = 60;
-		public double kSupplyCurrentTimeout = 0.0; // Seconds
 		public boolean kEnableSupplyCurrentLimit = false;
 
 		public int kStatorCurrentLimit = 40; // amps
