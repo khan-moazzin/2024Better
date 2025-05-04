@@ -32,18 +32,18 @@ public class IntakeDeploy extends StateBasedServoMotorSubsystemWithCancoder<Inta
 	final static double kStrictError = 20;
 	final static double kMediumError = 50;
 	final static double kLenientError = 80;
+
 	/**
 	 * Represents the different states of the intake deployment.
 	 */
 	public enum State implements ServoState {
 		GROUND(-141, kStrictError), 
 		STOW(0, kMediumError),
-		ALGAE(-78, kMediumError),
 		HUMAN(-141, kStrictError),
 		ZERO(0, kStrictError),
-		DISABLE(true);
+		DISABLE();
 
-		@Getter private double desiredPosition = 0;
+		@Getter private double demand = 0;
 		@Getter private double allowableError = 0;
 		@Getter private boolean disabled = false;
 
@@ -54,16 +54,17 @@ public class IntakeDeploy extends StateBasedServoMotorSubsystemWithCancoder<Inta
 		 * @param allowable_error The allowable error for the state.
 		 */
 		State(double output, double allowable_error) {
-			this.desiredPosition = output;
+			this.demand = output;
 			this.allowableError = allowable_error;
 		}
 		
-		State(boolean disable){
-			this.disabled = disable;
+		State(){this.disabled = true;}
+
+		@Override
+		public ControlState getControlState() {
+			return ControlState.MOTION_MAGIC;
 		}
-
 	}
-
 
 	/**
 	 * Constructs a new IntakeDeploy subsystem.
@@ -75,21 +76,6 @@ public class IntakeDeploy extends StateBasedServoMotorSubsystemWithCancoder<Inta
 		super(constants, encoder_constants, IntakeDeploy.State.GROUND);
 		enableSoftLimits(false);
 	}
-	/**
-	 * Reads the periodic inputs for the subsystem.
-	 */
-	@Override
-	public void readPeriodicInputs() {
-		super.readPeriodicInputs();
-	}
-
-	/**
-	 * Writes the periodic outputs for the subsystem.
-	 */
-	@Override
-	public void writePeriodicOutputs() {
-		super.writePeriodicOutputs();
-	}
 
 	/**
 	 * Outputs telemetry data for the subsystem.
@@ -100,22 +86,5 @@ public class IntakeDeploy extends StateBasedServoMotorSubsystemWithCancoder<Inta
 			Units.degreesToRadians(mServoInputs.position_units), Units.degreesToRadians(0)));
 
 		super.outputTelemetry();
-	}
-
-	/**
-	 * Stops the subsystem.
-	 */
-	@Override
-	public void stop() {
-	}
-
-	/**
-	 * Checks the system for any issues.
-	 *
-	 * @return True if the system is functioning correctly, false otherwise.
-	 */
-	@Override
-	public boolean checkSystem() {
-		return false;
 	}
 }

@@ -296,7 +296,7 @@ public abstract class RollerSubsystemBasic extends Subsystem {
 
 	
 
-	protected enum ControlState {
+	public enum ControlState {
 		OPEN_LOOP,
 		VELOCITY,
 		VOLTAGE

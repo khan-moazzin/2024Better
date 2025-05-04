@@ -1,10 +1,10 @@
 package com.team5817.frc2025.subsystems.EndEffector;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.RobotConstants;
+import com.team5817.lib.drivers.RollerSubsystemBasic.RollerSubsystemConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
@@ -14,10 +14,8 @@ public class EndEffectorConstants {
 	 * Constants related to the End Effector Wrist subsystem.
 	 */
 	public static final class EndEffectorWristConstants {
-		// 115.93
-		// 7.92
-		public static final ServoMotorSubsystemConstants kWristServoConstants = new ServoMotorSubsystemConstants();
 
+		public static final ServoMotorSubsystemConstants kWristServoConstants = new ServoMotorSubsystemConstants();
 
 		static {
 			kWristServoConstants.kName = "EndEffectorWrist";
@@ -79,21 +77,26 @@ public class EndEffectorConstants {
 	/**
 	 * Constants related to the End Effector Roller subsystem.
 	 */
-	public static final class EndEffectorRollerConstants {
-		public static TalonFXConfiguration RollerFXConfig() {
-			TalonFXConfiguration config = new TalonFXConfiguration();
+	public static final class RollerConstants {
 
-			config.CurrentLimits.SupplyCurrentLimitEnable = true;
-			config.CurrentLimits.SupplyCurrentLimit = 30.0;
+		public static final RollerSubsystemConstants kEndEffectorRollerConstants = new RollerSubsystemConstants();
 
-			config.CurrentLimits.StatorCurrentLimitEnable = true;
-			config.CurrentLimits.StatorCurrentLimit = 100.0;
+		static{
 
-			config.Voltage.PeakForwardVoltage = 12.0;
-			config.Voltage.PeakReverseVoltage = -12.0;
+			kEndEffectorRollerConstants.kName = "EndEffectorRoller";
+			kEndEffectorRollerConstants.simIO = RobotConstants.isComp? false:true;
+			kEndEffectorRollerConstants.kMainConstants.id = Ports.ENDEFFECTOR_ROLLER;
+			kEndEffectorRollerConstants.kMainConstants.counterClockwisePositive = false;
 
-			config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-			return config;
+			kEndEffectorRollerConstants.kStatorCurrentLimit = 100;
+			kEndEffectorRollerConstants.kSupplyCurrentLimit = 30;
+
+			kEndEffectorRollerConstants.kEnableSupplyCurrentLimit = true;
+			kEndEffectorRollerConstants.kEnableStatorCurrentLimit = true;
+
+			kEndEffectorRollerConstants.kMaxForwardOutput = 12;
+			kEndEffectorRollerConstants.kMaxReverseOutput = -12;
+
 		}
 	}
 }

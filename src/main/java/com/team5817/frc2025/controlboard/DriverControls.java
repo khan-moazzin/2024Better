@@ -169,10 +169,6 @@ public class DriverControls {
 		if(codriver.POV90.wasReleased())
 			s.mEndEffectorWrist.home();
 
-		if(s.mEndEffectorRollers.gotPiece())
-			driver.rumble(6, .5);
-		
-
 		Logger.recordOutput("Elastic/PreparedGoal", preparedGoal);
 	}
 

@@ -6,8 +6,12 @@ import com.team5817.lib.Util;
 import com.team5817.lib.drivers.State.ServoState;
 import com.team5817.lib.requests.Request;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 public class StateBasedServoMotorSubsystem<S extends Enum<S>&ServoState> extends ServoMotorSubsystem {
-    protected S mState;
+    @Getter @Setter @Accessors(prefix = "m") protected S mState;
     private final boolean allowAutoStateOutput;
     protected boolean atState = false;
 
@@ -20,20 +24,29 @@ public class StateBasedServoMotorSubsystem<S extends Enum<S>&ServoState> extends
         this(constants, initialState, true);
     }
 
-    public void setState(S state) {
-        mState = state;
-    }
-
-    public S getState() {
-        return mState;
-    }
-
     @Override
     public void writePeriodicOutputs() {
-        if(mControlState == ControlState.MOTION_MAGIC&&allowAutoStateOutput) 
-            super.setSetpointMotionMagic(kMotionMagicSlot, mState.getDesiredPosition());
+        switch (mState.getControlState()) {
+            case MOTION_MAGIC:
+                if(allowAutoStateOutput)
+                    super.setSetpointMotionMagic(kMotionMagicSlot, mState.getDemand());
+                break;
+            case OPEN_LOOP:
+                super.setOpenLoop(mState.getDemand());
+                break;
+            case POSITION_PID:
+                super.setSetpointPositionPID(kPositionPIDSlot, mState.getDemand());
+                break;
+            case VOLTAGE:
+                super.applyVoltage(mState.getDemand());
+            default:
+                break;
+            
+        }
+
         if (mState.isDisabled())
             super.setOpenLoop(0);
+            
         super.writePeriodicOutputs();
     }
 

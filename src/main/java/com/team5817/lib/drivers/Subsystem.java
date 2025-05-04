@@ -50,7 +50,7 @@ public abstract class Subsystem {
 	}
 
 	/**
-	 * Outputs telemetry data to SmartDashboard.
+	 * Outputs telemetry data.
 	 */
 	public void outputTelemetry() {
 	}

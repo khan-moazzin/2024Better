@@ -1,8 +1,6 @@
 package com.team5817.frc2025.subsystems.Elevator;
 
 import com.team5817.frc2025.Robot;
-import com.team5817.frc2025.loops.ILooper;
-import com.team5817.frc2025.loops.Loop;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.State.ServoState;
 import com.team5817.lib.drivers.StateBasedServoMotorSubsystem;
@@ -56,33 +54,36 @@ public class Elevator extends StateBasedServoMotorSubsystem<Elevator.State> {
 		CLEAR(.35,kStrictError),
 		STOW(0.0, kStrictError);
 
-		@Getter private double desiredPosition = 0;
+		@Getter private double demand = 0;
 		@Getter private double allowableError = 20;
-		InterpolatingDoubleTreeMap map;
+		private InterpolatingDoubleTreeMap map;
 
 		
 		State(double output, double allowable_error) {
 			this(output, allowable_error, null);
 		}
 		State(double output, double allowable_error, InterpolatingDoubleTreeMap map) {
-			this.desiredPosition = output;
+			this.demand = output;
 			this.allowableError = allowable_error;
 			this.map = map;
 		}
 
-
 		public double getTrackedOutput(double distanceFromScoringPosition){
 			if(map == null){
-				return desiredPosition;
+				return demand;
 			}
-			double des = this.desiredPosition + map.get(distanceFromScoringPosition);
-
+			double des = this.demand + map.get(distanceFromScoringPosition);
 			des = Util.limit(des, ElevatorConstants.kElevatorServoConstants.kMinUnitsLimit, ElevatorConstants.kElevatorServoConstants.kMaxUnitsLimit);
-
 			return des;
 		}
+
 		public boolean isDisabled(){
 			return false;
+		}
+
+		@Override
+		public ControlState getControlState() {
+			return ControlState.MOTION_MAGIC;
 		}
 	}
 
@@ -96,36 +97,16 @@ public class Elevator extends StateBasedServoMotorSubsystem<Elevator.State> {
 		enableSoftLimits(false);
 	}
 
-	/**
-	 * Registers the enabled loops for the elevator.
-	 * 
-	 * @param enabledLooper the enabled looper
-	 */
-	public void registerEnabledLoops(ILooper enabledLooper) {
-		enabledLooper.register(new Loop() {
-			@Override
-			public void onStart(double timestamp) {
-			}
-
-			@Override
-			public void onLoop(double timestamp) {
-			}
-		});
-	}
 	public void updateOnBranchDistance(double dist){
 		this.distanceFromScoringPosition = dist;
 	}
+
 	public void setManualOffset(double offset){
 		this.scoringOffset = offset;
 	}
+
 	public void changeManualOffset(double deltaOffset){
 		this.scoringOffset+=deltaOffset;
-	}
-
-
-	@Override
-	public void readPeriodicInputs() {
-		super.readPeriodicInputs();
 	}
 
 	@Override
@@ -153,13 +134,4 @@ public class Elevator extends StateBasedServoMotorSubsystem<Elevator.State> {
 
 		super.outputTelemetry();
 	}
-	public boolean getAtState(){
-		return atState;
-	}
-
-	@Override
-	public boolean checkSystem() {
-		return false;
-	}
-
 }

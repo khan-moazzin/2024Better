@@ -54,12 +54,12 @@ public class EndEffectorWrist extends StateBasedServoMotorSubsystem<EndEffectorW
 		PINCH(131-89, 70),
 		STOW(88.17 ,kStrictError);
 
-		@Getter private double desiredPosition = 0;
+		@Getter private double demand = 0;
 		@Getter private double allowableError = 0;
 		InterpolatingDoubleTreeMap map;
 
 		State(double output, double allowable_error,InterpolatingDoubleTreeMap map) {
-			this.desiredPosition = output;
+			this.demand = output;
 			this.allowableError = allowable_error;
 			this.map = map;
 		}
@@ -69,9 +69,9 @@ public class EndEffectorWrist extends StateBasedServoMotorSubsystem<EndEffectorW
 		
 		public double getTrackedOutput(double distanceFromScoringPosition){
 			if(map == null){
-				return desiredPosition;
+				return demand;
 			}
-			double des = this.desiredPosition + map.get(distanceFromScoringPosition);
+			double des = this.demand + map.get(distanceFromScoringPosition);
 			des = Util.limit(des, EndEffectorWristConstants.kWristServoConstants.kMinUnitsLimit,EndEffectorWristConstants.kWristServoConstants.kMaxUnitsLimit);
 
 			return des;
@@ -79,6 +79,10 @@ public class EndEffectorWrist extends StateBasedServoMotorSubsystem<EndEffectorW
 		
 		public boolean isDisabled(){
 			return false;
+		}
+		@Override
+		public ControlState getControlState() {
+			return ControlState.MOTION_MAGIC;
 		}
 	}
 
