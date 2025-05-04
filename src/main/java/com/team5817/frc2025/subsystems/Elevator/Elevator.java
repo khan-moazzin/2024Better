@@ -1,13 +1,10 @@
 package com.team5817.frc2025.subsystems.Elevator;
 
-import com.team5817.frc2025.Robot;
+import com.team5817.frc2025.RobotVisualizer;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.State.ServoState;
 import com.team5817.lib.drivers.StateBasedServoMotorSubsystem;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.util.Units;
 import lombok.Getter;
 
 import org.littletonrobotics.junction.Logger;
@@ -122,14 +119,8 @@ public class Elevator extends StateBasedServoMotorSubsystem<Elevator.State> {
 
 	@Override
 	public void outputTelemetry() {
-		Pose3d current = new Pose3d(Math.cos(Units.degreesToRadians(84)) * mServoInputs.position_units, 0,
-				Math.sin(Units.degreesToRadians(84)) * mServoInputs.position_units, new Rotation3d());
+		RobotVisualizer.updateElevatorHeight(getPosition());
 
-		Robot.mechPoses[1] = current.div(3);
-		Robot.mechPoses[2] = current.div(3).times(2);
-		Robot.mechPoses[3] = current;
-
-		
 		Logger.recordOutput("Elevator/Offset", this.scoringOffset);
 
 		super.outputTelemetry();

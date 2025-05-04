@@ -1,13 +1,9 @@
 package com.team5817.frc2025.subsystems.Intake;
 
-import com.team5817.frc2025.Robot;
+import com.team5817.frc2025.RobotVisualizer;
 import com.team5817.frc2025.subsystems.Intake.IntakeConstants.DeployConstants;
 import com.team5817.lib.drivers.State.ServoState;
 import com.team5817.lib.drivers.StateBasedServoMotorSubsystemWithCancoder;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import lombok.Getter;
 
 /**
@@ -82,8 +78,7 @@ public class IntakeDeploy extends StateBasedServoMotorSubsystemWithCancoder<Inta
 	 */
 	@Override
 	public void outputTelemetry() {
-		Robot.mechPoses[0] = new Pose3d(new Translation3d(-.314, 0, .272), new Rotation3d(Units.degreesToRadians(0),
-			Units.degreesToRadians(mServoInputs.position_units), Units.degreesToRadians(0)));
+		RobotVisualizer.updateIntakeAngle(getPosition());
 
 		super.outputTelemetry();
 	}

@@ -1,15 +1,11 @@
 package com.team5817.frc2025.subsystems.EndEffector;
 
-import com.team5817.frc2025.Robot;
+import com.team5817.frc2025.RobotVisualizer;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorConstants.EndEffectorWristConstants;
 import com.team5817.lib.Util;
 import com.team5817.lib.drivers.State.ServoState;
 import com.team5817.lib.drivers.StateBasedServoMotorSubsystem;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.util.Units;
 import lombok.Getter;
 
 import org.littletonrobotics.junction.Logger;
@@ -123,10 +119,8 @@ public class EndEffectorWrist extends StateBasedServoMotorSubsystem<EndEffectorW
 
 	@Override
 	public void outputTelemetry() {
-		Robot.mechPoses[4] = Robot.mechPoses[3]
-				.transformBy(new Transform3d(new Translation3d(.22, 0, .2922), new Rotation3d(Units.degreesToRadians(0),
-						Units.degreesToRadians(mServoInputs.position_units+89), Units.degreesToRadians(0))));
-
+		RobotVisualizer.updateEndEffectorAngle(getPosition());
+		
 		Logger.recordOutput("EndEffectorWrist/Offset", this.scoringOffset);
 
 		super.outputTelemetry();

@@ -39,7 +39,6 @@ import com.team5817.lib.Elastic;
 import com.team5817.lib.Util;
 import com.team5817.lib.RobotMode;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -52,14 +51,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
  * The main robot class that extends LoggedRobot and contains the robot's lifecycle methods.
  */
 public class Robot extends LoggedRobot {
-  public static Pose3d[] mechPoses = new Pose3d[6];
-  static {
-    for (int i = 0; i < 6; i++) {
-      mechPoses[i] = new Pose3d();
-    }
-  }
   SubsystemManager mSubsystemManager;
-  // Superstructure s;
   private AutoExecuter mAutoExecuter;
   private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
   DriverControls controls;
@@ -150,7 +142,7 @@ public class Robot extends LoggedRobot {
     }
     Logger.recordOutput("Elastic/Match Time", Timer.getMatchTime());
     mEnabledLooper.update();
-    Logger.recordOutput("Mechs", mechPoses);
+    RobotVisualizer.outputTelemetry();
   }
 
   boolean disableGyroReset = false;
