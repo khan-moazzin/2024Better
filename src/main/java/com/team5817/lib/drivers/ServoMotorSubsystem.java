@@ -102,8 +102,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		public double kRampRate = 0.0; // s
 
 		public int kSupplyCurrentLimit = 60; // amps
-		public int kSupplyCurrentThreshold = 60;
-		public double kSupplyCurrentTimeout = 0.0; // Seconds
+		public int kSupplyCurrentThreshold = 60;//TODO look at what this should be add to roller if good
+		public double kSupplyCurrentTimeout = 0.0; // Seconds TODO look at what this should be add to roller if good
 		public boolean kEnableSupplyCurrentLimit = false;
 
 		public int kStatorCurrentLimit = 40; // amps

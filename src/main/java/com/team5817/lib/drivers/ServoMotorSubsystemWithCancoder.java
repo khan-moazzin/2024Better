@@ -1,8 +1,6 @@
 package com.team5817.lib.drivers;
 
 import static edu.wpi.first.units.Units.Rotation;
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.team254.lib.drivers.CanDeviceId;
 
@@ -37,7 +35,6 @@ public abstract class ServoMotorSubsystemWithCancoder extends ServoMotorSubsyste
 				encoder_constants.remote_encoder_port.getDeviceNumber(),
 				encoder_constants.remote_encoder_port.getBus());
 
-		Logger.recordOutput("absolute encoder reset", mCancoder.getAbsolutePosition().getValue().in(Rotation) * mEncoderConstants.rotor_to_sensor_ratio);
 		mMain.setPosition((mCancoder.getAbsolutePosition().getValue().in(Rotation))*mEncoderConstants.rotor_to_sensor_ratio);
 	}
 
