@@ -1,6 +1,7 @@
 package com.team5817.frc2025.subsystems.Drive;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,8 @@ public class AutoAlignPointSelector {
      * @return A map of AprilTag IDs to AprilTag objects.
      */
     private static Map<Integer, AprilTag> getTagSet() {
+        if(DriverStation.getAlliance().isEmpty())
+            return new HashMap<Integer, AprilTag>();
         if (DriverStation.getAlliance().get() == Alliance.Red) {
             return FieldLayout.Red.kAprilTagMap;
         } else {
