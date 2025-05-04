@@ -10,8 +10,8 @@ import com.team5817.lib.Util;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
+import com.team5817.frc2025.subsystems.Intake.Intake;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
-import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
 
 /**
  * The DriverControls class handles the input from the driver and co-driver controllers
@@ -104,8 +104,7 @@ public class DriverControls {
 			if(driver.bButton.isBeingPressed())
 				s.mEndEffectorRollers.setState(EndEffectorRollers.State.CORAL_INTAKE);
 			if(driver.yButton.isBeingPressed()){
-				s.mIntakeRollers.setState(IntakeRollers.State.HALF_INTAKING);
-				s.mIntakeDeploy.setState(IntakeDeploy.State.GROUND);
+				s.mIntake.stateRequest(Intake.State.HALF_INTAKING).act();
 			}
 			// if(driver.xButton.isBeingPressed())
 			// 	s.setGoal(GoalState.GROUND_ALGAE_INTAKE);
@@ -140,7 +139,7 @@ public class DriverControls {
 
 
 		if(codriver.getRightTriggerAxis()==1)
-			s.mIntakeDeploy.setState(IntakeDeploy.State.STOW);
+			s.mIntake.stateRequest(Intake.State.STOW).act();
 		if(codriver.getLeftTriggerAxis()==1)
 			s.setGoal(GoalState.CLEAR);
 		if(codriver.getStartButtonPressed())

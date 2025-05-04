@@ -5,8 +5,7 @@ import com.team5817.frc2025.field.FieldConstants.ReefLevel;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
-import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
-import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
+import com.team5817.frc2025.subsystems.Intake.Intake;
 
 /**
  * Represents the state of the superstructure, including various subsystems.
@@ -15,9 +14,8 @@ public class SuperstructureState {
 
 	public final Elevator.State mElevatorState;
 	public final EndEffectorWrist.State mEndEffectorWristState;
-	public final IntakeDeploy.State mIntakeDeployState;
 	public final EndEffectorRollers.State mEndEffectorRollersState;
-	public final IntakeRollers.State mIntakeRollersState;
+	public final Intake.State mIntakeState;
 	public final Type mType;
 	public final AlignmentType mAlignmentType;
 	
@@ -38,26 +36,22 @@ public class SuperstructureState {
 	 *
 	 * @param elevator_state the state of the elevator
 	 * @param wrist_state the state of the end effector wrist
-	 * @param intake_state the state of the intake deploy
 	 * @param climb_state the state of the climb
 	 * @param endEffector_state the state of the end effector rollers
-	 * @param intake_roller_state the state of the intake rollers
 	 * @param indexer_state the state of the indexer
 	 * @param type the type of the superstructure state
 	 */
 	public SuperstructureState(
 			Elevator.State elevator_state,
 			EndEffectorWrist.State wrist_state,
-			IntakeDeploy.State intake_state,
 			EndEffectorRollers.State endEffector_state,
-			IntakeRollers.State intake_roller_state,
+			Intake.State intake_state,
 			Type type) {
 	
 		this.mElevatorState = elevator_state;
 		this.mEndEffectorWristState = wrist_state;
-		this.mIntakeDeployState = intake_state;
 		this.mEndEffectorRollersState = endEffector_state;
-		this.mIntakeRollersState = intake_roller_state;
+		this.mIntakeState = intake_state;
 		this.mType = type;
 		this.mAlignmentType = AlignmentType.NONE;
 	
@@ -69,10 +63,8 @@ public class SuperstructureState {
 	 *
 	 * @param elevator_state the state of the elevator
 	 * @param wrist_state the state of the end effector wrist
-	 * @param intake_state the state of the intake deploy
 	 * @param climb_state the state of the climb
 	 * @param endEffector_state the state of the end effector rollers
-	 * @param intake_roller_state the state of the intake rollers
 	 * @param indexer_state the state of the indexer
 	 * @param type the type of the superstructure state
 	 * @param alignmentTypes the alignment type
@@ -80,16 +72,14 @@ public class SuperstructureState {
 	public SuperstructureState(
 			Elevator.State elevator_state,
 			EndEffectorWrist.State wrist_state,
-			IntakeDeploy.State intake_state,
 			EndEffectorRollers.State endEffector_state,
-			IntakeRollers.State intake_roller_state,
+			Intake.State intake_state,
 			Type type, AlignmentType alignmentTypes) {
 	
 		this.mElevatorState = elevator_state;
 		this.mEndEffectorWristState = wrist_state;
-		this.mIntakeDeployState = intake_state;
 		this.mEndEffectorRollersState = endEffector_state;
-		this.mIntakeRollersState = intake_roller_state;
+		this.mIntakeState = intake_state;
 		this.mType = type;
 		this.mAlignmentType = alignmentTypes;
 }
@@ -98,10 +88,8 @@ public class SuperstructureState {
 	 *
 	 * @param elevator_state the state of the elevator
 	 * @param wrist_state the state of the end effector wrist
-	 * @param intake_state the state of the intake deploy
 	 * @param climb_state the state of the climb
 	 * @param endEffector_state the state of the end effector rollers
-	 * @param intake_roller_state the state of the intake rollers
 	 * @param indexer_state the state of the indexer
 	 * @param type the type of the superstructure state
 	 * @param alignmentTypes the alignment type
@@ -109,16 +97,14 @@ public class SuperstructureState {
 	public SuperstructureState(
 			Elevator.State elevator_state,
 			EndEffectorWrist.State wrist_state,
-			IntakeDeploy.State intake_state,
 			EndEffectorRollers.State endEffector_state,
-			IntakeRollers.State intake_roller_state,
+			Intake.State intake_state,
 			Type type, AlignmentType alignmentTypes,ReefLevel level) {
 	
 		this.mElevatorState = elevator_state;
 		this.mEndEffectorWristState = wrist_state;
-		this.mIntakeDeployState = intake_state;
 		this.mEndEffectorRollersState = endEffector_state;
-		this.mIntakeRollersState = intake_roller_state;
+		this.mIntakeState = intake_state;
 		this.mType = type;
 		this.mAlignmentType = alignmentTypes;
 		this.level = level;

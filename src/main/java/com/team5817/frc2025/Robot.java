@@ -32,8 +32,7 @@ import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Elevator.Elevator;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
-import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
-import com.team5817.frc2025.subsystems.Intake.IntakeRollers;
+import com.team5817.frc2025.subsystems.Intake.Intake;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Elastic;
 import com.team5817.lib.Util;
@@ -118,11 +117,10 @@ public class Robot extends LoggedRobot {
         Drive.getInstance(),
         Superstructure.getInstance(),
         VisionDeviceManager.getInstance(),
-        IntakeDeploy.getInstance(),
         Elevator.getInstance(),
         EndEffectorRollers.getInstance(),
         EndEffectorWrist.getInstance(),
-        IntakeRollers.getInstance()
+        Intake.getInstance()
         );
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
