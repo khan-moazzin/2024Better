@@ -349,6 +349,7 @@ public abstract class RollerSubsystemBasic extends Subsystem {
 		if (mCSVWriter != null) {
 			mCSVWriter.add(mRollerInputs);
 		}
+		Logger.processInputs(mConstants.kName, mRollerInputs);
 	}
 
 	/**

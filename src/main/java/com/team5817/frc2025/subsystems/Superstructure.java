@@ -382,7 +382,7 @@ public class Superstructure extends Subsystem {
 				mIntakeRollers.stateRequest(goal.mIntakeRollersState),
 				mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLDCORAL),
 				new SequentialRequest(
-					mElevator.waitForExtensionRequest(ElevatorConstants.kCoralClearHeight),
+					mElevator.waitToBeOverRequest(ElevatorConstants.kCoralClearHeight),
 					mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))),
 			new SequentialRequest(
 			ReadyToScoreRequest(),

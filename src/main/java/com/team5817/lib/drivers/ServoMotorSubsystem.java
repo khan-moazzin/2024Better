@@ -23,6 +23,7 @@ import com.team254.lib.util.Util;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.lib.RobotMode;
+import com.team5817.lib.requests.Request;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -475,7 +476,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 		}
 		lastTimestamp = Timer.getTimestamp();
 		lastPosRots =  mServoInputs.position_rots;
-		
+
+		Logger.processInputs(mConstants.kName, mServoInputs);
 	}
 
 	/**
@@ -786,6 +788,26 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 			return Math.max(predicted_units, demand);
 		}
 	}
+
+	/**
+	 * Returns a request to wait for the elevator to extend to the given position.
+	 * 
+	 * @param position the position to wait for
+	 * @return a request to wait for the elevator to extend
+	 */
+	public Request waitToBeOverRequest(double position) {
+		return new Request() {
+			@Override
+			public void act() {
+			}
+
+			@Override
+			public boolean isFinished() {
+				return mServoInputs.position_units >= position;
+			}
+		};
+	}
+
 	public void setWantHome(boolean home){
 		mHoming = home;
 	}

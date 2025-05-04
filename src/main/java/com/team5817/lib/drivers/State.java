@@ -6,5 +6,7 @@ public class State {
     }
     public interface ServoState {
         double getDesiredPosition();
+        boolean isDisabled();
+        double getAllowableError();
     }
 }

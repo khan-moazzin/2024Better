@@ -6,8 +6,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.RobotConstants;
 import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
-import com.team5817.lib.drivers.ServoMotorSubsystemWithCancoder.AbsoluteEncoderConstants;
-
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
 public class EndEffectorConstants {
@@ -20,7 +18,6 @@ public class EndEffectorConstants {
 		// 7.92
 		public static final ServoMotorSubsystemConstants kWristServoConstants = new ServoMotorSubsystemConstants();
 
-		public static final AbsoluteEncoderConstants kWristEncoderConstants = new AbsoluteEncoderConstants();
 
 		static {
 			kWristServoConstants.kName = "EndEffectorWrist";

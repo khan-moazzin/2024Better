@@ -105,7 +105,7 @@ public class DriverControls {
 				s.mEndEffectorRollers.setState(EndEffectorRollers.State.CORAL_INTAKE);
 			if(driver.yButton.isBeingPressed()){
 				s.mIntakeRollers.setState(IntakeRollers.State.HALF_INTAKING);
-				s.mIntakeDeploy.conformToState(IntakeDeploy.State.GROUND);
+				s.mIntakeDeploy.setState(IntakeDeploy.State.GROUND);
 			}
 			// if(driver.xButton.isBeingPressed())
 			// 	s.setGoal(GoalState.GROUND_ALGAE_INTAKE);
@@ -140,7 +140,7 @@ public class DriverControls {
 
 
 		if(codriver.getRightTriggerAxis()==1)
-			s.mIntakeDeploy.conformToState(IntakeDeploy.State.STOW);
+			s.mIntakeDeploy.setState(IntakeDeploy.State.STOW);
 		if(codriver.getLeftTriggerAxis()==1)
 			s.setGoal(GoalState.CLEAR);
 		if(codriver.getStartButtonPressed())

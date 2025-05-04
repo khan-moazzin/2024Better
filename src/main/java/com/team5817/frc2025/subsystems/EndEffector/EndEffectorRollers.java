@@ -182,9 +182,7 @@ public class EndEffectorRollers extends Subsystem {
 		hasPiece = hasIntaked;
 		gotPiece = hasPiece!=lastHas&&hasPiece;
 		lastHas = hasPiece;
-		
-		Logger.processInputs("EndEffectorRollers", mEndEffectorRollerInputs);
-	}
+		}
 
 	@Override
 	public void writePeriodicOutputs() {

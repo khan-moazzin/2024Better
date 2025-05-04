@@ -53,12 +53,9 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
  */
 public class Robot extends LoggedRobot {
   public static Pose3d[] mechPoses = new Pose3d[6];
-  public static Pose3d[] desMechPoses = new Pose3d[6];
-
   static {
     for (int i = 0; i < 6; i++) {
       mechPoses[i] = new Pose3d();
-      desMechPoses[i] = new Pose3d();
     }
   }
   SubsystemManager mSubsystemManager;
@@ -154,7 +151,6 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Elastic/Match Time", Timer.getMatchTime());
     mEnabledLooper.update();
     Logger.recordOutput("Mechs", mechPoses);
-    Logger.recordOutput("Desired Mechs", desMechPoses);
   }
 
   boolean disableGyroReset = false;

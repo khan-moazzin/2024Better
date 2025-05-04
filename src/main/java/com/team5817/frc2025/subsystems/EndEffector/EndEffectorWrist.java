@@ -1,22 +1,20 @@
 package com.team5817.frc2025.subsystems.EndEffector;
 
 import com.team5817.frc2025.Robot;
-import com.team5817.frc2025.loops.ILooper;
-import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorConstants.EndEffectorWristConstants;
 import com.team5817.lib.Util;
-import com.team5817.lib.drivers.ServoMotorSubsystem;
-import com.team5817.lib.requests.Request;
-
+import com.team5817.lib.drivers.State.ServoState;
+import com.team5817.lib.drivers.StateBasedServoMotorSubsystem;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
+import lombok.Getter;
 
 import org.littletonrobotics.junction.Logger;
 
-public class EndEffectorWrist extends ServoMotorSubsystem{
+public class EndEffectorWrist extends StateBasedServoMotorSubsystem<EndEffectorWrist.State> {
 
 	/**
 	 * Singleton instance of the EndEffectorWrist.
@@ -35,16 +33,14 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		return mInstance;
 	}
 	
-	private State mState = State.ZERO;
-	private boolean atState = false;
-	private double branchDist = 0;
-	private double offset = 0;
+	private double distanceFromScoringLocation = 0;
+	private double scoringOffset = 0;
 
 	final static double kStrictError = 1.5;
 	final static double kMediumError = 2 ;
 	final static double kLenientError = 2.5;
 
-	public enum State {
+	public enum State implements ServoState {
 
 		L4(71.89453125-89, kStrictError,EndEffectorWristConstants.kHighOffsetMap),
 		L3(-31.185546874999993, kStrictError,EndEffectorWristConstants.kMidOffsetMap),
@@ -58,25 +54,31 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 		PINCH(131-89, 70),
 		STOW(88.17 ,kStrictError);
 
-		double output = 0;
-		double allowable_error = 0;
+		@Getter private double desiredPosition = 0;
+		@Getter private double allowableError = 0;
 		InterpolatingDoubleTreeMap map;
 
 		State(double output, double allowable_error,InterpolatingDoubleTreeMap map) {
-			this.output = output;
-			this.allowable_error = allowable_error;
+			this.desiredPosition = output;
+			this.allowableError = allowable_error;
 			this.map = map;
 		}
 		State(double output, double allowable_error){
 			this(output,allowable_error,null);
 		}
 		
-		public double getTrackedOutput(double position){
+		public double getTrackedOutput(double distanceFromScoringPosition){
 			if(map == null){
-				return output;
+				return desiredPosition;
 			}
-			double des = this.output + map.get(position);
+			double des = this.desiredPosition + map.get(distanceFromScoringPosition);
+			des = Util.limit(des, EndEffectorWristConstants.kWristServoConstants.kMinUnitsLimit,EndEffectorWristConstants.kWristServoConstants.kMaxUnitsLimit);
+
 			return des;
+		}
+		
+		public boolean isDisabled(){
+			return false;
 		}
 	}
 
@@ -87,57 +89,31 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 	 * @param encoder_constants The absolute encoder constants.
 	 */
 	public EndEffectorWrist(final ServoMotorSubsystemConstants constants) {
-		super(constants);
+		super(constants,State.ZERO,false);
 
 		enableSoftLimits(false);
-		mMain.setPosition(0);
-		// setSetpointMotionMagic(State.STOW.output);
 	}
 
-	/**
-	 * Registers the enabled loops.
-	 * 
-	 * @param enabledLooper The enabled looper.
-	 */
-	public void registerEnabledLoops(ILooper enabledLooper) {
-		enabledLooper.register(new Loop() {
-			@Override
-			public void onStart(double timestamp) {
-			}
-
-			@Override
-			public void onLoop(double timestamp) {}
-
-		});
-	}
-	public void conformToState(State state){
-		mState = state;
-	}
 	public void updateOnBranchDistance(double dist){
-		branchDist = dist;
+		distanceFromScoringLocation = dist;
 	}
+
 	public void setManualOffset(double offset){
-		this.offset = offset;
+		this.scoringOffset = offset;
 	}
+
 	public void changeManualOffset(Double deltaOffset){
-		this.offset+=deltaOffset;
-	}
-
-	@Override
-	public void readPeriodicInputs() {
-		super.readPeriodicInputs();
-
-		Logger.processInputs("EndEffectorWrist", mServoInputs);
+		this.scoringOffset+=deltaOffset;
 	}
 
 	@Override
 	public void writePeriodicOutputs() {
-		double trackedOutput = mState.getTrackedOutput(branchDist);
+		double trackedOutput = mState.getTrackedOutput(distanceFromScoringLocation);
 		if(mState==State.L1||mState==State.L2||mState==State.L3||mState==State.L4)
-			trackedOutput+=offset;
-		trackedOutput = Util.limit(trackedOutput, mConstants.kMinUnitsLimit,mConstants.kMaxUnitsLimit);
+			trackedOutput+=scoringOffset;
+
 		setSetpointMotionMagic(trackedOutput);
-		atState = Util.epsilonEquals(getPosition(),trackedOutput, mState.allowable_error);
+		
 		super.writePeriodicOutputs();
 	}
 
@@ -147,42 +123,8 @@ public class EndEffectorWrist extends ServoMotorSubsystem{
 				.transformBy(new Transform3d(new Translation3d(.22, 0, .2922), new Rotation3d(Units.degreesToRadians(0),
 						Units.degreesToRadians(mServoInputs.position_units+89), Units.degreesToRadians(0))));
 
-		Robot.desMechPoses[4] = Robot.desMechPoses[3]
-				.transformBy(new Transform3d(new Translation3d(.22, 0, .2922), new Rotation3d(Units.degreesToRadians(0),
-						Units.degreesToRadians(demand+89), Units.degreesToRadians(0))));
-		Logger.recordOutput("EndEffectorWrist/Offset", this.offset);
-		Logger.recordOutput(mConstants.kName+"/AtState", atState);
-		Logger.recordOutput(mConstants.kName+"/State",	mState);
+		Logger.recordOutput("EndEffectorWrist/Offset", this.scoringOffset);
+
 		super.outputTelemetry();
 	}
-
-	@Override
-	public void stop() {
-	}
-
-	@Override
-	public boolean checkSystem() {
-		return false;
-	}
-
-	/**
-	 * Returns a request to set the end effector wrist to the given state.
-	 * 
-	 * @param _wantedState The desired state.
-	 * @return The state request.
-	 */
-	public Request stateRequest(State _wantedState) {
-		return new Request() {
-			@Override
-			public void act() {
-				mState = _wantedState;
-			}
-
-			@Override
-			public boolean isFinished() {
-				return atState;
-			}
-		};
-	}
-
 }
