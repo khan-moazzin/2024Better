@@ -1,46 +1,58 @@
 package com.team5817.frc2025.subsystems.Intake;
 
-import com.team5817.frc2025.subsystems.Intake.IntakeConstants.RollerConstants;
 import com.team5817.lib.drivers.RollerSubsystemBasic.ControlState;
 import com.team5817.lib.drivers.State.RollerState;
 import com.team5817.lib.drivers.StateBasedRollerSubsystem;
+import com.team5817.frc2025.subsystems.Intake.IntakeConstants.RollerConstants;
 import lombok.Getter;
 
+/**
+ * The IntakeRollers class controls the intake roller subsystem using 2024 intake logic.
+ */
 public class IntakeRollers extends StateBasedRollerSubsystem<IntakeRollers.State> {
 
-	private static IntakeRollers mInstance;
+    private static IntakeRollers mInstance;
 
-	/**
-	 * Gets the singleton instance of the IntakeRollers.
-	 *
-	 * @return The singleton instance.
-	 */
-	public static IntakeRollers getInstance() {
-		if (mInstance == null) {
-			mInstance = new IntakeRollers();
-		}
-		return mInstance;
-	}
+    /**
+     * Gets the singleton instance of the IntakeRollers.
+     *
+     * @return The singleton instance.
+     */
+    public static IntakeRollers getInstance() {
+        if (mInstance == null) {
+            mInstance = new IntakeRollers();
+        }
+        return mInstance;
+    }
 
-	public enum State implements RollerState {
-		IDLE(0,0,0),
-		INTAKING(10.0,2.5,8),
-		HALF_INTAKING(10.0,0,0),
-		EXHAUST(-6,-6,-6),
-		IDLE_EXAUST(0,-2,-2);
+    /**
+     * Represents the different states of the intake rollers.
+     */
+    public enum State implements RollerState {
+        IDLE(0, ControlState.VOLTAGE),
+        INTAKING(0.75, ControlState.VOLTAGE),
+        HALF_INTAKING(0.75, ControlState.VOLTAGE),
+        EXHAUSTING(-0.7, ControlState.VOLTAGE),
+        IDLE_EXAUST(0, ControlState.VOLTAGE);
 
-		@Getter private double[] rollerDemands;
-		@Getter private ControlState[] controlStates = {ControlState.VOLTAGE, ControlState.VOLTAGE, ControlState.VOLTAGE};
+        @Getter private final double[] rollerDemands;
+        @Getter private final ControlState[] controlStates;
 
-		State(double intakeVoltage, double indexerBottomVoltage, double indexerSidesVoltage) {
-			this.rollerDemands = new double[] {intakeVoltage, indexerBottomVoltage, indexerSidesVoltage};
-		}
-	}
+        State(double demand, ControlState control) {
+            this.rollerDemands = new double[] { demand };
+            this.controlStates = new ControlState[] { control };
+        }
+    }
 
-	/**
-	 * Private constructor for the IntakeRollers subsystem.
-	 */
-	private IntakeRollers() {
-		super(State.IDLE, RollerConstants.kIntakeConstants, RollerConstants.kIndexerBottomConstants, RollerConstants.kIndexerSideConstants);
-	}
+    /**
+     * Private constructor for the IntakeRollers subsystem.
+     */
+    private IntakeRollers() {
+        super(State.IDLE, RollerConstants.kIntakeConstants);
+    }
+
+    @Override
+    public void outputTelemetry() {
+        super.outputTelemetry();
+    }
 }

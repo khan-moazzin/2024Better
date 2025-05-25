@@ -24,7 +24,7 @@ public static void updateIntakeAngle(double position) {
 			Units.degreesToRadians(position), Units.degreesToRadians(0)));
 }
 
-public static void updateElevatorHeight(double position) {
+public static void updatePivotHeight(double position) {
     Pose3d current = new Pose3d(Math.cos(Units.degreesToRadians(84)) * position, 0,
 				Math.sin(Units.degreesToRadians(84)) * position, new Rotation3d());
 

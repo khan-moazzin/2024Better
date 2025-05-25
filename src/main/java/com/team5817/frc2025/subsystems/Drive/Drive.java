@@ -2,8 +2,7 @@ package com.team5817.frc2025.subsystems.Drive;
 
 import com.team5817.frc2025.RobotConstants;
 import com.team5817.frc2025.RobotState;
-import com.team5817.frc2025.field.AlignmentPoint;
-import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
+
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Cancoders;
@@ -77,13 +76,11 @@ public class Drive extends Subsystem {
 	private boolean odometryReset = false;
 
 	private final DriveMotionPlanner mMotionPlanner;
-	private final AutoAlignMotionPlanner mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
 	private final SwerveHeadingController mHeadingController;
 
 	private boolean mControlStateHasChanged = false;
 	private boolean mOverrideHeading = false;
 
-	private double alignmentStartTimestamp = 0;
 
 	private Rotation2d mTrackingAngle = Rotation2d.identity();
 
@@ -91,7 +88,6 @@ public class Drive extends Subsystem {
 	private SwerveKinematicLimits driverKinematicLimits = mKinematicLimits;
 	private SwerveKinematicLimits mUncappedKinematicLimits = SwerveConstants.kSwerveUncappedKinematicLimits;
 
-	private static AlignmentType mAlignment = AlignmentType.CORAL_SCORE;
 	private static Drive mInstance;
 
 	public static Drive getInstance() {
@@ -142,7 +138,6 @@ public class Drive extends Subsystem {
 		mPigeon.setYaw(0.0);
 		mWheelTracker = new WheelTracker(mModules);
 		mSetpointGenerator = new SwerveSetpointGenerator(SwerveConstants.kKinematics);
-		mAutoAlignMotionPlanner.reset();
 		
 		
 	}
@@ -187,25 +182,7 @@ public class Drive extends Subsystem {
 				return;
 			}
 		}
-		if (mControlState == DriveControlState.AUTOALIGN) {
-			if (mControlStateHasChanged)
-				alignmentStartTimestamp = Timer.getTimestamp();
-			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond) > mKinematicLimits.kMaxDriveVelocity
-					* 0.1 && Timer.getTimestamp() - alignmentStartTimestamp > .5) {
-				mPeriodicIO.des_chassis_speeds = speeds;
-				mControlStateHasChanged = false;
-				return;
-			} else {
-				ChassisSpeeds speed = mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp,
-						RobotState.getInstance().getGlobalKalmanPose(mPeriodicIO.timestamp)
-								.withRotation(mPeriodicIO.heading));
-				if (speed != null) {
-					mPeriodicIO.des_chassis_speeds = speed;
-				}
-				mControlStateHasChanged = false;
-				return;
-			}
-		}
+	
 
 		if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
 			mKinematicLimits = driverKinematicLimits;
@@ -292,9 +269,7 @@ public class Drive extends Subsystem {
 	 *
 	 * @param alignment The alignment type.
 	 */
-	public void setAlignment(AlignmentType alignment) {
-		mAlignment = alignment;
-	}
+
 
 	/**
 	 * Enable/disables vision heading control.
@@ -341,30 +316,14 @@ public class Drive extends Subsystem {
 
 	boolean autoAlignFinishedOverrride = false;
 
-	public void autoAlign(AlignmentType type) {
-		setAlignment(type);
-		alignDrive(findTargetPoint());
-	}
+
 	/**
 	 * Initiates auto alignment with the specified alignment type.
 	 *
 	 * @param type The alignment type.
 	 */
-	public Pose2d findTargetPoint() {
-		return AutoAlignPointSelector.chooseTargetPoint(getPose(), mAlignment);
-	}
-	private void alignDrive(Pose2d targetPoint) {
-		autoAlignFinishedOverrride = false;
-		if (targetPoint == null) {
-			return;
-		}
-		mKinematicLimits = SwerveConstants.kSwerveKinematicLimits;
-		mAutoAlignMotionPlanner.setTargetPoint(targetPoint,mAlignment.tolerance);
-		if (mControlState != DriveControlState.AUTOALIGN) {
-			mAutoAlignMotionPlanner.reset();
-			setControlState(DriveControlState.AUTOALIGN);
-		}
-	}
+
+	
 
 	/**
 	 * Sets the trajectory for the motion planner.
@@ -383,23 +342,13 @@ public class Drive extends Subsystem {
 	 *
 	 * @return True if auto alignment is complete, false otherwise.
 	 */
-	public boolean getAutoAlignComplete() {
-		if (autoAlignFinishedOverrride)
-			return true;
-		return mAutoAlignMotionPlanner.getAutoAlignComplete();
-	}
+
 	/**
 	 * Checks if auto alignment is complete.
 	 *
 	 * @return True if auto alignment is complete, false otherwise.
 	 */
-	public Translation2d getAutoAlignError() {
-		mAutoAlignMotionPlanner.setTargetPoint(findTargetPoint(),mAlignment.tolerance);
-		mAutoAlignMotionPlanner.updateAutoAlign(mPeriodicIO.timestamp,
-						RobotState.getInstance().getGlobalKalmanPose(mPeriodicIO.timestamp)
-								.withRotation(mPeriodicIO.heading));
-		return mAutoAlignMotionPlanner.getAutoAlignError();
-	}
+
 
 	/**
 	 * Overrides the auto alignment completion status.
@@ -735,10 +684,7 @@ public class Drive extends Subsystem {
 	public SwerveKinematicLimits getKinematicLimits() {
 		return mKinematicLimits;
 	}
-	public static AlignmentPoint getAlignment()
-	{
-		return AutoAlignPointSelector.a;
-	}
+	
 
 	public static class SwerveInputs {
 		// Inputs/Desired States
