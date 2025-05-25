@@ -12,7 +12,6 @@ import com.team5817.frc2025.subsystems.Pivot.Pivot;
 public class SuperstructureState {
 
 	public final Pivot.State mPivotState;
-	public final EndEffectorWrist.State mEndEffectorWristState;
 	public final EndEffectorRollers.State mEndEffectorRollersState;
 	public final Intake.State mIntakeState;
 	public final Type mType;
@@ -35,7 +34,7 @@ public class SuperstructureState {
 	/**
 	 * Constructs a SuperstructureState with the specified subsystem states, type, and alignment type.
 	 *
-	 * @param pivot_state the state of the elevator
+	 * @param pivot_state the state of the pivot
 	 * @param wrist_state the state of the end effector wrist
 	 * @param climb_state the state of the climb
 	 * @param endEffector_state the state of the end effector rollers

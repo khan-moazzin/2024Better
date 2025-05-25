@@ -96,7 +96,7 @@ public class CustomMode extends AutoBase {
 	 */
 	@Override
 	public void routine() {
-		s.mElevator.setManualOffset(0.04);
+		s.mPivot.setManualOffset(0.04);
 		if (RobotMode.mode == RobotMode.Mode.SIM) {
 			mSim.setSimulationWorldPose(t.initalPose().wpi());
 		}

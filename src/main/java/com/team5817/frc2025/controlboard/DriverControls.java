@@ -164,7 +164,7 @@ public class DriverControls {
 		}
 		
 		if(codriver.POV270.wasReleased())
-			s.mElevator.home();
+			s.mPivot.home();
 		if(codriver.POV90.wasReleased())
 			s.mEndEffectorWrist.home();
 

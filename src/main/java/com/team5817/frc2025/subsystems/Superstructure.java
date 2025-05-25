@@ -1,7 +1,6 @@
 package com.team5817.frc2025.subsystems;
 
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
-import com.team5817.frc2025.field.FieldConstants.ReefLevel;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Drive.Drive;
@@ -53,14 +52,14 @@ public class Superstructure extends Subsystem {
 	public Drive mDrive;
 	private GoalState mGoal= GoalState.STOW;
 
-	public Elevator mElevator;
+	public Pivot mPivot;
 	public EndEffectorWrist mEndEffectorWrist;
 	public EndEffectorRollers mEndEffectorRollers;
 	public Intake mIntake;
 
 	public enum GameObject {
-		CORAL,
-		ALGAE
+		NOTE,
+		
 	}
 
 	public enum GoalState {
@@ -125,7 +124,7 @@ public class Superstructure extends Subsystem {
 	 */
 	Superstructure() {
 		mDrive = Drive.getInstance();
-		mElevator = Elevator.getInstance();
+		mPivot = Pivot.getInstance();
 		mEndEffectorWrist = EndEffectorWrist.getInstance();
 		mEndEffectorRollers = EndEffectorRollers.getInstance();
 		mIntake = Intake.getInstance();
@@ -213,10 +212,10 @@ public class Superstructure extends Subsystem {
 				manageRequests();
 				if(DriverStation.isEnabled()&&DriverStation.isTeleopEnabled()){
 					double dist = driverAllowsPoseComp?(-mDrive.getAutoAlignError().x()):0;
-					mElevator.updateOnBranchDistance(dist);
+					mPivot.updateOnBranchDistance(dist);
 					mEndEffectorWrist.updateOnBranchDistance(dist);
 				}else{
-					mElevator.updateOnBranchDistance(-1);
+					mPivot.updateOnBranchDistance(-1);
 					mEndEffectorWrist.updateOnBranchDistance(-1);
 				}
 			}
@@ -313,7 +312,7 @@ public class Superstructure extends Subsystem {
 	private Request CleanRequest(SuperstructureState goal) {
 		return new SequentialRequest(
 				new ParallelRequest(
-						mElevator.stateRequest(goal.mElevatorState),
+						mPivot.stateRequest(goal.mPivotState),
 						mIntake.stateRequest(goal.mIntakeState),
 						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
 						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))
@@ -330,7 +329,7 @@ public class Superstructure extends Subsystem {
 				new SequentialRequest(
 					mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
 					new WaitRequest(0.1),
-					mElevator.stateRequest(goal.mElevatorState)),
+					mPivot.stateRequest(goal.mPivotState)),
 				mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLD),
 				mIntake.stateRequest(goal.mIntakeState)),
 				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState)
@@ -354,7 +353,7 @@ public class Superstructure extends Subsystem {
 			mIntake.stateRequest(Intake.State.HALF_INTAKING),//idle indexer
 			new ParallelRequest(
 				mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
-				mElevator.stateRequest(goal.mElevatorState),
+				mPivot.stateRequest(goal.mPivotState),
 				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState)),
 			mIntake.stateRequest(goal.mIntakeState)
 		).addName("Intaking");
@@ -372,12 +371,11 @@ public class Superstructure extends Subsystem {
 		}
 		return new ParallelRequest(
 			new ParallelRequest(
-				mElevator.stateRequest(goal.mElevatorState),
+				mPivot.stateRequest(goal.mPivotState),
 				mIntake.stateRequest(goal.mIntakeState),
 				mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLDCORAL),
 				new SequentialRequest(
-					mElevator.waitToBeOverRequest(ElevatorConstants.kCoralClearHeight),
-					mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))),
+					mPivot.waitToBeOverRequest(PivotConstants.kCoralClearHeight),
 			new SequentialRequest(
 			ReadyToScoreRequest(),
 			mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState))
@@ -396,11 +394,10 @@ public class Superstructure extends Subsystem {
 		}
 		return new SequentialRequest(
 			new ParallelRequest(
-				mElevator.stateRequest(goal.mElevatorState),
+				mPivot.stateRequest(goal.mPivotState),
 				mIntake.stateRequest(goal.mIntakeState)),
 			ReadyToScoreRequest(),
 			new ParallelRequest(
-			mEndEffectorWrist.stateRequest(EndEffectorWrist.State.NET),
 			mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState))
 		).addName("Score");
 	}
