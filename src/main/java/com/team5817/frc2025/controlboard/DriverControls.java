@@ -9,7 +9,7 @@ import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.lib.Util;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
-import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
+import com.team5817.frc2025.subsystems.EndEffector.Shooter;
 import com.team5817.frc2025.subsystems.Intake.Intake;
 import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 
@@ -102,7 +102,7 @@ public class DriverControls {
 				s.setGoal(GoalState.A1);
 			}
 			if(driver.bButton.isBeingPressed())
-				s.mEndEffectorRollers.setState(EndEffectorRollers.State.CORAL_INTAKE);
+				s.mEndEffectorRollers.setState(Shooter.State.CORAL_INTAKE);
 			if(driver.yButton.isBeingPressed()){
 				s.mIntake.stateRequest(Intake.State.HALF_INTAKING).act();
 			}

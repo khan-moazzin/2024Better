@@ -299,7 +299,8 @@ public abstract class RollerSubsystemBasic extends Subsystem {
 	public enum ControlState {
 		OPEN_LOOP,
 		VELOCITY,
-		VOLTAGE
+		VOLTAGE,
+		DUTY_CYCLE; // For backwards compatibility, not used in new code
 	}
 
 	protected RollerInputsAutoLogged mRollerInputs = new RollerInputsAutoLogged();

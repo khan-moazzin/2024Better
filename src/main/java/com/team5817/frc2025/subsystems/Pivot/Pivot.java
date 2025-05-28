@@ -95,7 +95,7 @@ public class Pivot extends StateBasedServoMotorSubsystem<Pivot.State> {
     @Override
     public void writePeriodicOutputs() {
         double trackedOutput = mState.getTrackedOutput(distanceFromScoringPosition);
-        if (mState == State.MAXUP || mState == State.MAXDOWN) {
+        if (mState == State.MAXUP || mState == State.MAXDOWN) {//if aiming, use map
             trackedOutput += scoringOffset;
         }
 

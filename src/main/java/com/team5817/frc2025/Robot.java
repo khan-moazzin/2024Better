@@ -29,10 +29,10 @@ import com.team5817.frc2025.controlboard.DriverControls;
 import com.team5817.frc2025.loops.Looper;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Drive.Drive;
-import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
 import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2025.subsystems.Intake.Intake;
 import com.team5817.frc2025.subsystems.Pivot.Pivot;
+import com.team5817.frc2025.subsystems.Shooter.Shooter;
 import com.team5817.frc2025.subsystems.vision.VisionDeviceManager;
 import com.team5817.lib.Elastic;
 import com.team5817.lib.Util;
@@ -118,7 +118,7 @@ public class Robot extends LoggedRobot {
         Superstructure.getInstance(),
         VisionDeviceManager.getInstance(),
         Pivot.getInstance(),
-        EndEffectorRollers.getInstance(),
+        Shooter.getInstance(),
         EndEffectorWrist.getInstance(),
         Intake.getInstance()
         );
