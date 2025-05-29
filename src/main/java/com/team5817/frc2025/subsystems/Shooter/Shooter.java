@@ -1,15 +1,17 @@
 package com.team5817.frc2025.subsystems.Shooter;
 
 import com.team5817.frc2025.subsystems.Shooter.ShooterConstants.ShooterMotorConstants;
-import com.team5817.lib.drivers.BasicStateBasedRollerSubsystem;
-import com.team5817.lib.drivers.State.BasicRollerState;
+import com.team5817.lib.drivers.StateBasedRollerSubsystem;
+import com.team5817.lib.drivers.RollerSubsystemBasic.ControlState;
+import com.team5817.lib.drivers.State.RollerState;
+import com.team5817.lib.drivers.StateBasedRollerSubsystem;
 
 import lombok.Getter;
 
 /**
  * The EndEffectorRollers subsystem controls the rollers of the end effector.
  */
-public class Shooter extends BasicStateBasedRollerSubsystem<Shooter.State> {
+public class Shooter extends StateBasedRollerSubsystem<Shooter.State> {
 	private static Shooter mInstance;
 
 	/**
@@ -24,26 +26,31 @@ public class Shooter extends BasicStateBasedRollerSubsystem<Shooter.State> {
 		return mInstance;
 	}
 	
-	public enum State implements BasicRollerState {
-		PARTIALRAMP(.7),
-    	SHOOTING(1),
-    	TRANSFER(0.3),
-    	REVERSETRANSFER(-.5),
-    	AMP(.5),
-    	IDLE(.1);
+	public enum State implements RollerState {
+		PARTIALRAMP(0.7),
+		SHOOTING(1.0),
+		TRANSFER(0.3),
+		REVERSETRANSFER(-0.5),
+		AMP(0.5),
+		IDLE(0.1);
 
-		@Getter private double rollerDemand;
+		@Getter private final double rollerDemand;
 
-		double output = 0;
-    	State(double output){
-        	this.output = output;
-    }
+			State(double output) {
+				this.rollerDemand = output;
+			}
 
 		@Override
-		public ControlState getControlState() {
-			return ControlState.DUTY_CYCLE;
+		public double[] getRollerDemands() {
+			return new double[] { rollerDemand, rollerDemand }; 
 		}
-	}
+
+		@Override
+		public ControlState[] getControlStates() {
+			return new ControlState[] { ControlState.DUTY_CYCLE, ControlState.DUTY_CYCLE };
+		}
+}
+
 
 
 

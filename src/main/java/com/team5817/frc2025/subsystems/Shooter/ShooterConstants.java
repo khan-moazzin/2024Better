@@ -19,8 +19,7 @@ public class ShooterConstants {
         public static final RollerSubsystemConstants kShooterMotor2Constants = new RollerSubsystemConstants();
 
         public static final RollerSubsystemConstants[] kShooterConstants = {
-            kShooterMotor1Constants,
-            kShooterMotor2Constants
+     
         };
 
 		static {
@@ -34,9 +33,7 @@ public class ShooterConstants {
             kShooterMotor1Constants.kMaxForwardOutput = 12.0;
             kShooterMotor1Constants.kMaxReverseOutput = -12.0;
             kShooterMotor1Constants.kNeutralMode = NeutralModeValue.Brake;
-            kShooterMotor1Constants.kHomingTimeout = 0.5;
-            kShooterMotor1Constants.kHomingOutput = -0.25;
-            kShooterMotor1Constants.kHomingVelocityWindow = 1.0;
+     
 		
 		
 			kShooterMotor2Constants.kName = "ShooterMotor2";
@@ -49,9 +46,7 @@ public class ShooterConstants {
             kShooterMotor2Constants.kMaxForwardOutput = 12.0;
             kShooterMotor2Constants.kMaxReverseOutput = -12.0;
             kShooterMotor2Constants.kNeutralMode = NeutralModeValue.Brake;
-            kShooterMotor2Constants.kHomingTimeout = 0.5;
-            kShooterMotor2Constants.kHomingOutput = -0.25;
-            kShooterMotor2Constants.kHomingVelocityWindow = 1.0;
+
 
 		
 		

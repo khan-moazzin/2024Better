@@ -29,7 +29,6 @@ import com.team5817.frc2025.controlboard.DriverControls;
 import com.team5817.frc2025.loops.Looper;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Drive.Drive;
-import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
 import com.team5817.frc2025.subsystems.Intake.Intake;
 import com.team5817.frc2025.subsystems.Pivot.Pivot;
 import com.team5817.frc2025.subsystems.Shooter.Shooter;
@@ -119,7 +118,6 @@ public class Robot extends LoggedRobot {
         VisionDeviceManager.getInstance(),
         Pivot.getInstance(),
         Shooter.getInstance(),
-        EndEffectorWrist.getInstance(),
         Intake.getInstance()
         );
 
@@ -169,7 +167,6 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void teleopInit() {
-    EndEffectorWrist.getInstance().setManualOffset(0);
     Pivot.getInstance().setManualOffset(0);
     neverEnabled = false;
 		mDrive.setControlState(Drive.DriveControlState.OPEN_LOOP);

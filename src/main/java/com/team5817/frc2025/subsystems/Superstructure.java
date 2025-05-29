@@ -5,10 +5,8 @@ import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Pivot.PivotConstants;
-import com.team5817.frc2025.subsystems.EndEffector.EndEffectorRollers;
-import com.team5817.frc2025.subsystems.EndEffector.EndEffectorWrist;
-
-import com.team5817.frc2025.subsystems.Intake.Intake; // Added missing import for Intake
+import com.team5817.frc2025.subsystems.Shooter.ShooterConstants;
+import com.team5817.frc2025.subsystems.Intake.Intake; 
 import com.team5817.frc2025.subsystems.Pivot.Pivot;
 import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.requests.ParallelRequest;
@@ -53,8 +51,7 @@ public class Superstructure extends Subsystem {
 	private GoalState mGoal= GoalState.STOW;
 
 	public Pivot mPivot;
-	public EndEffectorWrist mEndEffectorWrist;
-	public EndEffectorRollers mEndEffectorRollers;
+	public Shooter mEndEffectorRollers;
 	public Intake mIntake;
 
 	public enum GameObject {
