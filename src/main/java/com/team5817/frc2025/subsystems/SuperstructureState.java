@@ -34,8 +34,6 @@ public class SuperstructureState {
 	 * Constructs a SuperstructureState with the specified subsystem states, type, and alignment type.
 	 *
 	 * @param pivot_state the state of the pivot
-	 * @param wrist_state the state of the end effector wrist
-	 * @param climb_state the state of the climb
 	 * @param endEffector_state the state of the end effector rollers
 	 * @param indexer_state the state of the indexer
 	 * @param type the type of the superstructure state

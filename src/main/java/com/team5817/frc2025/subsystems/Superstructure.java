@@ -5,6 +5,7 @@ import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Pivot.PivotConstants;
+import com.team5817.frc2025.subsystems.Shooter.Shooter;
 import com.team5817.frc2025.subsystems.Shooter.ShooterConstants;
 import com.team5817.frc2025.subsystems.Intake.Intake; 
 import com.team5817.frc2025.subsystems.Pivot.Pivot;
@@ -51,7 +52,7 @@ public class Superstructure extends Subsystem {
 	private GoalState mGoal= GoalState.STOW;
 
 	public Pivot mPivot;
-	public Shooter mEndEffectorRollers;
+	public Shooter mShooter;
 	public Intake mIntake;
 
 	public enum GameObject {
@@ -115,15 +116,14 @@ public class Superstructure extends Subsystem {
 			this.goal = state_goal;
 		}
 	}
-
+	
 	/**
 	 * Constructor for the Superstructure class.
 	 */
 	Superstructure() {
 		mDrive = Drive.getInstance();
 		mPivot = Pivot.getInstance();
-		mEndEffectorWrist = EndEffectorWrist.getInstance();
-		mEndEffectorRollers = EndEffectorRollers.getInstance();
+		mShooter = Shooter.getInstance();
 		mIntake = Intake.getInstance();
 	}
 
@@ -210,10 +210,8 @@ public class Superstructure extends Subsystem {
 				if(DriverStation.isEnabled()&&DriverStation.isTeleopEnabled()){
 					double dist = driverAllowsPoseComp?(-mDrive.getAutoAlignError().x()):0;
 					mPivot.updateOnBranchDistance(dist);
-					mEndEffectorWrist.updateOnBranchDistance(dist);
 				}else{
 					mPivot.updateOnBranchDistance(-1);
-					mEndEffectorWrist.updateOnBranchDistance(-1);
 				}
 			}
 		});
@@ -311,8 +309,8 @@ public class Superstructure extends Subsystem {
 				new ParallelRequest(
 						mPivot.stateRequest(goal.mPivotState),
 						mIntake.stateRequest(goal.mIntakeState),
-						mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState),
-						mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState))
+						mShooter.stateRequest(goal.mEndEffectorRollersState)
+						)
 				).addName("Clean");
 	}
 
@@ -324,12 +322,11 @@ public class Superstructure extends Subsystem {
 		return new SequentialRequest(
 			new ParallelRequest(
 				new SequentialRequest(
-					mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
 					new WaitRequest(0.1),
 					mPivot.stateRequest(goal.mPivotState)),
-				mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLD),
+				mShooter.stateRequest(Shooter.State.IDLE),
 				mIntake.stateRequest(goal.mIntakeState)),
-				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState)
+				mShooter.stateRequest(goal.mEndEffectorRollersState)
 						
 		).addName("Idle");
 	}
@@ -349,9 +346,8 @@ public class Superstructure extends Subsystem {
 		return new SequentialRequest(
 			mIntake.stateRequest(Intake.State.HALF_INTAKING),//idle indexer
 			new ParallelRequest(
-				mEndEffectorWrist.stateRequest(goal.mEndEffectorWristState),
 				mPivot.stateRequest(goal.mPivotState),
-				mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState)),
+				mShooter.stateRequest(goal.mEndEffectorRollersState)),//FIXXUHHHHHH
 			mIntake.stateRequest(goal.mIntakeState)
 		).addName("Intaking");
 	}
@@ -370,12 +366,12 @@ public class Superstructure extends Subsystem {
 			new ParallelRequest(
 				mPivot.stateRequest(goal.mPivotState),
 				mIntake.stateRequest(goal.mIntakeState),
-				mEndEffectorRollers.stateRequest(EndEffectorRollers.State.HOLDCORAL),
+				mShooter.stateRequest(Shooter.State.IDLE),
 				new SequentialRequest(
 					mPivot.waitToBeOverRequest(PivotConstants.kCoralClearHeight),
 			new SequentialRequest(
 			ReadyToScoreRequest(),
-			mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState))
+			mShooter.stateRequest(goal.mEndEffectorRollersState))
 		).addName("Score");
 	}
 
@@ -395,7 +391,7 @@ public class Superstructure extends Subsystem {
 				mIntake.stateRequest(goal.mIntakeState)),
 			ReadyToScoreRequest(),
 			new ParallelRequest(
-			mEndEffectorRollers.stateRequest(goal.mEndEffectorRollersState))
+			mShooter.stateRequest(goal.mEndEffectorRollersState))
 		).addName("Score");
 	}
 
