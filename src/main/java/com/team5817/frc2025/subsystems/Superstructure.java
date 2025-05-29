@@ -196,26 +196,9 @@ public class Superstructure extends Subsystem {
 		queuedRequests.add(req);
 	}
 
-	@Override
-	public void registerEnabledLoops(ILooper enabledLooper) {
-		enabledLooper.register(new Loop() {
-			@Override
-			public void onStart(double timestamp) {
-				clearRequestQueue();
-			}
-
-			@Override
-			public void onLoop(double timestamp) {
-				manageRequests();
-				if(DriverStation.isEnabled()&&DriverStation.isTeleopEnabled()){
-					double dist = driverAllowsPoseComp?(-mDrive.getAutoAlignError().x()):0;
-					mPivot.updateOnBranchDistance(dist);
-				}else{
-					mPivot.updateOnBranchDistance(-1);
-				}
-			}
-		});
-	}
+	
+		
+	
 	public void manageRequests(){
 		try {
 			if (hasNewRequest && activeRequest != null) {
@@ -309,7 +292,7 @@ public class Superstructure extends Subsystem {
 				new ParallelRequest(
 						mPivot.stateRequest(goal.mPivotState),
 						mIntake.stateRequest(goal.mIntakeState),
-						mShooter.stateRequest(goal.mEndEffectorRollersState)
+						mShooter.stateRequest(goal.mShooterState)
 						)
 				).addName("Clean");
 	}
@@ -326,7 +309,7 @@ public class Superstructure extends Subsystem {
 					mPivot.stateRequest(goal.mPivotState)),
 				mShooter.stateRequest(Shooter.State.IDLE),
 				mIntake.stateRequest(goal.mIntakeState)),
-				mShooter.stateRequest(goal.mEndEffectorRollersState)
+				mShooter.stateRequest(goal.mShooterState)
 						
 		).addName("Idle");
 	}
@@ -347,7 +330,7 @@ public class Superstructure extends Subsystem {
 			mIntake.stateRequest(Intake.State.HALF_INTAKING),//idle indexer
 			new ParallelRequest(
 				mPivot.stateRequest(goal.mPivotState),
-				mShooter.stateRequest(goal.mEndEffectorRollersState)),//FIXXUHHHHHH
+				mShooter.stateRequest(goal.mShooterState)),//FIXXUHHHHHH
 			mIntake.stateRequest(goal.mIntakeState)
 		).addName("Intaking");
 	}
@@ -371,7 +354,7 @@ public class Superstructure extends Subsystem {
 					mPivot.waitToBeOverRequest(PivotConstants.kCoralClearHeight),
 			new SequentialRequest(
 			ReadyToScoreRequest(),
-			mShooter.stateRequest(goal.mEndEffectorRollersState))
+			mShooter.stateRequest(goal.mShooterState))
 		).addName("Score");
 	}
 
