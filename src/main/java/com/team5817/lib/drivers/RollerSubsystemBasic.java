@@ -88,6 +88,8 @@ public abstract class RollerSubsystemBasic extends Subsystem {
 		public int kStatusFrame8UpdateRate = 1000;
 
 		public double simSpeedMultiplyer = 1.0;
+
+		public CanDeviceId id;
 	}
 
 	protected final RollerSubsystemConstants mConstants;

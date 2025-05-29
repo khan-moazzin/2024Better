@@ -21,7 +21,7 @@ public final class PivotConstants {
 		kPivotServoConstants.kMainConstants.counterClockwisePositive = true;
 
 		TalonFXConstants followerConstants = new TalonFXConstants();
-		followerConstants.id = Ports.ELEVATOR_2;
+		followerConstants.id = Ports.ELEVATOR;
 		followerConstants.counterClockwisePositive = false;
 		followerConstants.invert_sensor_phase = false;
 
