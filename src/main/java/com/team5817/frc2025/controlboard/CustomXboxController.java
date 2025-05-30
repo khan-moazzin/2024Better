@@ -2,13 +2,13 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package com.uni.frc.Controls;
+package com.team5817.frc2025.controlboard;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
-public class Controller {
+public class CustomXboxController {
   private final XboxController controller;
 
   public final ButtonCheck leftStickX = new ButtonCheck();
@@ -36,7 +36,7 @@ public class Controller {
   private final Timer rumbleTimer = new Timer();
   private double rumbleStart = Double.NEGATIVE_INFINITY;
 
-  public Controller(int port) {
+  public CustomXboxController(int port) {
     controller = new XboxController(port);
     rumbleTimer.start();
   }

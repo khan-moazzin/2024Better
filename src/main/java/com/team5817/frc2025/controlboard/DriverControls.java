@@ -9,9 +9,9 @@ import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 import com.team5817.lib.Util;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Drive.Drive.DriveControlState;
-import com.team5817.frc2025.subsystems.EndEffector.Shooter;
+import com.team5817.frc2025.subsystems.Pivot.Pivot;
+import com.team5817.frc2025.subsystems.Shooter.Shooter;
 import com.team5817.frc2025.subsystems.Intake.Intake;
-import com.team5817.frc2025.subsystems.Intake.IntakeDeploy;
 
 /**
  * The DriverControls class handles the input from the driver and co-driver controllers
@@ -44,11 +44,6 @@ public class DriverControls {
 		if(driver.getStartButton())
 			mDrive.zeroGyro();
 
-
-		if(driver.getAButton())
-			IntakeDeploy.getInstance().stateRequest(IntakeDeploy.State.GROUND).act();
-		if(driver.getBButton())
-			IntakeDeploy.getInstance().stateRequest(IntakeDeploy.State.STOW).act();
 		
 		
 			
@@ -135,45 +130,11 @@ public class DriverControls {
 				s.setReadyToScore(driver.rightBumper.isBeingPressed());
 			else if(driver.rightBumper.isBeingPressed())
 				s.setGoal(GoalState.EXHAUST);
-		
 
-
-		if(codriver.getRightTriggerAxis()==1)
-			s.mIntake.stateRequest(Intake.State.STOW).act();
-		if(codriver.getLeftTriggerAxis()==1)
-			s.setGoal(GoalState.CLEAR);
-		if(codriver.getStartButtonPressed())
-			s.toggleAllowPoseComp();
-		if(s.getGoalState()==GoalState.CLEAR&&codriver.getLeftTriggerAxis()!=1)
-			s.setGoal(GoalState.STOW);
-		if(codriver.yButton.isBeingPressed())
-			preparedGoal = GoalState.L4;
-		if(codriver.bButton.isBeingPressed())
-			preparedGoal = GoalState.L3;
-		if(codriver.aButton.isBeingPressed())
-			preparedGoal = GoalState.L2;
-		
-		
-		if(codriver.xButton.isBeingPressed())
-			preparedGoal = GoalState.L1;
-		if(codriver.POV0.isBeingPressed()){
-			preparedGoal = GoalState.NET;
-		}
-		if(codriver.POV180.isBeingPressed()){
-			preparedGoal = GoalState.PROCESS;
-		}
-		
-		if(codriver.POV270.wasReleased())
-			s.mPivot.home();
-		if(codriver.POV90.wasReleased())
-			s.mEndEffectorWrist.home();
 
 		Logger.recordOutput("Elastic/PreparedGoal", preparedGoal);
 	}
 
-	public boolean clearReef(){
-		return mDrive.getPose().getTranslation().translateBy(FieldLayout.getReefPose().inverse().getTranslation()).norm() > 1.4;
-	}
 	public void testMode(){
 		if(driver.getAButton())
 			s.mDrive.snapHeading(driver.getPOVDirection());

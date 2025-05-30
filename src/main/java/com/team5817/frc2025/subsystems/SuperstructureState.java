@@ -35,7 +35,7 @@ public class SuperstructureState {
 	 *
 	 * @param pivot_state the state of the pivot
 	 * @param shooter_state the state of the end effector rollers
-	 * @param indexer_state the state of the indexer
+	 * @param intake_state the state of the indexer
 	 * @param type the type of the superstructure state
 	 * @param alignmentTypes the alignment type
 	 */

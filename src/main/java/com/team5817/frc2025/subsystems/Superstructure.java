@@ -4,11 +4,14 @@ import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.loops.ILooper;
 import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Drive.Drive;
+import com.team5817.frc2025.subsystems.Pivot.Pivot;
 import com.team5817.frc2025.subsystems.Pivot.PivotConstants;
 import com.team5817.frc2025.subsystems.Shooter.Shooter;
 import com.team5817.frc2025.subsystems.Shooter.ShooterConstants;
 import com.team5817.frc2025.subsystems.Intake.Intake; 
-import com.team5817.frc2025.subsystems.Pivot.Pivot;
+import com.team5817.frc2025.subsystems.Intake.IntakeRollers; 
+import com.team5817.frc2025.subsystems.Intake.IndexerRollers; 
+import com.team5817.frc2025.subsystems.Intake.IntakeConstants; 
 import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.requests.ParallelRequest;
 import com.team5817.lib.requests.Request;
@@ -55,59 +58,70 @@ public class Superstructure extends Subsystem {
 	public Shooter mShooter;
 	public Intake mIntake;
 
-	public enum GameObject {
-		NOTE,
-		
-	}
 
+
+	public enum Mode {
+        SHOOTING,
+        FIRING,
+		INTAKING,
+		OUTTAKING,
+		IDLE
+    }
+	
+	
 	public enum GoalState {
-		STOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, 
-				EndEffectorRollers.State.IDLE, Intake.State.IDLE, 
+		STOW(new SuperstructureState(
+			    Pivot.State.STOW, 
+				EndEffectorRollers.State.IDLE, 
+				Intake.State.IDLE, 
 				SuperstructureState.Type.IDLE)),
-		ASTOW(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, 
-				EndEffectorRollers.State.HOLD, Intake.State.IDLE, 
+
+		ZERO(new SuperstructureState(
+				Elevator.State.ZERO, 
+				EndEffectorRollers.State.IDLE, 
+				Intake.State.IDLE, 
 				SuperstructureState.Type.IDLE)),
-		ZERO(new SuperstructureState(Elevator.State.ZERO, EndEffectorWrist.State.ZERO, 
-				EndEffectorRollers.State.IDLE, Intake.State.IDLE, 
+
+		CLEAR(new SuperstructureState(
+				Elevator.State.CLEAR, 
+				EndEffectorRollers.State.IDLE, 
+				Intake.State.IDLE, 
 				SuperstructureState.Type.IDLE)),
-		CLEAR(new SuperstructureState(Elevator.State.CLEAR, EndEffectorWrist.State.STOW, 
-				EndEffectorRollers.State.IDLE, Intake.State.IDLE, 
-				SuperstructureState.Type.IDLE)),
-		EXHAUST(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.STOW, 
-				EndEffectorRollers.State.IDLE, Intake.State.EXHAUSTING, 
+
+		EXHAUST(new SuperstructureState(
+				Pivot.State.STOW, 
+				EndEffectorRollers.State.IDLE, 
+				Intake.State.EXHAUSTING, 
 				SuperstructureState.Type.IDLE)),	
-		L1(new SuperstructureState(Elevator.State.L1, EndEffectorWrist.State.L1, 
-				EndEffectorRollers.State.l1, Intake.State.IDLE_EXAUST, 
-				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L1)),
-		L2(new SuperstructureState(Elevator.State.L2, EndEffectorWrist.State.L2, 
-				EndEffectorRollers.State.l2, Intake.State.IDLE_EXAUST, 
-				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L2)),
-		L3(new SuperstructureState(Elevator.State.L3, EndEffectorWrist.State.L3, 
-				EndEffectorRollers.State.l3, Intake.State.IDLE_EXAUST, 
-				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L3)),
-		L4(new SuperstructureState(Elevator.State.L4, EndEffectorWrist.State.L4, 
-				EndEffectorRollers.State.l4, Intake.State.IDLE_EXAUST, 
-				SuperstructureState.Type.SCORING, AlignmentType.CORAL_SCORE,ReefLevel.L4)),
-		NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, 
-				EndEffectorRollers.State.ALGAE_OUTTAKE, Intake.State.IDLE, 
+
+		SUPER_NET(new SuperstructureState(
+				Elevator.State.NET, 
+				EndEffectorWrist.State.STOW, 
+				Intake.State.IDLE, 
 				SuperstructureState.Type.NET)),
-		SUPER_NET(new SuperstructureState(Elevator.State.NET, EndEffectorWrist.State.STOW, 
-				EndEffectorRollers.State.ALGAE_SHOOT, Intake.State.IDLE, 
-				SuperstructureState.Type.NET)),
-		PROCESS(new SuperstructureState(Elevator.State.PROCESS, EndEffectorWrist.State.STOW, 
-				EndEffectorRollers.State.ALGAE_OUTTAKE, Intake.State.IDLE, 
+
+		PROCESS(new SuperstructureState(
+				Elevator.State.PROCESS,
+				EndEffectorRollers.State.ALGAE_OUTTAKE, 
+				Intake.State.IDLE, 
 				SuperstructureState.Type.SCORING, AlignmentType.NONE)),
-		A1(new SuperstructureState(Elevator.State.A1, EndEffectorWrist.State.A1, 
-				EndEffectorRollers.State.ALGAE_INTAKE, Intake.State.IDLE, 
+
+		A1(new SuperstructureState(
+				Elevator.State.A1, 
+				EndEffectorRollers.State.ALGAE_INTAKE, 
+				Intake.State.IDLE, 
 				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
-		A2(new SuperstructureState(Elevator.State.A2, EndEffectorWrist.State.A2, 
-				EndEffectorRollers.State.ALGAE_INTAKE, Intake.State.IDLE, 
+
+		A2(new SuperstructureState(
+				Elevator.State.A2, 
+				EndEffectorRollers.State.ALGAE_INTAKE, 
+				Intake.State.IDLE, 
 				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
-		GROUND_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING, 
-				EndEffectorRollers.State.CORAL_INTAKE, Intake.State.INTAKING, 
-				SuperstructureState.Type.INTAKING)),
-		HUMAN_CORAL_INTAKE(new SuperstructureState(Elevator.State.STOW, EndEffectorWrist.State.INTAKING, 
-				EndEffectorRollers.State.CORAL_INTAKE, Intake.State.INTAKING, 
+
+		GROUND_CORAL_INTAKE(new SuperstructureState(
+				Elevator.State.STOW,
+				EndEffectorRollers.State.CORAL_INTAKE, 
+				Intake.State.INTAKING, 
 				SuperstructureState.Type.INTAKING));
 
 		public SuperstructureState goal;
@@ -374,7 +388,7 @@ public class Superstructure extends Subsystem {
 				mIntake.stateRequest(goal.mIntakeState)),
 			ReadyToScoreRequest(),
 			new ParallelRequest(
-			mShooter.stateRequest(goal.mEndEffectorRollersState))
+			mShooter.stateRequest(goal.mShooterState))
 		).addName("Score");
 	}
 
