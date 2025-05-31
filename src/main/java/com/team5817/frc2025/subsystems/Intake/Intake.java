@@ -28,7 +28,7 @@ public class Intake extends Subsystem {
         IDLE(IntakeRollers.State.IDLE, IndexerRollers.State.OFF),
         INTAKING(IntakeRollers.State.INTAKING, IndexerRollers.State.RECEIVING),
         HALF_INTAKING(IntakeRollers.State.HALF_INTAKING, IndexerRollers.State.RECEIVING),
-        EXHAUSTING(IntakeRollers.State.EXHAUSTING, IndexerRollers.State.OUTTAKING),
+        OUTTAKING(IntakeRollers.State.OUTTAKING, IndexerRollers.State.OUTTAKING),
         IDLE_EXHAUST(IntakeRollers.State.IDLE_EXAUST, IndexerRollers.State.OFF);
 
         final IntakeRollers.State rollerState;

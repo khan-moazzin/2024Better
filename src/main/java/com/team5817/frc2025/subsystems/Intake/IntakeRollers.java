@@ -32,7 +32,7 @@ public class IntakeRollers extends StateBasedRollerSubsystem<IntakeRollers.State
         IDLE(0, ControlState.VOLTAGE),
         INTAKING(0.75, ControlState.VOLTAGE),
         HALF_INTAKING(0.75, ControlState.VOLTAGE),
-        EXHAUSTING(-0.7, ControlState.VOLTAGE),
+        OUTTAKING(-0.7, ControlState.VOLTAGE),
         IDLE_EXAUST(0, ControlState.VOLTAGE);
 
         @Getter private final double[] rollerDemands;

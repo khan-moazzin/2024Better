@@ -67,16 +67,18 @@ public final class PivotConstants {
 	public static double kHomingZone = 0.1; // degrees
 	public static final double kBrakeHoldPower = -0.05;
 	public static final double kFollowerCurrentLimit = 40;
-
+	public static final double kClearHeight = 0.0;
+	
+	
 	public static final class State {
 		public static final double SPEAKER = 0;
 		public static final double AMP = 5;
-		public static final double TRAP = 0;
 		public static final double TRANSFER = 0;
 		public static final double SHOOTING = 0;
 		public static final double MAX_UP = 36.0;
 		public static final double MAX_DOWN = 0;
 		public static final double INTAKING = 5;
+		public static final double ZERO = 0.0;
 	}
 
 	public static final InterpolatingDoubleTreeMap SpeakerAngleMap = new InterpolatingDoubleTreeMap();

@@ -1,6 +1,5 @@
 package com.team5817.frc2025.subsystems;
 
-import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.subsystems.Intake.Intake;
 import com.team5817.frc2025.subsystems.Pivot.Pivot;
 import com.team5817.frc2025.subsystems.Shooter.Shooter;
@@ -14,14 +13,13 @@ public class SuperstructureState {
 	public final Shooter.State mShooterState;
 	public final Intake.State mIntakeState;
 	public final Type mType;
-	public final AlignmentType mAlignmentType;
 	
 	/**
 	 * Enum representing the type of superstructure state.
 	 */
 	public enum Type {
 		INTAKING,
-        SCORE,
+        SCORING,
         OFF,
         IDLE,
         AUTO,
@@ -37,19 +35,17 @@ public class SuperstructureState {
 	 * @param shooter_state the state of the end effector rollers
 	 * @param intake_state the state of the indexer
 	 * @param type the type of the superstructure state
-	 * @param alignmentTypes the alignment type
 	 */
 	public SuperstructureState(
 			Pivot.State pivot_state,
 			Shooter.State shooter_state,
 			Intake.State intake_state,
-			Type type, AlignmentType alignmentTypes) {
+			Type type) {
 	
 		this.mPivotState = pivot_state;
 		this.mShooterState = shooter_state;
 		this.mIntakeState = intake_state;
 		this.mType = type;
-		this.mAlignmentType = alignmentTypes;
 
 }
 }

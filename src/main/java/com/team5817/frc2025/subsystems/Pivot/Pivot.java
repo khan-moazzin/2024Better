@@ -35,8 +35,10 @@ public class Pivot extends StateBasedServoMotorSubsystem<Pivot.State> {
         MAXDOWN(PivotConstants.State.MAX_DOWN),
         INTAKING(PivotConstants.State.INTAKING),
         TRANSFER(PivotConstants.State.TRANSFER),
+        SHOOTING(PivotConstants.State.SHOOTING),
         CLEAR(0.35), // if no constant, keep the literal
-        STOW(PivotConstants.State.MAX_DOWN); // assuming stow = MAX_DOWN
+        STOW(PivotConstants.State.MAX_DOWN), // assuming stow = MAX_DOWN
+        ZERO(PivotConstants.State.ZERO);
 
         @Getter private double demand = 0;
         private InterpolatingDoubleTreeMap map;

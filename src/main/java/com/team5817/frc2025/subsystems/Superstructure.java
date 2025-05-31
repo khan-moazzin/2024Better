@@ -49,80 +49,69 @@ public class Superstructure extends Subsystem {
 	private boolean allRequestsComplete = false;
 	private boolean readyToScore = true;
 	private boolean driverAllowsPoseComp = true;
+	private GoalState mGoal= GoalState.STOW;
 
 	// Subsystems
 	public Drive mDrive;
-	private GoalState mGoal= GoalState.STOW;
-
 	public Pivot mPivot;
 	public Shooter mShooter;
 	public Intake mIntake;
-
+//SUPERSTRUCTURE STATE FIXED WITH CORRECT ARGUMENTS, WORK ON SUPERSTSRUCTURE
 
 
 	public enum Mode {
-        SHOOTING,
-        FIRING,
+		IDLE,
 		INTAKING,
 		OUTTAKING,
-		IDLE
+		SCORING,
+		FIRING,
+		SHOOTING,
     }
 	
 	
 	public enum GoalState {
-		STOW(new SuperstructureState(
-			    Pivot.State.STOW, 
-				EndEffectorRollers.State.IDLE, 
-				Intake.State.IDLE, 
-				SuperstructureState.Type.IDLE)),
-
+			
 		ZERO(new SuperstructureState(
-				Elevator.State.ZERO, 
-				EndEffectorRollers.State.IDLE, 
+				Pivot.State.ZERO, 
+				Shooter.State.IDLE, 
 				Intake.State.IDLE, 
 				SuperstructureState.Type.IDLE)),
 
-		CLEAR(new SuperstructureState(
-				Elevator.State.CLEAR, 
-				EndEffectorRollers.State.IDLE, 
-				Intake.State.IDLE, 
-				SuperstructureState.Type.IDLE)),
-
-		EXHAUST(new SuperstructureState(
+		IDLE(new SuperstructureState(
 				Pivot.State.STOW, 
-				EndEffectorRollers.State.IDLE, 
-				Intake.State.EXHAUSTING, 
-				SuperstructureState.Type.IDLE)),	
-
-		SUPER_NET(new SuperstructureState(
-				Elevator.State.NET, 
-				EndEffectorWrist.State.STOW, 
+				Shooter.State.IDLE, 
 				Intake.State.IDLE, 
-				SuperstructureState.Type.NET)),
+				SuperstructureState.Type.IDLE)),
+		
+		STOW(new SuperstructureState(
+		    Pivot.State.STOW, 
+			Shooter.State.IDLE, 
+			Intake.State.IDLE, 
+			SuperstructureState.Type.IDLE)),
+		
+		INTAKE(new SuperstructureState(
+			Pivot.State.TRANSFER, 
+			Shooter.State.TRANSFER, 
+			Intake.State.INTAKING, 
+			SuperstructureState.Type.IDLE)),
 
-		PROCESS(new SuperstructureState(
-				Elevator.State.PROCESS,
-				EndEffectorRollers.State.ALGAE_OUTTAKE, 
-				Intake.State.IDLE, 
-				SuperstructureState.Type.SCORING, AlignmentType.NONE)),
+		OUTTAKE(new SuperstructureState(
+			Pivot.State.CLEAR, 
+			Shooter.State.REVERSETRANSFER, 
+			Intake.State.OUTTAKING, 
+			SuperstructureState.Type.IDLE)),
+				
+		SHOOTING(new SuperstructureState(
+				Pivot.State.SHOOTING,
+				Shooter.State.SHOOTING, 
+				Intake.State.HALF_INTAKING, 
+				SuperstructureState.Type.SCORING)),
 
 		A1(new SuperstructureState(
 				Elevator.State.A1, 
 				EndEffectorRollers.State.ALGAE_INTAKE, 
 				Intake.State.IDLE, 
-				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
-
-		A2(new SuperstructureState(
-				Elevator.State.A2, 
-				EndEffectorRollers.State.ALGAE_INTAKE, 
-				Intake.State.IDLE, 
-				SuperstructureState.Type.CLEAN, AlignmentType.ALGAE_CLEAN)),
-
-		GROUND_CORAL_INTAKE(new SuperstructureState(
-				Elevator.State.STOW,
-				EndEffectorRollers.State.CORAL_INTAKE, 
-				Intake.State.INTAKING, 
-				SuperstructureState.Type.INTAKING));
+				SuperstructureState.Type.OUTTAKING, AlignmentType.ALGAE_CLEAN));
 
 		public SuperstructureState goal;
 
@@ -283,11 +272,8 @@ public class Superstructure extends Subsystem {
 				case INTAKING:
 					r = IntakeRequest(goal.goal);
 					break;
-				case CLEAN:
+				case OUTTAKING:
 					r = CleanRequest(goal.goal);
-					break;
-				case NET:
-					r= netRequest(goal.goal);
 					break;
 			}
 			request(r);
@@ -365,11 +351,11 @@ public class Superstructure extends Subsystem {
 				mIntake.stateRequest(goal.mIntakeState),
 				mShooter.stateRequest(Shooter.State.IDLE),
 				new SequentialRequest(
-					mPivot.waitToBeOverRequest(PivotConstants.kCoralClearHeight),
+					mPivot.waitToBeOverRequest(PivotConstants.kClearHeight),
 			new SequentialRequest(
 			ReadyToScoreRequest(),
 			mShooter.stateRequest(goal.mShooterState))
-		).addName("Score");
+		).addName("Score")));
 	}
 
 	/**
@@ -378,20 +364,6 @@ public class Superstructure extends Subsystem {
 	 * @param goal The goal state.
 	 * @return A request for scoring.
 	 */
-	private Request netRequest(SuperstructureState goal) {
-		if (!(goal.mType == SuperstructureState.Type.NET)) {
-			System.out.println("Wrong Goal Type");
-		}
-		return new SequentialRequest(
-			new ParallelRequest(
-				mPivot.stateRequest(goal.mPivotState),
-				mIntake.stateRequest(goal.mIntakeState)),
-			ReadyToScoreRequest(),
-			new ParallelRequest(
-			mShooter.stateRequest(goal.mShooterState))
-		).addName("Score");
-	}
-
 
 	/**
 	 * Creates a request to wait until the system is ready to score.
