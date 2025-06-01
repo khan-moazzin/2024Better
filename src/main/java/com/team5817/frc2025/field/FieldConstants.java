@@ -21,6 +21,34 @@ public final class FieldConstants {
     public static final double kFarWallX = kFieldLength;
 
     /** Obstacles on field for pathfinding or collision avoidance */
+    
+    
+    
+    public static Pose2d getSpeakerAimingPose() {
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+        return alliance == Alliance.Red
+            ? new Pose2d(16.7, 5.56, new Rotation2d())
+            : new Pose2d(0.42, 5.56, new Rotation2d()); // 16.7 - 16.28
+    }
+
+    public static Pose2d getSpeakerPivotPose() {
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+        return alliance == Alliance.Red
+            ? new Pose2d(16.5, 5.56, new Rotation2d())
+            : new Pose2d(0.0, 5.56, new Rotation2d());
+    }
+
+    public static Pose2d getLobPose() {
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+        return alliance == Alliance.Red
+            ? new Pose2d(15.77, 7.43, new Rotation2d())
+            : new Pose2d(0.73, 7.43, new Rotation2d()); // 16.5 - 15.77
+    }
+    
+    
+    
+    
+    
     public static final class Obstacles {
         private static final double[] boxX = Doubles.of(2.88, 5.83, 5.83);
         private static final double[] boxY = Doubles.of(4.1, 5.73, 2.47);
@@ -45,6 +73,7 @@ public final class FieldConstants {
                 new Translation2d(reflect(boxX)[2], boxY[2])
             )
         );
+
     }
 
     /** Static field element poses (like speaker & amp) */
@@ -59,27 +88,6 @@ public final class FieldConstants {
             return alliance == Alliance.Red
                 ? new Pose2d(kRedAmpX, kAmpY, new Rotation2d())
                 : new Pose2d(kBlueAmpX, kAmpY, new Rotation2d());
-        }
-
-        public static Pose2d getSpeakerAimingPose() {
-            Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-            return alliance == Alliance.Red
-                ? new Pose2d(16.7, 5.56, new Rotation2d())
-                : new Pose2d(0.42, 5.56, new Rotation2d()); // 16.7 - 16.28
-        }
-
-        public static Pose2d getSpeakerPivotPose() {
-            Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-            return alliance == Alliance.Red
-                ? new Pose2d(16.5, 5.56, new Rotation2d())
-                : new Pose2d(0.0, 5.56, new Rotation2d());
-        }
-
-        public static Pose2d getLobPose() {
-            Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-            return alliance == Alliance.Red
-                ? new Pose2d(15.77, 7.43, new Rotation2d())
-                : new Pose2d(0.73, 7.43, new Rotation2d()); // 16.5 - 15.77
         }
 
         public static final Pose2d kSpeakerBlue = new Pose2d(

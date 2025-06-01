@@ -49,6 +49,8 @@ public class Shooter extends StateBasedRollerSubsystem<Shooter.State> {
 		public ControlState[] getControlStates() {
 			return new ControlState[] { ControlState.DUTY_CYCLE, ControlState.DUTY_CYCLE };
 		}
+
+		
 }
 
 

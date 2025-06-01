@@ -4,15 +4,16 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.util.Map;
 import java.util.Optional;
 
 
-import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.geometry.Twist2d;
+import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 import com.team254.lib.util.MovingAverageTwist2d;
@@ -36,6 +37,7 @@ public class RobotState {
     private Optional<Translation2d> initialPoseError = Optional.empty();
     private InterpolatingTreeMap<InterpolatingDouble, Pose2d> poseFromOdom;
     private InterpolatingTreeMap<InterpolatingDouble, Translation2d> visionPoseComponent;
+    
 
     private Twist2d PredictedVelocity;
     private Twist2d MeasuredVelocity;
@@ -134,6 +136,37 @@ public class RobotState {
         return poseFromOdom.getInterpolated(new InterpolatingDouble(timestamp));
     }
 
+    
+    
+    public synchronized Translation2d getAbsoluteVisionPoseComponent(double timestamp) {
+        return visionPoseComponent.getInterpolated(new InterpolatingDouble(timestamp));
+    }
+    
+    public synchronized Translation2d getLatestVisionPoseComponent() {
+        return getAbsoluteVisionPoseComponent(visionPoseComponent.lastKey().value);
+    }
+
+    public synchronized Pose2d getLatestKalmanPose() {
+        Pose2d poseFromOdom = getLatestPoseFromOdom().getValue();
+        return new Pose2d(getLatestVisionPoseComponent().getTranslation().add(poseFromOdom.getTranslation()), poseFromOdom.getRotation());
+    }
+
+    public synchronized Pose2d getPredictedPose(double lookahead_time) {
+    if(DriverStation.getAlliance().get().equals(Alliance.Blue))
+            return getLatestKalmanPose()
+                    .transformBy(Pose2d.projectTwist(PredictedVelocity.scaled(-lookahead_time)));
+        return getLatestKalmanPose().transformBy(Pose2d.exp(PredictedVelocity.scaled(lookahead_time)));
+    }
+
+    
+    public synchronized Pose2d getKalmanPose(double timestamp) {
+        Pose2d poseFromOdom = getPoseFromOdom(timestamp);
+
+        Translation2d kalmanPoseOffset = getAbsoluteVisionPoseComponent(timestamp);
+        return new Pose2d(kalmanPoseOffset.translateBy(poseFromOdom.getTranslation()), poseFromOdom.getRotation());
+
+    }
+
     /**
      * Returns the latest pose from odometry.
      * 
@@ -215,10 +248,7 @@ public class RobotState {
             Pose2d visionFieldToVehicle = Pose2d.fromTranslation(visionUpdate.getFieldToVision());
 
             // Check if the vision update should be accepted
-            if (!mPoseAcceptor.shouldAcceptVision(visionTimestamp, visionFieldToVehicle, getLatestGlobalKalmanPose(),
-                    MeasuredVelocity, false)) {
-                return;
-            }
+
 
             // Calculate the vision odometry error and apply it to the Kalman filter
             Translation2d visionOdomError = visionFieldToVehicle.getTranslation()

@@ -305,6 +305,10 @@ public class Pose2d implements IPose2d<Pose2d>,StructSerializable {
         return (Util.epsilonEquals(twist.dy, 0.0) && Util.epsilonEquals(twist.dtheta, 0.0));
     }
 
+    public static Pose2d projectTwist(final Twist2d delta){
+        return new Pose2d(new Translation2d(delta.dx,delta.dy),new Rotation2d());
+    }
+
     /**
      * Checks if this pose is approximately equal to another pose.
      * 

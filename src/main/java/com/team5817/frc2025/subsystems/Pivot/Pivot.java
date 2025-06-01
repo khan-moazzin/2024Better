@@ -52,6 +52,8 @@ public class Pivot extends StateBasedServoMotorSubsystem<Pivot.State> {
             this.map = map;
         }
 
+
+        
         public double getTrackedOutput(double distanceFromScoringPosition) {
             if (map == null) {
                 return demand;
@@ -76,6 +78,13 @@ public class Pivot extends StateBasedServoMotorSubsystem<Pivot.State> {
         }
     }
 
+
+
+
+
+
+
+    
     /**
      * Constructs a Pivot with the given constants.
      * 

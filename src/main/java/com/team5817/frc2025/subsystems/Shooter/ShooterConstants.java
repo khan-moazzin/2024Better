@@ -2,6 +2,8 @@ package com.team5817.frc2025.subsystems.Shooter;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.team254.lib.util.InterpolatingDouble;
+import com.team254.lib.util.InterpolatingTreeMap;
 import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.RobotConstants;
 import com.team5817.lib.drivers.RollerSubsystemBasic.RollerSubsystemConstants;
@@ -17,7 +19,6 @@ public class ShooterConstants {
 
 		public static final RollerSubsystemConstants kShooterMotor1Constants = new RollerSubsystemConstants();
         public static final RollerSubsystemConstants kShooterMotor2Constants = new RollerSubsystemConstants();
-
         public static final RollerSubsystemConstants[] kShooterConstants = {
      
         };
@@ -62,6 +63,31 @@ public class ShooterConstants {
 			kMidOffsetMap.put(0.0, 0.0);
 		}
 	}
+    
+    public static final double kShotTime = 1.2;
 
+    
+    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SPEAKER_VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
+
+    static {
+        SPEAKER_VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(.4));
+        SPEAKER_VELOCITY_TREE_MAP.put(new InterpolatingDouble(3.0), new InterpolatingDouble(1.0));
+    }
+    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SPIN_TREE_MAP = new InterpolatingTreeMap<>();
+    static{
+        SPIN_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(1.0));
+        SPIN_TREE_MAP.put(new InterpolatingDouble(3.0), new InterpolatingDouble(.5));
+    }
+    
+    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> LOB_VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
+    static {
+        LOB_VELOCITY_TREE_MAP.put(new InterpolatingDouble(8.25), new InterpolatingDouble(0.6));
+        LOB_VELOCITY_TREE_MAP.put(new InterpolatingDouble(16.0), new InterpolatingDouble(.6));
+    }
+    public static final InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
+    static {
+        SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.0003));
+        SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.0045));
+    }
 	
 }
