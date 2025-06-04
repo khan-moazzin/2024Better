@@ -1,10 +1,15 @@
 package com.team5817.frc2025.subsystems;
 
+import java.util.Map;
+
+
 import com.google.flatbuffers.Constants;
 import com.team254.lib.geometry.Pose2d;
+import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
+
 import com.team5817.frc2025.RobotState;
 import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.field.FieldConstants;
@@ -26,7 +31,7 @@ import com.team5817.lib.requests.SequentialRequest;
 import com.team5817.lib.requests.WaitRequest;
 import com.team5817.lib.util.ShootingUtils;
 import com.team5817.lib.util.ShootingUtils.ShootingParameters;
-
+import com.team5817.lib.util.ShootingParametersBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -36,6 +41,8 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
+
+
 
 public class Superstructure extends Subsystem {
 
@@ -61,6 +68,8 @@ public class Superstructure extends Subsystem {
 	private boolean allRequestsComplete = false;
 	private boolean readyToScore = true;
 	private boolean driverAllowsPoseComp = true;
+	private double pivotOffset = 0;
+
 	private GoalState mGoal= GoalState.STOW;
     protected RobotState mRobotState;
 
@@ -212,73 +221,50 @@ public class Superstructure extends Subsystem {
 		queuedRequests.add(req);
 	}
 
-	
-    public boolean inShootZone(double timestamp) {
+
+		public boolean inShootZone(double timestamp) {
         Pose2d currentPose = mRobotState.getGlobalKalmanPose(timestamp);
         if (DriverStation.getAlliance().get().equals(Alliance.Red))
             return currentPose.getTranslation().x() > 8.25;
         return currentPose.getTranslation().x() < 8.25;
     }
+	
 
 
+//////Shooting Parameters w/Builder Util ////////////
+public ShootingParameters getShootingParams(Pose2d currentPose) {
+    Pose2d speakerPose = FieldConstants.getSpeakerPivotPose();
 
+    return new ShootingParametersBuilder()
+            .setCurrentPose(currentPose)
+            .setTargetPose(speakerPose)
+            .setPivotMap(ShootingUtils.getPivotMap(false)) 
+            .setVelocityMap(ShootingUtils.getVelocityMap(false)) 
+            .setCurrentVelocity(mRobotState.getPredictedVelocity())
+            .setManual(false)
+            .build();
+}
 
-//////Shooting Paramerts Integrated with Field Constants////////////
-	public ShootingParameters getShootingParams(Pose2d currentPose) {
-        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeMap = ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
-        double kShotTime = ShooterConstants.kShotTime;
+public ShootingParameters getShootingParams(Pose2d currentPose, boolean manual, boolean lob) {
+    Pose2d speakerPose = FieldConstants.getSpeakerPivotPose();
 
-        Pose2d speakerPose = FieldConstants.getSpeakerPivotPose();
-
-        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = ShootingUtils
-				.getPivotMap(false);
-        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityMap = ShootingUtils
-                .getVelocityMap(false);
-
-        ShootingParameters shootingParameters = ShootingUtils.getShootingParameters(
-                0,
-                currentPose,
-                speakerPose,
-                kShotTime,
-                pivotMap,
-                velocityMap,
-                shotTimeMap,
-                mRobotState.getPredictedVelocity(),
-                false);
-        return shootingParameters;
-    }
-
-    public ShootingParameters getShootingParams(Pose2d currentPose, boolean manual, boolean lob) {
-        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeMap = ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
-        double kShotTime = ShooterConstants.kShotTime;
-
-        Pose2d speakerPose = FieldConstants.getSpeakerPivotPose();
-        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = ShootingUtils
-                .getPivotMap(lob);
-        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityMap = ShootingUtils
-                .getVelocityMap(lob);
-
-        ShootingParameters shootingParameters = ShootingUtils.getShootingParameters(
-                pivotOffset,
-                currentPose,
-                speakerPose,
-                kShotTime,
-                pivotMap,
-                velocityMap,
-                shotTimeMap,
-                mRobotState.getPredictedVelocity(),
-                manual);// TODO change to measured when it works
-                
-        return shootingParameters;
-    }
+    return new ShootingParametersBuilder()
+            .setPivotOffset(pivotOffset)
+            .setCurrentPose(currentPose)
+            .setTargetPose(speakerPose)
+            .setPivotMap(ShootingUtils.getPivotMap(lob)) 
+            .setVelocityMap(ShootingUtils.getVelocityMap(lob)) 
+            .setCurrentVelocity(mRobotState.getPredictedVelocity())
+            .setManual(manual)
+            .build();
+}
 ///////////////////////////////////////////////////////
 
 
 
 
 
-
-    public void prepareShooterSetpoints(double timestamp) {
+public void prepareShooterSetpoints(double timestamp) {
         ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
         Shooter.State state = Shooter.State.SHOOTING;
         state.output = shootingParameters.compensatedDesiredShooterSpeed;
@@ -287,7 +273,10 @@ public class Superstructure extends Subsystem {
         mShooter.setSpin(shootingParameters.spin);
     }
 	
-		
+	
+	
+
+
 	
 	public void manageRequests(){
 		try {
