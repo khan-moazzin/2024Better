@@ -80,11 +80,6 @@ public class Pivot extends StateBasedServoMotorSubsystem<Pivot.State> {
 
 
 
-
-
-
-
-    
     /**
      * Constructs a Pivot with the given constants.
      * 
@@ -123,4 +118,14 @@ public class Pivot extends StateBasedServoMotorSubsystem<Pivot.State> {
 
         super.outputTelemetry();
     }
+
+    /** Conforms pivot to a raw angle value. */
+public void conformToState(double overrideAngle) {
+    setSetpointMotionMagic(overrideAngle);
+}
+
+/** Conforms pivot to a predefined enum state. */
+public void conformToState(State state) {
+    conformToState(state.getTrackedOutput(distanceFromScoringPosition));
+}
 }

@@ -34,7 +34,7 @@ public class Shooter extends StateBasedRollerSubsystem<Shooter.State> {
 		AMP(0.5),
 		IDLE(0.1);
 
-		@Getter private final double rollerDemand;
+		@Getter public final double rollerDemand;
 
 			State(double output) {
 				this.rollerDemand = output;
@@ -52,14 +52,29 @@ public class Shooter extends StateBasedRollerSubsystem<Shooter.State> {
 
 		
 }
+	private double spinMultiplier = 1;
+	public void setSpin(double spinMultiplier){
+		this.spinMultiplier = spinMultiplier;
+	}
 
 
+	private double velocitySetpoint = 0.0;
 
+	public void setVelocitySetpoint(double velocity) {
+		this.velocitySetpoint = velocity;
+	}
 
-
+	public double getVelocitySetpoint() {
+	return velocitySetpoint;
+	}
 	
+	public void conformToState(State state) {
+			setState(state); 
+		}
+
+
 	/**
-	 * Private constructor for the EndEffectorRollers subsystem.
+	 * Private constructor for the Shooter subsystem.
 	 */
 	private Shooter() {
 		super(State.IDLE, ShooterConstants.ShooterMotorConstants.kShooterConstants);

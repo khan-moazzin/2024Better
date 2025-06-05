@@ -129,11 +129,11 @@ public class Superstructure extends Subsystem {
 				Intake.State.HALF_INTAKING, 
 				SuperstructureState.Type.SCORING)),
 
-		A1(new SuperstructureState(
-				Elevator.State.A1, 
-				EndEffectorRollers.State.ALGAE_INTAKE, 
+		FIRING(new SuperstructureState(
+				Pivot.State.SHOOTING, 
+				Shooter.State.SHOOTING, 
 				Intake.State.IDLE, 
-				SuperstructureState.Type.OUTTAKING, AlignmentType.ALGAE_CLEAN));
+				SuperstructureState.Type.SCORING));
 
 		public SuperstructureState goal;
 
@@ -231,7 +231,6 @@ public class Superstructure extends Subsystem {
 	
 
 
-//////Shooting Parameters w/Builder Util ////////////
 public ShootingParameters getShootingParams(Pose2d currentPose) {
     Pose2d speakerPose = FieldConstants.getSpeakerPivotPose();
 
@@ -258,23 +257,35 @@ public ShootingParameters getShootingParams(Pose2d currentPose, boolean manual, 
             .setManual(manual)
             .build();
 }
-///////////////////////////////////////////////////////
-
-
 
 
 
 public void prepareShooterSetpoints(double timestamp) {
-        ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
-        Shooter.State state = Shooter.State.SHOOTING;
-        state.output = shootingParameters.compensatedDesiredShooterSpeed;
-        mShooter.conformToState(Shooter.State.SHOOTING);
-        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle - 1);
-        mShooter.setSpin(shootingParameters.spin);
-    }
+	ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
+	Shooter.State state = Shooter.State.SHOOTING;
+	mShooter.setVelocitySetpoint(shootingParameters.compensatedDesiredShooterSpeed);
+	mShooter.setSpin(shootingParameters.spin);
+
+	mShooter.conformToState(Shooter.State.SHOOTING);
+	mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle - 1);
+}
+
 	
-	
-	
+public void prepareShooterSetpoints(double timestamp, boolean manual) {
+	ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp), manual,
+			!inShootZone(timestamp));
+	Shooter.State state = Shooter.State.SHOOTING;
+	if (inShootZone(timestamp)) {
+		mShooter.conformToState(state);
+		mShooter.setSpin(shootingParameters.spin);
+	} else {
+		mShooter.setVelocitySetpoint(shootingParameters.compensatedDesiredShooterSpeed);
+		mShooter.setSpin(1);
+	}
+	mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
+}
+
+
 
 
 	
