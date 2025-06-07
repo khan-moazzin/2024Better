@@ -1,10 +1,8 @@
 package com.team5817.frc2025.subsystems.Shooter;
 
-import com.team5817.frc2025.subsystems.Shooter.ShooterConstants.ShooterMotorConstants;
 import com.team5817.lib.drivers.StateBasedRollerSubsystem;
 import com.team5817.lib.drivers.RollerSubsystemBasic.ControlState;
 import com.team5817.lib.drivers.State.RollerState;
-import com.team5817.lib.drivers.StateBasedRollerSubsystem;
 
 import lombok.Getter;
 

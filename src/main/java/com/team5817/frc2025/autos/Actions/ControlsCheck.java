@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.swerve.ChassisSpeeds;
-import com.team5817.frc2025.controlboard.ControlBoard;
-import com.team5817.frc2025.controlboard.DriverControls;
+import com.team5817.frc2025.controls.ControlBoard;
+import com.team5817.frc2025.controls.DriverControls;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.lib.Util;
@@ -61,7 +61,6 @@ public class ControlsCheck implements Action{
     @Override
     public void update() {
         controlBoard.update();
-        controls.twoControllerMode();
 
         d.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
         controlBoard.getSwerveTranslation().x(),

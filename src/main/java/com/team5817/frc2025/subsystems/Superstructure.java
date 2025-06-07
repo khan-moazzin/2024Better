@@ -1,29 +1,17 @@
 package com.team5817.frc2025.subsystems;
 
-import java.util.Map;
 
 
-import com.google.flatbuffers.Constants;
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Twist2d;
-import com.team254.lib.geometry.Translation2d;
-import com.team254.lib.util.InterpolatingDouble;
-import com.team254.lib.util.InterpolatingTreeMap;
+
 
 import com.team5817.frc2025.RobotState;
-import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
 import com.team5817.frc2025.field.FieldConstants;
-import com.team5817.frc2025.loops.ILooper;
-import com.team5817.frc2025.loops.Loop;
 import com.team5817.frc2025.subsystems.Drive.Drive;
 import com.team5817.frc2025.subsystems.Pivot.Pivot;
 import com.team5817.frc2025.subsystems.Pivot.PivotConstants;
 import com.team5817.frc2025.subsystems.Shooter.Shooter;
-import com.team5817.frc2025.subsystems.Shooter.ShooterConstants;
 import com.team5817.frc2025.subsystems.Intake.Intake; 
-import com.team5817.frc2025.subsystems.Intake.IntakeRollers; 
-import com.team5817.frc2025.subsystems.Intake.IndexerRollers; 
-import com.team5817.frc2025.subsystems.Intake.IntakeConstants; 
 import com.team5817.lib.drivers.Subsystem;
 import com.team5817.lib.requests.ParallelRequest;
 import com.team5817.lib.requests.Request;
@@ -68,7 +56,11 @@ public class Superstructure extends Subsystem {
 	private boolean allRequestsComplete = false;
 	private boolean readyToScore = true;
 	private boolean driverAllowsPoseComp = true;
-	private double pivotOffset = 0;
+	private double pivotOffset = 0;  
+    private Mode currentMode = Mode.SHOOTING;
+	private boolean modeChanged = false;
+
+
 
 	private GoalState mGoal= GoalState.STOW;
     protected RobotState mRobotState;
@@ -90,7 +82,11 @@ public class Superstructure extends Subsystem {
 		SHOOTING,
     }
 	
-	
+	public void offsetPivot(double offset) {
+        pivotOffset += offset;
+    }
+
+
 	public enum GoalState {
 			
 		ZERO(new SuperstructureState(
@@ -170,6 +166,12 @@ public class Superstructure extends Subsystem {
 		setActiveRequest(r);
 		clearRequestQueue();
 	}
+
+    public void setMode(Mode mode) {
+        if (currentMode != mode)
+            modeChanged = true;
+        currentMode = mode;
+    }
 
 	/**
 	 * Sets the active request.

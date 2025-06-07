@@ -1,13 +1,11 @@
 package com.team5817.frc2025.subsystems.Shooter;
 
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 import com.team5817.frc2025.Ports;
 import com.team5817.frc2025.RobotConstants;
 import com.team5817.lib.drivers.RollerSubsystemBasic.RollerSubsystemConstants;
-import com.team5817.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
 public class ShooterConstants {

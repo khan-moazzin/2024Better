@@ -24,8 +24,9 @@ import com.team5817.frc2025.autos.AutoExecuter;
 import com.team5817.frc2025.autos.AutoModeSelector;
 import com.team5817.frc2025.autos.Modes.Characterize;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
-import com.team5817.frc2025.controlboard.ControlBoard;
-import com.team5817.frc2025.controlboard.DriverControls;
+import com.team5817.frc2025.controls.CustomXboxController;
+import com.team5817.frc2025.controls.DriverControls;
+import com.team5817.frc2025.controls.ControlBoard;
 import com.team5817.frc2025.loops.Looper;
 import com.team5817.frc2025.subsystems.Superstructure;
 import com.team5817.frc2025.subsystems.Drive.Drive;
@@ -53,7 +54,7 @@ public class Robot extends LoggedRobot {
   private AutoExecuter mAutoExecuter;
   private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
   DriverControls controls;
-  ControlBoard controlBoard = ControlBoard.getInstance();
+  CustomXboxController controlBoard = CustomXboxController.getInstance();
   private final Looper mEnabledLooper = new Looper();
 
   SwerveDriveSimulation mDriveSim;
@@ -184,19 +185,18 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    controls.twoControllerMode();
     // controls.oneControllerMode();
     controlBoard.update();
 
     mDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-        controlBoard.getSwerveTranslation().x(),
-        controlBoard.getSwerveTranslation().y(),
-        controlBoard.getSwerveRotation(),
+        controls.getSwerveTranslation().x(),
+        controls.getSwerveTranslation().y(),
+        controls.getSwerveRotation(),
         Util.robotToFieldRelative(mDrive.getHeading(), DriverStation.getAlliance().get().equals(Alliance.Red))));
 
   }
 
-  /**
+  /** 
    * This method is called once each time the robot is disabled.
    */
   @Override

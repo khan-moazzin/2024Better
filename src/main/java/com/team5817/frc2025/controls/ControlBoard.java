@@ -1,4 +1,4 @@
-package com.team5817.frc2025.controlboard;
+package com.team5817.frc2025.controls;
 
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
@@ -27,11 +27,9 @@ public class ControlBoard {
 	}
 
 	public final CustomXboxController driver;
-	public final CustomXboxController operator;
 
 	private ControlBoard() {
 		driver = new CustomXboxController(0);
-		operator = new CustomXboxController(RobotConstants.kButtonGamepadPort);
 	}
 
 	/**
@@ -39,7 +37,6 @@ public class ControlBoard {
 	 */
 	public void update() {
 		driver.update();
-		operator.update();
 	}
 
 	/* DRIVER METHODS */
@@ -127,19 +124,5 @@ public class ControlBoard {
 				|| driver.rightTrigger.isBeingPressed());
 	}
 
-
-	// Driver and Operator
-
-	/**
-	 * Checks if the top buttons on the operator's controller are clear.
-	 * 
-	 * @return true if the top buttons are clear, false otherwise
-	 */
-	public boolean topButtonsClearOperator() {
-		return !(operator.leftBumper.isBeingPressed()
-				|| operator.rightBumper.isBeingPressed()
-				|| operator.leftTrigger.isBeingPressed()
-				|| operator.rightTrigger.isBeingPressed());
-	}
 
 }

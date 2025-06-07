@@ -36,6 +36,8 @@ import com.team254.lib.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -141,7 +143,32 @@ public class Drive extends Subsystem {
 		
 		
 	}
+	Translation2d translationVector = new Translation2d();
+    final double rotationDeadband = 0.1;
+    public double rotationScalar = 0;
+    SwerveHeadingController headingController = new SwerveHeadingController();
+    final double translationDeadband = 0.1;
 
+	public void sendInput(double x, double y, double rotation) {
+        translationVector = new Translation2d(x, y);
+        if (Math.abs(rotation) <= rotationDeadband) {
+            rotation = 0;
+        }
+        if (rotation == 0 && rotationScalar != 0) {
+            headingController.disableSwerveHeadingController(true);
+        }
+        rotationScalar = rotation;
+        final double scaleValue = 1.5;
+        double inputMagnitude = translationVector.norm();
+        inputMagnitude = Math.pow(inputMagnitude, scaleValue);
+        inputMagnitude = Util.deadBand(translationDeadband, inputMagnitude);
+        if (translationVector.norm() <= translationDeadband) {
+            translationVector = new Translation2d();
+        }
+        if (DriverStation.getAlliance().get().equals(Alliance.Blue))
+            translationVector = translationVector.inverse();
+        rotationScalar *= 0.025;
+    }
 	/**
 	 * Sets the control state of the drive system.
 	 *

@@ -26,7 +26,15 @@ public class SwerveHeadingController {
 		SNAP,
 		STABILIZE
 	}
+    private double lastTimestamp;
 
+	private double disabledStartTimestamp = 0;
+    private boolean atTarget = false;
+    private boolean isDisabled = false;
+    public void disableSwerveHeadingController(boolean disable) {
+        disabledStartTimestamp = lastTimestamp;
+        isDisabled = disable;
+	}
 	private State current_state = State.OFF;
 
 	public State getState() {
