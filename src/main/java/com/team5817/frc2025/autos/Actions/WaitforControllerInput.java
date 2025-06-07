@@ -1,6 +1,6 @@
 package com.team5817.frc2025.autos.Actions;
 
-import com.team5817.frc2025.controlboard.CustomXboxController;
+import com.team5817.frc2025.controls.CustomXboxController;
 
 /**
  * Action that waits for a specific input from the controller.

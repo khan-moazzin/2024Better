@@ -157,7 +157,14 @@ public class RobotState {
                     .transformBy(Pose2d.projectTwist(PredictedVelocity.scaled(-lookahead_time)));
         return getLatestKalmanPose().transformBy(Pose2d.exp(PredictedVelocity.scaled(lookahead_time)));
     }
-
+    
+    public synchronized Pose2d getPredictedPoseFromOdometry(double lookahead_time) {
+        if(DriverStation.getAlliance().get().equals(Alliance.Blue))
+            return getLatestPoseFromOdom().getValue()
+                    .transformBy(Pose2d.projectTwist(PredictedVelocity.scaled(-lookahead_time)));
+        return getLatestPoseFromOdom().getValue()
+                .transformBy(Pose2d.projectTwist(PredictedVelocity.scaled(lookahead_time)));
+    }
     
     public synchronized Pose2d getKalmanPose(double timestamp) {
         Pose2d poseFromOdom = getPoseFromOdom(timestamp);

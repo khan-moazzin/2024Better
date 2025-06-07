@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.team254.lib.geometry.Pose2d;
-import com.team5817.frc2025.field.AlignmentPoint.AlignmentType;
+import com.team5817.frc2025.field.AlignmentPoint.AimingRequest;
 
 /**
  * Represents an AprilTag on the field.
@@ -18,7 +18,7 @@ public class AprilTag {
     private AlignmentPoint tagToLeftAlign;
     private AlignmentPoint tagToRightAlign;
     private AlignmentPoint tagToCenterAlign;
-    private List<AlignmentType> allTypes = new ArrayList<>();
+    private List<AimingRequest> allTypes = new ArrayList<>();
     private List<AlignmentPoint> allAlignmentPoints;
 
     /**
@@ -43,7 +43,7 @@ public class AprilTag {
             this.fieldToTag = fieldToTag.withRotation(fieldToTag.getRotation().flip());
         }
         for (AlignmentPoint alignments : allAlignmentPoints) {
-            for (AlignmentType tagTypes : alignments.getAllowedAllignments()) {
+            for (AimingRequest tagTypes : alignments.getAllowedAllignments()) {
                 if (!allTypes.contains(tagTypes)) {
                     allTypes.add(tagTypes);
                 }
@@ -83,7 +83,7 @@ public class AprilTag {
      *
      * @return a list of allowable alignment types
      */
-    public List<AlignmentType> getAllAllowableAllignments() {
+    public List<AimingRequest> getAllAllowableAllignments() {
         return allTypes;
     }
 

@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveHeadingController {
 	private static SwerveHeadingController mInstance;
+	private Rotation2d targetHeading = Rotation2d.fromDegrees(0);
+
 
 	public static SwerveHeadingController getInstance() {
 		if (mInstance == null) {
@@ -31,6 +33,8 @@ public class SwerveHeadingController {
 	private double disabledStartTimestamp = 0;
     private boolean atTarget = false;
     private boolean isDisabled = false;
+	private SynchronousPIDF openLoopController;
+    private SynchronousPIDF velocityController;
     public void disableSwerveHeadingController(boolean disable) {
         disabledStartTimestamp = lastTimestamp;
         isDisabled = disable;
@@ -48,6 +52,41 @@ public class SwerveHeadingController {
 	public void disable() {
 		setState(State.OFF);
 	}
+
+    public void setTargetHeading(Rotation2d heading) {
+        targetHeading = Rotation2d.fromDegrees(heading.getDegrees());
+        atTarget = false;
+    }
+
+	public double updateRotationCorrection(Rotation2d heading, double timestamp) {
+        if(isDisabled) {
+            if((timestamp - disabledStartTimestamp) > 0.25) {
+                isDisabled = false;
+                setTargetHeading(heading);
+            }
+            return 0;
+        }
+        return getRotationCorrection(heading, timestamp);
+    }
+
+	public double getRotationCorrection(Rotation2d heading, double timestamp) {
+        double error = new Rotation2d(targetHeading).rotateBy(heading.inverse()).getDegrees();
+        double dt = timestamp - lastTimestamp;
+        lastTimestamp = timestamp;
+        if(Math.abs(error)< 2.5){
+            atTarget = true;
+        }
+        double correctionForce = openLoopController.calculate(error, dt);
+        if(Math.abs(correctionForce) > 0.017){
+            correctionForce = .0075* Math.signum(correctionForce);
+        }
+        return correctionForce;
+    }
+
+    public boolean atTarget(){
+        return atTarget;
+    }
+
 
 	private SynchronousPIDF stabilizePID;
 	private SynchronousPIDF snapPID;

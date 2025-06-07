@@ -9,7 +9,6 @@ import com.team5817.frc2025.autos.Actions.ParallelAction;
 import com.team5817.frc2025.autos.Actions.SequentialAction;
 import com.team5817.frc2025.autos.Actions.TrajectoryAction;
 import com.team5817.frc2025.autos.Actions.WaitAction;
-import com.team5817.frc2025.autos.Actions.WaitToPassDistanceToReef;
 import com.team5817.frc2025.autos.AutoModeSelector.StartingPosition;
 import com.team5817.frc2025.autos.Actions.WaitForSuperstructureAction;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;

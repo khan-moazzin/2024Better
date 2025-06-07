@@ -46,6 +46,17 @@ public class Rotation2d implements IRotation2d<Rotation2d>, StructSerializable {
         radians_ = radians;
     }
 
+    public Rotation2d(double x, double y) {
+        double magnitude = Math.hypot(x, y);
+        if (magnitude > 1e-6) {
+          sin_angle_ = y / magnitude;
+          cos_angle_ = x / magnitude;
+        } else {
+          sin_angle_ = 0.0;
+          cos_angle_ = 1.0;
+        }
+    }
+
     public Rotation2d(double x, double y, boolean normalize) {
         if (normalize) {
             // From trig, we know that sin^2 + cos^2 == 1, but as we do math on this object

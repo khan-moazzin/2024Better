@@ -10,7 +10,6 @@ import org.littletonrobotics.junction.Logger;
 
 import com.team5817.frc2025.autos.Modes.Center11;
 import com.team5817.frc2025.autos.Modes.Center12;
-import com.team5817.frc2025.autos.Modes.CustomMode;
 import com.team5817.frc2025.autos.Modes.DoNothingMode;
 import com.team5817.frc2025.subsystems.Superstructure.GoalState;
 

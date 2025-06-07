@@ -21,14 +21,10 @@ public class ControlsCheck implements Action{
     public final EnumMap<GoalState, Boolean> mGoalMap = new EnumMap<>(Superstructure.GoalState.class);
 
     public static List<String> statesToCheck = List.of(
-        "GROUND_CORAL_INTAKE",
-        "A2",
-        "L4",
-        "STOW",
-        "CLIMB_PREPARE",
-        "CLIMB_PULL",
-        "NET",
-        "PROCESS"
+        "INTAKE",
+        "OUTTAKE",
+        "SHOOT",
+        "FIRE"
     );
 
     public Superstructure s;

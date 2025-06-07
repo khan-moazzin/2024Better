@@ -131,6 +131,11 @@ public class Translation2d implements ITranslation2d<Translation2d>,StructSerial
         }
         return extrapolate(other, x);
     }
+   
+    public Rotation2d getAngle() {
+        return new Rotation2d(x_, y_);
+    }
+
 
     public Translation2d extrapolate(final Translation2d other, double x) {
         return new Translation2d(x * (other.x_ - x_) + x_, x * (other.y_ - y_) + y_);
