@@ -54,7 +54,10 @@ public class Robot extends LoggedRobot {
   private AutoExecuter mAutoExecuter;
   private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
   DriverControls controls;
-  CustomXboxController controlBoard = CustomXboxController.getInstance();
+  CustomXboxController xboxController = CustomXboxController.getInstance();
+  ControlBoard controlBoard = ControlBoard.getInstance();
+  
+  
   private final Looper mEnabledLooper = new Looper();
 
   SwerveDriveSimulation mDriveSim;
@@ -186,12 +189,12 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     // controls.oneControllerMode();
-    controlBoard.update();
+    xboxController.update();
 
     mDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-        controls.getSwerveTranslation().x(),
-        controls.getSwerveTranslation().y(),
-        controls.getSwerveRotation(),
+        controlBoard.getSwerveTranslation().x(),
+        controlBoard.getSwerveTranslation().y(),
+        controlBoard.getSwerveRotation(),
         Util.robotToFieldRelative(mDrive.getHeading(), DriverStation.getAlliance().get().equals(Alliance.Red))));
 
   }
