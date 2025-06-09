@@ -21,7 +21,6 @@ import com.team254.lib.swerve.ChassisSpeeds;
 import com.team5817.BuildConstants;
 import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.AutoExecuter;
-import com.team5817.frc2025.autos.AutoModeSelector;
 import com.team5817.frc2025.autos.Modes.Characterize;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
 import com.team5817.frc2025.controls.CustomXboxController;
@@ -38,6 +37,8 @@ import com.team5817.lib.Elastic;
 import com.team5817.lib.Util;
 import com.team5817.lib.RobotMode;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -52,7 +53,6 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 public class Robot extends LoggedRobot {
   SubsystemManager mSubsystemManager;
   private AutoExecuter mAutoExecuter;
-  private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
   DriverControls controls;
   CustomXboxController xboxController = CustomXboxController.getInstance();
   ControlBoard controlBoard = ControlBoard.getInstance();
@@ -143,6 +143,20 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Elastic/Match Time", Timer.getMatchTime());
     mEnabledLooper.update();
     RobotVisualizer.outputTelemetry();
+
+    Logger.recordOutput("RobotPose", new Pose2d());
+    Logger.recordOutput("ZeroedComponentPoses", new Pose3d[] {new Pose3d()});
+    Logger.recordOutput(
+      "FinalComponentPoses",
+      new Pose3d[]{
+        new Pose3d(
+          0, 0, 0, new Rotation3d(0.0, Math.sin(Timer.getTimestamp()) - 1.0, 0.0)
+        )
+      }
+    );
+
+//sims stuff
+
   }
 
   boolean disableGyroReset = false;
@@ -223,14 +237,7 @@ public class Robot extends LoggedRobot {
     l.update();
     // if(mVision.getMovingAverage().getSize()!=0&&neverEnabled)
     //   mDrive.zeroGyro(mVision.getMovingAverage().getAverage());
-    mAutoModeSelector.updateModeCreator();
-    Optional<AutoBase> autoMode = mAutoModeSelector.getAutoMode();
-    if (autoMode.isPresent() && (autoMode.get() != mAutoExecuter.getAuto())) {
-      if (RobotMode.mode == RobotMode.Mode.SIM) 
-        autoMode.get().registerDriveSimulation(mDriveSim);
-      mAutoExecuter.setAuto(autoMode.get());
-      
-    }
+
 
     // if(!disableGyroReset)
     // drive.zeroGyro(mVision.getMovingAverageRead());

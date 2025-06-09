@@ -10,8 +10,8 @@ import lombok.experimental.Accessors;
 public class BasicStateBasedRollerSubsystem<S extends Enum<S> & BasicRollerState> extends RollerSubsystemBasic {
     @Getter @Setter @Accessors(prefix = "m") protected S mState;
 
-    public BasicStateBasedRollerSubsystem(S initialState, RollerSubsystemConstants[] kshooterconstants ) {
-        super(kshooterconstants);
+    public BasicStateBasedRollerSubsystem(S initialState, RollerSubsystemConstants constants) {
+        super(constants); 
         this.mState = initialState;
     }
 

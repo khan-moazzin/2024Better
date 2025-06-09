@@ -287,8 +287,10 @@ public void prepareShooterSetpoints(double timestamp, boolean manual) {
 	mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
 }
 
-
-
+	private boolean continuousShoot = false;
+	public void setContinuousShoot(boolean continuousShoot) {
+		this.continuousShoot = continuousShoot;
+	}
 
 	
 	public void manageRequests(){

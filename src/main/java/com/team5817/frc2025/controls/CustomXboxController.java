@@ -140,8 +140,8 @@ public class CustomXboxController extends XboxController {
     private double threshold;
     private boolean current = false;
     private boolean previous = false;
-	boolean buttonActive = false;
-	boolean activationReported = false;
+	  boolean buttonActive = false;
+	  boolean activationReported = false;
 
 
 
@@ -174,18 +174,18 @@ public class CustomXboxController extends XboxController {
       return current;
     }
 
-	public boolean isBeingPressed() {
+	  public boolean isBeingPressed() {
 		return buttonActive;
-	}
+	  }
 
-	public boolean wasActivated() {
-		if (buttonActive && !activationReported) {
-			activationReported = true;
-			return true;
-		}
-		return false;
+	  public boolean wasActivated() {
+		  if (buttonActive && !activationReported) {
+			  activationReported = true;
+			  return true;
+		  }
+		  return false;
 	
-}
+      }
 
     public double getValue() {
       return Math.abs(value) >= threshold ? value : 0.0;
