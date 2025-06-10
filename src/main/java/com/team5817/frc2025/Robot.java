@@ -4,7 +4,6 @@
 
 package com.team5817.frc2025;
 
-import java.util.Optional;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -18,8 +17,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.swerve.ChassisSpeeds;
+
 import com.team5817.BuildConstants;
-import com.team5817.frc2025.autos.AutoBase;
 import com.team5817.frc2025.autos.AutoExecuter;
 import com.team5817.frc2025.autos.Modes.Characterize;
 import com.team5817.frc2025.autos.TrajectoryLibrary.l;
@@ -144,17 +143,6 @@ public class Robot extends LoggedRobot {
     mEnabledLooper.update();
     RobotVisualizer.outputTelemetry();
 
-    Logger.recordOutput("RobotPose", new Pose2d().wpi());
-    Logger.recordOutput("ZeroedComponentPoses", new Pose3d[] {new Pose3d()});
-    Logger.recordOutput(
-      "FinalComponentPoses",
-      new Pose3d[]{
-        new Pose3d(
-          0, 0, 0, new Rotation3d(0.0, Math.sin(Timer.getTimestamp()) - 1.0, 0.0)
-
-        )
-      }
-    );
 
 //sims stuff
 
