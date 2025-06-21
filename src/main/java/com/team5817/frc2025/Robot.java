@@ -36,8 +36,7 @@ import com.team5817.lib.Elastic;
 import com.team5817.lib.Util;
 import com.team5817.lib.RobotMode;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
+
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
