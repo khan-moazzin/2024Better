@@ -72,15 +72,14 @@
 					wpiModuleLocations);
 
 			/* Swerve Profiling Values *///GUESSTIMATES
-			public static final double maxSpeed = 10; // meters per second
-			public static final double maxAcceleration = 5; // meters per second og 5
-			public static final double maxAngularVelocity = 45;//og 30
+			public static final double maxSpeed = 8; // meters/second og 6?
+			public static final double maxAcceleration = 5; // meters/second og 5
+			public static final double maxAngularVelocity = 30;//og 30
 			public static final double maxAngularAcceleration = maxAcceleration /
 					Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
 
 			public static final double kV = 12 * Math.PI * wheelDiameter / (driveGearRatio * maxSpeed);
 			public static final double maxAutoSpeed = maxSpeed * 0.9; // Max out at 85% to ensure attainable speeds
-
 			/* Motor Inverts */
 			public static final boolean driveMotorInvert = false;
 			public static final boolean angleMotorInvert = false;
@@ -113,13 +112,13 @@
 
 			static {
 				kSwerveKinematicLimits.kMaxDriveVelocity = maxSpeed;
-				kSwerveKinematicLimits.kMaxDriveAcceleration = 250;//og 200
+				kSwerveKinematicLimits.kMaxDriveAcceleration = 220;//og 200
 				kSwerveKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 			}
 			public static final SwerveKinematicLimits kExtendedKinematicLimits = new SwerveKinematicLimits();
 
 			static {
-				kExtendedKinematicLimits.kMaxDriveVelocity = 6;//og 3
+				kExtendedKinematicLimits.kMaxDriveVelocity = 4;//og 3
 				kExtendedKinematicLimits.kMaxDriveAcceleration = 5;//og 5
 				kExtendedKinematicLimits.kMaxSteeringVelocity = maxAngularVelocity;
 			}

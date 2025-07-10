@@ -1,9 +1,6 @@
 package com.team5817.frc2025.subsystems;
 
-
-
 import com.team254.lib.geometry.Pose2d;
-
 
 import com.team5817.frc2025.RobotState;
 import com.team5817.frc2025.field.FieldConstants;
@@ -70,7 +67,6 @@ public class Superstructure extends Subsystem {
 	public Pivot mPivot;
 	public Shooter mShooter;
 	public Intake mIntake;
-//SUPERSTRUCTURE STATE FIXED WITH CORRECT ARGUMENTS, WORK ON SUPERSTSRUCTURE
 
 
 	public enum Mode {
@@ -82,9 +78,7 @@ public class Superstructure extends Subsystem {
 		SHOOTING,
     }
 	
-	public void offsetPivot(double offset) {
-        pivotOffset += offset;
-    }
+
 
 
 	public enum GoalState {
@@ -286,6 +280,10 @@ public void prepareShooterSetpoints(double timestamp, boolean manual) {
 	}
 	mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
 }
+
+	public void offsetPivot(double offset) {
+		pivotOffset += offset;
+	}
 
 	private boolean continuousShoot = false;
 	public void setContinuousShoot(boolean continuousShoot) {

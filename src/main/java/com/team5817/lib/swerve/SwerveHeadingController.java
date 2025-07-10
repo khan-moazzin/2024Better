@@ -34,7 +34,6 @@ public class SwerveHeadingController {
     private boolean atTarget = false;
     private boolean isDisabled = false;
 	private SynchronousPIDF openLoopController;
-    private SynchronousPIDF velocityController;
     public void disableSwerveHeadingController(boolean disable) {
         disabledStartTimestamp = lastTimestamp;
         isDisabled = disable;

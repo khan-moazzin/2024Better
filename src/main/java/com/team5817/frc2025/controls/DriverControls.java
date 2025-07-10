@@ -59,8 +59,6 @@ public class DriverControls {
 			}
 		} 
 
-
-
         // No Rumble as we dont have an active beambreak available to implement in the indexer
         //driver.setRumble(Intake.getInstance().hasPiece());
 
